@@ -73,22 +73,25 @@ class Graph {
 
   // set position based on simulated array
   apply_position_map(data) {
-    for(const n of data.keys()){
-      this.nodes.get(n).data = {... this.nodes.get(n).data, pos:data.get(n)};
+    for (const n of data.keys()) {
+      this.nodes.get(n).data = { ...this.nodes.get(n).data, pos: data.get(n) };
     }
   }
 
   // create new edge pos representation
-  apply_edge_pos_maps(data){
-    for(const key of data.keys()){
-      this.edges.get(key).data = {...this.edges.get(key).data, ldata:data.get(key)}
+  apply_edge_pos_maps(data) {
+    for (const key of data.keys()) {
+      this.edges.get(key).data = {
+        ...this.edges.get(key).data,
+        ldata: data.get(key),
+      };
     }
   }
 
-  // get the edge reps 
-  get_edge_lines(){
+  // get the edge reps
+  get_edge_lines() {
     const lines = new Map();
-    for(const key of this.edges.keys()){
+    for (const key of this.edges.keys()) {
       const edge = this.edges.get(key).data.ldata;
       lines.set(key, edge);
     }
@@ -96,11 +99,12 @@ class Graph {
   }
 
   // graph apply pos and edge map
-  apply_drawing_maps(layout){
-    if(layout.pmap){
+  apply_drawing_maps(layout) {
+    console.log(layout);
+    if (layout.pmap) {
       this.apply_position_map(layout.pmap);
     }
-    if(layout.emap){
+    if (layout.emap) {
       this.apply_edge_pos_maps(layout.emap);
     }
   }

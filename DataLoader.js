@@ -6,14 +6,12 @@ import { Graph } from "./Graph.js";
 import { Point } from "./HelperClasses/Point.js";
 import { Node } from "./Node.js";
 import { Edge } from "./Edges.js";
-import { DrawEdgeLines, SimulateKamadaKawai } from "./Drawing.js";
+import { DrawEdgeLines } from "./Drawing.js";
 
 function LoadZKC() {
   // load up the dataset representation
   const data = zkc;
   const G = ConstructGraphNodeEdgesList(data.nodes, data.edges);
-  G.apply_position_map(SimulateKamadaKawai(G, 1));
-  G.apply_edge_pos_maps(DrawEdgeLines(G, 1));
   return G;
 }
 

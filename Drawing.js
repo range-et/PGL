@@ -7,15 +7,14 @@ import { Point } from "./HelperClasses/Point.js";
 import { Dijkstra } from "./GraphMethods.js";
 
 // draw kamada kawai
-// TODO: Fix the kamada kawai layout method
-function SimulateKamadaKawai(G, iterations) {
+async function SimulateKamadaKawai(G, iterations) {
   const adjList = G.get_adjacency();
   // pos map
   const PosMapX = new Map();
   const PosMapY = new Map();
   for (const node of adjList.keys()) {
-    PosMapX.set(node, Math.random() * 100);
-    PosMapY.set(node, Math.random() * 100);
+    PosMapX.set(node, Math.random() * 200);
+    PosMapY.set(node, Math.random() * 200);
   }
   // start simulation
   for (let i = 0; i < iterations; i++) {
@@ -47,29 +46,22 @@ function SimulateKamadaKawai(G, iterations) {
         // get the position of all the other nodes
         if (otherNode != node) {
           // calculate inverse distance
-          const distDiffX = Math.pow(
-            PosMapX.get(otherNode) - PosMapX.get(node),
-            2
-          );
-          const distDiffY = Math.pow(
-            PosMapY.get(otherNode) - PosMapY.get(node),
-            2
-          );
+          const distDiffX = PosMapX.get(otherNode) - PosMapX.get(node);
+          const distDiffY = PosMapY.get(otherNode) - PosMapY.get(node);
           // get the inverse square value
-          const displacementXAmount = 0.001 / distDiffX;
-          const displacementYAmount = 0.001 / distDiffY;
           // add that to the *_r arrays
-          x_r.push(displacementXAmount);
-          y_r.push(displacementYAmount);
+          x_r.push(distDiffX);
+          y_r.push(distDiffY);
         }
       }
-
-      const new_x_r_pos = calculateAverage(x_r);
-      const new_y_r_pos = calculateAverage(y_r);
+      const A_mult = 2;
+      const new_x_r_pos = (A_mult * 1) / calculateAverage(x_r);
+      const new_y_r_pos = (A_mult * 1) / calculateAverage(y_r);
 
       // calculate the dispacement amount in c/y pos
-      const new_c_xpos_dispacement = new_c_xpos - PosMapX.get(node);
-      const new_c_ypos_dispacement = new_c_ypos - PosMapY.get(node);
+      const C_mult = 0.2;
+      const new_c_xpos_dispacement = C_mult * (new_c_xpos - PosMapX.get(node));
+      const new_c_ypos_dispacement = C_mult * (new_c_ypos - PosMapY.get(node));
 
       // then add the x and y components of the two vectors
       const new_xpos = new_x_r_pos + new_c_xpos_dispacement + PosMapX.get(node);
@@ -81,11 +73,39 @@ function SimulateKamadaKawai(G, iterations) {
     }
   }
   // return the position
-  const PosMap = new Map();
+  let PosMap = new Map();
   for (const p of PosMapX.keys()) {
-    PosMap.set(p, new Point(PosMapX.get(p), 0, PosMapY.get(p)))
+    PosMap.set(p, new Point(PosMapX.get(p), 0, PosMapY.get(p)));
   }
-  return PosMap;
+  // get / set positions
+  // move the points
+  // get the average pos
+  const sim_x = [];
+  const sim_y = [];
+  const sim_z = [];
+  let interimPoint;
+  for (const p of PosMap.keys()) {
+    interimPoint = PosMap.get(p);
+    sim_x.push(interimPoint.x);
+    sim_y.push(interimPoint.y);
+    sim_z.push(interimPoint.z);
+  }
+
+  const x_displacement = calculateAverage(sim_x);
+  const y_displacement = calculateAverage(sim_y);
+  const z_displacement = calculateAverage(sim_z);
+  const dispacementVector = new Point(
+    -x_displacement,
+    -y_displacement,
+    -z_displacement
+  );
+
+  PosMap = movePmap(PosMap, dispacementVector);
+
+  G.apply_position_map(PosMap);
+  const lmap = DrawEdgeLines(G, 1);
+  const newLmap = await DrawEdgeBundling(lmap, 12, 5);
+  return { pmap: PosMap, emap: newLmap.emap };
 }
 
 // draw the edge representations and then store them in the edge classes
@@ -148,7 +168,7 @@ async function DrawEdgeBundling(LineMap, iterations, distance) {
     }
   }
   // now return that array
-  return {emap:returnArray};
+  return { emap: returnArray };
 }
 
 // displace the th eedges
@@ -179,7 +199,7 @@ async function HivePlot(G, selectedNode, step, startP) {
   // the returning pos map
   const Pmap = new Map();
   // now find the relevant node Positions
-  // get the start positions 
+  // get the start positions
   const xoff = startP.x || 0;
   const yoff = startP.y || 0;
   const zoff = startP.z || 0;
@@ -194,11 +214,25 @@ async function HivePlot(G, selectedNode, step, startP) {
     const pnt = new Point(xval + xoff, -yval + yoff, zval + zoff);
     Pmap.set(node, pnt);
   }
-  // simulate the lines 
+  // simulate the lines
   G.apply_position_map(Pmap);
   const lmap = DrawEdgeLines(G, 1);
   const newLmap = await DrawEdgeBundling(lmap, 12, 5);
-  return {pmap:Pmap, emap:lmap};
+  return { pmap: Pmap, emap: newLmap };
+}
+
+// move graph
+function moveGraph(G, dispacement) {}
+
+// move pmap
+function movePmap(Pmap, displacement) {
+  const newPmap = new Map();
+  for (const node of Pmap.keys()) {
+    const p = Pmap.get(node);
+    p.translate(displacement);
+    newPmap.set(node, p);
+  }
+  return newPmap;
 }
 
 export {
