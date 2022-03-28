@@ -218,11 +218,13 @@ async function HivePlot(G, selectedNode, step, startP) {
   G.apply_position_map(Pmap);
   const lmap = DrawEdgeLines(G, 1);
   const newLmap = await DrawEdgeBundling(lmap, 12, 5);
-  return { pmap: Pmap, emap: newLmap };
+  return { pmap: Pmap, emap: newLmap.emap };
 }
 
 // move graph
-function moveGraph(G, dispacement) {}
+function moveGraph(G, dispacement) {
+  G.get_position_map();
+}
 
 // move pmap
 function movePmap(Pmap, displacement) {
@@ -241,4 +243,5 @@ export {
   DrawEdgeBundling,
   HivePlot,
   DisplaceEdgeInZ,
+  moveGraph,
 };

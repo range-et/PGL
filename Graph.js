@@ -100,13 +100,24 @@ class Graph {
 
   // graph apply pos and edge map
   apply_drawing_maps(layout) {
-    console.log(layout);
     if (layout.pmap) {
       this.apply_position_map(layout.pmap);
     }
     if (layout.emap) {
       this.apply_edge_pos_maps(layout.emap);
     }
+  }
+
+  // get the positon map of the graph
+  get_position_map(){
+    const returnObject = {pmap: new Map(), emap: new Map()}
+    for(const node of this.nodes.keys()){
+      returnObject.pmap.set(node, this.nodes.get(node).data.pos);
+    }
+    for(const edge of this.edges.keys()){
+      returnObject.emap.set(edge, this.edges.get(edge).data.ldata);
+    }
+    return returnObject
   }
 }
 
