@@ -1,7 +1,9 @@
+import {Graph} from "./Graph.js"
+
 // do a BFS Search Starting from some point
 // searches the whole graph and returns a map of which node 
 // was searched from where
-function BFSSearch(G, node){
+async function BFSSearch(G, node){
     const adj = G.get_adjacency();
     const exploredFromMap = new Map();
 
@@ -31,11 +33,11 @@ function BFSSearch(G, node){
 }
 
 // do a dijkstra Search
-function Dijkstra(G, Node){
+async function Dijkstra(G, Node){
     const adj = G.get_adjacency();
     const Dmap = new Map();
     // get the explored from map
-    const exploredFromMap = BFSSearch(G, Node);
+    const exploredFromMap = await BFSSearch(G, Node);
     // then for each element in the map go through 
     // contact trace where that element came from
     for(const n of adj.keys()){
@@ -53,15 +55,46 @@ function Dijkstra(G, Node){
 
 // This file contains basic things like 
 // Graph searches and stuff
-function GraphDiameter(graph){
+async function GraphDiameter(graph){
     // find the diameter of the graph
-
     // start Dijkstra from some random node 
-    // search to the end
-    // then search from there to the furthest point again 
-    // TADA
+    let seed = Math.floor(Math.random() * graph.nodes.size);
+    let Dstart = await Dijkstra(graph, seed);
+    // iterate through all the values and then get
+    // the value that is the highest amongst the others 
+    let currentDistance = -1;
+    for(const n of Dstart.keys()){
+        const dval = Dstart.get(n);
+        if(dval > currentDistance){
+            seed = n;
+            currentDistance = dval;
+        }
+    }
+    // then search from there to the furthest point again
+    const newStart = seed;
+    Dstart = await Dijkstra(graph, seed);
+    // repeat the thing 
+    currentDistance = -1;
+    for(const n of Dstart.keys()){
+        const dval = Dstart.get(n);
+        if(dval > currentDistance){
+            seed = n;
+            currentDistance = dval;
+        }
+    }
+    const returnObj = {
+        start: newStart,
+        end: seed,
+        distance: currentDistance
+    }
+    return returnObj;
 }
 
+// Select a subrgaph
+async function SelectSubgraph(graph, nodeList){
+    const prunedVertices = new Map();
+    const prunedEdges = new Map();
+}
 
 // this is where the exports happen
-export {GraphDiameter, Dijkstra, BFSSearch}
+export {GraphDiameter, Dijkstra, BFSSearch, SelectSubgraph}

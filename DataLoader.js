@@ -8,14 +8,14 @@ import { Node } from "./Node.js";
 import { Edge } from "./Edges.js";
 import { DrawEdgeLines } from "./Drawing.js";
 
-function LoadZKC() {
+async function LoadZKC() {
   // load up the dataset representation
   const data = zkc;
-  const G = ConstructGraphNodeEdgesList(data.nodes, data.edges);
+  const G = await ConstructGraphNodeEdgesList(data.nodes, data.edges);
   return G;
 }
 
-function LoadZKCSimulated() {
+async function LoadZKCSimulated() {
   // make a map
   const data = zkc_simulated;
   const nodes = new Map();
@@ -36,8 +36,7 @@ function LoadZKCSimulated() {
     edges.set(i, e);
   }
   // make a graph object
-  const G = new Graph(nodes, edges);
-  G.apply_edge_pos_maps(DrawEdgeLines(G, 1));
+  const G = await Graph.create(nodes, edges);
   return G;
 }
 

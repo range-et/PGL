@@ -29,4 +29,20 @@ function line_from_start_end_distance(start, end, distance){
     return subdivline;
 }
 
-export { line_from_start_end_divisions, line_from_start_end_distance }
+function centroid(points){
+    let rx = 0;
+    let ry = 0;
+    let rz = 0;
+    points.forEach(element => {
+        rx += element.x;
+        ry += element.y;
+        rz += element.z;
+    });
+    rx = rx / points.length;
+    ry = ry / points.length;
+    rz = rz / points.length;
+    const centroid = new Point(rx, ry, rz);
+    return centroid;
+}
+
+export { line_from_start_end_divisions, line_from_start_end_distance, Point, Line, calculateDistance, centroid}

@@ -5,10 +5,9 @@ class Graph {
     this.nodes = nodes;
     this.edges = edges;
     // execute Internal methods
-    // first construct the adjacency list representation
-    this.constructAdjacencyList();
     this.printData();
   }
+
   // test function
   printData() {
     const message =
@@ -20,19 +19,33 @@ class Graph {
     console.log(message);
   }
 
+  // initialize
+  async initialize() {
+    await this.constructAdjacencyList();
+  }
+
+  // new create method
+  static async create(nodes, edges) {
+    const g = new Graph(nodes, edges);
+    await g.initialize();
+    return g;
+  }
+
   // construct the adjacency list represntation
-  constructAdjacencyList() {
+  async constructAdjacencyList() {
     // I'm constructing a Graph here so some of the stuff doesnt matter
     this.edges.forEach((edge) => {
       // get the start point
       const start = edge.start;
       const end = edge.end;
       // set the node property
-      const relevantSNode = this.nodes.get(start);
-      relevantSNode.neighbours.push(end);
-      // set the other way around (since this is a regular graph)
-      const relevantENode = this.nodes.get(end);
-      relevantENode.neighbours.push(start);
+      if (this.nodes.get(start)) {
+        const relevantSNode = this.nodes.get(start);
+        relevantSNode.neighbours.push(end);
+      } else if (this.nodes.get(end)) {
+        const relevantENode = this.nodes.get(end);
+        relevantENode.neighbours.push(start);
+      }
     });
     // then for each node then get the unique neighbours
     for (const key of this.nodes.keys()) {
@@ -109,15 +122,15 @@ class Graph {
   }
 
   // get the positon map of the graph
-  get_position_map(){
-    const returnObject = {pmap: new Map(), emap: new Map()}
-    for(const node of this.nodes.keys()){
+  get_position_map() {
+    const returnObject = { pmap: new Map(), emap: new Map() };
+    for (const node of this.nodes.keys()) {
       returnObject.pmap.set(node, this.nodes.get(node).data.pos);
     }
-    for(const edge of this.edges.keys()){
+    for (const edge of this.edges.keys()) {
       returnObject.emap.set(edge, this.edges.get(edge).data.ldata);
     }
-    return returnObject
+    return returnObject;
   }
 }
 

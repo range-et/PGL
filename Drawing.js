@@ -12,9 +12,12 @@ async function SimulateKamadaKawai(G, iterations) {
   // pos map
   const PosMapX = new Map();
   const PosMapY = new Map();
+  let rx, ry;
   for (const node of adjList.keys()) {
-    PosMapX.set(node, Math.random() * 200);
-    PosMapY.set(node, Math.random() * 200);
+    rx = Math.random() * 200;
+    ry = Math.random() * 200;
+    PosMapX.set(node, rx);
+    PosMapY.set(node, ry);
   }
   // start simulation
   for (let i = 0; i < iterations; i++) {
@@ -54,12 +57,14 @@ async function SimulateKamadaKawai(G, iterations) {
           y_r.push(distDiffY);
         }
       }
+      // this is the repulsion value
       const A_mult = 2;
-      const new_x_r_pos = (A_mult * 1) / calculateAverage(x_r);
-      const new_y_r_pos = (A_mult * 1) / calculateAverage(y_r);
+      const new_x_r_pos = (A_mult * 1) / (calculateAverage(x_r)*calculateAverage(x_r));
+      const new_y_r_pos = (A_mult * 1) / (calculateAverage(y_r)*calculateAverage(y_r));
 
       // calculate the dispacement amount in c/y pos
-      const C_mult = 0.2;
+      // this is the cohesion value
+      const C_mult = 1;
       const new_c_xpos_dispacement = C_mult * (new_c_xpos - PosMapX.get(node));
       const new_c_ypos_dispacement = C_mult * (new_c_ypos - PosMapY.get(node));
 
@@ -71,6 +76,8 @@ async function SimulateKamadaKawai(G, iterations) {
       PosMapX.set(node, new_xpos);
       PosMapY.set(node, new_ypos);
     }
+    console.log(PosMapX);
+    console.log(PosMapY);
   }
   // return the position
   let PosMap = new Map();
@@ -106,6 +113,24 @@ async function SimulateKamadaKawai(G, iterations) {
   const lmap = DrawEdgeLines(G, 1);
   const newLmap = await DrawEdgeBundling(lmap, 12, 5);
   return { pmap: PosMap, emap: newLmap.emap };
+}
+
+// instanciate a random set of positions 
+function instanciateRandomPositions(G){
+  const adjList = G.get_adjacency();
+  const PosMapX = new Map();
+  const PosMapY = new Map();
+  for (const node of adjList.keys()) {
+    PosMapX.set(node, Math.random() * 200);
+    PosMapY.set(node, Math.random() * 200);
+  }
+  let PosMap = new Map();
+  for (const p of PosMapX.keys()) {
+    PosMap.set(p, new Point(PosMapX.get(p), 0, PosMapY.get(p)));
+  }
+  G.apply_position_map(PosMap);
+  const lmap = DrawEdgeLines(G, 1);
+  return { pmap: PosMap, emap: lmap };
 }
 
 // draw the edge representations and then store them in the edge classes
@@ -181,7 +206,7 @@ function DisplaceEdgeInZ(LineMap, zVal) {
 // draw the circular vertical packing crypto like drawing
 async function HivePlot(G, selectedNode, step, startP) {
   const adj = G.get_adjacency();
-  const DijkstraDepth = Dijkstra(G, selectedNode);
+  const DijkstraDepth = await Dijkstra(G, selectedNode);
   // calculate the number of steps that I am searching through
   const steps = Math.max(...[...DijkstraDepth.values()]);
   // step map
@@ -223,7 +248,9 @@ async function HivePlot(G, selectedNode, step, startP) {
 
 // move graph
 function moveGraph(G, dispacement) {
-  G.get_position_map();
+  const Pmap  = G.get_position_map();
+  const NewPmap = movePmap(Pmap, dispacement);
+  G.apply_position_map(NewPmap);
 }
 
 // move pmap
@@ -244,4 +271,5 @@ export {
   HivePlot,
   DisplaceEdgeInZ,
   moveGraph,
+  instanciateRandomPositions,
 };
