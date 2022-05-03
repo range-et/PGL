@@ -5,7 +5,7 @@ class Graph {
     this.nodes = nodes;
     this.edges = edges;
     // execute Internal methods
-    this.printData();
+    // this.printData();
   }
 
   // test function

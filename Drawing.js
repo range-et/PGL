@@ -2,7 +2,7 @@ import {
   calculateAverage,
   calculateSquaredDistance,
 } from "./HelperClasses/Utilities.js";
-import { line_from_start_end_distance } from "./HelperClasses/GeometryHelpers.js";
+import { line_from_start_end_distance, line_from_start_end_divisions } from "./HelperClasses/GeometryHelpers.js";
 import { Point } from "./HelperClasses/Point.js";
 import { Dijkstra } from "./GraphMethods.js";
 
@@ -116,7 +116,7 @@ async function SimulateKamadaKawai(G, iterations) {
 }
 
 // instanciate a random set of positions 
-function instanciateRandomPositions(G){
+function InstanciateRandomPositions(G){
   const adjList = G.get_adjacency();
   const PosMapX = new Map();
   const PosMapY = new Map();
@@ -148,6 +148,32 @@ function DrawEdgeLines(G, divDistance) {
   return lineMap;
 }
 
+// update edge lines after moving points or something 
+function UpdateEdgeLinesDist(G, divDistance){
+  let edge, start, end, line;
+  for (const key of G.edges.keys()) {
+    edge = G.edges.get(key);
+    // get the start pos
+    start = G.nodes.get(edge.start).data.pos;
+    end = G.nodes.get(edge.end).data.pos;
+    line = line_from_start_end_distance(start, end, divDistance);
+    edge.data.ldata = line;
+  }
+}
+
+// function Update EdgeLines based on the number of divisions 
+function UpdateEdgeLinesDivs(G, Divs){
+  let edge, start, end, line;
+  for (const key of G.edges.keys()) {
+    edge = G.edges.get(key);
+    // get the start pos
+    start = G.nodes.get(edge.start).data.pos;
+    end = G.nodes.get(edge.end).data.pos;
+    line = line_from_start_end_divisions(start, end, Divs);
+    edge.data.ldata = line;
+  }
+}
+
 // now draw out the edge bundling thing
 async function DrawEdgeBundling(LineMap, iterations, distance) {
   const returnArray = LineMap;
@@ -156,7 +182,7 @@ async function DrawEdgeBundling(LineMap, iterations, distance) {
     // then iterate through every line
     for (const key of returnArray.keys()) {
       // then get the line that we are working with
-      const line = returnArray.get(key);
+      const line = returnArray.get(key).data.ldata;
       // then for each point in the line we have to move it closer to the other points
       for (let ii = 1; ii < line.points.length - 1; ii++) {
         // then get the point that we need to work with
@@ -168,7 +194,7 @@ async function DrawEdgeBundling(LineMap, iterations, distance) {
         for (const otherKey of returnArray.keys()) {
           if (otherKey != key) {
             // then get the other line
-            const otherLine = returnArray.get(otherKey);
+            const otherLine = returnArray.get(otherKey).data.ldata;
             for (let iii = 1; iii < otherLine.points.length - 1; iii++) {
               const otherpoint = otherLine.points[iii];
               const d = calculateSquaredDistance(pnt, otherpoint);
@@ -196,10 +222,39 @@ async function DrawEdgeBundling(LineMap, iterations, distance) {
   return { emap: returnArray };
 }
 
-// displace the th eedges
-function DisplaceEdgeInZ(LineMap, zVal) {
-  for (const key of LineMap.key()) {
+// displace the th edges
+function DisplaceEdgeInY(LineMap, displacement) {
+  for (const key of LineMap.keys()) {
     const line = LineMap.get(key);
+    // now for all the points in this
+    let pnt, ydisval; 
+    for (let i = 0; i < line.data.ldata.points.length; i++) {
+      pnt = line.data.ldata.points[i];
+      ydisval = displacement*Math.sin((Math.PI * i)/(line.data.ldata.points.length-1));
+      pnt.y = pnt.y + ydisval;
+    }
+  }
+}
+
+// displace the graph by some measure 
+function DisplaceVertices(nodeMap, parameter, displacement){
+  let max = 0;
+  let value, ydisplacement;
+  // go through the thing and set the min max values 
+  for(const node of nodeMap.values()){
+    value = eval("node.data."+parameter);
+    if(value >= max){
+      max = value;
+    }
+  }
+  // go through the nodes again and set the values 
+  for(const node of nodeMap.values()){
+    value = eval("node.data."+parameter);
+    ydisplacement = ((value/max)*displacement);
+    // now filter the values so that we know that the values are between a max and a min
+    ydisplacement = Math.max(0, ydisplacement); // this sets the lower bound to be something 
+    ydisplacement = Math.min(displacement, ydisplacement); // this sets the upper bound of the thing
+    node.data.pos.y = ydisplacement;
   }
 }
 
@@ -247,14 +302,14 @@ async function HivePlot(G, selectedNode, step, startP) {
 }
 
 // move graph
-function moveGraph(G, dispacement) {
+function MoveGraph(G, dispacement) {
   const Pmap  = G.get_position_map();
-  const NewPmap = movePmap(Pmap, dispacement);
+  const NewPmap = MovePmap(Pmap, dispacement);
   G.apply_position_map(NewPmap);
 }
 
 // move pmap
-function movePmap(Pmap, displacement) {
+function MovePmap(Pmap, displacement) {
   const newPmap = new Map();
   for (const node of Pmap.keys()) {
     const p = Pmap.get(node);
@@ -269,7 +324,10 @@ export {
   DrawEdgeLines,
   DrawEdgeBundling,
   HivePlot,
-  DisplaceEdgeInZ,
-  moveGraph,
-  instanciateRandomPositions,
+  DisplaceEdgeInY,
+  MoveGraph,
+  InstanciateRandomPositions,
+  DisplaceVertices,
+  UpdateEdgeLinesDist,
+  UpdateEdgeLinesDivs,
 };

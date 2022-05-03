@@ -24,7 +24,8 @@ async function LoadZKCSimulated() {
   data.nodes.forEach((node) => {
     const id = node.id;
     const pos = new Point(node.px*50, 0, node.py*50);
-    const n = new Node({ pos: pos });
+    const modularity = node.member;
+    const n = new Node({ pos: pos, size:10, info:"Node Info", modularity:modularity });
     nodes.set(id, n);
   });
   // set the edge map
@@ -37,6 +38,8 @@ async function LoadZKCSimulated() {
   }
   // make a graph object
   const G = await Graph.create(nodes, edges);
+  const lmap = DrawEdgeLines(G, 10);
+  G.apply_edge_pos_maps(lmap);
   return G;
 }
 
