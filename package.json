@@ -1,0 +1,27 @@
+{
+  "name": "plebian-graph-library",
+  "version": "1.0.0",
+  "description": "A NetworkX like package for graphs in javascript ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/range-et/PGL.git"
+  },
+  "keywords": [
+    "Network",
+    "Graphs"
+  ],
+  "author": "Indrajeet Haldar",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/range-et/PGL/issues"
+  },
+  "homepage": "https://github.com/range-et/PGL#readme",
+  "dependencies": {
+    "three": "^0.141.0",
+    "vis-network": "^9.1.2"
+  }
+}

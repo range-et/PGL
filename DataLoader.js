@@ -4,7 +4,7 @@ import { zkc_simulated } from "./SampleData/ZKC_simulated.js";
 import { ConstructGraphNodeEdgesList } from "./GraphConstructors.js";
 import { Graph } from "./Graph.js";
 import { Point } from "./HelperClasses/Point.js";
-import { Node } from "./Node.js";
+import { Vertex } from "./Vertex.js";
 import { Edge } from "./Edges.js";
 import { DrawEdgeLines } from "./Drawing.js";
 
@@ -25,7 +25,7 @@ async function LoadZKCSimulated() {
     const id = node.id;
     const pos = new Point(node.px*50, 0, node.py*50);
     const modularity = node.member;
-    const n = new Node({ pos: pos, size:10, info:"Node Info", modularity:modularity });
+    const n = new Vertex({ pos: pos, size:10, info:"Node Info", modularity:modularity });
     nodes.set(id, n);
   });
   // set the edge map

@@ -1,5 +1,3 @@
-import { Edge } from "./Edges.js";
-
 class Graph {
   constructor(nodes, edges) {
     this.nodes = nodes;

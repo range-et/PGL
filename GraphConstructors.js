@@ -1,5 +1,5 @@
 import { Graph } from "./Graph.js";
-import { Node } from "./Node.js";
+import { Vertex } from "./Vertex.js";
 import { Edge } from "./Edges.js";
 
 // construct a graph based on an edge list etc
@@ -7,7 +7,7 @@ async function ConstructGraphNodeEdgesList(nodes, edges) {
   // make a node OBJ
   const nodeOBJ = new Map();
   for (let i = 0; i < nodes.length; i++) {
-    const n = new Node(nodes[i].data);
+    const n = new Vertex(nodes[i].data);
     nodeOBJ.set(nodes[i], n);
   }
   // make an edge object
@@ -21,4 +21,4 @@ async function ConstructGraphNodeEdgesList(nodes, edges) {
   return G;
 }
 
-export { ConstructGraphNodeEdgesList, Graph, Node, Edge };
+export { ConstructGraphNodeEdgesList, Graph, Vertex as Node, Edge };

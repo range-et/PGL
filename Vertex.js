@@ -1,4 +1,4 @@
-class Node {
+class Vertex {
     constructor(data){
         // this data is an arbitrary thing with which I can create any object
         this.data = { ... data};
@@ -7,4 +7,4 @@ class Node {
     }
 }
 
-export {Node}
+export {Vertex}
