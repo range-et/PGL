@@ -9,6 +9,8 @@ The Plebian Graph Library : An attempt to emulate Network X in Javascript
 
 ## Performing graph operations 
 
+## Integrations
+
 ## Larger example 
 
 ## Other notes
