@@ -1,7 +1,7 @@
 # PGL
 The Plebian Graph Library : An attempt to emulate Network X in Javascript 
 
-# Usage and Examples 
+## Usage and Examples 
 
 ## Semantics of the Package 
 

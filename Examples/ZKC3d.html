@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ZKC3d - Example</title>
+  </head>
+  <body style="background-color:black">
+    <h4
+      style="
+        z-index: 10;
+        text-align: center;
+        font-family: 'Courier New', Courier, monospace;
+        color: white;
+      "
+    >
+      A simple plot of the ZKC Dataset
+    </h4>
+
+    <div id="displayCanvas" style="width: 800px; height: 600px; background-color: grey;"></div>
+
+    <script type="module">
+      import * as PGL from "../index.js";
+
+      // construct a simple ZKC graph
+      const zkcSimulated = await PGL.SampleData.LoadZKCSimulated();
+
+      // pass in the graph and the canvas into the drawing object to draw it
+      // first get the canvas element
+      const container = document.getElementById("displayCanvas");
+      // then create a graph drawer object
+      // to do that first make a options object
+      const graphDrawerOptions = {
+        graph: zkcSimulated,
+        width: 800,
+        height: 600,
+        container: container,
+      };
+      // then create that graph
+      const graph3d = new PGL.GraphDrawer.GraphDrawer3d(graphDrawerOptions);
+
+      // then there are two last steps for a 3d graph
+      // this is done so that other 3d objects can be added in later
+      // since the base library is three.js all standard three js things are possible
+      // now moving on to the two steps :
+      // make an animation function
+      function animate() {
+        requestAnimationFrame(animate);
+        graph3d.rendercall();
+      }
+      
+      // initializing it
+      await graph3d.init();
+      // and then drawing render calls
+      animate();
+    </script>
+  </body>
+</html>

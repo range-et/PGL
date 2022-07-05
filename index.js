@@ -5,6 +5,8 @@ import * as Constructors from "./GraphConstructors.js";
 import * as Drawing from "./Drawing.js";
 import * as Geometry from "./HelperClasses/GeometryHelpers.js";
 import * as Utilities from "./HelperClasses/Utilities.js";
+import * as threeDWrapper from "./ThreeJSDrawer.js";
+import * as GraphDrawer from "./GraphDawer.js";
 
 // this is where I bundle everything up and export it
 export {
@@ -15,4 +17,6 @@ export {
   Constructors,
   Drawing,
   Utilities,
+  threeDWrapper,
+  GraphDrawer,
 };
