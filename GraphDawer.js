@@ -1,23 +1,30 @@
 import * as THREE from "./node_modules/three/build/three.module.js";
-import * as PGLWrapper from "./ThreeJSDrawer.js";
+import {OrbitControls} from "./OrbitControls.js";
+import * as PGLTHREEWrapper from "./ThreeJSDrawer.js";
 
 // this is the 3d graph drawing class with three js
 class GraphDrawer3d {
-  constructor(GraphDrawerOptions3d) {
-    this.camera;
-    this.scene;
+  constructor(GraphDrawerOptions3d, graphs) {
+    this.canvas = GraphDrawerOptions3d.canvas;
+    this.width = GraphDrawerOptions3d.width;
+    this.height = GraphDrawerOptions3d.height;
     this.geometryMap = new Map();
     this.materialMap = new Map();
     this.meshMap = new Map();
+    this.controls;
     this.renderer;
-    this.width = GraphDrawerOptions3d.width;
-    this.height = GraphDrawerOptions3d.height;
-    this.container = GraphDrawerOptions3d.container;
+    this.camera;
+    this.scene;
     // bounds is a global parameter that we change (think about this as scale)
-    this.bound = 1;
+    this.bound = GraphDrawerOptions3d.bounds;
     // graph map is the hash map that holds all the
     // graphs that we are working with together
     this.graphs = new Map();
+    // add the default graph to the graph map
+    for (let i = 0; i < graphs.length; i++) {
+      const g = graphs[i];
+      this.graphs.set(i, g)
+    }
   }
 
   async init() {
@@ -29,25 +36,38 @@ class GraphDrawer3d {
     this.scene = new THREE.Scene();
 
     // set up a renderer
-    this.renderer = new THREE.WebGLRenderer({ antialias: true });
+    this.renderer = new THREE.WebGLRenderer({canvas:this.canvas, antialias:true});
     this.renderer.setSize(this.width, this.height);
-    this.renderer.setClearColor(0x00000, 0);
-    this.container.appendChild(this.renderer.domElement);
-
-    // set up the camera stuff
-    this.camera.position.set(0, 0, 0);
+    this.renderer.setClearColor(0xff00ff, 0);
 
     // add in a light
     this.scene.add(new THREE.AmbientLight(0xffffff));
+    // add a spotlight 
+    const DirectionalLight = new THREE.DirectionalLight(0xffffff, 1);
+    DirectionalLight.position.set(0, 10, 0);
+    this.scene.add(DirectionalLight);
 
-    // add in a cube
-    const geometry = new THREE.BoxGeometry(1, 1, 1);
-    const material = new THREE.MeshBasicMaterial({ color: 0xffff00 });
-    const cube = new THREE.Mesh(geometry, material);
-    this.scene.add(cube);
 
-    console.log(this.scene);
-    
+    // set up the control system
+    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    this.camera.position.set(0, 100, 100);
+    this.controls.autoRotate = true;
+    this.controls.maxPolarAngle = Math.PI * 0.5;
+    this.camera.enableDamping = true;
+    this.controls.maxDistance = 1000;
+    this.controls.minDistance = 10;
+    this.controls.update();
+
+    // add in the graph that we wanted this.graphs.get('ProvidedGraph')
+    for (const graph of this.graphs.keys()) {
+      const GeoGraph = PGLTHREEWrapper.DrawTHREEBoxBasedVertices(this.graphs.get(graph), this.bound);
+      this.scene.add(GeoGraph);
+      const ThickEdges = PGLTHREEWrapper.DrawTHREEGraphEdgesThick(this.graphs.get(graph), this.bound);
+      this.scene.add(ThickEdges);
+    }
+
+    // edges 
+
 
     // finally print out that the initialization has finished
     const t2 = performance.now();
@@ -57,7 +77,9 @@ class GraphDrawer3d {
 
   // this stuff renders out one specific instances
   rendercall() {
-    // this is the render draw call on the raycast
+    // this is the render draw call
+    this.renderer.render(this.scene, this.camera);
+    this.controls.update();
   }
 }
 

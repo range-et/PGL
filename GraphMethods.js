@@ -5,7 +5,6 @@ import { Graph } from "./Graph.js";
 // was searched from where
 async function BFSSearch(G, node) {
   const adj = G.get_adjacency();
-  console.log(adj);
   const exploredFromMap = new Map();
 
   const explored = [];

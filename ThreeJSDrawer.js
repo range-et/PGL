@@ -8,13 +8,12 @@ import { vertexShader } from "./Shaders/vertexShader.glsl.js";
 import { fragmentShader } from "./Shaders/fragmentShader.glsl.js";
 import * as GraphMethods from "./GraphMethods.js";
 
-// then make a thing that takes in a graph and returns a bunch of boxes
+// Draw the graph out as a bunch of vertices
 function DrawTHREEGraphVertices(Graph, bounds) {
   const positionAttribute = [];
   const sizes = [];
   const colors = [];
   const labels = [];
-
   const color = new THREE.Color();
   // process the data set
   let i = 0;
@@ -25,7 +24,7 @@ function DrawTHREEGraphVertices(Graph, bounds) {
       nodeData.data.pos.y * bounds,
       nodeData.data.pos.z * bounds
     );
-    color.setRGB(100, 237, 146);
+    color.setRGB(255, 255, 255);
     color.toArray(colors, i * 3);
     if (nodeData.data.size != undefined){
       sizes.push(nodeData.data.size);
@@ -58,7 +57,7 @@ function DrawTHREEGraphVertices(Graph, bounds) {
     uniforms: {
       color: { value: new THREE.Color(0xffffff) },
       pointTexture: {
-        value: new THREE.TextureLoader().load("textures/Square.png"),
+        value: new THREE.TextureLoader().load("./Textures/Square.png"),
       },
       alphaTest: { value: 0.9 },
     },
@@ -80,8 +79,8 @@ function DrawThickEdgesFromEdgeMap(emap, bounds) {
   // this is the line thing
   const mat = new MeshLineMaterial({
     transparent: true,
-    lineWidth: 10,
-    opacity: 0.2,
+    lineWidth: 5,
+    opacity: 0.8,
     color: new THREE.Color(0xcaf0f8),
   });
   const meshes = new THREE.Group();
@@ -139,7 +138,7 @@ function DrawThinEdgesFromEdgeMap(emap, bounds) {
 }
 
 // draw the cube box graph here
-function AddBoxBasedImaging(vertexMap) {
+function AddBoxBasedImaging(vertexMap, bounds) {
   // returns a group
   const group = new THREE.Group();
   const material = new THREE.MeshBasicMaterial({ color: 0x0466c8 });
@@ -153,13 +152,19 @@ function AddBoxBasedImaging(vertexMap) {
     geometry.name = node;
     const nodeMesh = new THREE.Mesh(geometry, material);
     nodeMesh.position.set(
-      nodeData.data.pos.x,
-      nodeData.data.pos.y,
-      nodeData.data.pos.z
+      nodeData.data.pos.x * bounds,
+      nodeData.data.pos.y * bounds,
+      nodeData.data.pos.z * bounds
     );
     group.add(nodeMesh);
   }
   return group;
+}
+
+// Draw BoxBased imaging from a graph
+function DrawTHREEBoxBasedVertices(graph, bounds){
+  const Bgroup = AddBoxBasedImaging(graph.nodes, bounds);
+  return Bgroup;
 }
 
 // draw cylinders where required
@@ -289,4 +294,5 @@ export {
   DrawSimplifiedEdges,
   ChangeTheVertexColours,
   ResetVertexColors,
+  DrawTHREEBoxBasedVertices
 };
