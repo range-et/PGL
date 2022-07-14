@@ -1,12 +1,12 @@
 // load up the ZKC dataset
-import { zkc } from "./SampleData/ZKC.js";
-import { zkc_simulated } from "./SampleData/ZKC_simulated.js";
-import { ConstructGraphNodeEdgesList } from "./GraphConstructors.js";
-import { Graph } from "./Graph.js";
-import { Point } from "./HelperClasses/Point.js";
-import { Vertex } from "./Vertex.js";
-import { Edge } from "./Edges.js";
-import { DrawEdgeLines } from "./Drawing.js";
+import { zkc } from "./ZKC.js";
+import { zkc_simulated } from "./ZKC_simulated.js";
+import { ConstructGraphNodeEdgesList } from "../HelperClasses/GraphConstructors.js";
+import { Graph } from "../Core/Graph.js";
+import { Point } from "../HelperClasses/Point.js";
+import { Vertex } from "../Core/Vertex.js";
+import { Edge } from "../Core/Edges.js";
+import { DrawEdgeLines } from "../Drawing/Drawing.js";
 
 async function LoadZKC() {
   // load up the dataset representation
@@ -44,4 +44,4 @@ async function LoadZKCSimulated() {
 }
 
 // exports
-export { LoadZKC, LoadZKCSimulated };
+export default { LoadZKC, LoadZKCSimulated };

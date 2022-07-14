@@ -1,10 +1,10 @@
 import {
   calculateAverage,
   calculateSquaredDistance,
-} from "./HelperClasses/Utilities.js";
-import { line_from_start_end_distance, line_from_start_end_divisions } from "./HelperClasses/GeometryHelpers.js";
-import { Point } from "./HelperClasses/Point.js";
-import { Dijkstra } from "./GraphMethods.js";
+} from "../HelperClasses/Utilities.js";
+import { line_from_start_end_distance, line_from_start_end_divisions } from "../HelperClasses/GeometryHelpers.js";
+import { Point } from "../HelperClasses/Point.js";
+import GraphMethods from "../GraphAlgorithms/GraphMethods.js";
 
 // draw kamada kawai
 async function SimulateKamadaKawai(G, iterations) {
@@ -261,7 +261,7 @@ function DisplaceVertices(nodeMap, parameter, displacement){
 // draw the circular vertical packing crypto like drawing
 async function HivePlot(G, selectedNode, step, startP) {
   const adj = G.get_adjacency();
-  const DijkstraDepth = await Dijkstra(G, selectedNode);
+  const DijkstraDepth = await GraphMethods.Dijkstra(G, selectedNode);
   // calculate the number of steps that I am searching through
   const steps = Math.max(...[...DijkstraDepth.values()]);
   // step map

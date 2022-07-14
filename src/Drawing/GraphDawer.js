@@ -86,5 +86,4 @@ class GraphDrawer3d {
 
 export {
     GraphDrawer3d,
-
 }

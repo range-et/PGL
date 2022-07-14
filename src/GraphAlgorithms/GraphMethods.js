@@ -1,4 +1,4 @@
-import { Graph } from "./Graph.js";
+import { Graph } from "../Core/Graph.js";
 
 // do a BFS Search Starting from some point
 // searches the whole graph and returns a map of which node
@@ -119,4 +119,4 @@ async function SelectSubgraph(graph, nodeList) {
 }
 
 // this is where the exports happen
-export { GraphDiameter, Dijkstra, BFSSearch, SelectSubgraph };
+export default { GraphDiameter, Dijkstra, BFSSearch, SelectSubgraph };

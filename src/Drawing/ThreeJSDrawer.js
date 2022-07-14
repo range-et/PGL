@@ -3,10 +3,10 @@ import {
   MeshLine,
   MeshLineMaterial,
   MeshLineRaycast,
-} from "./MeshLine.js";
-import { vertexShader } from "./Shaders/vertexShader.glsl.js";
-import { fragmentShader } from "./Shaders/fragmentShader.glsl.js";
-import * as GraphMethods from "./GraphMethods.js";
+} from "../MeshLine.js";
+import { vertexShader } from "../Shaders/vertexShader.glsl.js";
+import { fragmentShader } from "../Shaders/fragmentShader.glsl.js";
+import GraphMethods from "../GraphAlgorithms/GraphMethods.js";
 
 // Draw the graph out as a bunch of vertices
 function DrawTHREEGraphVertices(Graph, bounds) {

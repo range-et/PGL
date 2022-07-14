@@ -13,9 +13,10 @@
     <canvas id="displayCanvas" class="displayCanvas"></canvas>
 
     <script type="module">
-      import {pgl} from "../build/pgl.js";
+      import * as PGL from "../build/pgl_module.js";
 
       console.log(PGL);
+      PGL.logStatus();
       // construct a simple ZKC graph
       const zkcSimulated = await PGL.SampleData.LoadZKCSimulated();
 

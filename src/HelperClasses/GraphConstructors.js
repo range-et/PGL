@@ -1,6 +1,6 @@
-import { Graph } from "./Graph.js";
-import { Vertex } from "./Vertex.js";
-import { Edge } from "./Edges.js";
+import { Graph } from "../Core/Graph.js";
+import { Vertex } from "../Core/Vertex.js";
+import { Edge } from "../Core/Edges.js";
 
 // construct a graph based on an edge list etc
 async function ConstructGraphNodeEdgesList(nodes, edges) {
@@ -21,4 +21,4 @@ async function ConstructGraphNodeEdgesList(nodes, edges) {
   return G;
 }
 
-export { ConstructGraphNodeEdgesList, Graph, Vertex as Node, Edge };
+export { ConstructGraphNodeEdgesList };
