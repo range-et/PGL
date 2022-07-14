@@ -32,12 +32,12 @@
     "module": {
       "includeNodeModules": true
     }
- },
+  },
   "dependencies": {
+    "@deck.gl/core": "^8.8.4",
+    "@deck.gl/layers": "^8.8.4",
     "three": "^0.141.0",
-    "vis-network": "^9.1.2",
-    "deck.gl": "^8.6.2",
-    "mapbox-gl": "^2.5.1"
+    "vis-network": "^9.1.2"
   },
   "devDependencies": {
     "parcel": "latest"

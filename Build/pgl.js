@@ -1,8 +1,10 @@
 var $htxhw$three = require("three");
+var $htxhw$threeexamplesjsmlinesLine2js = require("three/examples/jsm/lines/Line2.js");
 var $htxhw$threeexamplesjsmlinesLineMaterialjs = require("three/examples/jsm/lines/LineMaterial.js");
 var $htxhw$threeexamplesjsmlinesLineGeometryjs = require("three/examples/jsm/lines/LineGeometry.js");
-var $htxhw$threeexamplesjsmlinesLine2js = require("three/examples/jsm/lines/Line2.js");
 var $htxhw$threeexamplesjsmcontrolsOrbitControls = require("three/examples/jsm/controls/OrbitControls");
+var $htxhw$deckglcore = require("@deck.gl/core");
+var $htxhw$deckgllayers = require("@deck.gl/layers");
 
 function $parcel$export(e, n, v, s) {
   Object.defineProperty(e, n, {get: v, set: s, enumerable: true, configurable: true});
@@ -732,8 +734,9 @@ $parcel$export(module.exports, "Constructors", () => $1de12fba3c0269cf$export$2e
 $parcel$export(module.exports, "Drawing", () => (parcelRequire("is5Zp")).default);
 $parcel$export(module.exports, "Geometry", () => (parcelRequire("i1Hf9")).default);
 $parcel$export(module.exports, "Utilities", () => (parcelRequire("fDRV6")).default);
-$parcel$export(module.exports, "threeDWrapper", () => $589e8ef60d1a3840$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "threeDWrapper", () => $a5f0f7b27f7e3a97$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "GraphDrawer", () => $291fd03f386082c6$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "Simulation", () => $8b47958e2fc13100$export$156b30a852a4aab);
 
 var $iFDmY = parcelRequire("iFDmY");
 
@@ -1761,7 +1764,7 @@ void main() {
 
 var $jDJ15 = parcelRequire("jDJ15");
 // Draw the graph out as a bunch of vertices
-function $589e8ef60d1a3840$var$DrawTHREEGraphVertices(Graph, bounds) {
+function $a5f0f7b27f7e3a97$var$DrawTHREEGraphVertices(Graph, bounds) {
     const positionAttribute = [];
     const sizes = [];
     const colors = [];
@@ -1809,11 +1812,11 @@ function $589e8ef60d1a3840$var$DrawTHREEGraphVertices(Graph, bounds) {
     return vertices;
 }
 // then make a thing which draws out all the edges (THICK)
-function $589e8ef60d1a3840$var$DrawTHREEGraphEdgesThick(G, bounds) {
-    return $589e8ef60d1a3840$var$DrawThickEdgesFromEdgeMap(G.edges, bounds);
+function $a5f0f7b27f7e3a97$var$DrawTHREEGraphEdgesThick(G, bounds) {
+    return $a5f0f7b27f7e3a97$var$DrawThickEdgesFromEdgeMap(G.edges, bounds);
 }
 // draw a thing to draw out all the edges from the edge map stuff
-function $589e8ef60d1a3840$var$DrawThickEdgesFromEdgeMap(emap, bounds) {
+function $a5f0f7b27f7e3a97$var$DrawThickEdgesFromEdgeMap(emap, bounds) {
     // this is the line thing
     const mat = new (0, $htxhw$threeexamplesjsmlinesLineMaterialjs.LineMaterial)({
         color: 0xffffff,
@@ -1845,11 +1848,11 @@ function $589e8ef60d1a3840$var$DrawThickEdgesFromEdgeMap(emap, bounds) {
     return meshes;
 }
 // make a thing that draws out all the lines (Thin)
-function $589e8ef60d1a3840$var$DrawTHREEGraphEdgesThin(G, bounds) {
-    return $589e8ef60d1a3840$var$DrawThinEdgesFromEdgeMap(G.edges, bounds);
+function $a5f0f7b27f7e3a97$var$DrawTHREEGraphEdgesThin(G, bounds) {
+    return $a5f0f7b27f7e3a97$var$DrawThinEdgesFromEdgeMap(G.edges, bounds);
 }
 // function to draw edges from edge map
-function $589e8ef60d1a3840$var$DrawThinEdgesFromEdgeMap(emap, bounds) {
+function $a5f0f7b27f7e3a97$var$DrawThinEdgesFromEdgeMap(emap, bounds) {
     const material = new $htxhw$three.LineBasicMaterial({
         color: 0x90e0ef
     });
@@ -1869,7 +1872,7 @@ function $589e8ef60d1a3840$var$DrawThinEdgesFromEdgeMap(emap, bounds) {
     return lines;
 }
 // draw the cube box graph here
-function $589e8ef60d1a3840$var$AddBoxBasedImaging(vertexMap, bounds) {
+function $a5f0f7b27f7e3a97$var$AddBoxBasedImaging(vertexMap, bounds) {
     // returns a group
     const group = new $htxhw$three.Group();
     const material = new $htxhw$three.MeshBasicMaterial({
@@ -1886,12 +1889,18 @@ function $589e8ef60d1a3840$var$AddBoxBasedImaging(vertexMap, bounds) {
     return group;
 }
 // Draw BoxBased imaging from a graph
-function $589e8ef60d1a3840$var$DrawTHREEBoxBasedVertices(graph, bounds) {
-    const Bgroup = $589e8ef60d1a3840$var$AddBoxBasedImaging(graph.nodes, bounds);
+function $a5f0f7b27f7e3a97$var$DrawTHREEBoxBasedVertices(graph, bounds) {
+    const Bgroup = $a5f0f7b27f7e3a97$var$AddBoxBasedImaging(graph.nodes, bounds);
     return Bgroup;
 }
+// draw Cylinder based imaging given a graph
+function $a5f0f7b27f7e3a97$var$DrawCylinderBasedVertices(graph, bounds, divisons) {
+    const ds = divisons || 1;
+    const Cgroup = $a5f0f7b27f7e3a97$var$AddCylinderBasedImaging(graph.nodes, ds, bounds);
+    return Cgroup;
+}
 // draw cylinders where required
-function $589e8ef60d1a3840$var$AddCylinderBasedImaging(vertexMap, divisonLength) {
+function $a5f0f7b27f7e3a97$var$AddCylinderBasedImaging(vertexMap, divisonLength, bounds) {
     // returns a group
     const group = new $htxhw$three.Group();
     const material = new $htxhw$three.MeshBasicMaterial({
@@ -1906,13 +1915,13 @@ function $589e8ef60d1a3840$var$AddCylinderBasedImaging(vertexMap, divisonLength)
         const geometry = new $htxhw$three.CylinderGeometry(radius, radius, 10, segments);
         geometry.name = node;
         const nodeMesh = new $htxhw$three.Mesh(geometry, material);
-        nodeMesh.position.set(nodeData.data.pos.x, nodeData.data.pos.y, nodeData.data.pos.z);
+        nodeMesh.position.set(nodeData.data.pos.x * bounds, nodeData.data.pos.y * bounds, nodeData.data.pos.z * bounds);
         group.add(nodeMesh);
     }
     return group;
 }
 // draw the sparse graph as groups
-async function $589e8ef60d1a3840$var$AddInModularityBasedPointGroups(Graph, modularityList) {
+async function $a5f0f7b27f7e3a97$var$AddInModularityBasedPointGroups(Graph, modularityList) {
     // returns an array of groups
     const groups = new Map();
     const otherNodes = [];
@@ -1936,16 +1945,16 @@ async function $589e8ef60d1a3840$var$AddInModularityBasedPointGroups(Graph, modu
         // returns an array
         const subgraph = await (0, $jDJ15.default).SelectSubgraph(Graph, subgraphGroup);
         // then make the vertex thing
-        const meshRep = $589e8ef60d1a3840$var$DrawTHREEGraphVertices(subgraph, 1);
+        const meshRep = $a5f0f7b27f7e3a97$var$DrawTHREEGraphVertices(subgraph, 1);
         meshGraphVertices.set(modularityGroup, meshRep);
         // make the edges
-        const edges = $589e8ef60d1a3840$var$DrawSimplifiedEdges(subgraph, 0.03);
+        const edges = $a5f0f7b27f7e3a97$var$DrawSimplifiedEdges(subgraph, 0.03);
         meshGraphEdges.set(modularityGroup, edges);
     }
     // now for all the vertices in the "other" Nodes map add in the
     // rest of the stuff for us to play around with
     const OtherNodes = await (0, $jDJ15.default).SelectSubgraph(Graph, otherNodes);
-    const LeafVertices = $589e8ef60d1a3840$var$DrawTHREEGraphVertices(OtherNodes, 1);
+    const LeafVertices = $a5f0f7b27f7e3a97$var$DrawTHREEGraphVertices(OtherNodes, 1);
     const ROBJ = {
         vertices: meshGraphVertices,
         edges: meshGraphEdges,
@@ -1953,7 +1962,7 @@ async function $589e8ef60d1a3840$var$AddInModularityBasedPointGroups(Graph, modu
     };
     return ROBJ;
 }
-function $589e8ef60d1a3840$var$DrawSimplifiedEdges(G, amount) {
+function $a5f0f7b27f7e3a97$var$DrawSimplifiedEdges(G, amount) {
     const lineGroup = new $htxhw$three.Group();
     const material = new $htxhw$three.LineBasicMaterial({
         color: 0x90e0ef
@@ -1970,7 +1979,7 @@ function $589e8ef60d1a3840$var$DrawSimplifiedEdges(G, amount) {
     }
     return lineGroup;
 }
-function $589e8ef60d1a3840$var$ChangeTheVertexColours(vertices, indexArray, color) {
+function $a5f0f7b27f7e3a97$var$ChangeTheVertexColours(vertices, indexArray, color) {
     let Attrib = vertices.geometry.attributes;
     let k = 0;
     indexArray.forEach((node)=>{
@@ -1981,7 +1990,7 @@ function $589e8ef60d1a3840$var$ChangeTheVertexColours(vertices, indexArray, colo
     });
     Attrib.customColor.needsUpdate = true;
 }
-function $589e8ef60d1a3840$var$ResetVertexColors(vertices) {
+function $a5f0f7b27f7e3a97$var$ResetVertexColors(vertices) {
     let Attrib = vertices.geometry.attributes;
     let k = 0;
     for(let i = 0; i < Attrib.customColor.count; i++){
@@ -1992,19 +2001,20 @@ function $589e8ef60d1a3840$var$ResetVertexColors(vertices) {
     }
     Attrib.customColor.needsUpdate = true;
 }
-var $589e8ef60d1a3840$export$2e2bcd8739ae039 = {
-    DrawTHREEGraphVertices: $589e8ef60d1a3840$var$DrawTHREEGraphVertices,
-    DrawTHREEGraphEdgesThick: $589e8ef60d1a3840$var$DrawTHREEGraphEdgesThick,
-    DrawTHREEGraphEdgesThin: $589e8ef60d1a3840$var$DrawTHREEGraphEdgesThin,
-    AddBoxBasedImaging: $589e8ef60d1a3840$var$AddBoxBasedImaging,
-    AddInModularityBasedPointGroups: $589e8ef60d1a3840$var$AddInModularityBasedPointGroups,
-    DrawThinEdgesFromEdgeMap: $589e8ef60d1a3840$var$DrawThinEdgesFromEdgeMap,
-    DrawThickEdgesFromEdgeMap: $589e8ef60d1a3840$var$DrawThickEdgesFromEdgeMap,
-    AddCylinderBasedImaging: $589e8ef60d1a3840$var$AddCylinderBasedImaging,
-    DrawSimplifiedEdges: $589e8ef60d1a3840$var$DrawSimplifiedEdges,
-    ChangeTheVertexColours: $589e8ef60d1a3840$var$ChangeTheVertexColours,
-    ResetVertexColors: $589e8ef60d1a3840$var$ResetVertexColors,
-    DrawTHREEBoxBasedVertices: $589e8ef60d1a3840$var$DrawTHREEBoxBasedVertices
+var $a5f0f7b27f7e3a97$export$2e2bcd8739ae039 = {
+    DrawTHREEGraphVertices: $a5f0f7b27f7e3a97$var$DrawTHREEGraphVertices,
+    DrawTHREEGraphEdgesThick: $a5f0f7b27f7e3a97$var$DrawTHREEGraphEdgesThick,
+    DrawTHREEGraphEdgesThin: $a5f0f7b27f7e3a97$var$DrawTHREEGraphEdgesThin,
+    AddBoxBasedImaging: $a5f0f7b27f7e3a97$var$AddBoxBasedImaging,
+    AddInModularityBasedPointGroups: $a5f0f7b27f7e3a97$var$AddInModularityBasedPointGroups,
+    DrawThinEdgesFromEdgeMap: $a5f0f7b27f7e3a97$var$DrawThinEdgesFromEdgeMap,
+    DrawThickEdgesFromEdgeMap: $a5f0f7b27f7e3a97$var$DrawThickEdgesFromEdgeMap,
+    AddCylinderBasedImaging: $a5f0f7b27f7e3a97$var$AddCylinderBasedImaging,
+    DrawSimplifiedEdges: $a5f0f7b27f7e3a97$var$DrawSimplifiedEdges,
+    ChangeTheVertexColours: $a5f0f7b27f7e3a97$var$ChangeTheVertexColours,
+    ResetVertexColors: $a5f0f7b27f7e3a97$var$ResetVertexColors,
+    DrawTHREEBoxBasedVertices: $a5f0f7b27f7e3a97$var$DrawTHREEBoxBasedVertices,
+    DrawCylinderBasedVertices: $a5f0f7b27f7e3a97$var$DrawCylinderBasedVertices
 };
 
 
@@ -2012,11 +2022,13 @@ var $589e8ef60d1a3840$export$2e2bcd8739ae039 = {
 
 
 // this is the 3d graph drawing class with three js
-class $291fd03f386082c6$var$GraphDrawer3d {
+class $b343e0dd57ca25ab$export$4aefcc8a99cfbd66 {
     constructor(GraphDrawerOptions3d, graphs){
         this.canvas = GraphDrawerOptions3d.canvas;
         this.width = GraphDrawerOptions3d.width;
         this.height = GraphDrawerOptions3d.height;
+        this.nodeStyle = GraphDrawerOptions3d.nodeStyle || "POINT";
+        this.edgeStyle = GraphDrawerOptions3d.edgeStyle || "THIN";
         this.geometryMap = new Map();
         this.materialMap = new Map();
         this.meshMap = new Map();
@@ -2064,12 +2076,26 @@ class $291fd03f386082c6$var$GraphDrawer3d {
         this.controls.update();
         // add in the graph that we wanted this.graphs.get('ProvidedGraph')
         for (const graph of this.graphs.keys()){
-            const GeoGraph = (0, $589e8ef60d1a3840$export$2e2bcd8739ae039).DrawTHREEBoxBasedVertices(this.graphs.get(graph), this.bound);
-            this.scene.add(GeoGraph);
-            const ThickEdges = (0, $589e8ef60d1a3840$export$2e2bcd8739ae039).DrawTHREEGraphEdgesThick(this.graphs.get(graph), this.bound);
-            this.scene.add(ThickEdges);
+            // first add in the correct type of nodes 
+            if (this.nodeStyle == "BOX") {
+                const GeoGraph = (0, $a5f0f7b27f7e3a97$export$2e2bcd8739ae039).DrawTHREEBoxBasedVertices(this.graphs.get(graph), this.bound);
+                this.scene.add(GeoGraph);
+            } else if (this.nodeStyle == "CYLINDER") {
+                const GeoGraph = (0, $a5f0f7b27f7e3a97$export$2e2bcd8739ae039).DrawCylinderBasedVertices(this.graphs.get(graph), this.bound);
+                this.scene.add(GeoGraph);
+            } else if (this.nodeStyle == "POINT") {
+                const GeoGraph = (0, $a5f0f7b27f7e3a97$export$2e2bcd8739ae039).DrawTHREEGraphVertices(this.graphs.get(graph), this.bound);
+                this.scene.add(GeoGraph);
+            }
+            // then add in the correct type of edges
+            if (this.edgeStyle == "THICK") {
+                const ThickEdges = (0, $a5f0f7b27f7e3a97$export$2e2bcd8739ae039).DrawTHREEGraphEdgesThick(this.graphs.get(graph), this.bound);
+                this.scene.add(ThickEdges);
+            } else if (this.edgeStyle == "THIN") {
+                const ThinLines = (0, $a5f0f7b27f7e3a97$export$2e2bcd8739ae039).DrawTHREEGraphEdgesThin(this.graphs.get(graph), this.bound);
+                this.scene.add(ThinLines);
+            }
         }
-        // edges 
         // finally print out that the initialization has finished
         const t2 = performance.now();
         console.log("initialization has finished");
@@ -2082,9 +2108,81 @@ class $291fd03f386082c6$var$GraphDrawer3d {
         this.controls.update();
     }
 }
+
+
+
+
+class $348f3b481a4551fe$export$1b8cf9af48396d5d {
+    constructor(GraphDrawerOptions3d, graphs){
+        this.canvas = GraphDrawerOptions3d.canvas;
+        this.width = GraphDrawerOptions3d.width;
+        this.height = GraphDrawerOptions3d.height;
+        this.layerMap = new Map();
+        this.deck;
+        // bounds is a global parameter that we change (think about this as scale)
+        this.bound = GraphDrawerOptions3d.bounds;
+        // graph map is the hash map that holds all the
+        // graphs that we are working with together
+        this.graphs = new Map();
+        // add the default graph to the graph map
+        for(let i = 0; i < graphs.length; i++){
+            const g = graphs[i];
+            this.graphs.set(i, g);
+        }
+    }
+    async init() {
+        const INITIAL_VIEW_STATE = {
+            latitude: 37.8,
+            longitude: -122.45,
+            zoom: 15
+        };
+        this.deck = new (0, $htxhw$deckglcore.Deck)({
+            canvas: this.canvas,
+            initialViewState: INITIAL_VIEW_STATE,
+            controller: true,
+            layers: [
+                new (0, $htxhw$deckgllayers.ScatterplotLayer)({
+                    data: [
+                        {
+                            position: [
+                                -122.45,
+                                37.8
+                            ],
+                            color: [
+                                255,
+                                0,
+                                0
+                            ],
+                            radius: 100
+                        }, 
+                    ],
+                    getColor: (d)=>d.color,
+                    getRadius: (d)=>d.radius
+                }), 
+            ]
+        });
+    }
+}
+
+
 var $291fd03f386082c6$export$2e2bcd8739ae039 = {
-    GraphDrawer3d: $291fd03f386082c6$var$GraphDrawer3d
+    GraphDrawer3d: $b343e0dd57ca25ab$export$4aefcc8a99cfbd66,
+    GraphDrawerDeck: $348f3b481a4551fe$export$1b8cf9af48396d5d
 };
+
+
+// make a simulation class object
+// This class ideally does everything
+// Which involves three primary things
+// change colors and change
+class $8b47958e2fc13100$export$156b30a852a4aab {
+    constructor(Graph, deltaTick){
+        this.Graph = Graph;
+        this.deltaTick = deltaTick || 1;
+        this.forces = new Map();
+    }
+    tick() {}
+}
 
 
 
