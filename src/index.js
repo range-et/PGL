@@ -8,8 +8,13 @@ import * as Utilities from "./HelperClasses/Utilities.js";
 import * as threeDWrapper from "./ThreeJSDrawer.js";
 import * as GraphDrawer from "./GraphDawer.js";
 
+
+function logStatus(){
+  console.log("PGL has loaded properly");
+}
+
 // this is where I bundle everything up and export it
-export {
+const PGL = {
   Graph,
   Geometry,
   GraphMethods,
@@ -19,4 +24,7 @@ export {
   Utilities,
   threeDWrapper,
   GraphDrawer,
+  logStatus
 };
+
+export {PGL as pgl}; 

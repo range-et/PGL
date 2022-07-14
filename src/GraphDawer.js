@@ -1,5 +1,5 @@
-import * as THREE from "./node_modules/three/build/three.module.js";
-import {OrbitControls} from "./OrbitControls.js";
+import * as THREE from "three";
+import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import * as PGLTHREEWrapper from "./ThreeJSDrawer.js";
 
 // this is the 3d graph drawing class with three js

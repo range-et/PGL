@@ -4,7 +4,8 @@
   "description": "A NetworkX like package for graphs in javascript ",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
   },
   "repository": {
     "type": "git",
@@ -22,6 +23,13 @@
   "homepage": "https://github.com/range-et/PGL#readme",
   "dependencies": {
     "three": "^0.141.0",
-    "vis-network": "^9.1.2"
+    "vis-network": "^9.1.2",
+    "deck.gl": "^8.6.2",
+    "mapbox-gl": "^2.5.1"
+  },
+  "devDependencies": {
+    "webpack": "^5.61.0",
+    "webpack-cli": "^4.9.1",
+    "webpack-dev-server": "^4.4.0"
   }
 }
