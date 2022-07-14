@@ -1,8 +1,5 @@
-import {
-  calculateAverage,
-  calculateSquaredDistance,
-} from "../HelperClasses/Utilities.js";
-import { line_from_start_end_distance, line_from_start_end_divisions } from "../HelperClasses/GeometryHelpers.js";
+import Utilities from "../HelperClasses/Utilities.js";
+import GeometryHelpers from "../HelperClasses/GeometryHelpers.js";
 import { Point } from "../HelperClasses/Point.js";
 import GraphMethods from "../GraphAlgorithms/GraphMethods.js";
 
@@ -38,8 +35,8 @@ async function SimulateKamadaKawai(G, iterations) {
         y_s.push(n_pos_y);
       });
       // now average out the values
-      const new_c_xpos = calculateAverage(x_s);
-      const new_c_ypos = calculateAverage(y_s);
+      const new_c_xpos = Utilities.calculateAverage(x_s);
+      const new_c_ypos = Utilities.calculateAverage(y_s);
 
       // this chunk is for the repelling force
       const x_r = [];
@@ -59,8 +56,8 @@ async function SimulateKamadaKawai(G, iterations) {
       }
       // this is the repulsion value
       const A_mult = 2;
-      const new_x_r_pos = (A_mult * 1) / (calculateAverage(x_r)*calculateAverage(x_r));
-      const new_y_r_pos = (A_mult * 1) / (calculateAverage(y_r)*calculateAverage(y_r));
+      const new_x_r_pos = (A_mult * 1) / (Utilities.calculateAverage(x_r)*Utilities.calculateAverage(x_r));
+      const new_y_r_pos = (A_mult * 1) / (Utilities.calculateAverage(y_r)*Utilities.calculateAverage(y_r));
 
       // calculate the dispacement amount in c/y pos
       // this is the cohesion value
@@ -76,8 +73,6 @@ async function SimulateKamadaKawai(G, iterations) {
       PosMapX.set(node, new_xpos);
       PosMapY.set(node, new_ypos);
     }
-    console.log(PosMapX);
-    console.log(PosMapY);
   }
   // return the position
   let PosMap = new Map();
@@ -142,7 +137,7 @@ function DrawEdgeLines(G, divDistance) {
     // get the start pos
     const start = G.nodes.get(edge.start).data.pos;
     const end = G.nodes.get(edge.end).data.pos;
-    const Line = line_from_start_end_distance(start, end, divDistance);
+    const Line = GeometryHelpers.line_from_start_end_distance(start, end, divDistance);
     lineMap.set(key, Line);
   }
   return lineMap;
@@ -156,7 +151,7 @@ function UpdateEdgeLinesDist(G, divDistance){
     // get the start pos
     start = G.nodes.get(edge.start).data.pos;
     end = G.nodes.get(edge.end).data.pos;
-    line = line_from_start_end_distance(start, end, divDistance);
+    line = GeometryHelpers.line_from_start_end_distance(start, end, divDistance);
     edge.data.ldata = line;
   }
 }
@@ -169,7 +164,7 @@ function UpdateEdgeLinesDivs(G, Divs){
     // get the start pos
     start = G.nodes.get(edge.start).data.pos;
     end = G.nodes.get(edge.end).data.pos;
-    line = line_from_start_end_divisions(start, end, Divs);
+    line = GeometryHelpers.line_from_start_end_divisions(start, end, Divs);
     edge.data.ldata = line;
   }
 }
@@ -197,7 +192,7 @@ async function DrawEdgeBundling(LineMap, iterations, distance) {
             const otherLine = returnArray.get(otherKey).data.ldata;
             for (let iii = 1; iii < otherLine.points.length - 1; iii++) {
               const otherpoint = otherLine.points[iii];
-              const d = calculateSquaredDistance(pnt, otherpoint);
+              const d = Utilities.calculateSquaredDistance(pnt, otherpoint);
               if (d <= Math.pow(distance, 2)) {
                 const x_d = otherpoint.x - pnt.x;
                 const y_d = otherpoint.y - pnt.y;
@@ -210,9 +205,9 @@ async function DrawEdgeBundling(LineMap, iterations, distance) {
           }
         }
         // now create a new displacement amount
-        const avgx = pnt.x + 0.8 * (calculateAverage(x_s) || 0);
-        const avgy = pnt.y + 0.8 * (calculateAverage(y_s) || 0);
-        const avgz = pnt.z + 0.8 * (calculateAverage(z_s) || 0);
+        const avgx = pnt.x + 0.8 * (Utilities.calculateAverage(x_s) || 0);
+        const avgy = pnt.y + 0.8 * (Utilities.calculateAverage(y_s) || 0);
+        const avgz = pnt.z + 0.8 * (Utilities.calculateAverage(z_s) || 0);
         const newPoint = new Point(avgx, avgy, avgz);
         line.points[ii] = newPoint;
       }
@@ -319,7 +314,7 @@ function MovePmap(Pmap, displacement) {
   return newPmap;
 }
 
-export {
+export default {
   SimulateKamadaKawai,
   DrawEdgeLines,
   DrawEdgeBundling,

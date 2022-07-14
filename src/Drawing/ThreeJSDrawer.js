@@ -1,9 +1,7 @@
 import * as THREE from "three";
-import {
-  MeshLine,
-  MeshLineMaterial,
-  MeshLineRaycast,
-} from "../MeshLine.js";
+import { Line2 } from "three/examples/jsm/lines/Line2.js";
+import { LineMaterial } from "three/examples/jsm/lines/LineMaterial.js";
+import { LineGeometry } from "three/examples/jsm/lines/LineGeometry.js"
 import { vertexShader } from "../Shaders/vertexShader.glsl.js";
 import { fragmentShader } from "../Shaders/fragmentShader.glsl.js";
 import GraphMethods from "../GraphAlgorithms/GraphMethods.js";
@@ -77,30 +75,40 @@ function DrawTHREEGraphEdgesThick(G, bounds) {
 // draw a thing to draw out all the edges from the edge map stuff
 function DrawThickEdgesFromEdgeMap(emap, bounds) {
   // this is the line thing
-  const mat = new MeshLineMaterial({
-    transparent: true,
-    lineWidth: 5,
-    opacity: 0.8,
-    color: new THREE.Color(0xcaf0f8),
+  const mat = new LineMaterial({
+    color: 0xffffff,
+		linewidth: 0.02, // in world units with size attenuation, pixels otherwise
+		vertexColors: true,
+
+		//resolution:  // to be set by renderer, eventually
+		dashed: false,
+		alphaToCoverage: true,
   });
+
   const meshes = new THREE.Group();
   for (const edge of emap.values()) {
     const lval = edge.data.ldata;
+    const color = new THREE.Color();
+    color.setHSL( 1.0, 1.0, 1.0 );
     const pnts = [];
+    const cols = [];
+
     lval.points.forEach((pnt) => {
       pnts.push(
-        new THREE.Vector3(
-          pnt.x * bounds - bounds / 2,
-          pnt.y * bounds - bounds / 2,
-          pnt.z * bounds - bounds / 2
-        )
+        pnt.x * bounds - bounds / 2,
+        pnt.y * bounds - bounds / 2,
+        pnt.z * bounds - bounds / 2
       );
+      cols.push( color.r, color.g, color.b );
     });
-    const geo = new THREE.BufferGeometry().setFromPoints(pnts);
-    const line = new MeshLine();
-    line.setGeometry(geo);
-    const lineMesh = new THREE.Mesh(line, mat);
-    meshes.add(lineMesh);
+
+    const geo = new LineGeometry();
+    geo.setPositions( pnts );
+    geo.setColors( cols );
+    const line = new Line2( geo, mat );
+    line.computeLineDistances();
+		line.scale.set( 1, 1, 1 );
+    meshes.add(line);
   }
   return meshes;
 }
@@ -282,7 +290,7 @@ function ResetVertexColors(vertices){
   Attrib.customColor.needsUpdate = true;
 }
 
-export {
+export default {
   DrawTHREEGraphVertices,
   DrawTHREEGraphEdgesThick,
   DrawTHREEGraphEdgesThin,

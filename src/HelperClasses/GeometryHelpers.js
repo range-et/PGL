@@ -1,6 +1,6 @@
 import {Point} from "./Point.js";
 import {Line} from "./Line.js";
-import {calculateDistance} from "./Utilities.js";
+import Utilities from "./Utilities.js";
 
 function line_from_start_end_divisions(start, end, divisions){
     // create a start and end time 
@@ -23,7 +23,7 @@ function line_from_start_end_divisions(start, end, divisions){
 }
 
 function line_from_start_end_distance(start, end, distance){
-    const dist = calculateDistance(start, end);
+    const dist = Utilities.calculateDistance(start, end);
     const divs = Math.round(dist / distance)+2;
     const subdivline = line_from_start_end_divisions(start, end, divs);
     return subdivline;
@@ -45,4 +45,4 @@ function centroid(points){
     return centroid;
 }
 
-export { line_from_start_end_divisions, line_from_start_end_distance, Point, Line, calculateDistance, centroid}
+export default { line_from_start_end_divisions, line_from_start_end_distance, Point, Line, centroid}

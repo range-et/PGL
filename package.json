@@ -2,9 +2,9 @@
   "name": "pgl",
   "version": "1.0.0",
   "description": "A NetworkX like package for graphs in javascript ",
-  "source": "./src/index.js",
-  "main": "./build/pgl.js",
-  "module": "./build/pgl_module.js",
+  "source": "./Src/index.js",
+  "main": "./Build/pgl.js",
+  "module": "./Build/pgl_module.js",
   "scripts": {
     "watch": "parcel watch",
     "build": "parcel build"
@@ -15,7 +15,9 @@
   },
   "keywords": [
     "Network",
-    "Graphs"
+    "Graphs",
+    "Webgl",
+    "Visualization"
   ],
   "author": "Indrajeet Haldar",
   "license": "MIT",

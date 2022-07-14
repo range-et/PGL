@@ -27,8 +27,6 @@ h4 {
 }
 
 .displayCanvas {
-  width: 800px;
-  height: 800px;
   margin-left: auto;
   margin-right: auto;
   outline: var(--black) 3px solid;

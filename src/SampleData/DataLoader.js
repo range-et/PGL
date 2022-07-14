@@ -1,17 +1,17 @@
 // load up the ZKC dataset
 import { zkc } from "./ZKC.js";
 import { zkc_simulated } from "./ZKC_simulated.js";
-import { ConstructGraphNodeEdgesList } from "../HelperClasses/GraphConstructors.js";
+import GraphConstructors from "../HelperClasses/GraphConstructors.js";
 import { Graph } from "../Core/Graph.js";
 import { Point } from "../HelperClasses/Point.js";
 import { Vertex } from "../Core/Vertex.js";
 import { Edge } from "../Core/Edges.js";
-import { DrawEdgeLines } from "../Drawing/Drawing.js";
+import Drawing from "../Drawing/Drawing.js";
 
 async function LoadZKC() {
   // load up the dataset representation
   const data = zkc;
-  const G = await ConstructGraphNodeEdgesList(data.nodes, data.edges);
+  const G = await GraphConstructors.ConstructGraphNodeEdgesList(data.nodes, data.edges);
   return G;
 }
 
@@ -38,7 +38,7 @@ async function LoadZKCSimulated() {
   }
   // make a graph object
   const G = await Graph.create(nodes, edges);
-  const lmap = DrawEdgeLines(G, 10);
+  const lmap = Drawing.DrawEdgeLines(G, 10);
   G.apply_edge_pos_maps(lmap);
   return G;
 }

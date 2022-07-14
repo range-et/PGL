@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
-import * as PGLTHREEWrapper from "./ThreeJSDrawer.js";
+import PGLTHREEWrapper from "./ThreeJSDrawer.js";
 
 // this is the 3d graph drawing class with three js
 class GraphDrawer3d {
@@ -84,6 +84,6 @@ class GraphDrawer3d {
 }
 
 
-export {
+export default {
     GraphDrawer3d,
 }

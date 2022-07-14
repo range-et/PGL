@@ -21,4 +21,4 @@ async function ConstructGraphNodeEdgesList(nodes, edges) {
   return G;
 }
 
-export { ConstructGraphNodeEdgesList };
+export default { ConstructGraphNodeEdgesList };

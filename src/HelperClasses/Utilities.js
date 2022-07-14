@@ -41,4 +41,4 @@ function getRandomSubset(arr, n) {
   return result;
 }
 
-export { calculateAverage, calculateDistance, calculateSquaredDistance, getRandomSubset};
+export default { calculateAverage, calculateDistance, calculateSquaredDistance, getRandomSubset};

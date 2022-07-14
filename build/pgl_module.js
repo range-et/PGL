@@ -39,26 +39,17 @@ if (parcelRequire == null) {
 
   $parcel$global["parcelRequired21f"] = parcelRequire;
 }
-parcelRequire.register("99muE", function(module, exports) {
+parcelRequire.register("fXQP4", function(module, exports) {
 
-$parcel$export(module.exports, "SimulateKamadaKawai", () => SimulateKamadaKawai);
-$parcel$export(module.exports, "DrawEdgeLines", () => DrawEdgeLines);
-$parcel$export(module.exports, "DrawEdgeBundling", () => DrawEdgeBundling);
-$parcel$export(module.exports, "InstanciateRandomPositions", () => InstanciateRandomPositions);
-$parcel$export(module.exports, "UpdateEdgeLinesDist", () => UpdateEdgeLinesDist);
-$parcel$export(module.exports, "UpdateEdgeLinesDivs", () => UpdateEdgeLinesDivs);
-$parcel$export(module.exports, "DisplaceEdgeInY", () => DisplaceEdgeInY);
-$parcel$export(module.exports, "DisplaceVertices", () => DisplaceVertices);
-$parcel$export(module.exports, "HivePlot", () => HivePlot);
-$parcel$export(module.exports, "MoveGraph", () => MoveGraph);
+$parcel$export(module.exports, "default", () => $b9f55733e92b0fab$export$2e2bcd8739ae039);
 
-var $h2Wgl = parcelRequire("h2Wgl");
+var $3JWOZ = parcelRequire("3JWOZ");
 
-var $hqJB7 = parcelRequire("hqJB7");
+var $je3oj = parcelRequire("je3oj");
 
-var $kdvPf = parcelRequire("kdvPf");
+var $7T9Wu = parcelRequire("7T9Wu");
 
-var $6QeEl = parcelRequire("6QeEl");
+var $03PHD = parcelRequire("03PHD");
 // draw kamada kawai
 async function SimulateKamadaKawai(G, iterations) {
     const adjList = G.get_adjacency();
@@ -73,62 +64,58 @@ async function SimulateKamadaKawai(G, iterations) {
         PosMapY.set(node, ry);
     }
     // start simulation
-    for(let i = 0; i < iterations; i++){
-        // calculate the clustering force
-        for (const node of adjList.keys()){
-            // this chunk is for the attraction force
-            // get the node pos
-            const neighbours = adjList.get(node);
-            // get the set of x's
-            const x_s = [];
-            // get the set of y's
-            const y_s = [];
-            // now iterate through the pos list and append
-            neighbours.forEach((n_s)=>{
-                const n_pos_x = PosMapX.get(n_s);
-                const n_pos_y = PosMapY.get(n_s);
-                x_s.push(n_pos_x);
-                y_s.push(n_pos_y);
-            });
-            // now average out the values
-            const new_c_xpos = (0, $h2Wgl.calculateAverage)(x_s);
-            const new_c_ypos = (0, $h2Wgl.calculateAverage)(y_s);
-            // this chunk is for the repelling force
-            const x_r = [];
-            const y_r = [];
-            // then find the element
-            for (const otherNode of G.nodes.keys())// get the position of all the other nodes
-            if (otherNode != node) {
-                // calculate inverse distance
-                const distDiffX = PosMapX.get(otherNode) - PosMapX.get(node);
-                const distDiffY = PosMapY.get(otherNode) - PosMapY.get(node);
-                // get the inverse square value
-                // add that to the *_r arrays
-                x_r.push(distDiffX);
-                y_r.push(distDiffY);
-            }
-            // this is the repulsion value
-            const A_mult = 2;
-            const new_x_r_pos = A_mult * 1 / ((0, $h2Wgl.calculateAverage)(x_r) * (0, $h2Wgl.calculateAverage)(x_r));
-            const new_y_r_pos = A_mult * 1 / ((0, $h2Wgl.calculateAverage)(y_r) * (0, $h2Wgl.calculateAverage)(y_r));
-            // calculate the dispacement amount in c/y pos
-            // this is the cohesion value
-            const C_mult = 1;
-            const new_c_xpos_dispacement = C_mult * (new_c_xpos - PosMapX.get(node));
-            const new_c_ypos_dispacement = C_mult * (new_c_ypos - PosMapY.get(node));
-            // then add the x and y components of the two vectors
-            const new_xpos = new_x_r_pos + new_c_xpos_dispacement + PosMapX.get(node);
-            const new_ypos = new_y_r_pos + new_c_ypos_dispacement + PosMapY.get(node);
-            // now set these positions
-            PosMapX.set(node, new_xpos);
-            PosMapY.set(node, new_ypos);
+    for(let i = 0; i < iterations; i++)// calculate the clustering force
+    for (const node1 of adjList.keys()){
+        // this chunk is for the attraction force
+        // get the node pos
+        const neighbours = adjList.get(node1);
+        // get the set of x's
+        const x_s = [];
+        // get the set of y's
+        const y_s = [];
+        // now iterate through the pos list and append
+        neighbours.forEach((n_s)=>{
+            const n_pos_x = PosMapX.get(n_s);
+            const n_pos_y = PosMapY.get(n_s);
+            x_s.push(n_pos_x);
+            y_s.push(n_pos_y);
+        });
+        // now average out the values
+        const new_c_xpos = (0, $3JWOZ.default).calculateAverage(x_s);
+        const new_c_ypos = (0, $3JWOZ.default).calculateAverage(y_s);
+        // this chunk is for the repelling force
+        const x_r = [];
+        const y_r = [];
+        // then find the element
+        for (const otherNode of G.nodes.keys())// get the position of all the other nodes
+        if (otherNode != node1) {
+            // calculate inverse distance
+            const distDiffX = PosMapX.get(otherNode) - PosMapX.get(node1);
+            const distDiffY = PosMapY.get(otherNode) - PosMapY.get(node1);
+            // get the inverse square value
+            // add that to the *_r arrays
+            x_r.push(distDiffX);
+            y_r.push(distDiffY);
         }
-        console.log(PosMapX);
-        console.log(PosMapY);
+        // this is the repulsion value
+        const A_mult = 2;
+        const new_x_r_pos = A_mult * 1 / ((0, $3JWOZ.default).calculateAverage(x_r) * (0, $3JWOZ.default).calculateAverage(x_r));
+        const new_y_r_pos = A_mult * 1 / ((0, $3JWOZ.default).calculateAverage(y_r) * (0, $3JWOZ.default).calculateAverage(y_r));
+        // calculate the dispacement amount in c/y pos
+        // this is the cohesion value
+        const C_mult = 1;
+        const new_c_xpos_dispacement = C_mult * (new_c_xpos - PosMapX.get(node1));
+        const new_c_ypos_dispacement = C_mult * (new_c_ypos - PosMapY.get(node1));
+        // then add the x and y components of the two vectors
+        const new_xpos = new_x_r_pos + new_c_xpos_dispacement + PosMapX.get(node1);
+        const new_ypos = new_y_r_pos + new_c_ypos_dispacement + PosMapY.get(node1);
+        // now set these positions
+        PosMapX.set(node1, new_xpos);
+        PosMapY.set(node1, new_ypos);
     }
     // return the position
     let PosMap = new Map();
-    for (const p of PosMapX.keys())PosMap.set(p, new (0, $kdvPf.Point)(PosMapX.get(p), 0, PosMapY.get(p)));
+    for (const p of PosMapX.keys())PosMap.set(p, new (0, $7T9Wu.Point)(PosMapX.get(p), 0, PosMapY.get(p)));
     // get / set positions
     // move the points
     // get the average pos
@@ -142,10 +129,10 @@ async function SimulateKamadaKawai(G, iterations) {
         sim_y.push(interimPoint.y);
         sim_z.push(interimPoint.z);
     }
-    const x_displacement = (0, $h2Wgl.calculateAverage)(sim_x);
-    const y_displacement = (0, $h2Wgl.calculateAverage)(sim_y);
-    const z_displacement = (0, $h2Wgl.calculateAverage)(sim_z);
-    const dispacementVector = new (0, $kdvPf.Point)(-x_displacement, -y_displacement, -z_displacement);
+    const x_displacement = calculateAverage(sim_x);
+    const y_displacement = calculateAverage(sim_y);
+    const z_displacement = calculateAverage(sim_z);
+    const dispacementVector = new (0, $7T9Wu.Point)(-x_displacement, -y_displacement, -z_displacement);
     PosMap = movePmap(PosMap, dispacementVector);
     G.apply_position_map(PosMap);
     const lmap = DrawEdgeLines(G, 1);
@@ -165,7 +152,7 @@ function InstanciateRandomPositions(G) {
         PosMapY.set(node, Math.random() * 200);
     }
     let PosMap = new Map();
-    for (const p of PosMapX.keys())PosMap.set(p, new (0, $kdvPf.Point)(PosMapX.get(p), 0, PosMapY.get(p)));
+    for (const p of PosMapX.keys())PosMap.set(p, new (0, $7T9Wu.Point)(PosMapX.get(p), 0, PosMapY.get(p)));
     G.apply_position_map(PosMap);
     const lmap = DrawEdgeLines(G, 1);
     return {
@@ -182,7 +169,7 @@ function DrawEdgeLines(G, divDistance) {
         // get the start pos
         const start = G.nodes.get(edge.start).data.pos;
         const end = G.nodes.get(edge.end).data.pos;
-        const Line = (0, $hqJB7.line_from_start_end_distance)(start, end, divDistance);
+        const Line = (0, $je3oj.default).line_from_start_end_distance(start, end, divDistance);
         lineMap.set(key, Line);
     }
     return lineMap;
@@ -195,7 +182,7 @@ function UpdateEdgeLinesDist(G, divDistance) {
         // get the start pos
         start = G.nodes.get(edge.start).data.pos;
         end = G.nodes.get(edge.end).data.pos;
-        line = (0, $hqJB7.line_from_start_end_distance)(start, end, divDistance);
+        line = (0, $je3oj.default).line_from_start_end_distance(start, end, divDistance);
         edge.data.ldata = line;
     }
 }
@@ -207,7 +194,7 @@ function UpdateEdgeLinesDivs(G, Divs) {
         // get the start pos
         start = G.nodes.get(edge.start).data.pos;
         end = G.nodes.get(edge.end).data.pos;
-        line = (0, $hqJB7.line_from_start_end_divisions)(start, end, Divs);
+        line = (0, $je3oj.default).line_from_start_end_divisions(start, end, Divs);
         edge.data.ldata = line;
     }
 }
@@ -232,7 +219,7 @@ async function DrawEdgeBundling(LineMap, iterations, distance) {
                 const otherLine = returnArray.get(otherKey).data.ldata;
                 for(let iii = 1; iii < otherLine.points.length - 1; iii++){
                     const otherpoint = otherLine.points[iii];
-                    const d = (0, $h2Wgl.calculateSquaredDistance)(pnt, otherpoint);
+                    const d = (0, $3JWOZ.default).calculateSquaredDistance(pnt, otherpoint);
                     if (d <= Math.pow(distance, 2)) {
                         const x_d = otherpoint.x - pnt.x;
                         const y_d = otherpoint.y - pnt.y;
@@ -244,10 +231,10 @@ async function DrawEdgeBundling(LineMap, iterations, distance) {
                 }
             }
             // now create a new displacement amount
-            const avgx = pnt.x + 0.8 * ((0, $h2Wgl.calculateAverage)(x_s) || 0);
-            const avgy = pnt.y + 0.8 * ((0, $h2Wgl.calculateAverage)(y_s) || 0);
-            const avgz = pnt.z + 0.8 * ((0, $h2Wgl.calculateAverage)(z_s) || 0);
-            const newPoint = new (0, $kdvPf.Point)(avgx, avgy, avgz);
+            const avgx = pnt.x + 0.8 * ((0, $3JWOZ.default).calculateAverage(x_s) || 0);
+            const avgy = pnt.y + 0.8 * ((0, $3JWOZ.default).calculateAverage(y_s) || 0);
+            const avgz = pnt.z + 0.8 * ((0, $3JWOZ.default).calculateAverage(z_s) || 0);
+            const newPoint = new (0, $7T9Wu.Point)(avgx, avgy, avgz);
             line.points[ii] = newPoint;
         }
     }
@@ -279,19 +266,19 @@ function DisplaceVertices(nodeMap, parameter, displacement) {
         if (value >= max) max = value;
     }
     // go through the nodes again and set the values 
-    for (const node1 of nodeMap.values()){
+    for (const node2 of nodeMap.values()){
         value = eval("node.data." + parameter);
         ydisplacement = value / max * displacement;
         // now filter the values so that we know that the values are between a max and a min
         ydisplacement = Math.max(0, ydisplacement); // this sets the lower bound to be something 
         ydisplacement = Math.min(displacement, ydisplacement); // this sets the upper bound of the thing
-        node1.data.pos.y = ydisplacement;
+        node2.data.pos.y = ydisplacement;
     }
 }
 // draw the circular vertical packing crypto like drawing
 async function HivePlot(G, selectedNode, step, startP) {
     const adj = G.get_adjacency();
-    const DijkstraDepth = await (0, $6QeEl.Dijkstra)(G, selectedNode);
+    const DijkstraDepth = await (0, $03PHD.default).Dijkstra(G, selectedNode);
     // calculate the number of steps that I am searching through
     const steps = Math.max(...[
         ...DijkstraDepth.values()
@@ -319,7 +306,7 @@ async function HivePlot(G, selectedNode, step, startP) {
         const xval = Math.sin(angle) * yval;
         const zval = Math.cos(angle) * yval;
         // construct a new point
-        const pnt = new (0, $kdvPf.Point)(xval + xoff, -yval + yoff, zval + zoff);
+        const pnt = new (0, $7T9Wu.Point)(xval + xoff, -yval + yoff, zval + zoff);
         Pmap.set(node, pnt);
     }
     // simulate the lines
@@ -347,31 +334,40 @@ function MovePmap(Pmap, displacement) {
     }
     return newPmap;
 }
+var $b9f55733e92b0fab$export$2e2bcd8739ae039 = {
+    SimulateKamadaKawai: SimulateKamadaKawai,
+    DrawEdgeLines: DrawEdgeLines,
+    DrawEdgeBundling: DrawEdgeBundling,
+    HivePlot: HivePlot,
+    DisplaceEdgeInY: DisplaceEdgeInY,
+    MoveGraph: MoveGraph,
+    InstanciateRandomPositions: InstanciateRandomPositions,
+    DisplaceVertices: DisplaceVertices,
+    UpdateEdgeLinesDist: UpdateEdgeLinesDist,
+    UpdateEdgeLinesDivs: UpdateEdgeLinesDivs
+};
 
 });
-parcelRequire.register("h2Wgl", function(module, exports) {
+parcelRequire.register("3JWOZ", function(module, exports) {
 
-$parcel$export(module.exports, "calculateAverage", () => $c68fd1528b46f9b0$export$a79d55e851f5cb17);
-$parcel$export(module.exports, "calculateDistance", () => $c68fd1528b46f9b0$export$65ed38a8a8f60c04);
-$parcel$export(module.exports, "calculateSquaredDistance", () => $c68fd1528b46f9b0$export$46ae17e5a80ed386);
-$parcel$export(module.exports, "getRandomSubset", () => $c68fd1528b46f9b0$export$cede5c017bc8f6ac);
+$parcel$export(module.exports, "default", () => $2b9333ccd3e7770b$export$2e2bcd8739ae039);
 // Calculate average
-function $c68fd1528b46f9b0$export$a79d55e851f5cb17(arr) {
+function $2b9333ccd3e7770b$var$calculateAverage(arr) {
     let runningSum = 0;
     for(let i = 0; i < arr.length; i++)runningSum = runningSum + arr[i];
     const avg = runningSum / arr.length;
     return avg;
 }
 // calculate distance between two points
-function $c68fd1528b46f9b0$export$65ed38a8a8f60c04(p1, p2) {
+function $2b9333ccd3e7770b$var$calculateDistance(p1, p2) {
     const d = Math.pow(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2) + Math.pow(p1.z - p2.z, 2), 0.5);
     return d;
 }
-function $c68fd1528b46f9b0$export$46ae17e5a80ed386(p1, p2) {
+function $2b9333ccd3e7770b$var$calculateSquaredDistance(p1, p2) {
     const d = Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2) + Math.pow(p1.z - p2.z, 2);
     return d;
 }
-function $c68fd1528b46f9b0$export$cede5c017bc8f6ac(arr, n) {
+function $2b9333ccd3e7770b$var$getRandomSubset(arr, n) {
     var result = new Array(n), len = arr.length, taken = new Array(len);
     if (n > len) throw new RangeError("getRandom: more elements taken than available");
     while(n--){
@@ -381,27 +377,28 @@ function $c68fd1528b46f9b0$export$cede5c017bc8f6ac(arr, n) {
     }
     return result;
 }
+var $2b9333ccd3e7770b$export$2e2bcd8739ae039 = {
+    calculateAverage: $2b9333ccd3e7770b$var$calculateAverage,
+    calculateDistance: $2b9333ccd3e7770b$var$calculateDistance,
+    calculateSquaredDistance: $2b9333ccd3e7770b$var$calculateSquaredDistance,
+    getRandomSubset: $2b9333ccd3e7770b$var$getRandomSubset
+};
 
 });
 
-parcelRequire.register("hqJB7", function(module, exports) {
+parcelRequire.register("je3oj", function(module, exports) {
 
-$parcel$export(module.exports, "line_from_start_end_divisions", () => $cb083c2392e02b03$export$d17d3d69df58ff1);
-$parcel$export(module.exports, "line_from_start_end_distance", () => $cb083c2392e02b03$export$3ed87fe6baf100f6);
-$parcel$export(module.exports, "centroid", () => $cb083c2392e02b03$export$e2a20c553f6c85ce);
-$parcel$export(module.exports, "Point", () => (parcelRequire("kdvPf")).Point);
-$parcel$export(module.exports, "Line", () => (parcelRequire("aDGMo")).Line);
-$parcel$export(module.exports, "calculateDistance", () => (parcelRequire("h2Wgl")).calculateDistance);
+$parcel$export(module.exports, "default", () => $dff1f486beb1bf4c$export$2e2bcd8739ae039);
 
-var $kdvPf = parcelRequire("kdvPf");
+var $7T9Wu = parcelRequire("7T9Wu");
 
-var $aDGMo = parcelRequire("aDGMo");
+var $lJKuM = parcelRequire("lJKuM");
 
-var $h2Wgl = parcelRequire("h2Wgl");
-function $cb083c2392e02b03$export$d17d3d69df58ff1(start, end, divisions) {
+var $3JWOZ = parcelRequire("3JWOZ");
+function $dff1f486beb1bf4c$var$line_from_start_end_divisions(start, end, divisions) {
     // create a start and end time 
-    const Start = new (0, $kdvPf.Point)(start.x, start.y, start.z);
-    const End = new (0, $kdvPf.Point)(end.x, end.y, end.z);
+    const Start = new (0, $7T9Wu.Point)(start.x, start.y, start.z);
+    const End = new (0, $7T9Wu.Point)(end.x, end.y, end.z);
     // interpolated points
     const points = [];
     // divisions 
@@ -410,20 +407,20 @@ function $cb083c2392e02b03$export$d17d3d69df58ff1(start, end, divisions) {
         const newx = interVar * Start.x + (1 - interVar) * End.x;
         const newy = interVar * Start.y + (1 - interVar) * End.y;
         const newz = interVar * Start.z + (1 - interVar) * End.z;
-        const newPoint = new (0, $kdvPf.Point)(newx, newy, newz);
+        const newPoint = new (0, $7T9Wu.Point)(newx, newy, newz);
         points.push(newPoint);
     }
     // create a new point 
-    const SubdividedLine = new (0, $aDGMo.Line)(points);
+    const SubdividedLine = new (0, $lJKuM.Line)(points);
     return SubdividedLine;
 }
-function $cb083c2392e02b03$export$3ed87fe6baf100f6(start, end, distance) {
-    const dist = (0, $h2Wgl.calculateDistance)(start, end);
+function $dff1f486beb1bf4c$var$line_from_start_end_distance(start, end, distance) {
+    const dist = (0, $3JWOZ.default).calculateDistance(start, end);
     const divs = Math.round(dist / distance) + 2;
-    const subdivline = $cb083c2392e02b03$export$d17d3d69df58ff1(start, end, divs);
+    const subdivline = $dff1f486beb1bf4c$var$line_from_start_end_divisions(start, end, divs);
     return subdivline;
 }
-function $cb083c2392e02b03$export$e2a20c553f6c85ce(points) {
+function $dff1f486beb1bf4c$var$centroid(points) {
     let rx = 0;
     let ry = 0;
     let rz = 0;
@@ -435,15 +432,22 @@ function $cb083c2392e02b03$export$e2a20c553f6c85ce(points) {
     rx = rx / points.length;
     ry = ry / points.length;
     rz = rz / points.length;
-    const centroid1 = new (0, $kdvPf.Point)(rx, ry, rz);
+    const centroid1 = new (0, $7T9Wu.Point)(rx, ry, rz);
     return centroid1;
 }
+var $dff1f486beb1bf4c$export$2e2bcd8739ae039 = {
+    line_from_start_end_divisions: $dff1f486beb1bf4c$var$line_from_start_end_divisions,
+    line_from_start_end_distance: $dff1f486beb1bf4c$var$line_from_start_end_distance,
+    Point: $7T9Wu.Point,
+    Line: $lJKuM.Line,
+    centroid: $dff1f486beb1bf4c$var$centroid
+};
 
 });
-parcelRequire.register("kdvPf", function(module, exports) {
+parcelRequire.register("7T9Wu", function(module, exports) {
 
-$parcel$export(module.exports, "Point", () => $eb7db56be9963286$export$baf26146a414f24a);
-class $eb7db56be9963286$export$baf26146a414f24a {
+$parcel$export(module.exports, "Point", () => $5be561ce1e188a6b$export$baf26146a414f24a);
+class $5be561ce1e188a6b$export$baf26146a414f24a {
     constructor(x, y, z){
         this.x = x;
         this.y = y;
@@ -458,16 +462,16 @@ class $eb7db56be9963286$export$baf26146a414f24a {
 
 });
 
-parcelRequire.register("aDGMo", function(module, exports) {
+parcelRequire.register("lJKuM", function(module, exports) {
 
-$parcel$export(module.exports, "Line", () => $7beebb0d0e9a6554$export$17d680238e50603e);
+$parcel$export(module.exports, "Line", () => $fd31ddfd8fe8eb05$export$17d680238e50603e);
 
-var $kdvPf = parcelRequire("kdvPf");
-class $7beebb0d0e9a6554$export$17d680238e50603e {
+var $7T9Wu = parcelRequire("7T9Wu");
+class $fd31ddfd8fe8eb05$export$17d680238e50603e {
     constructor(points){
         this.points = [];
         points.forEach((p)=>{
-            const point = new (0, $kdvPf.Point)(p.x, p.y, p.z);
+            const point = new (0, $7T9Wu.Point)(p.x, p.y, p.z);
             this.points.push(point);
         });
     }
@@ -476,18 +480,15 @@ class $7beebb0d0e9a6554$export$17d680238e50603e {
 });
 
 
-parcelRequire.register("6QeEl", function(module, exports) {
+parcelRequire.register("03PHD", function(module, exports) {
 
-$parcel$export(module.exports, "BFSSearch", () => $4fb2f6850c2dbcf1$export$9512e8ca8b081e8f);
-$parcel$export(module.exports, "Dijkstra", () => $4fb2f6850c2dbcf1$export$be200438c84dec06);
-$parcel$export(module.exports, "GraphDiameter", () => $4fb2f6850c2dbcf1$export$9f5accb7363d2ecf);
-$parcel$export(module.exports, "SelectSubgraph", () => $4fb2f6850c2dbcf1$export$45dbfc9b37871a67);
+$parcel$export(module.exports, "default", () => $00b8630467633a1d$export$2e2bcd8739ae039);
 
-var $fvTv3 = parcelRequire("fvTv3");
+var $dPfZ4 = parcelRequire("dPfZ4");
 // do a BFS Search Starting from some point
 // searches the whole graph and returns a map of which node
 // was searched from where
-async function $4fb2f6850c2dbcf1$export$9512e8ca8b081e8f(G, node) {
+async function $00b8630467633a1d$var$BFSSearch(G, node) {
     const adj = G.get_adjacency();
     const exploredFromMap = new Map();
     const explored = [];
@@ -513,11 +514,11 @@ async function $4fb2f6850c2dbcf1$export$9512e8ca8b081e8f(G, node) {
     return exploredFromMap;
 }
 // do a dijkstra Search
-async function $4fb2f6850c2dbcf1$export$be200438c84dec06(G, Node) {
+async function $00b8630467633a1d$var$Dijkstra(G, Node) {
     const adj = G.get_adjacency();
     const Dmap = new Map();
     // get the explored from map
-    const exploredFromMap = await $4fb2f6850c2dbcf1$export$9512e8ca8b081e8f(G, Node);
+    const exploredFromMap = await $00b8630467633a1d$var$BFSSearch(G, Node);
     // then for each element in the map go through
     // contact trace where that element came from
     for (const n of adj.keys()){
@@ -534,11 +535,11 @@ async function $4fb2f6850c2dbcf1$export$be200438c84dec06(G, Node) {
 }
 // This file contains basic things like
 // Graph searches and stuff
-async function $4fb2f6850c2dbcf1$export$9f5accb7363d2ecf(graph) {
+async function $00b8630467633a1d$var$GraphDiameter(graph) {
     // find the diameter of the graph
     // start Dijkstra from some random node
     let seed = Math.floor(Math.random() * graph.nodes.size);
-    let Dstart = await $4fb2f6850c2dbcf1$export$be200438c84dec06(graph, seed);
+    let Dstart = await $00b8630467633a1d$var$Dijkstra(graph, seed);
     // iterate through all the values and then get
     // the value that is the highest amongst the others
     let currentDistance = -1;
@@ -551,7 +552,7 @@ async function $4fb2f6850c2dbcf1$export$9f5accb7363d2ecf(graph) {
     }
     // then search from there to the furthest point again
     const newStart = seed;
-    Dstart = await $4fb2f6850c2dbcf1$export$be200438c84dec06(graph, seed);
+    Dstart = await $00b8630467633a1d$var$Dijkstra(graph, seed);
     // repeat the thing
     currentDistance = -1;
     for (const n1 of Dstart.keys()){
@@ -569,7 +570,7 @@ async function $4fb2f6850c2dbcf1$export$9f5accb7363d2ecf(graph) {
     return returnObj;
 }
 // Select a subrgaph
-async function $4fb2f6850c2dbcf1$export$45dbfc9b37871a67(graph, nodeList) {
+async function $00b8630467633a1d$var$SelectSubgraph(graph, nodeList) {
     const prunedVertices = new Map();
     const prunedEdges = new Map();
     // set the prunded vertices list
@@ -589,15 +590,22 @@ async function $4fb2f6850c2dbcf1$export$45dbfc9b37871a67(graph, nodeList) {
         }
     }
     // construct a new graph that represents the new graph
-    const newGraph = await (0, $fvTv3.Graph).create(prunedVertices, prunedEdges);
+    const newGraph = await (0, $dPfZ4.Graph).create(prunedVertices, prunedEdges);
     return newGraph;
 }
+var // this is where the exports happen
+$00b8630467633a1d$export$2e2bcd8739ae039 = {
+    GraphDiameter: $00b8630467633a1d$var$GraphDiameter,
+    Dijkstra: $00b8630467633a1d$var$Dijkstra,
+    BFSSearch: $00b8630467633a1d$var$BFSSearch,
+    SelectSubgraph: $00b8630467633a1d$var$SelectSubgraph
+};
 
 });
-parcelRequire.register("fvTv3", function(module, exports) {
+parcelRequire.register("dPfZ4", function(module, exports) {
 
-$parcel$export(module.exports, "Graph", () => $b4b4cd65444af0f9$export$614db49f3febe941);
-class $b4b4cd65444af0f9$export$614db49f3febe941 {
+$parcel$export(module.exports, "Graph", () => $a10c6fe030ef2f2d$export$614db49f3febe941);
+class $a10c6fe030ef2f2d$export$614db49f3febe941 {
     constructor(nodes, edges){
         this.nodes = nodes;
         this.edges = edges;
@@ -615,7 +623,7 @@ class $b4b4cd65444af0f9$export$614db49f3febe941 {
     }
     // new create method
     static async create(nodes, edges) {
-        const g = new $b4b4cd65444af0f9$export$614db49f3febe941(nodes, edges);
+        const g = new $a10c6fe030ef2f2d$export$614db49f3febe941(nodes, edges);
         await g.initialize();
         return g;
     }
@@ -711,12 +719,10 @@ class $b4b4cd65444af0f9$export$614db49f3febe941 {
 
 
 
-var $6QeEl = parcelRequire("6QeEl");
-var $b02d8ab485bd5a8e$exports = {};
+var $dPfZ4 = parcelRequire("dPfZ4");
 
-$parcel$export($b02d8ab485bd5a8e$exports, "LoadZKC", () => $b02d8ab485bd5a8e$export$25541fba70f1c06e);
-$parcel$export($b02d8ab485bd5a8e$exports, "LoadZKCSimulated", () => $b02d8ab485bd5a8e$export$c517c27d9806916);
-const $785c0fdd0ab93d86$export$b6cdfb6bd6195507 = {
+var $03PHD = parcelRequire("03PHD");
+const $c6b6d9334764306a$export$b6cdfb6bd6195507 = {
     "nodes": [
         0,
         1,
@@ -1070,7 +1076,7 @@ const $785c0fdd0ab93d86$export$b6cdfb6bd6195507 = {
 };
 
 
-const $554aefb13010bcb1$export$aa88f89bcd11f8a9 = {
+const $f1c9d3ba26f93daa$export$aa88f89bcd11f8a9 = {
     nodes: [
         {
             id: 0,
@@ -1594,12 +1600,9 @@ const $554aefb13010bcb1$export$aa88f89bcd11f8a9 = {
 };
 
 
-var $bd6e0ad6b0b7cd6e$exports = {};
 
-$parcel$export($bd6e0ad6b0b7cd6e$exports, "ConstructGraphNodeEdgesList", () => $bd6e0ad6b0b7cd6e$export$5b2c597b1682b5a9);
-
-var $fvTv3 = parcelRequire("fvTv3");
-class $581661829fee4026$export$3e8a3cc8713efbec {
+var $dPfZ4 = parcelRequire("dPfZ4");
+class $4f62a0545083f26b$export$3e8a3cc8713efbec {
     constructor(data){
         // this data is an arbitrary thing with which I can create any object
         this.data = {
@@ -1611,7 +1614,7 @@ class $581661829fee4026$export$3e8a3cc8713efbec {
 }
 
 
-class $6b52ada4915015bd$export$b9d9805c9b77a56d {
+class $83a5165462902ef5$export$b9d9805c9b77a56d {
     constructor(start, end, data){
         this.start = start;
         this.end = end;
@@ -1623,50 +1626,53 @@ class $6b52ada4915015bd$export$b9d9805c9b77a56d {
 
 
 // construct a graph based on an edge list etc
-async function $bd6e0ad6b0b7cd6e$export$5b2c597b1682b5a9(nodes, edges) {
+async function $2a82d025d9354169$var$ConstructGraphNodeEdgesList(nodes, edges) {
     // make a node OBJ
     const nodeOBJ = new Map();
     for(let i = 0; i < nodes.length; i++){
-        const n = new (0, $581661829fee4026$export$3e8a3cc8713efbec)(nodes[i].data);
+        const n = new (0, $4f62a0545083f26b$export$3e8a3cc8713efbec)(nodes[i].data);
         nodeOBJ.set(nodes[i], n);
     }
     // make an edge object
     const edgeOBJ = new Map();
     for(let i1 = 0; i1 < edges.length; i1++){
-        const e = new (0, $6b52ada4915015bd$export$b9d9805c9b77a56d)(edges[i1][0], edges[i1][1], edges[i1].data);
+        const e = new (0, $83a5165462902ef5$export$b9d9805c9b77a56d)(edges[i1][0], edges[i1][1], edges[i1].data);
         edgeOBJ.set(i1, e);
     }
     // make a graph object
-    const G = await (0, $fvTv3.Graph).create(nodeOBJ, edgeOBJ);
+    const G = await (0, $dPfZ4.Graph).create(nodeOBJ, edgeOBJ);
     return G;
 }
+var $2a82d025d9354169$export$2e2bcd8739ae039 = {
+    ConstructGraphNodeEdgesList: $2a82d025d9354169$var$ConstructGraphNodeEdgesList
+};
 
 
 
-var $fvTv3 = parcelRequire("fvTv3");
+var $dPfZ4 = parcelRequire("dPfZ4");
 
-var $kdvPf = parcelRequire("kdvPf");
+var $7T9Wu = parcelRequire("7T9Wu");
 
 
 
-var $99muE = parcelRequire("99muE");
-async function $b02d8ab485bd5a8e$export$25541fba70f1c06e() {
+var $fXQP4 = parcelRequire("fXQP4");
+async function $1929603c63fa12f5$var$LoadZKC() {
     // load up the dataset representation
-    const data = (0, $785c0fdd0ab93d86$export$b6cdfb6bd6195507);
-    const G = await (0, $bd6e0ad6b0b7cd6e$export$5b2c597b1682b5a9)(data.nodes, data.edges);
+    const data = (0, $c6b6d9334764306a$export$b6cdfb6bd6195507);
+    const G = await (0, $2a82d025d9354169$export$2e2bcd8739ae039).ConstructGraphNodeEdgesList(data.nodes, data.edges);
     return G;
 }
-async function $b02d8ab485bd5a8e$export$c517c27d9806916() {
+async function $1929603c63fa12f5$var$LoadZKCSimulated() {
     // make a map
-    const data = (0, $554aefb13010bcb1$export$aa88f89bcd11f8a9);
+    const data = (0, $f1c9d3ba26f93daa$export$aa88f89bcd11f8a9);
     const nodes = new Map();
     const edges = new Map();
     // set the node map
     data.nodes.forEach((node)=>{
         const id = node.id;
-        const pos = new (0, $kdvPf.Point)(node.px * 50, 0, node.py * 50);
+        const pos = new (0, $7T9Wu.Point)(node.px * 50, 0, node.py * 50);
         const modularity = node.member;
-        const n = new (0, $581661829fee4026$export$3e8a3cc8713efbec)({
+        const n = new (0, $4f62a0545083f26b$export$3e8a3cc8713efbec)({
             pos: pos,
             size: 10,
             info: "Node Info",
@@ -1679,38 +1685,29 @@ async function $b02d8ab485bd5a8e$export$c517c27d9806916() {
         const edge = data.edges[i];
         const start = edge[0];
         const end = edge[1];
-        const e = new (0, $6b52ada4915015bd$export$b9d9805c9b77a56d)(start, end, {});
+        const e = new (0, $83a5165462902ef5$export$b9d9805c9b77a56d)(start, end, {});
         edges.set(i, e);
     }
     // make a graph object
-    const G = await (0, $fvTv3.Graph).create(nodes, edges);
-    const lmap = (0, $99muE.DrawEdgeLines)(G, 10);
+    const G = await (0, $dPfZ4.Graph).create(nodes, edges);
+    const lmap = (0, $fXQP4.default).DrawEdgeLines(G, 10);
     G.apply_edge_pos_maps(lmap);
     return G;
 }
+var // exports
+$1929603c63fa12f5$export$2e2bcd8739ae039 = {
+    LoadZKC: $1929603c63fa12f5$var$LoadZKC,
+    LoadZKCSimulated: $1929603c63fa12f5$var$LoadZKCSimulated
+};
 
 
 
 
-var $99muE = parcelRequire("99muE");
+var $fXQP4 = parcelRequire("fXQP4");
 
-var $hqJB7 = parcelRequire("hqJB7");
+var $je3oj = parcelRequire("je3oj");
 
-var $h2Wgl = parcelRequire("h2Wgl");
-var $fd457d300ac15182$exports = {};
-
-$parcel$export($fd457d300ac15182$exports, "DrawTHREEGraphVertices", () => $fd457d300ac15182$export$3722d609e92d59e4);
-$parcel$export($fd457d300ac15182$exports, "DrawTHREEGraphEdgesThick", () => $fd457d300ac15182$export$a96a15c14ab3f9b1);
-$parcel$export($fd457d300ac15182$exports, "DrawThickEdgesFromEdgeMap", () => $fd457d300ac15182$export$71197654c552d4f7);
-$parcel$export($fd457d300ac15182$exports, "DrawTHREEGraphEdgesThin", () => $fd457d300ac15182$export$bcbc82e0d2fddfa9);
-$parcel$export($fd457d300ac15182$exports, "DrawThinEdgesFromEdgeMap", () => $fd457d300ac15182$export$bbd7eb6d0a9b1b8a);
-$parcel$export($fd457d300ac15182$exports, "AddBoxBasedImaging", () => $fd457d300ac15182$export$545f74f6baebd19e);
-$parcel$export($fd457d300ac15182$exports, "DrawTHREEBoxBasedVertices", () => $fd457d300ac15182$export$ccbc3593ea66381b);
-$parcel$export($fd457d300ac15182$exports, "AddCylinderBasedImaging", () => $fd457d300ac15182$export$175a7c7b986803c2);
-$parcel$export($fd457d300ac15182$exports, "AddInModularityBasedPointGroups", () => $fd457d300ac15182$export$4375efd5a56da8c8);
-$parcel$export($fd457d300ac15182$exports, "DrawSimplifiedEdges", () => $fd457d300ac15182$export$df50b176b062f988);
-$parcel$export($fd457d300ac15182$exports, "ChangeTheVertexColours", () => $fd457d300ac15182$export$ddabfdc3a667d816);
-$parcel$export($fd457d300ac15182$exports, "ResetVertexColors", () => $fd457d300ac15182$export$f12354bb68150715);
+var $3JWOZ = parcelRequire("3JWOZ");
 /**
  * @license
  * Copyright 2010-2022 Three.js Authors
@@ -29608,522 +29605,677 @@ if (typeof window !== "undefined") {
 
 
 
-class $29d66402462b2424$export$a6bbb4bb79a67a67 extends $084574008ccedf86$export$b7be63a67df8959 {
+
+const $fd127f46fc1ba387$var$_box = new (0, $084574008ccedf86$export$6f7d5a9418ab2aa3)();
+const $fd127f46fc1ba387$var$_vector = new (0, $084574008ccedf86$export$64b5c384219d3699)();
+class $fd127f46fc1ba387$export$5b1256aa5274bf8 extends (0, $084574008ccedf86$export$231f009cbe414146) {
     constructor(){
         super();
-        this.isMeshLine = true;
-        this.type = "MeshLine";
-        this.positions = [];
-        this.previous = [];
-        this.next = [];
-        this.side = [];
-        this.width = [];
-        this.indices_array = [];
-        this.uvs = [];
-        this.counters = [];
-        this._points = [];
-        this._geom = null;
-        this.widthCallback = null;
-        // Used to raycast
-        this.matrixWorld = new $084574008ccedf86$export$2ae72fc923e5eb5();
-        Object.defineProperties(this, {
-            // this is now a bufferGeometry
-            // add getter to support previous api
-            geometry: {
-                enumerable: true,
-                get: function() {
-                    return this;
-                }
-            },
-            geom: {
-                enumerable: true,
-                get: function() {
-                    return this._geom;
-                },
-                set: function(value) {
-                    this.setGeometry(value, this.widthCallback);
-                }
-            },
-            // for declaritive architectures
-            // to return the same value that sets the points
-            // eg. this.points = points
-            // console.log(this.points) -> points
-            points: {
-                enumerable: true,
-                get: function() {
-                    return this._points;
-                },
-                set: function(value) {
-                    this.setPoints(value, this.widthCallback);
-                }
+        this.isLineSegmentsGeometry = true;
+        this.type = "LineSegmentsGeometry";
+        const positions = [
+            -1,
+            2,
+            0,
+            1,
+            2,
+            0,
+            -1,
+            1,
+            0,
+            1,
+            1,
+            0,
+            -1,
+            0,
+            0,
+            1,
+            0,
+            0,
+            -1,
+            -1,
+            0,
+            1,
+            -1,
+            0
+        ];
+        const uvs = [
+            -1,
+            2,
+            1,
+            2,
+            -1,
+            1,
+            1,
+            1,
+            -1,
+            -1,
+            1,
+            -1,
+            -1,
+            -2,
+            1,
+            -2
+        ];
+        const index = [
+            0,
+            2,
+            1,
+            2,
+            3,
+            1,
+            2,
+            4,
+            3,
+            4,
+            5,
+            3,
+            4,
+            6,
+            5,
+            6,
+            7,
+            5
+        ];
+        this.setIndex(index);
+        this.setAttribute("position", new (0, $084574008ccedf86$export$cbe7a62641830ebd)(positions, 3));
+        this.setAttribute("uv", new (0, $084574008ccedf86$export$cbe7a62641830ebd)(uvs, 2));
+    }
+    applyMatrix4(matrix) {
+        const start = this.attributes.instanceStart;
+        const end = this.attributes.instanceEnd;
+        if (start !== undefined) {
+            start.applyMatrix4(matrix);
+            end.applyMatrix4(matrix);
+            start.needsUpdate = true;
+        }
+        if (this.boundingBox !== null) this.computeBoundingBox();
+        if (this.boundingSphere !== null) this.computeBoundingSphere();
+        return this;
+    }
+    setPositions(array) {
+        let lineSegments;
+        if (array instanceof Float32Array) lineSegments = array;
+        else if (Array.isArray(array)) lineSegments = new Float32Array(array);
+        const instanceBuffer = new (0, $084574008ccedf86$export$25ec0e1af1389358)(lineSegments, 6, 1); // xyz, xyz
+        this.setAttribute("instanceStart", new (0, $084574008ccedf86$export$920b6d07334599c7)(instanceBuffer, 3, 0)); // xyz
+        this.setAttribute("instanceEnd", new (0, $084574008ccedf86$export$920b6d07334599c7)(instanceBuffer, 3, 3)); // xyz
+        //
+        this.computeBoundingBox();
+        this.computeBoundingSphere();
+        return this;
+    }
+    setColors(array) {
+        let colors;
+        if (array instanceof Float32Array) colors = array;
+        else if (Array.isArray(array)) colors = new Float32Array(array);
+        const instanceColorBuffer = new (0, $084574008ccedf86$export$25ec0e1af1389358)(colors, 6, 1); // rgb, rgb
+        this.setAttribute("instanceColorStart", new (0, $084574008ccedf86$export$920b6d07334599c7)(instanceColorBuffer, 3, 0)); // rgb
+        this.setAttribute("instanceColorEnd", new (0, $084574008ccedf86$export$920b6d07334599c7)(instanceColorBuffer, 3, 3)); // rgb
+        return this;
+    }
+    fromWireframeGeometry(geometry) {
+        this.setPositions(geometry.attributes.position.array);
+        return this;
+    }
+    fromEdgesGeometry(geometry) {
+        this.setPositions(geometry.attributes.position.array);
+        return this;
+    }
+    fromMesh(mesh) {
+        this.fromWireframeGeometry(new (0, $084574008ccedf86$export$4b739da06d24892b)(mesh.geometry));
+        // set colors, maybe
+        return this;
+    }
+    fromLineSegments(lineSegments) {
+        const geometry = lineSegments.geometry;
+        this.setPositions(geometry.attributes.position.array); // assumes non-indexed
+        // set colors, maybe
+        return this;
+    }
+    computeBoundingBox() {
+        if (this.boundingBox === null) this.boundingBox = new (0, $084574008ccedf86$export$6f7d5a9418ab2aa3)();
+        const start = this.attributes.instanceStart;
+        const end = this.attributes.instanceEnd;
+        if (start !== undefined && end !== undefined) {
+            this.boundingBox.setFromBufferAttribute(start);
+            $fd127f46fc1ba387$var$_box.setFromBufferAttribute(end);
+            this.boundingBox.union($fd127f46fc1ba387$var$_box);
+        }
+    }
+    computeBoundingSphere() {
+        if (this.boundingSphere === null) this.boundingSphere = new (0, $084574008ccedf86$export$805e8b72413ccaba)();
+        if (this.boundingBox === null) this.computeBoundingBox();
+        const start = this.attributes.instanceStart;
+        const end = this.attributes.instanceEnd;
+        if (start !== undefined && end !== undefined) {
+            const center = this.boundingSphere.center;
+            this.boundingBox.getCenter(center);
+            let maxRadiusSq = 0;
+            for(let i = 0, il = start.count; i < il; i++){
+                $fd127f46fc1ba387$var$_vector.fromBufferAttribute(start, i);
+                maxRadiusSq = Math.max(maxRadiusSq, center.distanceToSquared($fd127f46fc1ba387$var$_vector));
+                $fd127f46fc1ba387$var$_vector.fromBufferAttribute(end, i);
+                maxRadiusSq = Math.max(maxRadiusSq, center.distanceToSquared($fd127f46fc1ba387$var$_vector));
             }
-        });
-    }
-}
-$29d66402462b2424$export$a6bbb4bb79a67a67.prototype.setMatrixWorld = function(matrixWorld) {
-    this.matrixWorld = matrixWorld;
-};
-// setting via a geometry is rather superfluous
-// as you're creating a unecessary geometry just to throw away
-// but exists to support previous api
-$29d66402462b2424$export$a6bbb4bb79a67a67.prototype.setGeometry = function(g, c) {
-    // as the input geometry are mutated we store them
-    // for later retreival when necessary (declaritive architectures)
-    this._geometry = g;
-    this.setPoints(g.getAttribute("position").array, c);
-};
-$29d66402462b2424$export$a6bbb4bb79a67a67.prototype.setPoints = function(points, wcb) {
-    if (!(points instanceof Float32Array) && !(points instanceof Array)) {
-        console.error("ERROR: The BufferArray of points is not instancied correctly.");
-        return;
-    }
-    // as the points are mutated we store them
-    // for later retreival when necessary (declaritive architectures)
-    this._points = points;
-    this.widthCallback = wcb;
-    this.positions = [];
-    this.counters = [];
-    if (points.length && points[0] instanceof $084574008ccedf86$export$64b5c384219d3699) // could transform Vector3 array into the array used below
-    // but this approach will only loop through the array once
-    // and is more performant
-    for(var j = 0; j < points.length; j++){
-        var p = points[j];
-        var c = j / points.length;
-        this.positions.push(p.x, p.y, p.z);
-        this.positions.push(p.x, p.y, p.z);
-        this.counters.push(c);
-        this.counters.push(c);
-    }
-    else for(var j = 0; j < points.length; j += 3){
-        var c = j / points.length;
-        this.positions.push(points[j], points[j + 1], points[j + 2]);
-        this.positions.push(points[j], points[j + 1], points[j + 2]);
-        this.counters.push(c);
-        this.counters.push(c);
-    }
-    this.process();
-};
-function $29d66402462b2424$export$fd9812c8150ba238(raycaster, intersects) {
-    var inverseMatrix = new $084574008ccedf86$export$2ae72fc923e5eb5();
-    var ray = new $084574008ccedf86$export$a186db52eed6d40e();
-    var sphere = new $084574008ccedf86$export$805e8b72413ccaba();
-    var interRay = new $084574008ccedf86$export$64b5c384219d3699();
-    var geometry = this.geometry;
-    // Checking boundingSphere distance to ray
-    if (!geometry.boundingSphere) geometry.computeBoundingSphere();
-    sphere.copy(geometry.boundingSphere);
-    sphere.applyMatrix4(this.matrixWorld);
-    if (raycaster.ray.intersectSphere(sphere, interRay) === false) return;
-    inverseMatrix.copy(this.matrixWorld).invert();
-    ray.copy(raycaster.ray).applyMatrix4(inverseMatrix);
-    var vStart = new $084574008ccedf86$export$64b5c384219d3699();
-    var vEnd = new $084574008ccedf86$export$64b5c384219d3699();
-    var interSegment = new $084574008ccedf86$export$64b5c384219d3699();
-    var step = this instanceof $084574008ccedf86$export$ff1ed10fedfdd604 ? 2 : 1;
-    var index = geometry.index;
-    var attributes = geometry.attributes;
-    if (index !== null) {
-        var indices = index.array;
-        var positions = attributes.position.array;
-        var widths = attributes.width.array;
-        for(var i = 0, l = indices.length - 1; i < l; i += step){
-            var a = indices[i];
-            var b = indices[i + 1];
-            vStart.fromArray(positions, a * 3);
-            vEnd.fromArray(positions, b * 3);
-            var width = widths[Math.floor(i / 3)] !== undefined ? widths[Math.floor(i / 3)] : 1;
-            var precision = raycaster.params.Line.threshold + this.material.lineWidth * width / 2;
-            var precisionSq = precision * precision;
-            var distSq = ray.distanceSqToSegment(vStart, vEnd, interRay, interSegment);
-            if (distSq > precisionSq) continue;
-            interRay.applyMatrix4(this.matrixWorld); //Move back to world space for distance calculation
-            var distance = raycaster.ray.origin.distanceTo(interRay);
-            if (distance < raycaster.near || distance > raycaster.far) continue;
-            intersects.push({
-                distance: distance,
-                // What do we want? intersection point on the ray or on the segment??
-                // point: raycaster.ray.at( distance ),
-                point: interSegment.clone().applyMatrix4(this.matrixWorld),
-                index: i,
-                face: null,
-                faceIndex: null,
-                object: this
-            });
-            // make event only fire once
-            i = l;
+            this.boundingSphere.radius = Math.sqrt(maxRadiusSq);
+            if (isNaN(this.boundingSphere.radius)) console.error("THREE.LineSegmentsGeometry.computeBoundingSphere(): Computed radius is NaN. The instanced position data is likely to have NaN values.", this);
         }
     }
-}
-$29d66402462b2424$export$a6bbb4bb79a67a67.prototype.raycast = $29d66402462b2424$export$fd9812c8150ba238;
-$29d66402462b2424$export$a6bbb4bb79a67a67.prototype.compareV3 = function(a, b) {
-    var aa = a * 6;
-    var ab = b * 6;
-    return this.positions[aa] === this.positions[ab] && this.positions[aa + 1] === this.positions[ab + 1] && this.positions[aa + 2] === this.positions[ab + 2];
-};
-$29d66402462b2424$export$a6bbb4bb79a67a67.prototype.copyV3 = function(a) {
-    var aa = a * 6;
-    return [
-        this.positions[aa],
-        this.positions[aa + 1],
-        this.positions[aa + 2]
-    ];
-};
-$29d66402462b2424$export$a6bbb4bb79a67a67.prototype.process = function() {
-    var l = this.positions.length / 6;
-    this.previous = [];
-    this.next = [];
-    this.side = [];
-    this.width = [];
-    this.indices_array = [];
-    this.uvs = [];
-    var w;
-    var v;
-    // initial previous points
-    if (this.compareV3(0, l - 1)) v = this.copyV3(l - 2);
-    else v = this.copyV3(0);
-    this.previous.push(v[0], v[1], v[2]);
-    this.previous.push(v[0], v[1], v[2]);
-    for(var j = 0; j < l; j++){
-        // sides
-        this.side.push(1);
-        this.side.push(-1);
-        // widths
-        if (this.widthCallback) w = this.widthCallback(j / (l - 1));
-        else w = 1;
-        this.width.push(w);
-        this.width.push(w);
-        // uvs
-        this.uvs.push(j / (l - 1), 0);
-        this.uvs.push(j / (l - 1), 1);
-        if (j < l - 1) {
-            // points previous to poisitions
-            v = this.copyV3(j);
-            this.previous.push(v[0], v[1], v[2]);
-            this.previous.push(v[0], v[1], v[2]);
-            // indices
-            var n = j * 2;
-            this.indices_array.push(n, n + 1, n + 2);
-            this.indices_array.push(n + 2, n + 1, n + 3);
-        }
-        if (j > 0) {
-            // points after poisitions
-            v = this.copyV3(j);
-            this.next.push(v[0], v[1], v[2]);
-            this.next.push(v[0], v[1], v[2]);
-        }
+    toJSON() {
+    // todo
     }
-    // last next point
-    if (this.compareV3(l - 1, 0)) v = this.copyV3(1);
-    else v = this.copyV3(l - 1);
-    this.next.push(v[0], v[1], v[2]);
-    this.next.push(v[0], v[1], v[2]);
-    // redefining the attribute seems to prevent range errors
-    // if the user sets a differing number of vertices
-    if (!this._attributes || this._attributes.position.count !== this.positions.length) this._attributes = {
-        position: new $084574008ccedf86$export$8dea267bd6bde117(new Float32Array(this.positions), 3),
-        previous: new $084574008ccedf86$export$8dea267bd6bde117(new Float32Array(this.previous), 3),
-        next: new $084574008ccedf86$export$8dea267bd6bde117(new Float32Array(this.next), 3),
-        side: new $084574008ccedf86$export$8dea267bd6bde117(new Float32Array(this.side), 1),
-        width: new $084574008ccedf86$export$8dea267bd6bde117(new Float32Array(this.width), 1),
-        uv: new $084574008ccedf86$export$8dea267bd6bde117(new Float32Array(this.uvs), 2),
-        index: new $084574008ccedf86$export$8dea267bd6bde117(new Uint16Array(this.indices_array), 1),
-        counters: new $084574008ccedf86$export$8dea267bd6bde117(new Float32Array(this.counters), 1)
-    };
-    else {
-        this._attributes.position.copyArray(new Float32Array(this.positions));
-        this._attributes.position.needsUpdate = true;
-        this._attributes.previous.copyArray(new Float32Array(this.previous));
-        this._attributes.previous.needsUpdate = true;
-        this._attributes.next.copyArray(new Float32Array(this.next));
-        this._attributes.next.needsUpdate = true;
-        this._attributes.side.copyArray(new Float32Array(this.side));
-        this._attributes.side.needsUpdate = true;
-        this._attributes.width.copyArray(new Float32Array(this.width));
-        this._attributes.width.needsUpdate = true;
-        this._attributes.uv.copyArray(new Float32Array(this.uvs));
-        this._attributes.uv.needsUpdate = true;
-        this._attributes.index.copyArray(new Uint16Array(this.indices_array));
-        this._attributes.index.needsUpdate = true;
+    applyMatrix(matrix) {
+        console.warn("THREE.LineSegmentsGeometry: applyMatrix() has been renamed to applyMatrix4().");
+        return this.applyMatrix4(matrix);
     }
-    this.setAttribute("position", this._attributes.position);
-    this.setAttribute("previous", this._attributes.previous);
-    this.setAttribute("next", this._attributes.next);
-    this.setAttribute("side", this._attributes.side);
-    this.setAttribute("width", this._attributes.width);
-    this.setAttribute("uv", this._attributes.uv);
-    this.setAttribute("counters", this._attributes.counters);
-    this.setIndex(this._attributes.index);
-    this.computeBoundingSphere();
-    this.computeBoundingBox();
-};
-function $29d66402462b2424$var$memcpy(src, srcOffset, dst, dstOffset, length) {
-    var i;
-    src = src.subarray || src.slice ? src : src.buffer;
-    dst = dst.subarray || dst.slice ? dst : dst.buffer;
-    src = srcOffset ? src.subarray ? src.subarray(srcOffset, length && srcOffset + length) : src.slice(srcOffset, length && srcOffset + length) : src;
-    if (dst.set) dst.set(src, dstOffset);
-    else for(i = 0; i < src.length; i++)dst[i + dstOffset] = src[i];
-    return dst;
 }
-/**
- * Fast method to advance the line by one position.  The oldest position is removed.
- * @param position
- */ $29d66402462b2424$export$a6bbb4bb79a67a67.prototype.advance = function(position) {
-    var positions = this._attributes.position.array;
-    var previous = this._attributes.previous.array;
-    var next = this._attributes.next.array;
-    var l = positions.length;
-    // PREVIOUS
-    $29d66402462b2424$var$memcpy(positions, 0, previous, 0, l);
-    // POSITIONS
-    $29d66402462b2424$var$memcpy(positions, 6, positions, 0, l - 6);
-    positions[l - 6] = position.x;
-    positions[l - 5] = position.y;
-    positions[l - 4] = position.z;
-    positions[l - 3] = position.x;
-    positions[l - 2] = position.y;
-    positions[l - 1] = position.z;
-    // NEXT
-    $29d66402462b2424$var$memcpy(positions, 6, next, 0, l - 6);
-    next[l - 6] = position.x;
-    next[l - 5] = position.y;
-    next[l - 4] = position.z;
-    next[l - 3] = position.x;
-    next[l - 2] = position.y;
-    next[l - 1] = position.z;
-    this._attributes.position.needsUpdate = true;
-    this._attributes.previous.needsUpdate = true;
-    this._attributes.next.needsUpdate = true;
+
+
+
+(0, $084574008ccedf86$export$6643083551874bf5).line = {
+    worldUnits: {
+        value: 1
+    },
+    linewidth: {
+        value: 1
+    },
+    resolution: {
+        value: new (0, $084574008ccedf86$export$c977b3e384af9ae1)(1, 1)
+    },
+    dashOffset: {
+        value: 0
+    },
+    dashScale: {
+        value: 1
+    },
+    dashSize: {
+        value: 1
+    },
+    gapSize: {
+        value: 1
+    } // todo FIX - maybe change to totalSize
 };
-$084574008ccedf86$export$955f9f2e84c43c8b["meshline_vert"] = [
-    "",
-    $084574008ccedf86$export$955f9f2e84c43c8b.logdepthbuf_pars_vertex,
-    $084574008ccedf86$export$955f9f2e84c43c8b.fog_pars_vertex,
-    "",
-    "attribute vec3 previous;",
-    "attribute vec3 next;",
-    "attribute float side;",
-    "attribute float width;",
-    "attribute float counters;",
-    "",
-    "uniform vec2 resolution;",
-    "uniform float lineWidth;",
-    "uniform vec3 color;",
-    "uniform float opacity;",
-    "uniform float sizeAttenuation;",
-    "",
-    "varying vec2 vUV;",
-    "varying vec4 vColor;",
-    "varying float vCounters;",
-    "",
-    "vec2 fix( vec4 i, float aspect ) {",
-    "",
-    "    vec2 res = i.xy / i.w;",
-    "    res.x *= aspect;",
-    "	 vCounters = counters;",
-    "    return res;",
-    "",
-    "}",
-    "",
-    "void main() {",
-    "",
-    "    float aspect = resolution.x / resolution.y;",
-    "",
-    "    vColor = vec4( color, opacity );",
-    "    vUV = uv;",
-    "",
-    "    mat4 m = projectionMatrix * modelViewMatrix;",
-    "    vec4 finalPosition = m * vec4( position, 1.0 );",
-    "    vec4 prevPos = m * vec4( previous, 1.0 );",
-    "    vec4 nextPos = m * vec4( next, 1.0 );",
-    "",
-    "    vec2 currentP = fix( finalPosition, aspect );",
-    "    vec2 prevP = fix( prevPos, aspect );",
-    "    vec2 nextP = fix( nextPos, aspect );",
-    "",
-    "    float w = lineWidth * width;",
-    "",
-    "    vec2 dir;",
-    "    if( nextP == currentP ) dir = normalize( currentP - prevP );",
-    "    else if( prevP == currentP ) dir = normalize( nextP - currentP );",
-    "    else {",
-    "        vec2 dir1 = normalize( currentP - prevP );",
-    "        vec2 dir2 = normalize( nextP - currentP );",
-    "        dir = normalize( dir1 + dir2 );",
-    "",
-    "        vec2 perp = vec2( -dir1.y, dir1.x );",
-    "        vec2 miter = vec2( -dir.y, dir.x );",
-    "        //w = clamp( w / dot( miter, perp ), 0., 4. * lineWidth * width );",
-    "",
-    "    }",
-    "",
-    "    //vec2 normal = ( cross( vec3( dir, 0. ), vec3( 0., 0., 1. ) ) ).xy;",
-    "    vec4 normal = vec4( -dir.y, dir.x, 0., 1. );",
-    "    normal.xy *= .5 * w;",
-    "    normal *= projectionMatrix;",
-    "    if( sizeAttenuation == 0. ) {",
-    "        normal.xy *= finalPosition.w;",
-    "        normal.xy /= ( vec4( resolution, 0., 1. ) * projectionMatrix ).xy;",
-    "    }",
-    "",
-    "    finalPosition.xy += normal.xy * side;",
-    "",
-    "    gl_Position = finalPosition;",
-    "",
-    $084574008ccedf86$export$955f9f2e84c43c8b.logdepthbuf_vertex,
-    $084574008ccedf86$export$955f9f2e84c43c8b.fog_vertex && "    vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );",
-    $084574008ccedf86$export$955f9f2e84c43c8b.fog_vertex,
-    "}", 
-].join("\n");
-$084574008ccedf86$export$955f9f2e84c43c8b["meshline_frag"] = [
-    "",
-    $084574008ccedf86$export$955f9f2e84c43c8b.fog_pars_fragment,
-    $084574008ccedf86$export$955f9f2e84c43c8b.logdepthbuf_pars_fragment,
-    "",
-    "uniform sampler2D map;",
-    "uniform sampler2D alphaMap;",
-    "uniform float useMap;",
-    "uniform float useAlphaMap;",
-    "uniform float useDash;",
-    "uniform float dashArray;",
-    "uniform float dashOffset;",
-    "uniform float dashRatio;",
-    "uniform float visibility;",
-    "uniform float alphaTest;",
-    "uniform vec2 repeat;",
-    "",
-    "varying vec2 vUV;",
-    "varying vec4 vColor;",
-    "varying float vCounters;",
-    "",
-    "void main() {",
-    "",
-    $084574008ccedf86$export$955f9f2e84c43c8b.logdepthbuf_fragment,
-    "",
-    "    vec4 c = vColor;",
-    "    if( useMap == 1. ) c *= texture2D( map, vUV * repeat );",
-    "    if( useAlphaMap == 1. ) c.a *= texture2D( alphaMap, vUV * repeat ).a;",
-    "    if( c.a < alphaTest ) discard;",
-    "    if( useDash == 1. ){",
-    "        c.a *= ceil(mod(vCounters + dashOffset, dashArray) - (dashArray * dashRatio));",
-    "    }",
-    "    gl_FragColor = c;",
-    "    gl_FragColor.a *= step(vCounters, visibility);",
-    "",
-    $084574008ccedf86$export$955f9f2e84c43c8b.fog_fragment,
-    "}", 
-].join("\n");
-class $29d66402462b2424$export$d8abe26b06d5f5e4 extends $084574008ccedf86$export$83c7d75d550a8b0d {
+(0, $084574008ccedf86$export$bee4a7d47f8f5014)["line"] = {
+    uniforms: (0, $084574008ccedf86$export$d8ecdf8615bfea69).merge([
+        (0, $084574008ccedf86$export$6643083551874bf5).common,
+        (0, $084574008ccedf86$export$6643083551874bf5).fog,
+        (0, $084574008ccedf86$export$6643083551874bf5).line
+    ]),
+    vertexShader: /* glsl */ `
+		#include <common>
+		#include <color_pars_vertex>
+		#include <fog_pars_vertex>
+		#include <logdepthbuf_pars_vertex>
+		#include <clipping_planes_pars_vertex>
+
+		uniform float linewidth;
+		uniform vec2 resolution;
+
+		attribute vec3 instanceStart;
+		attribute vec3 instanceEnd;
+
+		attribute vec3 instanceColorStart;
+		attribute vec3 instanceColorEnd;
+
+		#ifdef WORLD_UNITS
+
+			varying vec4 worldPos;
+			varying vec3 worldStart;
+			varying vec3 worldEnd;
+
+			#ifdef USE_DASH
+
+				varying vec2 vUv;
+
+			#endif
+
+		#else
+
+			varying vec2 vUv;
+
+		#endif
+
+		#ifdef USE_DASH
+
+			uniform float dashScale;
+			attribute float instanceDistanceStart;
+			attribute float instanceDistanceEnd;
+			varying float vLineDistance;
+
+		#endif
+
+		void trimSegment( const in vec4 start, inout vec4 end ) {
+
+			// trim end segment so it terminates between the camera plane and the near plane
+
+			// conservative estimate of the near plane
+			float a = projectionMatrix[ 2 ][ 2 ]; // 3nd entry in 3th column
+			float b = projectionMatrix[ 3 ][ 2 ]; // 3nd entry in 4th column
+			float nearEstimate = - 0.5 * b / a;
+
+			float alpha = ( nearEstimate - start.z ) / ( end.z - start.z );
+
+			end.xyz = mix( start.xyz, end.xyz, alpha );
+
+		}
+
+		void main() {
+
+			#ifdef USE_COLOR
+
+				vColor.xyz = ( position.y < 0.5 ) ? instanceColorStart : instanceColorEnd;
+
+			#endif
+
+			#ifdef USE_DASH
+
+				vLineDistance = ( position.y < 0.5 ) ? dashScale * instanceDistanceStart : dashScale * instanceDistanceEnd;
+				vUv = uv;
+
+			#endif
+
+			float aspect = resolution.x / resolution.y;
+
+			// camera space
+			vec4 start = modelViewMatrix * vec4( instanceStart, 1.0 );
+			vec4 end = modelViewMatrix * vec4( instanceEnd, 1.0 );
+
+			#ifdef WORLD_UNITS
+
+				worldStart = start.xyz;
+				worldEnd = end.xyz;
+
+			#else
+
+				vUv = uv;
+
+			#endif
+
+			// special case for perspective projection, and segments that terminate either in, or behind, the camera plane
+			// clearly the gpu firmware has a way of addressing this issue when projecting into ndc space
+			// but we need to perform ndc-space calculations in the shader, so we must address this issue directly
+			// perhaps there is a more elegant solution -- WestLangley
+
+			bool perspective = ( projectionMatrix[ 2 ][ 3 ] == - 1.0 ); // 4th entry in the 3rd column
+
+			if ( perspective ) {
+
+				if ( start.z < 0.0 && end.z >= 0.0 ) {
+
+					trimSegment( start, end );
+
+				} else if ( end.z < 0.0 && start.z >= 0.0 ) {
+
+					trimSegment( end, start );
+
+				}
+
+			}
+
+			// clip space
+			vec4 clipStart = projectionMatrix * start;
+			vec4 clipEnd = projectionMatrix * end;
+
+			// ndc space
+			vec3 ndcStart = clipStart.xyz / clipStart.w;
+			vec3 ndcEnd = clipEnd.xyz / clipEnd.w;
+
+			// direction
+			vec2 dir = ndcEnd.xy - ndcStart.xy;
+
+			// account for clip-space aspect ratio
+			dir.x *= aspect;
+			dir = normalize( dir );
+
+			#ifdef WORLD_UNITS
+
+				// get the offset direction as perpendicular to the view vector
+				vec3 worldDir = normalize( end.xyz - start.xyz );
+				vec3 offset;
+				if ( position.y < 0.5 ) {
+
+					offset = normalize( cross( start.xyz, worldDir ) );
+
+				} else {
+
+					offset = normalize( cross( end.xyz, worldDir ) );
+
+				}
+
+				// sign flip
+				if ( position.x < 0.0 ) offset *= - 1.0;
+
+				float forwardOffset = dot( worldDir, vec3( 0.0, 0.0, 1.0 ) );
+
+				// don't extend the line if we're rendering dashes because we
+				// won't be rendering the endcaps
+				#ifndef USE_DASH
+
+					// extend the line bounds to encompass  endcaps
+					start.xyz += - worldDir * linewidth * 0.5;
+					end.xyz += worldDir * linewidth * 0.5;
+
+					// shift the position of the quad so it hugs the forward edge of the line
+					offset.xy -= dir * forwardOffset;
+					offset.z += 0.5;
+
+				#endif
+
+				// endcaps
+				if ( position.y > 1.0 || position.y < 0.0 ) {
+
+					offset.xy += dir * 2.0 * forwardOffset;
+
+				}
+
+				// adjust for linewidth
+				offset *= linewidth * 0.5;
+
+				// set the world position
+				worldPos = ( position.y < 0.5 ) ? start : end;
+				worldPos.xyz += offset;
+
+				// project the worldpos
+				vec4 clip = projectionMatrix * worldPos;
+
+				// shift the depth of the projected points so the line
+				// segments overlap neatly
+				vec3 clipPose = ( position.y < 0.5 ) ? ndcStart : ndcEnd;
+				clip.z = clipPose.z * clip.w;
+
+			#else
+
+				vec2 offset = vec2( dir.y, - dir.x );
+				// undo aspect ratio adjustment
+				dir.x /= aspect;
+				offset.x /= aspect;
+
+				// sign flip
+				if ( position.x < 0.0 ) offset *= - 1.0;
+
+				// endcaps
+				if ( position.y < 0.0 ) {
+
+					offset += - dir;
+
+				} else if ( position.y > 1.0 ) {
+
+					offset += dir;
+
+				}
+
+				// adjust for linewidth
+				offset *= linewidth;
+
+				// adjust for clip-space to screen-space conversion // maybe resolution should be based on viewport ...
+				offset /= resolution.y;
+
+				// select end
+				vec4 clip = ( position.y < 0.5 ) ? clipStart : clipEnd;
+
+				// back to clip space
+				offset *= clip.w;
+
+				clip.xy += offset;
+
+			#endif
+
+			gl_Position = clip;
+
+			vec4 mvPosition = ( position.y < 0.5 ) ? start : end; // this is an approximation
+
+			#include <logdepthbuf_vertex>
+			#include <clipping_planes_vertex>
+			#include <fog_vertex>
+
+		}
+		`,
+    fragmentShader: /* glsl */ `
+		uniform vec3 diffuse;
+		uniform float opacity;
+		uniform float linewidth;
+
+		#ifdef USE_DASH
+
+			uniform float dashOffset;
+			uniform float dashSize;
+			uniform float gapSize;
+
+		#endif
+
+		varying float vLineDistance;
+
+		#ifdef WORLD_UNITS
+
+			varying vec4 worldPos;
+			varying vec3 worldStart;
+			varying vec3 worldEnd;
+
+			#ifdef USE_DASH
+
+				varying vec2 vUv;
+
+			#endif
+
+		#else
+
+			varying vec2 vUv;
+
+		#endif
+
+		#include <common>
+		#include <color_pars_fragment>
+		#include <fog_pars_fragment>
+		#include <logdepthbuf_pars_fragment>
+		#include <clipping_planes_pars_fragment>
+
+		vec2 closestLineToLine(vec3 p1, vec3 p2, vec3 p3, vec3 p4) {
+
+			float mua;
+			float mub;
+
+			vec3 p13 = p1 - p3;
+			vec3 p43 = p4 - p3;
+
+			vec3 p21 = p2 - p1;
+
+			float d1343 = dot( p13, p43 );
+			float d4321 = dot( p43, p21 );
+			float d1321 = dot( p13, p21 );
+			float d4343 = dot( p43, p43 );
+			float d2121 = dot( p21, p21 );
+
+			float denom = d2121 * d4343 - d4321 * d4321;
+
+			float numer = d1343 * d4321 - d1321 * d4343;
+
+			mua = numer / denom;
+			mua = clamp( mua, 0.0, 1.0 );
+			mub = ( d1343 + d4321 * ( mua ) ) / d4343;
+			mub = clamp( mub, 0.0, 1.0 );
+
+			return vec2( mua, mub );
+
+		}
+
+		void main() {
+
+			#include <clipping_planes_fragment>
+
+			#ifdef USE_DASH
+
+				if ( vUv.y < - 1.0 || vUv.y > 1.0 ) discard; // discard endcaps
+
+				if ( mod( vLineDistance + dashOffset, dashSize + gapSize ) > dashSize ) discard; // todo - FIX
+
+			#endif
+
+			float alpha = opacity;
+
+			#ifdef WORLD_UNITS
+
+				// Find the closest points on the view ray and the line segment
+				vec3 rayEnd = normalize( worldPos.xyz ) * 1e5;
+				vec3 lineDir = worldEnd - worldStart;
+				vec2 params = closestLineToLine( worldStart, worldEnd, vec3( 0.0, 0.0, 0.0 ), rayEnd );
+
+				vec3 p1 = worldStart + lineDir * params.x;
+				vec3 p2 = rayEnd * params.y;
+				vec3 delta = p1 - p2;
+				float len = length( delta );
+				float norm = len / linewidth;
+
+				#ifndef USE_DASH
+
+					#ifdef USE_ALPHA_TO_COVERAGE
+
+						float dnorm = fwidth( norm );
+						alpha = 1.0 - smoothstep( 0.5 - dnorm, 0.5 + dnorm, norm );
+
+					#else
+
+						if ( norm > 0.5 ) {
+
+							discard;
+
+						}
+
+					#endif
+
+				#endif
+
+			#else
+
+				#ifdef USE_ALPHA_TO_COVERAGE
+
+					// artifacts appear on some hardware if a derivative is taken within a conditional
+					float a = vUv.x;
+					float b = ( vUv.y > 0.0 ) ? vUv.y - 1.0 : vUv.y + 1.0;
+					float len2 = a * a + b * b;
+					float dlen = fwidth( len2 );
+
+					if ( abs( vUv.y ) > 1.0 ) {
+
+						alpha = 1.0 - smoothstep( 1.0 - dlen, 1.0 + dlen, len2 );
+
+					}
+
+				#else
+
+					if ( abs( vUv.y ) > 1.0 ) {
+
+						float a = vUv.x;
+						float b = ( vUv.y > 0.0 ) ? vUv.y - 1.0 : vUv.y + 1.0;
+						float len2 = a * a + b * b;
+
+						if ( len2 > 1.0 ) discard;
+
+					}
+
+				#endif
+
+			#endif
+
+			vec4 diffuseColor = vec4( diffuse, alpha );
+
+			#include <logdepthbuf_fragment>
+			#include <color_fragment>
+
+			gl_FragColor = vec4( diffuseColor.rgb, alpha );
+
+			#include <tonemapping_fragment>
+			#include <encodings_fragment>
+			#include <fog_fragment>
+			#include <premultiplied_alpha_fragment>
+
+		}
+		`
+};
+class $2841f46819dbdf7d$export$d19cd1378966f3d3 extends (0, $084574008ccedf86$export$83c7d75d550a8b0d) {
     constructor(parameters){
         super({
-            uniforms: Object.assign({}, $084574008ccedf86$export$6643083551874bf5.fog, {
-                lineWidth: {
-                    value: 1
-                },
-                map: {
-                    value: null
-                },
-                useMap: {
-                    value: 0
-                },
-                alphaMap: {
-                    value: null
-                },
-                useAlphaMap: {
-                    value: 0
-                },
-                color: {
-                    value: new $084574008ccedf86$export$892596cec99bc70e(0xffffff)
-                },
-                opacity: {
-                    value: 1
-                },
-                resolution: {
-                    value: new $084574008ccedf86$export$c977b3e384af9ae1(1, 1)
-                },
-                sizeAttenuation: {
-                    value: 1
-                },
-                dashArray: {
-                    value: 0
-                },
-                dashOffset: {
-                    value: 0
-                },
-                dashRatio: {
-                    value: 0.5
-                },
-                useDash: {
-                    value: 0
-                },
-                visibility: {
-                    value: 1
-                },
-                alphaTest: {
-                    value: 0
-                },
-                repeat: {
-                    value: new $084574008ccedf86$export$c977b3e384af9ae1(1, 1)
-                }
-            }),
-            vertexShader: $084574008ccedf86$export$955f9f2e84c43c8b.meshline_vert,
-            fragmentShader: $084574008ccedf86$export$955f9f2e84c43c8b.meshline_frag
+            type: "LineMaterial",
+            uniforms: (0, $084574008ccedf86$export$d8ecdf8615bfea69).clone((0, $084574008ccedf86$export$bee4a7d47f8f5014)["line"].uniforms),
+            vertexShader: (0, $084574008ccedf86$export$bee4a7d47f8f5014)["line"].vertexShader,
+            fragmentShader: (0, $084574008ccedf86$export$bee4a7d47f8f5014)["line"].fragmentShader,
+            clipping: true // required for clipping support
         });
-        this.isMeshLineMaterial = true;
-        this.type = "MeshLineMaterial";
+        this.isLineMaterial = true;
         Object.defineProperties(this, {
-            lineWidth: {
-                enumerable: true,
-                get: function() {
-                    return this.uniforms.lineWidth.value;
-                },
-                set: function(value) {
-                    this.uniforms.lineWidth.value = value;
-                }
-            },
-            map: {
-                enumerable: true,
-                get: function() {
-                    return this.uniforms.map.value;
-                },
-                set: function(value) {
-                    this.uniforms.map.value = value;
-                }
-            },
-            useMap: {
-                enumerable: true,
-                get: function() {
-                    return this.uniforms.useMap.value;
-                },
-                set: function(value) {
-                    this.uniforms.useMap.value = value;
-                }
-            },
-            alphaMap: {
-                enumerable: true,
-                get: function() {
-                    return this.uniforms.alphaMap.value;
-                },
-                set: function(value) {
-                    this.uniforms.alphaMap.value = value;
-                }
-            },
-            useAlphaMap: {
-                enumerable: true,
-                get: function() {
-                    return this.uniforms.useAlphaMap.value;
-                },
-                set: function(value) {
-                    this.uniforms.useAlphaMap.value = value;
-                }
-            },
             color: {
                 enumerable: true,
                 get: function() {
-                    return this.uniforms.color.value;
+                    return this.uniforms.diffuse.value;
                 },
                 set: function(value) {
-                    this.uniforms.color.value = value;
+                    this.uniforms.diffuse.value = value;
+                }
+            },
+            worldUnits: {
+                enumerable: true,
+                get: function() {
+                    return "WORLD_UNITS" in this.defines;
+                },
+                set: function(value) {
+                    if (value === true) this.defines.WORLD_UNITS = "";
+                    else delete this.defines.WORLD_UNITS;
+                }
+            },
+            linewidth: {
+                enumerable: true,
+                get: function() {
+                    return this.uniforms.linewidth.value;
+                },
+                set: function(value) {
+                    this.uniforms.linewidth.value = value;
+                }
+            },
+            dashed: {
+                enumerable: true,
+                get: function() {
+                    return Boolean("USE_DASH" in this.defines);
+                },
+                set (value) {
+                    if (Boolean(value) !== Boolean("USE_DASH" in this.defines)) this.needsUpdate = true;
+                    if (value === true) this.defines.USE_DASH = "";
+                    else delete this.defines.USE_DASH;
+                }
+            },
+            dashScale: {
+                enumerable: true,
+                get: function() {
+                    return this.uniforms.dashScale.value;
+                },
+                set: function(value) {
+                    this.uniforms.dashScale.value = value;
+                }
+            },
+            dashSize: {
+                enumerable: true,
+                get: function() {
+                    return this.uniforms.dashSize.value;
+                },
+                set: function(value) {
+                    this.uniforms.dashSize.value = value;
+                }
+            },
+            dashOffset: {
+                enumerable: true,
+                get: function() {
+                    return this.uniforms.dashOffset.value;
+                },
+                set: function(value) {
+                    this.uniforms.dashOffset.value = value;
+                }
+            },
+            gapSize: {
+                enumerable: true,
+                get: function() {
+                    return this.uniforms.gapSize.value;
+                },
+                set: function(value) {
+                    this.uniforms.gapSize.value = value;
                 }
             },
             opacity: {
@@ -30144,106 +30296,293 @@ class $29d66402462b2424$export$d8abe26b06d5f5e4 extends $084574008ccedf86$export
                     this.uniforms.resolution.value.copy(value);
                 }
             },
-            sizeAttenuation: {
+            alphaToCoverage: {
                 enumerable: true,
                 get: function() {
-                    return this.uniforms.sizeAttenuation.value;
+                    return Boolean("USE_ALPHA_TO_COVERAGE" in this.defines);
                 },
                 set: function(value) {
-                    this.uniforms.sizeAttenuation.value = value;
-                }
-            },
-            dashArray: {
-                enumerable: true,
-                get: function() {
-                    return this.uniforms.dashArray.value;
-                },
-                set: function(value) {
-                    this.uniforms.dashArray.value = value;
-                    this.useDash = value !== 0 ? 1 : 0;
-                }
-            },
-            dashOffset: {
-                enumerable: true,
-                get: function() {
-                    return this.uniforms.dashOffset.value;
-                },
-                set: function(value) {
-                    this.uniforms.dashOffset.value = value;
-                }
-            },
-            dashRatio: {
-                enumerable: true,
-                get: function() {
-                    return this.uniforms.dashRatio.value;
-                },
-                set: function(value) {
-                    this.uniforms.dashRatio.value = value;
-                }
-            },
-            useDash: {
-                enumerable: true,
-                get: function() {
-                    return this.uniforms.useDash.value;
-                },
-                set: function(value) {
-                    this.uniforms.useDash.value = value;
-                }
-            },
-            visibility: {
-                enumerable: true,
-                get: function() {
-                    return this.uniforms.visibility.value;
-                },
-                set: function(value) {
-                    this.uniforms.visibility.value = value;
-                }
-            },
-            alphaTest: {
-                enumerable: true,
-                get: function() {
-                    return this.uniforms.alphaTest.value;
-                },
-                set: function(value) {
-                    this.uniforms.alphaTest.value = value;
-                }
-            },
-            repeat: {
-                enumerable: true,
-                get: function() {
-                    return this.uniforms.repeat.value;
-                },
-                set: function(value) {
-                    this.uniforms.repeat.value.copy(value);
+                    if (Boolean(value) !== Boolean("USE_ALPHA_TO_COVERAGE" in this.defines)) this.needsUpdate = true;
+                    if (value === true) {
+                        this.defines.USE_ALPHA_TO_COVERAGE = "";
+                        this.extensions.derivatives = true;
+                    } else {
+                        delete this.defines.USE_ALPHA_TO_COVERAGE;
+                        this.extensions.derivatives = false;
+                    }
                 }
             }
         });
         this.setValues(parameters);
     }
 }
-$29d66402462b2424$export$d8abe26b06d5f5e4.prototype.copy = function(source) {
-    $084574008ccedf86$export$83c7d75d550a8b0d.prototype.copy.call(this, source);
-    this.lineWidth = source.lineWidth;
-    this.map = source.map;
-    this.useMap = source.useMap;
-    this.alphaMap = source.alphaMap;
-    this.useAlphaMap = source.useAlphaMap;
-    this.color.copy(source.color);
-    this.opacity = source.opacity;
-    this.resolution.copy(source.resolution);
-    this.sizeAttenuation = source.sizeAttenuation;
-    this.dashArray.copy(source.dashArray);
-    this.dashOffset.copy(source.dashOffset);
-    this.dashRatio.copy(source.dashRatio);
-    this.useDash = source.useDash;
-    this.visibility = source.visibility;
-    this.alphaTest = source.alphaTest;
-    this.repeat.copy(source.repeat);
-    return this;
-};
 
 
-const $3312a6d70b83a7aa$export$84657c60382b0f83 = `
+const $07daaae4e109b37c$var$_start = new (0, $084574008ccedf86$export$64b5c384219d3699)();
+const $07daaae4e109b37c$var$_end = new (0, $084574008ccedf86$export$64b5c384219d3699)();
+const $07daaae4e109b37c$var$_start4 = new (0, $084574008ccedf86$export$fa7daccca11cdbe3)();
+const $07daaae4e109b37c$var$_end4 = new (0, $084574008ccedf86$export$fa7daccca11cdbe3)();
+const $07daaae4e109b37c$var$_ssOrigin = new (0, $084574008ccedf86$export$fa7daccca11cdbe3)();
+const $07daaae4e109b37c$var$_ssOrigin3 = new (0, $084574008ccedf86$export$64b5c384219d3699)();
+const $07daaae4e109b37c$var$_mvMatrix = new (0, $084574008ccedf86$export$2ae72fc923e5eb5)();
+const $07daaae4e109b37c$var$_line = new (0, $084574008ccedf86$export$e0ba6359f1954fd3)();
+const $07daaae4e109b37c$var$_closestPoint = new (0, $084574008ccedf86$export$64b5c384219d3699)();
+const $07daaae4e109b37c$var$_box = new (0, $084574008ccedf86$export$6f7d5a9418ab2aa3)();
+const $07daaae4e109b37c$var$_sphere = new (0, $084574008ccedf86$export$805e8b72413ccaba)();
+const $07daaae4e109b37c$var$_clipToWorldVector = new (0, $084574008ccedf86$export$fa7daccca11cdbe3)();
+let $07daaae4e109b37c$var$_ray, $07daaae4e109b37c$var$_instanceStart, $07daaae4e109b37c$var$_instanceEnd, $07daaae4e109b37c$var$_lineWidth;
+// Returns the margin required to expand by in world space given the distance from the camera,
+// line width, resolution, and camera projection
+function $07daaae4e109b37c$var$getWorldSpaceHalfWidth(camera, distance, resolution) {
+    // transform into clip space, adjust the x and y values by the pixel width offset, then
+    // transform back into world space to get world offset. Note clip space is [-1, 1] so full
+    // width does not need to be halved.
+    $07daaae4e109b37c$var$_clipToWorldVector.set(0, 0, -distance, 1.0).applyMatrix4(camera.projectionMatrix);
+    $07daaae4e109b37c$var$_clipToWorldVector.multiplyScalar(1.0 / $07daaae4e109b37c$var$_clipToWorldVector.w);
+    $07daaae4e109b37c$var$_clipToWorldVector.x = $07daaae4e109b37c$var$_lineWidth / resolution.width;
+    $07daaae4e109b37c$var$_clipToWorldVector.y = $07daaae4e109b37c$var$_lineWidth / resolution.height;
+    $07daaae4e109b37c$var$_clipToWorldVector.applyMatrix4(camera.projectionMatrixInverse);
+    $07daaae4e109b37c$var$_clipToWorldVector.multiplyScalar(1.0 / $07daaae4e109b37c$var$_clipToWorldVector.w);
+    return Math.abs(Math.max($07daaae4e109b37c$var$_clipToWorldVector.x, $07daaae4e109b37c$var$_clipToWorldVector.y));
+}
+function $07daaae4e109b37c$var$raycastWorldUnits(lineSegments, intersects) {
+    for(let i = 0, l = $07daaae4e109b37c$var$_instanceStart.count; i < l; i++){
+        $07daaae4e109b37c$var$_line.start.fromBufferAttribute($07daaae4e109b37c$var$_instanceStart, i);
+        $07daaae4e109b37c$var$_line.end.fromBufferAttribute($07daaae4e109b37c$var$_instanceEnd, i);
+        const pointOnLine = new (0, $084574008ccedf86$export$64b5c384219d3699)();
+        const point = new (0, $084574008ccedf86$export$64b5c384219d3699)();
+        $07daaae4e109b37c$var$_ray.distanceSqToSegment($07daaae4e109b37c$var$_line.start, $07daaae4e109b37c$var$_line.end, point, pointOnLine);
+        const isInside = point.distanceTo(pointOnLine) < $07daaae4e109b37c$var$_lineWidth * 0.5;
+        if (isInside) intersects.push({
+            point: point,
+            pointOnLine: pointOnLine,
+            distance: $07daaae4e109b37c$var$_ray.origin.distanceTo(point),
+            object: lineSegments,
+            face: null,
+            faceIndex: i,
+            uv: null,
+            uv2: null
+        });
+    }
+}
+function $07daaae4e109b37c$var$raycastScreenSpace(lineSegments, camera, intersects) {
+    const projectionMatrix = camera.projectionMatrix;
+    const material = lineSegments.material;
+    const resolution = material.resolution;
+    const matrixWorld = lineSegments.matrixWorld;
+    const geometry = lineSegments.geometry;
+    const instanceStart = geometry.attributes.instanceStart;
+    const instanceEnd = geometry.attributes.instanceEnd;
+    const near = -camera.near;
+    //
+    // pick a point 1 unit out along the ray to avoid the ray origin
+    // sitting at the camera origin which will cause "w" to be 0 when
+    // applying the projection matrix.
+    $07daaae4e109b37c$var$_ray.at(1, $07daaae4e109b37c$var$_ssOrigin);
+    // ndc space [ - 1.0, 1.0 ]
+    $07daaae4e109b37c$var$_ssOrigin.w = 1;
+    $07daaae4e109b37c$var$_ssOrigin.applyMatrix4(camera.matrixWorldInverse);
+    $07daaae4e109b37c$var$_ssOrigin.applyMatrix4(projectionMatrix);
+    $07daaae4e109b37c$var$_ssOrigin.multiplyScalar(1 / $07daaae4e109b37c$var$_ssOrigin.w);
+    // screen space
+    $07daaae4e109b37c$var$_ssOrigin.x *= resolution.x / 2;
+    $07daaae4e109b37c$var$_ssOrigin.y *= resolution.y / 2;
+    $07daaae4e109b37c$var$_ssOrigin.z = 0;
+    $07daaae4e109b37c$var$_ssOrigin3.copy($07daaae4e109b37c$var$_ssOrigin);
+    $07daaae4e109b37c$var$_mvMatrix.multiplyMatrices(camera.matrixWorldInverse, matrixWorld);
+    for(let i = 0, l = instanceStart.count; i < l; i++){
+        $07daaae4e109b37c$var$_start4.fromBufferAttribute(instanceStart, i);
+        $07daaae4e109b37c$var$_end4.fromBufferAttribute(instanceEnd, i);
+        $07daaae4e109b37c$var$_start4.w = 1;
+        $07daaae4e109b37c$var$_end4.w = 1;
+        // camera space
+        $07daaae4e109b37c$var$_start4.applyMatrix4($07daaae4e109b37c$var$_mvMatrix);
+        $07daaae4e109b37c$var$_end4.applyMatrix4($07daaae4e109b37c$var$_mvMatrix);
+        // skip the segment if it's entirely behind the camera
+        const isBehindCameraNear = $07daaae4e109b37c$var$_start4.z > near && $07daaae4e109b37c$var$_end4.z > near;
+        if (isBehindCameraNear) continue;
+        // trim the segment if it extends behind camera near
+        if ($07daaae4e109b37c$var$_start4.z > near) {
+            const deltaDist = $07daaae4e109b37c$var$_start4.z - $07daaae4e109b37c$var$_end4.z;
+            const t = ($07daaae4e109b37c$var$_start4.z - near) / deltaDist;
+            $07daaae4e109b37c$var$_start4.lerp($07daaae4e109b37c$var$_end4, t);
+        } else if ($07daaae4e109b37c$var$_end4.z > near) {
+            const deltaDist = $07daaae4e109b37c$var$_end4.z - $07daaae4e109b37c$var$_start4.z;
+            const t = ($07daaae4e109b37c$var$_end4.z - near) / deltaDist;
+            $07daaae4e109b37c$var$_end4.lerp($07daaae4e109b37c$var$_start4, t);
+        }
+        // clip space
+        $07daaae4e109b37c$var$_start4.applyMatrix4(projectionMatrix);
+        $07daaae4e109b37c$var$_end4.applyMatrix4(projectionMatrix);
+        // ndc space [ - 1.0, 1.0 ]
+        $07daaae4e109b37c$var$_start4.multiplyScalar(1 / $07daaae4e109b37c$var$_start4.w);
+        $07daaae4e109b37c$var$_end4.multiplyScalar(1 / $07daaae4e109b37c$var$_end4.w);
+        // screen space
+        $07daaae4e109b37c$var$_start4.x *= resolution.x / 2;
+        $07daaae4e109b37c$var$_start4.y *= resolution.y / 2;
+        $07daaae4e109b37c$var$_end4.x *= resolution.x / 2;
+        $07daaae4e109b37c$var$_end4.y *= resolution.y / 2;
+        // create 2d segment
+        $07daaae4e109b37c$var$_line.start.copy($07daaae4e109b37c$var$_start4);
+        $07daaae4e109b37c$var$_line.start.z = 0;
+        $07daaae4e109b37c$var$_line.end.copy($07daaae4e109b37c$var$_end4);
+        $07daaae4e109b37c$var$_line.end.z = 0;
+        // get closest point on ray to segment
+        const param = $07daaae4e109b37c$var$_line.closestPointToPointParameter($07daaae4e109b37c$var$_ssOrigin3, true);
+        $07daaae4e109b37c$var$_line.at(param, $07daaae4e109b37c$var$_closestPoint);
+        // check if the intersection point is within clip space
+        const zPos = (0, $084574008ccedf86$export$6a7ef315a0d1ef07).lerp($07daaae4e109b37c$var$_start4.z, $07daaae4e109b37c$var$_end4.z, param);
+        const isInClipSpace = zPos >= -1 && zPos <= 1;
+        const isInside = $07daaae4e109b37c$var$_ssOrigin3.distanceTo($07daaae4e109b37c$var$_closestPoint) < $07daaae4e109b37c$var$_lineWidth * 0.5;
+        if (isInClipSpace && isInside) {
+            $07daaae4e109b37c$var$_line.start.fromBufferAttribute(instanceStart, i);
+            $07daaae4e109b37c$var$_line.end.fromBufferAttribute(instanceEnd, i);
+            $07daaae4e109b37c$var$_line.start.applyMatrix4(matrixWorld);
+            $07daaae4e109b37c$var$_line.end.applyMatrix4(matrixWorld);
+            const pointOnLine = new (0, $084574008ccedf86$export$64b5c384219d3699)();
+            const point = new (0, $084574008ccedf86$export$64b5c384219d3699)();
+            $07daaae4e109b37c$var$_ray.distanceSqToSegment($07daaae4e109b37c$var$_line.start, $07daaae4e109b37c$var$_line.end, point, pointOnLine);
+            intersects.push({
+                point: point,
+                pointOnLine: pointOnLine,
+                distance: $07daaae4e109b37c$var$_ray.origin.distanceTo(point),
+                object: lineSegments,
+                face: null,
+                faceIndex: i,
+                uv: null,
+                uv2: null
+            });
+        }
+    }
+}
+class $07daaae4e109b37c$export$6eda8f258bdba8c5 extends (0, $084574008ccedf86$export$e176487c05830cc5) {
+    constructor(geometry = new (0, $fd127f46fc1ba387$export$5b1256aa5274bf8)(), material = new (0, $2841f46819dbdf7d$export$d19cd1378966f3d3)({
+        color: Math.random() * 0xffffff
+    })){
+        super(geometry, material);
+        this.isLineSegments2 = true;
+        this.type = "LineSegments2";
+    }
+    // for backwards-compatibility, but could be a method of LineSegmentsGeometry...
+    computeLineDistances() {
+        const geometry = this.geometry;
+        const instanceStart = geometry.attributes.instanceStart;
+        const instanceEnd = geometry.attributes.instanceEnd;
+        const lineDistances = new Float32Array(2 * instanceStart.count);
+        for(let i = 0, j = 0, l = instanceStart.count; i < l; i++, j += 2){
+            $07daaae4e109b37c$var$_start.fromBufferAttribute(instanceStart, i);
+            $07daaae4e109b37c$var$_end.fromBufferAttribute(instanceEnd, i);
+            lineDistances[j] = j === 0 ? 0 : lineDistances[j - 1];
+            lineDistances[j + 1] = lineDistances[j] + $07daaae4e109b37c$var$_start.distanceTo($07daaae4e109b37c$var$_end);
+        }
+        const instanceDistanceBuffer = new (0, $084574008ccedf86$export$25ec0e1af1389358)(lineDistances, 2, 1); // d0, d1
+        geometry.setAttribute("instanceDistanceStart", new (0, $084574008ccedf86$export$920b6d07334599c7)(instanceDistanceBuffer, 1, 0)); // d0
+        geometry.setAttribute("instanceDistanceEnd", new (0, $084574008ccedf86$export$920b6d07334599c7)(instanceDistanceBuffer, 1, 1)); // d1
+        return this;
+    }
+    raycast(raycaster, intersects) {
+        const worldUnits = this.material.worldUnits;
+        const camera = raycaster.camera;
+        if (camera === null && !worldUnits) console.error('LineSegments2: "Raycaster.camera" needs to be set in order to raycast against LineSegments2 while worldUnits is set to false.');
+        const threshold = raycaster.params.Line2 !== undefined ? raycaster.params.Line2.threshold || 0 : 0;
+        $07daaae4e109b37c$var$_ray = raycaster.ray;
+        const matrixWorld = this.matrixWorld;
+        const geometry = this.geometry;
+        const material = this.material;
+        $07daaae4e109b37c$var$_lineWidth = material.linewidth + threshold;
+        $07daaae4e109b37c$var$_instanceStart = geometry.attributes.instanceStart;
+        $07daaae4e109b37c$var$_instanceEnd = geometry.attributes.instanceEnd;
+        // check if we intersect the sphere bounds
+        if (geometry.boundingSphere === null) geometry.computeBoundingSphere();
+        $07daaae4e109b37c$var$_sphere.copy(geometry.boundingSphere).applyMatrix4(matrixWorld);
+        // increase the sphere bounds by the worst case line screen space width
+        let sphereMargin;
+        if (worldUnits) sphereMargin = $07daaae4e109b37c$var$_lineWidth * 0.5;
+        else {
+            const distanceToSphere = Math.max(camera.near, $07daaae4e109b37c$var$_sphere.distanceToPoint($07daaae4e109b37c$var$_ray.origin));
+            sphereMargin = $07daaae4e109b37c$var$getWorldSpaceHalfWidth(camera, distanceToSphere, material.resolution);
+        }
+        $07daaae4e109b37c$var$_sphere.radius += sphereMargin;
+        if ($07daaae4e109b37c$var$_ray.intersectsSphere($07daaae4e109b37c$var$_sphere) === false) return;
+        // check if we intersect the box bounds
+        if (geometry.boundingBox === null) geometry.computeBoundingBox();
+        $07daaae4e109b37c$var$_box.copy(geometry.boundingBox).applyMatrix4(matrixWorld);
+        // increase the box bounds by the worst case line width
+        let boxMargin;
+        if (worldUnits) boxMargin = $07daaae4e109b37c$var$_lineWidth * 0.5;
+        else {
+            const distanceToBox = Math.max(camera.near, $07daaae4e109b37c$var$_box.distanceToPoint($07daaae4e109b37c$var$_ray.origin));
+            boxMargin = $07daaae4e109b37c$var$getWorldSpaceHalfWidth(camera, distanceToBox, material.resolution);
+        }
+        $07daaae4e109b37c$var$_box.expandByScalar(boxMargin);
+        if ($07daaae4e109b37c$var$_ray.intersectsBox($07daaae4e109b37c$var$_box) === false) return;
+        if (worldUnits) $07daaae4e109b37c$var$raycastWorldUnits(this, intersects);
+        else $07daaae4e109b37c$var$raycastScreenSpace(this, camera, intersects);
+    }
+}
+
+
+
+class $b5593040d67e37e6$export$dcc17b59d0a74bb5 extends (0, $fd127f46fc1ba387$export$5b1256aa5274bf8) {
+    constructor(){
+        super();
+        this.isLineGeometry = true;
+        this.type = "LineGeometry";
+    }
+    setPositions(array) {
+        // converts [ x1, y1, z1,  x2, y2, z2, ... ] to pairs format
+        const length = array.length - 3;
+        const points = new Float32Array(2 * length);
+        for(let i = 0; i < length; i += 3){
+            points[2 * i] = array[i];
+            points[2 * i + 1] = array[i + 1];
+            points[2 * i + 2] = array[i + 2];
+            points[2 * i + 3] = array[i + 3];
+            points[2 * i + 4] = array[i + 4];
+            points[2 * i + 5] = array[i + 5];
+        }
+        super.setPositions(points);
+        return this;
+    }
+    setColors(array) {
+        // converts [ r1, g1, b1,  r2, g2, b2, ... ] to pairs format
+        const length = array.length - 3;
+        const colors = new Float32Array(2 * length);
+        for(let i = 0; i < length; i += 3){
+            colors[2 * i] = array[i];
+            colors[2 * i + 1] = array[i + 1];
+            colors[2 * i + 2] = array[i + 2];
+            colors[2 * i + 3] = array[i + 3];
+            colors[2 * i + 4] = array[i + 4];
+            colors[2 * i + 5] = array[i + 5];
+        }
+        super.setColors(colors);
+        return this;
+    }
+    fromLine(line) {
+        const geometry = line.geometry;
+        this.setPositions(geometry.attributes.position.array); // assumes non-indexed
+        // set colors, maybe
+        return this;
+    }
+}
+
+
+
+class $bedd24a76a719d5b$export$4e6fcde58d84e955 extends (0, $07daaae4e109b37c$export$6eda8f258bdba8c5) {
+    constructor(geometry = new (0, $b5593040d67e37e6$export$dcc17b59d0a74bb5)(), material = new (0, $2841f46819dbdf7d$export$d19cd1378966f3d3)({
+        color: Math.random() * 0xffffff
+    })){
+        super(geometry, material);
+        this.isLine2 = true;
+        this.type = "Line2";
+    }
+}
+
+
+
+
+const $fba578f3a3f8835f$export$84657c60382b0f83 = `
 attribute float size;
 attribute vec3 customColor;
 
@@ -30258,7 +30597,7 @@ void main() {
 `;
 
 
-const $9087a2267710148d$export$4391ef72fa03c19 = `
+const $b6abeaa394254db5$export$4391ef72fa03c19 = `
 uniform vec3 color;
 uniform sampler2D pointTexture;
 uniform float alphaTest;
@@ -30274,9 +30613,9 @@ void main() {
 
 
 
-var $6QeEl = parcelRequire("6QeEl");
+var $03PHD = parcelRequire("03PHD");
 // Draw the graph out as a bunch of vertices
-function $fd457d300ac15182$export$3722d609e92d59e4(Graph, bounds) {
+function $7dd8dd744a26bef5$var$DrawTHREEGraphVertices(Graph, bounds) {
     const positionAttribute = [];
     const sizes = [];
     const colors = [];
@@ -30317,46 +30656,54 @@ function $fd457d300ac15182$export$3722d609e92d59e4(Graph, bounds) {
                 value: 0.9
             }
         },
-        vertexShader: (0, $3312a6d70b83a7aa$export$84657c60382b0f83),
-        fragmentShader: (0, $9087a2267710148d$export$4391ef72fa03c19)
+        vertexShader: (0, $fba578f3a3f8835f$export$84657c60382b0f83),
+        fragmentShader: (0, $b6abeaa394254db5$export$4391ef72fa03c19)
     });
     const vertices = new $084574008ccedf86$export$1c787534cb11aa3e(geometry, PointMaterial);
     return vertices;
 }
 // then make a thing which draws out all the edges (THICK)
-function $fd457d300ac15182$export$a96a15c14ab3f9b1(G, bounds) {
-    return $fd457d300ac15182$export$71197654c552d4f7(G.edges, bounds);
+function $7dd8dd744a26bef5$var$DrawTHREEGraphEdgesThick(G, bounds) {
+    return $7dd8dd744a26bef5$var$DrawThickEdgesFromEdgeMap(G.edges, bounds);
 }
 // draw a thing to draw out all the edges from the edge map stuff
-function $fd457d300ac15182$export$71197654c552d4f7(emap, bounds) {
+function $7dd8dd744a26bef5$var$DrawThickEdgesFromEdgeMap(emap, bounds) {
     // this is the line thing
-    const mat = new (0, $29d66402462b2424$export$d8abe26b06d5f5e4)({
-        transparent: true,
-        lineWidth: 5,
-        opacity: 0.8,
-        color: new $084574008ccedf86$export$892596cec99bc70e(0xcaf0f8)
+    const mat = new (0, $2841f46819dbdf7d$export$d19cd1378966f3d3)({
+        color: 0xffffff,
+        linewidth: 0.02,
+        vertexColors: true,
+        //resolution:  // to be set by renderer, eventually
+        dashed: false,
+        alphaToCoverage: true
     });
     const meshes = new $084574008ccedf86$export$eb2fcfdbd7ba97d4();
     for (const edge of emap.values()){
         const lval = edge.data.ldata;
+        const color = new $084574008ccedf86$export$892596cec99bc70e();
+        color.setHSL(1.0, 1.0, 1.0);
         const pnts = [];
+        const cols = [];
         lval.points.forEach((pnt)=>{
-            pnts.push(new $084574008ccedf86$export$64b5c384219d3699(pnt.x * bounds - bounds / 2, pnt.y * bounds - bounds / 2, pnt.z * bounds - bounds / 2));
+            pnts.push(pnt.x * bounds - bounds / 2, pnt.y * bounds - bounds / 2, pnt.z * bounds - bounds / 2);
+            cols.push(color.r, color.g, color.b);
         });
-        const geo = new $084574008ccedf86$export$b7be63a67df8959().setFromPoints(pnts);
-        const line = new (0, $29d66402462b2424$export$a6bbb4bb79a67a67)();
-        line.setGeometry(geo);
-        const lineMesh = new $084574008ccedf86$export$e176487c05830cc5(line, mat);
-        meshes.add(lineMesh);
+        const geo = new (0, $b5593040d67e37e6$export$dcc17b59d0a74bb5)();
+        geo.setPositions(pnts);
+        geo.setColors(cols);
+        const line = new (0, $bedd24a76a719d5b$export$4e6fcde58d84e955)(geo, mat);
+        line.computeLineDistances();
+        line.scale.set(1, 1, 1);
+        meshes.add(line);
     }
     return meshes;
 }
 // make a thing that draws out all the lines (Thin)
-function $fd457d300ac15182$export$bcbc82e0d2fddfa9(G, bounds) {
-    return $fd457d300ac15182$export$bbd7eb6d0a9b1b8a(G.edges, bounds);
+function $7dd8dd744a26bef5$var$DrawTHREEGraphEdgesThin(G, bounds) {
+    return $7dd8dd744a26bef5$var$DrawThinEdgesFromEdgeMap(G.edges, bounds);
 }
 // function to draw edges from edge map
-function $fd457d300ac15182$export$bbd7eb6d0a9b1b8a(emap, bounds) {
+function $7dd8dd744a26bef5$var$DrawThinEdgesFromEdgeMap(emap, bounds) {
     const material = new $084574008ccedf86$export$fbaaa33907730a0c({
         color: 0x90e0ef
     });
@@ -30376,7 +30723,7 @@ function $fd457d300ac15182$export$bbd7eb6d0a9b1b8a(emap, bounds) {
     return lines;
 }
 // draw the cube box graph here
-function $fd457d300ac15182$export$545f74f6baebd19e(vertexMap, bounds) {
+function $7dd8dd744a26bef5$var$AddBoxBasedImaging(vertexMap, bounds) {
     // returns a group
     const group = new $084574008ccedf86$export$eb2fcfdbd7ba97d4();
     const material = new $084574008ccedf86$export$55cbcc9b622fe1f5({
@@ -30393,12 +30740,12 @@ function $fd457d300ac15182$export$545f74f6baebd19e(vertexMap, bounds) {
     return group;
 }
 // Draw BoxBased imaging from a graph
-function $fd457d300ac15182$export$ccbc3593ea66381b(graph, bounds) {
-    const Bgroup = $fd457d300ac15182$export$545f74f6baebd19e(graph.nodes, bounds);
+function $7dd8dd744a26bef5$var$DrawTHREEBoxBasedVertices(graph, bounds) {
+    const Bgroup = $7dd8dd744a26bef5$var$AddBoxBasedImaging(graph.nodes, bounds);
     return Bgroup;
 }
 // draw cylinders where required
-function $fd457d300ac15182$export$175a7c7b986803c2(vertexMap, divisonLength) {
+function $7dd8dd744a26bef5$var$AddCylinderBasedImaging(vertexMap, divisonLength) {
     // returns a group
     const group = new $084574008ccedf86$export$eb2fcfdbd7ba97d4();
     const material = new $084574008ccedf86$export$55cbcc9b622fe1f5({
@@ -30419,7 +30766,7 @@ function $fd457d300ac15182$export$175a7c7b986803c2(vertexMap, divisonLength) {
     return group;
 }
 // draw the sparse graph as groups
-async function $fd457d300ac15182$export$4375efd5a56da8c8(Graph, modularityList) {
+async function $7dd8dd744a26bef5$var$AddInModularityBasedPointGroups(Graph, modularityList) {
     // returns an array of groups
     const groups = new Map();
     const otherNodes = [];
@@ -30441,18 +30788,18 @@ async function $fd457d300ac15182$export$4375efd5a56da8c8(Graph, modularityList) 
     for (const modularityGroup of groups.keys()){
         const subgraphGroup = groups.get(modularityGroup);
         // returns an array
-        const subgraph = await $6QeEl.SelectSubgraph(Graph, subgraphGroup);
+        const subgraph = await (0, $03PHD.default).SelectSubgraph(Graph, subgraphGroup);
         // then make the vertex thing
-        const meshRep = $fd457d300ac15182$export$3722d609e92d59e4(subgraph, 1);
+        const meshRep = $7dd8dd744a26bef5$var$DrawTHREEGraphVertices(subgraph, 1);
         meshGraphVertices.set(modularityGroup, meshRep);
         // make the edges
-        const edges = $fd457d300ac15182$export$df50b176b062f988(subgraph, 0.03);
+        const edges = $7dd8dd744a26bef5$var$DrawSimplifiedEdges(subgraph, 0.03);
         meshGraphEdges.set(modularityGroup, edges);
     }
     // now for all the vertices in the "other" Nodes map add in the
     // rest of the stuff for us to play around with
-    const OtherNodes = await $6QeEl.SelectSubgraph(Graph, otherNodes);
-    const LeafVertices = $fd457d300ac15182$export$3722d609e92d59e4(OtherNodes, 1);
+    const OtherNodes = await (0, $03PHD.default).SelectSubgraph(Graph, otherNodes);
+    const LeafVertices = $7dd8dd744a26bef5$var$DrawTHREEGraphVertices(OtherNodes, 1);
     const ROBJ = {
         vertices: meshGraphVertices,
         edges: meshGraphEdges,
@@ -30460,7 +30807,7 @@ async function $fd457d300ac15182$export$4375efd5a56da8c8(Graph, modularityList) 
     };
     return ROBJ;
 }
-function $fd457d300ac15182$export$df50b176b062f988(G, amount) {
+function $7dd8dd744a26bef5$var$DrawSimplifiedEdges(G, amount) {
     const lineGroup = new $084574008ccedf86$export$eb2fcfdbd7ba97d4();
     const material = new $084574008ccedf86$export$fbaaa33907730a0c({
         color: 0x90e0ef
@@ -30477,7 +30824,7 @@ function $fd457d300ac15182$export$df50b176b062f988(G, amount) {
     }
     return lineGroup;
 }
-function $fd457d300ac15182$export$ddabfdc3a667d816(vertices, indexArray, color) {
+function $7dd8dd744a26bef5$var$ChangeTheVertexColours(vertices, indexArray, color) {
     let Attrib = vertices.geometry.attributes;
     let k = 0;
     indexArray.forEach((node)=>{
@@ -30488,7 +30835,7 @@ function $fd457d300ac15182$export$ddabfdc3a667d816(vertices, indexArray, color) 
     });
     Attrib.customColor.needsUpdate = true;
 }
-function $fd457d300ac15182$export$f12354bb68150715(vertices) {
+function $7dd8dd744a26bef5$var$ResetVertexColors(vertices) {
     let Attrib = vertices.geometry.attributes;
     let k = 0;
     for(let i = 0; i < Attrib.customColor.count; i++){
@@ -30499,11 +30846,22 @@ function $fd457d300ac15182$export$f12354bb68150715(vertices) {
     }
     Attrib.customColor.needsUpdate = true;
 }
+var $7dd8dd744a26bef5$export$2e2bcd8739ae039 = {
+    DrawTHREEGraphVertices: $7dd8dd744a26bef5$var$DrawTHREEGraphVertices,
+    DrawTHREEGraphEdgesThick: $7dd8dd744a26bef5$var$DrawTHREEGraphEdgesThick,
+    DrawTHREEGraphEdgesThin: $7dd8dd744a26bef5$var$DrawTHREEGraphEdgesThin,
+    AddBoxBasedImaging: $7dd8dd744a26bef5$var$AddBoxBasedImaging,
+    AddInModularityBasedPointGroups: $7dd8dd744a26bef5$var$AddInModularityBasedPointGroups,
+    DrawThinEdgesFromEdgeMap: $7dd8dd744a26bef5$var$DrawThinEdgesFromEdgeMap,
+    DrawThickEdgesFromEdgeMap: $7dd8dd744a26bef5$var$DrawThickEdgesFromEdgeMap,
+    AddCylinderBasedImaging: $7dd8dd744a26bef5$var$AddCylinderBasedImaging,
+    DrawSimplifiedEdges: $7dd8dd744a26bef5$var$DrawSimplifiedEdges,
+    ChangeTheVertexColours: $7dd8dd744a26bef5$var$ChangeTheVertexColours,
+    ResetVertexColors: $7dd8dd744a26bef5$var$ResetVertexColors,
+    DrawTHREEBoxBasedVertices: $7dd8dd744a26bef5$var$DrawTHREEBoxBasedVertices
+};
 
 
-var $25ee465cd7b1d0b7$exports = {};
-
-$parcel$export($25ee465cd7b1d0b7$exports, "GraphDrawer3d", () => $25ee465cd7b1d0b7$export$4aefcc8a99cfbd66);
 
 
 // This set of controls performs orbiting, dollying (zooming), and panning.
@@ -31190,7 +31548,7 @@ class $bbcfa2e1a5161948$export$7628ccdac312035f extends $bbcfa2e1a5161948$export
 
 
 // this is the 3d graph drawing class with three js
-class $25ee465cd7b1d0b7$export$4aefcc8a99cfbd66 {
+class $c5c7cc0819666552$var$GraphDrawer3d {
     constructor(GraphDrawerOptions3d, graphs){
         this.canvas = GraphDrawerOptions3d.canvas;
         this.width = GraphDrawerOptions3d.width;
@@ -31242,9 +31600,9 @@ class $25ee465cd7b1d0b7$export$4aefcc8a99cfbd66 {
         this.controls.update();
         // add in the graph that we wanted this.graphs.get('ProvidedGraph')
         for (const graph of this.graphs.keys()){
-            const GeoGraph = $fd457d300ac15182$export$ccbc3593ea66381b(this.graphs.get(graph), this.bound);
+            const GeoGraph = (0, $7dd8dd744a26bef5$export$2e2bcd8739ae039).DrawTHREEBoxBasedVertices(this.graphs.get(graph), this.bound);
             this.scene.add(GeoGraph);
-            const ThickEdges = $fd457d300ac15182$export$a96a15c14ab3f9b1(this.graphs.get(graph), this.bound);
+            const ThickEdges = (0, $7dd8dd744a26bef5$export$2e2bcd8739ae039).DrawTHREEGraphEdgesThick(this.graphs.get(graph), this.bound);
             this.scene.add(ThickEdges);
         }
         // edges 
@@ -31260,13 +31618,17 @@ class $25ee465cd7b1d0b7$export$4aefcc8a99cfbd66 {
         this.controls.update();
     }
 }
+var $c5c7cc0819666552$export$2e2bcd8739ae039 = {
+    GraphDrawer3d: $c5c7cc0819666552$var$GraphDrawer3d
+};
 
 
 
-var $fvTv3 = parcelRequire("fvTv3");
 
-
-var $b4b4cd65444af0f9$export$614db49f3febe941 = parcelRequire("fvTv3").Graph;
-var $6a96670be1a4c9e4$exports = parcelRequire("99muE")["*"];
-export {$b4b4cd65444af0f9$export$614db49f3febe941 as Graph, $6a96670be1a4c9e4$exports as Drawing};
+var $a10c6fe030ef2f2d$export$614db49f3febe941 = parcelRequire("dPfZ4").Graph;
+var $00b8630467633a1d$export$2e2bcd8739ae039 = parcelRequire("03PHD").default;
+var $b9f55733e92b0fab$export$2e2bcd8739ae039 = parcelRequire("fXQP4").default;
+var $dff1f486beb1bf4c$export$2e2bcd8739ae039 = parcelRequire("je3oj").default;
+var $2b9333ccd3e7770b$export$2e2bcd8739ae039 = parcelRequire("3JWOZ").default;
+export {$a10c6fe030ef2f2d$export$614db49f3febe941 as Graph, $00b8630467633a1d$export$2e2bcd8739ae039 as GraphMethods, $1929603c63fa12f5$export$2e2bcd8739ae039 as SampleData, $2a82d025d9354169$export$2e2bcd8739ae039 as Constructors, $b9f55733e92b0fab$export$2e2bcd8739ae039 as Drawing, $dff1f486beb1bf4c$export$2e2bcd8739ae039 as Geometry, $2b9333ccd3e7770b$export$2e2bcd8739ae039 as Utilities, $7dd8dd744a26bef5$export$2e2bcd8739ae039 as threeDWrapper, $c5c7cc0819666552$export$2e2bcd8739ae039 as GraphDrawer};
 //# sourceMappingURL=pgl_module.js.map
