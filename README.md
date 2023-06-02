@@ -51,6 +51,10 @@ animate();
 ## Usage
 // package to yet be distributed to npm but expect it shortly
 in the meantime - just download the build, put it in as a module and start using it! 
+ideally at some point:
+```
+npm install PGL
+```
 
 ## Integrations
 The Plebian Graph Library (PGL) is intricately woven into the fabric of the ThreeJS library, seamlessly integrating its rich functionalities into a comprehensive and powerful toolset for large-scale graph data visualization. By leveraging the foundation provided by ThreeJS, PGL inherits a wide range of features, including advanced shading techniques, texture mapping capabilities, and much more. These powerful rendering capabilities enable PGL to create visually stunning and immersive graph visualizations, adding depth and realism to the representation of complex network structures. With its symbiotic relationship with ThreeJS, PGL empowers users to go beyond traditional graph visualizations, unlocking a world of possibilities for exploration and analysis.
