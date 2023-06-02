@@ -34,10 +34,7 @@
     }
  },
   "dependencies": {
-    "three": "^0.141.0",
-    "vis-network": "^9.1.2",
-    "deck.gl": "^8.6.2",
-    "mapbox-gl": "^2.5.1"
+    "three": "^0.141.0"
   },
   "devDependencies": {
     "parcel": "latest"

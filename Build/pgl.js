@@ -1,7 +1,7 @@
 var $htxhw$three = require("three");
+var $htxhw$threeexamplesjsmlinesLine2js = require("three/examples/jsm/lines/Line2.js");
 var $htxhw$threeexamplesjsmlinesLineMaterialjs = require("three/examples/jsm/lines/LineMaterial.js");
 var $htxhw$threeexamplesjsmlinesLineGeometryjs = require("three/examples/jsm/lines/LineGeometry.js");
-var $htxhw$threeexamplesjsmlinesLine2js = require("three/examples/jsm/lines/Line2.js");
 var $htxhw$threeexamplesjsmcontrolsOrbitControls = require("three/examples/jsm/controls/OrbitControls");
 
 function $parcel$export(e, n, v, s) {
