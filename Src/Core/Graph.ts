@@ -2,8 +2,8 @@ import { _Node } from "./_Node";
 import { Edge } from "./Edge";
 
 interface Graph {
-  nodes: _Node[];
-  edges: Edge[];
+  nodes: Map<number, _Node>;
+  edges: Map<number, Edge>;
 }
 
 class Graph {
@@ -47,21 +47,21 @@ class Graph {
       // set the node property
       if (this.nodes.get(start)) {
         const relevantSNode = this.nodes.get(start);
-        relevantSNode.neighbours.push(end);
+        relevantSNode!.neighbours.push(end);
       } else if (this.nodes.get(end)) {
         const relevantENode = this.nodes.get(end);
-        relevantENode.neighbours.push(start);
+        relevantENode!.neighbours.push(start);
       }
     });
     // then for each node then get the unique neighbours
     for (const key of this.nodes.keys()) {
-      const neighs = this.nodes.get(key).neighbours;
+      const neighs = this.nodes.get(key)!.neighbours;
       const new_neigh = [...new Set(neighs)];
       const selfIndex = new_neigh.indexOf(key);
       if (selfIndex > -1) {
         new_neigh.splice(selfIndex, 1); // 2nd parameter means remove one item only
       }
-      this.nodes.get(key).neighbours = new_neigh;
+      this.nodes.get(key)!.neighbours = new_neigh;
     }
   }
 
@@ -77,7 +77,7 @@ class Graph {
     this.edges.set(this.edges.size, newEdge);
     // also add this to the node neighbours
     const relevantNode = this.nodes.get(start);
-    relevantNode.neighbours.push(end);
+    relevantNode!.neighbours.push(end);
   }
 
   // get a sparse reprentation of the graph
@@ -85,7 +85,7 @@ class Graph {
     const SparseMap = new Map();
     // iterate through the node list
     for (const key of this.nodes.keys()) {
-      SparseMap.set(key, this.nodes.get(key).neighbours);
+      SparseMap.set(key, this.nodes.get(key)!.neighbours);
     }
     return SparseMap;
   }
@@ -93,15 +93,15 @@ class Graph {
   // set position based on simulated array
   apply_position_map(data) {
     for (const n of data.keys()) {
-      this.nodes.get(n).data = { ...this.nodes.get(n).data, pos: data.get(n) };
+      this.nodes.get(n)!.data = { ...this.nodes.get(n)!.data, pos: data.get(n) };
     }
   }
 
   // create new edge pos representation
   apply_edge_pos_maps(data) {
     for (const key of data.keys()) {
-      this.edges.get(key).data = {
-        ...this.edges.get(key).data,
+      this.edges.get(key)!.data = {
+        ...this.edges.get(key)!.data,
         ldata: data.get(key),
       };
     }
@@ -111,7 +111,7 @@ class Graph {
   get_edge_lines() {
     const lines = new Map();
     for (const key of this.edges.keys()) {
-      const edge = this.edges.get(key).data.ldata;
+      const edge = this.edges.get(key)!.data.ldata;
       lines.set(key, edge);
     }
     return lines;
@@ -131,10 +131,10 @@ class Graph {
   get_position_map() {
     const returnObject = { pmap: new Map(), emap: new Map() };
     for (const node of this.nodes.keys()) {
-      returnObject.pmap.set(node, this.nodes.get(node).data.pos);
+      returnObject.pmap.set(node, this.nodes.get(node)!.data.pos);
     }
     for (const edge of this.edges.keys()) {
-      returnObject.emap.set(edge, this.edges.get(edge).data.ldata);
+      returnObject.emap.set(edge, this.edges.get(edge)!.data.ldata);
     }
     return returnObject;
   }
