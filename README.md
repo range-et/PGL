@@ -4,7 +4,7 @@ The Plebian Graph Library (PGL) is a library designed to facilitate the visualiz
 ## Semantics of the Package 
 Existing network visualisation libraries like NetworkX dictated the semantics of the graph library and borrowed some of the semantic ideas from three JS. The process is to define a Graph Object made of nodes and edges. Then modify this graph based on some set of properties. Then update the relevant settings. And lastly, to visualise the nodes, either as point clouds, boxes or cylinders, and to draw out the edges (bundled or not) lines.
 Here is an illustrated walkthrough of a simple set-up given a predefined set of “nodes” and “edges”.
-```
+```javascript
 // import the library here the file is located under build
 import * as PGL from "../Build/pgl_module.js";
 
@@ -44,7 +44,7 @@ await graph3d.init();
 // append the graph renderer to the container
 // and then drawing render calls
 animate();
-```js
+```
 
 ## An example of rendering a basic graph
 
