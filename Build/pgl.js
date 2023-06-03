@@ -1,10 +1,8 @@
-var $htxhw$three = require("three");
-var $htxhw$threeexamplesjsmlinesLine2js = require("three/examples/jsm/lines/Line2.js");
-var $htxhw$threeexamplesjsmlinesLineMaterialjs = require("three/examples/jsm/lines/LineMaterial.js");
-var $htxhw$threeexamplesjsmlinesLineGeometryjs = require("three/examples/jsm/lines/LineGeometry.js");
-var $htxhw$threeexamplesjsmcontrolsOrbitControls = require("three/examples/jsm/controls/OrbitControls");
-var $htxhw$deckglcore = require("@deck.gl/core");
-var $htxhw$deckgllayers = require("@deck.gl/layers");
+var $h9nKb$three = require("three");
+var $h9nKb$threeexamplesjsmlinesLine2js = require("three/examples/jsm/lines/Line2.js");
+var $h9nKb$threeexamplesjsmlinesLineMaterial = require("three/examples/jsm/lines/LineMaterial");
+var $h9nKb$threeexamplesjsmlinesLineGeometry = require("three/examples/jsm/lines/LineGeometry");
+var $h9nKb$threeexamplesjsmcontrolsOrbitControls = require("three/examples/jsm/controls/OrbitControls");
 
 function $parcel$export(e, n, v, s) {
   Object.defineProperty(e, n, {get: v, set: s, enumerable: true, configurable: true});
@@ -47,85 +45,113 @@ if (parcelRequire == null) {
 
   $parcel$global["parcelRequired21f"] = parcelRequire;
 }
-parcelRequire.register("is5Zp", function(module, exports) {
+parcelRequire.register("jYcHE", function(module, exports) {
 
-$parcel$export(module.exports, "default", () => $d6ef7cea57f62fcb$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "default", () => $36d87c0da0370973$export$2e2bcd8739ae039);
 
-var $fDRV6 = parcelRequire("fDRV6");
+var $6Xdhg = parcelRequire("6Xdhg");
 
-var $i1Hf9 = parcelRequire("i1Hf9");
+var $fd3jp = parcelRequire("fd3jp");
 
-var $99CHB = parcelRequire("99CHB");
+var $fw40F = parcelRequire("fw40F");
 
-var $jDJ15 = parcelRequire("jDJ15");
+var $3WMe9 = parcelRequire("3WMe9");
+
+var $cWcXJ = parcelRequire("cWcXJ");
 // draw kamada kawai
-async function SimulateKamadaKawai(G, iterations) {
+async function SimulateKamadaKawai(G, iterations, simulationBound = 200, cohesionValue = 1) {
     const adjList = G.get_adjacency();
     // pos map
     const PosMapX = new Map();
     const PosMapY = new Map();
     let rx, ry;
     for (const node of adjList.keys()){
-        rx = Math.random() * 200;
-        ry = Math.random() * 200;
+        rx = Math.random() * simulationBound;
+        ry = Math.random() * simulationBound;
         PosMapX.set(node, rx);
         PosMapY.set(node, ry);
     }
     // start simulation
-    for(let i = 0; i < iterations; i++)// calculate the clustering force
-    for (const node1 of adjList.keys()){
-        // this chunk is for the attraction force
-        // get the node pos
-        const neighbours = adjList.get(node1);
-        // get the set of x's
-        const x_s = [];
-        // get the set of y's
-        const y_s = [];
-        // now iterate through the pos list and append
-        neighbours.forEach((n_s)=>{
-            const n_pos_x = PosMapX.get(n_s);
-            const n_pos_y = PosMapY.get(n_s);
-            x_s.push(n_pos_x);
-            y_s.push(n_pos_y);
-        });
-        // now average out the values
-        const new_c_xpos = (0, $fDRV6.default).calculateAverage(x_s);
-        const new_c_ypos = (0, $fDRV6.default).calculateAverage(y_s);
-        // this chunk is for the repelling force
-        const x_r = [];
-        const y_r = [];
-        // then find the element
-        for (const otherNode of G.nodes.keys())// get the position of all the other nodes
-        if (otherNode != node1) {
-            // calculate inverse distance
-            const distDiffX = PosMapX.get(otherNode) - PosMapX.get(node1);
-            const distDiffY = PosMapY.get(otherNode) - PosMapY.get(node1);
-            // get the inverse square value
-            // add that to the *_r arrays
-            x_r.push(distDiffX);
-            y_r.push(distDiffY);
+    for(let i = 0; i < iterations; i++){
+        // calculate the clustering force
+        // these two keep track of the node being simulated's
+        // position - redeclaring is sorta unncessary
+        let nodeX;
+        let nodeY;
+        // also keep track of all the x_s and y_s
+        let x_s;
+        let y_s;
+        // also the same thing for the clustering force
+        let y_r;
+        let x_r;
+        // same thing for the cohesion values that get recalculated
+        let new_c_xpos_dispacement;
+        let new_c_ypos_dispacement;
+        for (const node of adjList.keys()){
+            // this chunk is for the attraction force
+            // get the node pos
+            const neighbours = adjList.get(node);
+            // remember always declare this nodes details
+            nodeX = PosMapX.get(node);
+            nodeY = PosMapY.get(node);
+            // get the set of x's
+            x_s = [];
+            // get the set of y's
+            y_s = [];
+            // now iterate through the pos list and append
+            neighbours.forEach((n_s)=>{
+                const n_pos_x = PosMapX.get(n_s);
+                const n_pos_y = PosMapY.get(n_s);
+                x_s.push(n_pos_x);
+                y_s.push(n_pos_y);
+            });
+            // now average out the values
+            const new_c_xpos = (0, $6Xdhg.default).calculateAverage(x_s);
+            const new_c_ypos = (0, $6Xdhg.default).calculateAverage(y_s);
+            // this chunk is for the repelling force
+            y_r = [];
+            x_r = [];
+            let diffx;
+            let diffy;
+            let othernodeX;
+            let othernodeY;
+            // then find the element
+            for (const otherNode of G.nodes.keys())// get the position of all the other nodes
+            if (otherNode != node) {
+                // calculate inverse distance
+                othernodeX = PosMapX.get(otherNode);
+                othernodeY = PosMapY.get(otherNode);
+                diffx = othernodeX - nodeX;
+                diffy = othernodeY - nodeY;
+                // get the inverse square value
+                // add that to the *_r arrays
+                x_r.push(diffx);
+                y_r.push(diffy);
+            }
+            // this is the repulsion value
+            const A_mult = 2;
+            const new_x_r_pos = A_mult * 1 / ((0, $6Xdhg.default).calculateAverage(x_r) * (0, $6Xdhg.default).calculateAverage(x_r));
+            const new_y_r_pos = A_mult * 1 / ((0, $6Xdhg.default).calculateAverage(y_r) * (0, $6Xdhg.default).calculateAverage(y_r));
+            // calculate the dispacement amount in c/y pos
+            // this is the cohesion value
+            const new_c_xpos_dispacement = cohesionValue * (new_c_xpos - nodeX);
+            const new_c_ypos_dispacement = cohesionValue * (new_c_ypos - nodeY);
+            // then add the x and y components of the two vectors
+            const new_xpos = new_x_r_pos + new_c_xpos_dispacement + nodeX;
+            const new_ypos = new_y_r_pos + new_c_ypos_dispacement + nodeY;
+            // now set these positions
+            PosMapX.set(node, new_xpos);
+            PosMapY.set(node, new_ypos);
         }
-        // this is the repulsion value
-        const A_mult = 2;
-        const new_x_r_pos = A_mult * 1 / ((0, $fDRV6.default).calculateAverage(x_r) * (0, $fDRV6.default).calculateAverage(x_r));
-        const new_y_r_pos = A_mult * 1 / ((0, $fDRV6.default).calculateAverage(y_r) * (0, $fDRV6.default).calculateAverage(y_r));
-        // calculate the dispacement amount in c/y pos
-        // this is the cohesion value
-        const C_mult = 1;
-        const new_c_xpos_dispacement = C_mult * (new_c_xpos - PosMapX.get(node1));
-        const new_c_ypos_dispacement = C_mult * (new_c_ypos - PosMapY.get(node1));
-        // then add the x and y components of the two vectors
-        const new_xpos = new_x_r_pos + new_c_xpos_dispacement + PosMapX.get(node1);
-        const new_ypos = new_y_r_pos + new_c_ypos_dispacement + PosMapY.get(node1);
-        // now set these positions
-        PosMapX.set(node1, new_xpos);
-        PosMapY.set(node1, new_ypos);
     }
     // return the position
+    // keep in mind three JS works with Y upwards and not Z
+    // in my head I work the other way round so Im swapping the Z and Y values here
     let PosMap = new Map();
-    for (const p of PosMapX.keys())PosMap.set(p, new (0, $99CHB.Point)(PosMapX.get(p), 0, PosMapY.get(p)));
+    for (const p of PosMapX.keys())PosMap.set(p, new (0, $fw40F.Point)(PosMapX.get(p), 0, PosMapY.get(p)));
     // get / set positions
     // move the points
+    // Since this simulation might have moved the whole graph off screen
     // get the average pos
     const sim_x = [];
     const sim_y = [];
@@ -137,20 +163,14 @@ async function SimulateKamadaKawai(G, iterations) {
         sim_y.push(interimPoint.y);
         sim_z.push(interimPoint.z);
     }
-    const x_displacement = calculateAverage(sim_x);
-    const y_displacement = calculateAverage(sim_y);
-    const z_displacement = calculateAverage(sim_z);
-    const dispacementVector = new (0, $99CHB.Point)(-x_displacement, -y_displacement, -z_displacement);
-    PosMap = movePmap(PosMap, dispacementVector);
-    G.apply_position_map(PosMap);
-    const lmap = DrawEdgeLines(G, 1);
-    const newLmap = await DrawEdgeBundling(lmap, 12, 5);
-    return {
-        pmap: PosMap,
-        emap: newLmap.emap
-    };
+    const x_displacement = (0, $6Xdhg.default).calculateAverage(sim_x);
+    const y_displacement = (0, $6Xdhg.default).calculateAverage(sim_y);
+    const z_displacement = (0, $6Xdhg.default).calculateAverage(sim_z);
+    const dispacementVector = new (0, $fw40F.Point)(-x_displacement, -y_displacement, -z_displacement);
+    PosMap = MovePmap(PosMap, dispacementVector);
+    return PosMap;
 }
-// instanciate a random set of positions 
+// instanciate a random set of positions
 function InstanciateRandomPositions(G) {
     const adjList = G.get_adjacency();
     const PosMapX = new Map();
@@ -160,7 +180,7 @@ function InstanciateRandomPositions(G) {
         PosMapY.set(node, Math.random() * 200);
     }
     let PosMap = new Map();
-    for (const p of PosMapX.keys())PosMap.set(p, new (0, $99CHB.Point)(PosMapX.get(p), 0, PosMapY.get(p)));
+    for (const p of PosMapX.keys())PosMap.set(p, new (0, $fw40F.Point)(PosMapX.get(p), 0, PosMapY.get(p)));
     G.apply_position_map(PosMap);
     const lmap = DrawEdgeLines(G, 1);
     return {
@@ -172,66 +192,60 @@ function InstanciateRandomPositions(G) {
 function DrawEdgeLines(G, divDistance) {
     // this is the return map
     const lineMap = new Map();
+    let edge;
+    let start;
+    let end;
     for (const key of G.edges.keys()){
-        const edge = G.edges.get(key);
+        edge = G.edges.get(key);
         // get the start pos
-        const start = G.nodes.get(edge.start).data.pos;
-        const end = G.nodes.get(edge.end).data.pos;
-        const Line = (0, $i1Hf9.default).line_from_start_end_distance(start, end, divDistance);
-        lineMap.set(key, Line);
+        start = G.nodes.get(edge.start).data.pos;
+        end = G.nodes.get(edge.end).data.pos;
+        const Line1 = (0, $fd3jp.default).line_from_start_end_distance(start, end, divDistance);
+        lineMap.set(key, Line1);
     }
     return lineMap;
-}
-// update edge lines after moving points or something 
-function UpdateEdgeLinesDist(G, divDistance) {
-    let edge, start, end, line;
-    for (const key of G.edges.keys()){
-        edge = G.edges.get(key);
-        // get the start pos
-        start = G.nodes.get(edge.start).data.pos;
-        end = G.nodes.get(edge.end).data.pos;
-        line = (0, $i1Hf9.default).line_from_start_end_distance(start, end, divDistance);
-        edge.data.ldata = line;
-    }
-}
-// function Update EdgeLines based on the number of divisions 
-function UpdateEdgeLinesDivs(G, Divs) {
-    let edge, start, end, line;
-    for (const key of G.edges.keys()){
-        edge = G.edges.get(key);
-        // get the start pos
-        start = G.nodes.get(edge.start).data.pos;
-        end = G.nodes.get(edge.end).data.pos;
-        line = (0, $i1Hf9.default).line_from_start_end_divisions(start, end, Divs);
-        edge.data.ldata = line;
-    }
 }
 // now draw out the edge bundling thing
 async function DrawEdgeBundling(LineMap, iterations, distance) {
     const returnArray = LineMap;
+    // variables that are getting reused
+    let line;
+    let otherLine;
+    let x_s;
+    let y_s;
+    let z_s;
+    let pnt;
+    let otherpoint;
+    let d;
+    let x_d;
+    let y_d;
+    let z_d;
+    let avgx;
+    let avgy;
+    let avgz;
     // run it for whatever number of iterations
     for(let i = 0; i < iterations; i++)// then iterate through every line
-    for (const key of returnArray.keys()){
+    for (let key of returnArray.keys()){
         // then get the line that we are working with
-        const line = returnArray.get(key).data.ldata;
+        line = returnArray.get(key);
         // then for each point in the line we have to move it closer to the other points
         for(let ii = 1; ii < line.points.length - 1; ii++){
             // then get the point that we need to work with
-            const x_s = [];
-            const y_s = [];
-            const z_s = [];
-            const pnt = line.points[ii];
+            x_s = [];
+            y_s = [];
+            z_s = [];
+            pnt = line.points[ii];
             // then run the point accumulation algoritm
-            for (const otherKey of returnArray.keys())if (otherKey != key) {
+            for (let otherKey of returnArray.keys())if (otherKey != key) {
                 // then get the other line
-                const otherLine = returnArray.get(otherKey).data.ldata;
+                otherLine = returnArray.get(otherKey);
                 for(let iii = 1; iii < otherLine.points.length - 1; iii++){
-                    const otherpoint = otherLine.points[iii];
-                    const d = (0, $fDRV6.default).calculateSquaredDistance(pnt, otherpoint);
+                    otherpoint = otherLine.points[iii];
+                    d = (0, $6Xdhg.default).calculateSquaredDistance(pnt, otherpoint);
                     if (d <= Math.pow(distance, 2)) {
-                        const x_d = otherpoint.x - pnt.x;
-                        const y_d = otherpoint.y - pnt.y;
-                        const z_d = otherpoint.z - pnt.z;
+                        x_d = otherpoint.x - pnt.x;
+                        y_d = otherpoint.y - pnt.y;
+                        z_d = otherpoint.z - pnt.z;
                         x_s.push(x_d);
                         y_s.push(y_d);
                         z_s.push(z_d);
@@ -239,54 +253,53 @@ async function DrawEdgeBundling(LineMap, iterations, distance) {
                 }
             }
             // now create a new displacement amount
-            const avgx = pnt.x + 0.8 * ((0, $fDRV6.default).calculateAverage(x_s) || 0);
-            const avgy = pnt.y + 0.8 * ((0, $fDRV6.default).calculateAverage(y_s) || 0);
-            const avgz = pnt.z + 0.8 * ((0, $fDRV6.default).calculateAverage(z_s) || 0);
-            const newPoint = new (0, $99CHB.Point)(avgx, avgy, avgz);
+            avgx = pnt.x + 0.8 * ((0, $6Xdhg.default).calculateAverage(x_s) || 0);
+            avgy = pnt.y + 0.8 * ((0, $6Xdhg.default).calculateAverage(y_s) || 0);
+            avgz = pnt.z + 0.8 * ((0, $6Xdhg.default).calculateAverage(z_s) || 0);
+            const newPoint = new (0, $fw40F.Point)(avgx, avgy, avgz);
             line.points[ii] = newPoint;
         }
     }
-    // now return that array
-    return {
-        emap: returnArray
-    };
+    // now return that new map
+    return returnArray;
 }
 // displace the th edges
+// sorta like and arc in the middle of the thing
 function DisplaceEdgeInY(LineMap, displacement) {
     for (const key of LineMap.keys()){
         const line = LineMap.get(key);
         // now for all the points in this
         let pnt, ydisval;
-        for(let i = 0; i < line.data.ldata.points.length; i++){
-            pnt = line.data.ldata.points[i];
-            ydisval = displacement * Math.sin(Math.PI * i / (line.data.ldata.points.length - 1));
+        for(let i = 0; i < line.points.length; i++){
+            pnt = line.points[i];
+            ydisval = displacement * Math.sin(Math.PI * i / (line.points.length - 1));
             pnt.y = pnt.y + ydisval;
         }
     }
 }
-// displace the graph by some measure 
+// displace the graph by some measure
 function DisplaceVertices(nodeMap, parameter, displacement) {
     let max = 0;
     let value, ydisplacement;
-    // go through the thing and set the min max values 
-    for (const node of nodeMap.values()){
+    // go through the thing and set the min max values
+    for (let node of nodeMap.values()){
         value = eval("node.data." + parameter);
         if (value >= max) max = value;
     }
-    // go through the nodes again and set the values 
-    for (const node2 of nodeMap.values()){
+    // go through the nodes again and set the values
+    for (const node1 of nodeMap.values()){
         value = eval("node.data." + parameter);
         ydisplacement = value / max * displacement;
         // now filter the values so that we know that the values are between a max and a min
-        ydisplacement = Math.max(0, ydisplacement); // this sets the lower bound to be something 
+        ydisplacement = Math.max(0, ydisplacement); // this sets the lower bound to be something
         ydisplacement = Math.min(displacement, ydisplacement); // this sets the upper bound of the thing
-        node2.data.pos.y = ydisplacement;
+        node1.data.pos.y = ydisplacement;
     }
 }
 // draw the circular vertical packing crypto like drawing
 async function HivePlot(G, selectedNode, step, startP) {
     const adj = G.get_adjacency();
-    const DijkstraDepth = await (0, $jDJ15.default).Dijkstra(G, selectedNode);
+    const DijkstraDepth = await (0, $cWcXJ.default).Dijkstra(G, selectedNode);
     // calculate the number of steps that I am searching through
     const steps = Math.max(...[
         ...DijkstraDepth.values()
@@ -314,7 +327,7 @@ async function HivePlot(G, selectedNode, step, startP) {
         const xval = Math.sin(angle) * yval;
         const zval = Math.cos(angle) * yval;
         // construct a new point
-        const pnt = new (0, $99CHB.Point)(xval + xoff, -yval + yoff, zval + zoff);
+        const pnt = new (0, $fw40F.Point)(xval + xoff, -yval + yoff, zval + zoff);
         Pmap.set(node, pnt);
     }
     // simulate the lines
@@ -323,26 +336,93 @@ async function HivePlot(G, selectedNode, step, startP) {
     const newLmap = await DrawEdgeBundling(lmap, 12, 5);
     return {
         pmap: Pmap,
-        emap: newLmap.emap
+        emap: newLmap
     };
 }
 // move graph
 function MoveGraph(G, dispacement) {
-    const Pmap = G.get_position_map();
-    const NewPmap = MovePmap(Pmap, dispacement);
-    G.apply_position_map(NewPmap);
+    const Gmap = G.get_map();
+    const NewPmap = MovePmap(Gmap.pmap, dispacement);
+    const NewEmap = MoveEmap(Gmap.emap, dispacement);
+    G.apply_drawing_maps({
+        pmap: NewPmap,
+        emap: NewEmap
+    });
 }
 // move pmap
 function MovePmap(Pmap, displacement) {
     const newPmap = new Map();
-    for (const node of Pmap.keys()){
+    for (let node of Pmap.keys()){
         const p = Pmap.get(node);
         p.translate(displacement);
         newPmap.set(node, p);
     }
     return newPmap;
 }
-var $d6ef7cea57f62fcb$export$2e2bcd8739ae039 = {
+// move the edges
+function MoveEmap(Emap, dispacement) {
+    const newEmap = new Map();
+    // variables - instead of redeclaring
+    let interimPoints;
+    let interimLine;
+    let newLine;
+    for (let lineNumber of Emap.keys()){
+        // reset the interim points
+        interimPoints = [];
+        // get the line
+        interimLine = Emap.get(lineNumber);
+        // move all the points
+        for (let pnt of interimLine.points){
+            pnt.translate(dispacement);
+            // add this to the new stack of lines
+            interimPoints.push(pnt);
+        }
+        // create a new line
+        newLine = new (0, $3WMe9.Line)(interimPoints);
+        // add this to the new map
+        newEmap.set(lineNumber, newLine);
+    }
+    return newEmap;
+}
+// THIS IS THE BIT THATS A BIT CONFUSING
+/*
+Data for visualization is store in the graph under the elements data
+So for example - the position data under a point in the graph is under 
+- Graph.nodes.get(whatever node).data.pos 
+*/ // commenting out because appears to be redundant
+// update edge lines after moving points or something
+// this redraws the lines based on distance
+function UpdateEdgeLinesDist(G, divDistance) {
+    let edge;
+    let start;
+    let end;
+    let line;
+    for (const key of G.edges.keys()){
+        edge = G.edges.get(key);
+        // get the start pos
+        start = G.nodes.get(edge.start).data.pos;
+        end = G.nodes.get(edge.end).data.pos;
+        line = (0, $fd3jp.default).line_from_start_end_distance(start, end, divDistance);
+        edge.data.ldata = line;
+    }
+}
+// function Update EdgeLines based on the number of divisions
+// redraw the line based on divisions
+function UpdateEdgeLinesDivs(G, Divs) {
+    let edge;
+    let start;
+    let end;
+    let line;
+    for (const key of G.edges.keys()){
+        edge = G.edges.get(key);
+        // get the start pos
+        start = G.nodes.get(edge.start).data.pos;
+        end = G.nodes.get(edge.end).data.pos;
+        line = (0, $fd3jp.default).line_from_start_end_divisions(start, end, Divs);
+        edge.data.ldata = line;
+    }
+}
+var $36d87c0da0370973$export$2e2bcd8739ae039 = {
     SimulateKamadaKawai: SimulateKamadaKawai,
     DrawEdgeLines: DrawEdgeLines,
     DrawEdgeBundling: DrawEdgeBundling,
@@ -351,31 +431,36 @@ var $d6ef7cea57f62fcb$export$2e2bcd8739ae039 = {
     MoveGraph: MoveGraph,
     InstanciateRandomPositions: InstanciateRandomPositions,
     DisplaceVertices: DisplaceVertices,
-    UpdateEdgeLinesDist: UpdateEdgeLinesDist,
+    UpdateEdgeLinesDist: // these two are special functions
+    UpdateEdgeLinesDist,
     UpdateEdgeLinesDivs: UpdateEdgeLinesDivs
 };
 
 });
-parcelRequire.register("fDRV6", function(module, exports) {
+parcelRequire.register("6Xdhg", function(module, exports) {
 
-$parcel$export(module.exports, "default", () => $b63452e7c6daf3f1$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "default", () => $6492b9164e95c481$export$2e2bcd8739ae039);
 // Calculate average
-function $b63452e7c6daf3f1$var$calculateAverage(arr) {
+function $6492b9164e95c481$var$calculateAverage(arr) {
     let runningSum = 0;
     for(let i = 0; i < arr.length; i++)runningSum = runningSum + arr[i];
     const avg = runningSum / arr.length;
     return avg;
 }
 // calculate distance between two points
-function $b63452e7c6daf3f1$var$calculateDistance(p1, p2) {
+function $6492b9164e95c481$var$calculateDistance(p1, p2) {
     const d = Math.pow(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2) + Math.pow(p1.z - p2.z, 2), 0.5);
     return d;
 }
-function $b63452e7c6daf3f1$var$calculateSquaredDistance(p1, p2) {
+// calculate squared distance sometimes we dont really need
+// the actual root but just a rough idea
+function $6492b9164e95c481$var$calculateSquaredDistance(p1, p2) {
     const d = Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2) + Math.pow(p1.z - p2.z, 2);
     return d;
 }
-function $b63452e7c6daf3f1$var$getRandomSubset(arr, n) {
+// get a random subset of something from a array of things
+// must provide the number of things we want from that array
+function $6492b9164e95c481$var$getRandomSubset(arr, n) {
     var result = new Array(n), len = arr.length, taken = new Array(len);
     if (n > len) throw new RangeError("getRandom: more elements taken than available");
     while(n--){
@@ -385,50 +470,50 @@ function $b63452e7c6daf3f1$var$getRandomSubset(arr, n) {
     }
     return result;
 }
-var $b63452e7c6daf3f1$export$2e2bcd8739ae039 = {
-    calculateAverage: $b63452e7c6daf3f1$var$calculateAverage,
-    calculateDistance: $b63452e7c6daf3f1$var$calculateDistance,
-    calculateSquaredDistance: $b63452e7c6daf3f1$var$calculateSquaredDistance,
-    getRandomSubset: $b63452e7c6daf3f1$var$getRandomSubset
+var $6492b9164e95c481$export$2e2bcd8739ae039 = {
+    calculateAverage: $6492b9164e95c481$var$calculateAverage,
+    calculateDistance: $6492b9164e95c481$var$calculateDistance,
+    calculateSquaredDistance: $6492b9164e95c481$var$calculateSquaredDistance,
+    getRandomSubset: $6492b9164e95c481$var$getRandomSubset
 };
 
 });
 
-parcelRequire.register("i1Hf9", function(module, exports) {
+parcelRequire.register("fd3jp", function(module, exports) {
 
-$parcel$export(module.exports, "default", () => $d1f9dd3c4c08380f$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "default", () => $ef6d2250c1a51156$export$2e2bcd8739ae039);
 
-var $99CHB = parcelRequire("99CHB");
+var $fw40F = parcelRequire("fw40F");
 
-var $3kDFt = parcelRequire("3kDFt");
+var $3WMe9 = parcelRequire("3WMe9");
 
-var $fDRV6 = parcelRequire("fDRV6");
-function $d1f9dd3c4c08380f$var$line_from_start_end_divisions(start, end, divisions) {
-    // create a start and end time 
-    const Start = new (0, $99CHB.Point)(start.x, start.y, start.z);
-    const End = new (0, $99CHB.Point)(end.x, end.y, end.z);
+var $6Xdhg = parcelRequire("6Xdhg");
+function $ef6d2250c1a51156$var$line_from_start_end_divisions(start, end, divisions) {
+    // create a start and end time
+    const Start = new (0, $fw40F.Point)(start.x, start.y, start.z);
+    const End = new (0, $fw40F.Point)(end.x, end.y, end.z);
     // interpolated points
     const points = [];
-    // divisions 
+    // divisions
     for(let i = 0; i <= divisions; i++){
         const interVar = i / divisions;
         const newx = interVar * Start.x + (1 - interVar) * End.x;
         const newy = interVar * Start.y + (1 - interVar) * End.y;
         const newz = interVar * Start.z + (1 - interVar) * End.z;
-        const newPoint = new (0, $99CHB.Point)(newx, newy, newz);
+        const newPoint = new (0, $fw40F.Point)(newx, newy, newz);
         points.push(newPoint);
     }
-    // create a new point 
-    const SubdividedLine = new (0, $3kDFt.Line)(points);
+    // create a new line
+    const SubdividedLine = new (0, $3WMe9.Line)(points);
     return SubdividedLine;
 }
-function $d1f9dd3c4c08380f$var$line_from_start_end_distance(start, end, distance) {
-    const dist = (0, $fDRV6.default).calculateDistance(start, end);
+function $ef6d2250c1a51156$var$line_from_start_end_distance(start, end, distance) {
+    const dist = (0, $6Xdhg.default).calculateDistance(start, end);
     const divs = Math.round(dist / distance) + 2;
-    const subdivline = $d1f9dd3c4c08380f$var$line_from_start_end_divisions(start, end, divs);
+    const subdivline = $ef6d2250c1a51156$var$line_from_start_end_divisions(start, end, divs);
     return subdivline;
 }
-function $d1f9dd3c4c08380f$var$centroid(points) {
+function $ef6d2250c1a51156$var$centroid(points) {
     let rx = 0;
     let ry = 0;
     let rz = 0;
@@ -440,27 +525,28 @@ function $d1f9dd3c4c08380f$var$centroid(points) {
     rx = rx / points.length;
     ry = ry / points.length;
     rz = rz / points.length;
-    const centroid1 = new (0, $99CHB.Point)(rx, ry, rz);
+    const centroid1 = new (0, $fw40F.Point)(rx, ry, rz);
     return centroid1;
 }
-var $d1f9dd3c4c08380f$export$2e2bcd8739ae039 = {
-    line_from_start_end_divisions: $d1f9dd3c4c08380f$var$line_from_start_end_divisions,
-    line_from_start_end_distance: $d1f9dd3c4c08380f$var$line_from_start_end_distance,
-    Point: $99CHB.Point,
-    Line: $3kDFt.Line,
-    centroid: $d1f9dd3c4c08380f$var$centroid
+var $ef6d2250c1a51156$export$2e2bcd8739ae039 = {
+    line_from_start_end_divisions: $ef6d2250c1a51156$var$line_from_start_end_divisions,
+    line_from_start_end_distance: $ef6d2250c1a51156$var$line_from_start_end_distance,
+    centroid: $ef6d2250c1a51156$var$centroid
 };
 
 });
-parcelRequire.register("99CHB", function(module, exports) {
+parcelRequire.register("fw40F", function(module, exports) {
 
-$parcel$export(module.exports, "Point", () => $6aa2f9c9342feaef$export$baf26146a414f24a);
-class $6aa2f9c9342feaef$export$baf26146a414f24a {
+$parcel$export(module.exports, "Point", () => $6f087314b9046b23$export$baf26146a414f24a);
+class $6f087314b9046b23$export$baf26146a414f24a {
     constructor(x, y, z){
         this.x = x;
         this.y = y;
         this.z = z;
     }
+    // Points are somewhat the same thing as a vector 
+    // So im using the same type instead of redeclaring the 
+    // Type
     translate(Point1) {
         this.x = this.x + Point1.x;
         this.y = this.y + Point1.y;
@@ -470,16 +556,16 @@ class $6aa2f9c9342feaef$export$baf26146a414f24a {
 
 });
 
-parcelRequire.register("3kDFt", function(module, exports) {
+parcelRequire.register("3WMe9", function(module, exports) {
 
-$parcel$export(module.exports, "Line", () => $26d2028dcd62894e$export$17d680238e50603e);
+$parcel$export(module.exports, "Line", () => $d5f5a45608dd8afe$export$17d680238e50603e);
 
-var $99CHB = parcelRequire("99CHB");
-class $26d2028dcd62894e$export$17d680238e50603e {
+var $fw40F = parcelRequire("fw40F");
+class $d5f5a45608dd8afe$export$17d680238e50603e {
     constructor(points){
         this.points = [];
         points.forEach((p)=>{
-            const point = new (0, $99CHB.Point)(p.x, p.y, p.z);
+            const point = new (0, $fw40F.Point)(p.x, p.y, p.z);
             this.points.push(point);
         });
     }
@@ -488,15 +574,16 @@ class $26d2028dcd62894e$export$17d680238e50603e {
 });
 
 
-parcelRequire.register("jDJ15", function(module, exports) {
+parcelRequire.register("cWcXJ", function(module, exports) {
 
-$parcel$export(module.exports, "default", () => $e4c4942d050698b1$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "default", () => $52c5dbc8ff16eb90$export$2e2bcd8739ae039);
 
-var $iFDmY = parcelRequire("iFDmY");
+var $9TL8g = parcelRequire("9TL8g");
 // do a BFS Search Starting from some point
 // searches the whole graph and returns a map of which node
 // was searched from where
-async function $e4c4942d050698b1$var$BFSSearch(G, node) {
+// to speed this up all the nodes are actually numbers
+async function $52c5dbc8ff16eb90$var$BFSSearch(G, node) {
     const adj = G.get_adjacency();
     const exploredFromMap = new Map();
     const explored = [];
@@ -521,12 +608,12 @@ async function $e4c4942d050698b1$var$BFSSearch(G, node) {
     // then return the explored from map
     return exploredFromMap;
 }
-// do a dijkstra Search
-async function $e4c4942d050698b1$var$Dijkstra(G, Node) {
+// do a dijkstra Search Distance map
+async function $52c5dbc8ff16eb90$var$Dijkstra(G, Node) {
     const adj = G.get_adjacency();
     const Dmap = new Map();
     // get the explored from map
-    const exploredFromMap = await $e4c4942d050698b1$var$BFSSearch(G, Node);
+    const exploredFromMap = await $52c5dbc8ff16eb90$var$BFSSearch(G, Node);
     // then for each element in the map go through
     // contact trace where that element came from
     for (const n of adj.keys()){
@@ -543,11 +630,13 @@ async function $e4c4942d050698b1$var$Dijkstra(G, Node) {
 }
 // This file contains basic things like
 // Graph searches and stuff
-async function $e4c4942d050698b1$var$GraphDiameter(graph) {
+// this only returns one of the diameters that is the longest 
+// not all of them
+async function $52c5dbc8ff16eb90$var$GraphDiameter(graph) {
     // find the diameter of the graph
     // start Dijkstra from some random node
     let seed = Math.floor(Math.random() * graph.nodes.size);
-    let Dstart = await $e4c4942d050698b1$var$Dijkstra(graph, seed);
+    let Dstart = await $52c5dbc8ff16eb90$var$Dijkstra(graph, seed);
     // iterate through all the values and then get
     // the value that is the highest amongst the others
     let currentDistance = -1;
@@ -560,7 +649,7 @@ async function $e4c4942d050698b1$var$GraphDiameter(graph) {
     }
     // then search from there to the furthest point again
     const newStart = seed;
-    Dstart = await $e4c4942d050698b1$var$Dijkstra(graph, seed);
+    Dstart = await $52c5dbc8ff16eb90$var$Dijkstra(graph, seed);
     // repeat the thing
     currentDistance = -1;
     for (const n1 of Dstart.keys()){
@@ -578,15 +667,16 @@ async function $e4c4942d050698b1$var$GraphDiameter(graph) {
     return returnObj;
 }
 // Select a subrgaph
-async function $e4c4942d050698b1$var$SelectSubgraph(graph, nodeList) {
-    const prunedVertices = new Map();
+// you must specify a list of nodes that you passed in
+async function $52c5dbc8ff16eb90$var$SelectSubgraph(graph, nodeList) {
+    const prunedNodes = new Map();
     const prunedEdges = new Map();
     // set the prunded vertices list
     nodeList.forEach((element)=>{
         // get the element from the graph and set that
         // data element in the  prunded vertices map
         const ndata = graph.nodes.get(element);
-        prunedVertices.set(element, ndata);
+        prunedNodes.set(element, ndata);
     });
     // set the pruned edges list
     let i = 0;
@@ -598,22 +688,24 @@ async function $e4c4942d050698b1$var$SelectSubgraph(graph, nodeList) {
         }
     }
     // construct a new graph that represents the new graph
-    const newGraph = await (0, $iFDmY.Graph).create(prunedVertices, prunedEdges);
+    const newGraph = await (0, $9TL8g.Graph).create(prunedNodes, prunedEdges);
     return newGraph;
 }
 var // this is where the exports happen
-$e4c4942d050698b1$export$2e2bcd8739ae039 = {
-    GraphDiameter: $e4c4942d050698b1$var$GraphDiameter,
-    Dijkstra: $e4c4942d050698b1$var$Dijkstra,
-    BFSSearch: $e4c4942d050698b1$var$BFSSearch,
-    SelectSubgraph: $e4c4942d050698b1$var$SelectSubgraph
+$52c5dbc8ff16eb90$export$2e2bcd8739ae039 = {
+    GraphDiameter: $52c5dbc8ff16eb90$var$GraphDiameter,
+    Dijkstra: $52c5dbc8ff16eb90$var$Dijkstra,
+    BFSSearch: $52c5dbc8ff16eb90$var$BFSSearch,
+    SelectSubgraph: $52c5dbc8ff16eb90$var$SelectSubgraph
 };
 
 });
-parcelRequire.register("iFDmY", function(module, exports) {
+parcelRequire.register("9TL8g", function(module, exports) {
 
-$parcel$export(module.exports, "Graph", () => $d97a985115b478af$export$614db49f3febe941);
-class $d97a985115b478af$export$614db49f3febe941 {
+$parcel$export(module.exports, "Graph", () => $3f08e238ca59e412$export$614db49f3febe941);
+
+var $i8obY = parcelRequire("i8obY");
+class $3f08e238ca59e412$export$614db49f3febe941 {
     constructor(nodes, edges){
         this.nodes = nodes;
         this.edges = edges;
@@ -631,7 +723,7 @@ class $d97a985115b478af$export$614db49f3febe941 {
     }
     // new create method
     static async create(nodes, edges) {
-        const g = new $d97a985115b478af$export$614db49f3febe941(nodes, edges);
+        const g = new $3f08e238ca59e412$export$614db49f3febe941(nodes, edges);
         await g.initialize();
         return g;
     }
@@ -664,40 +756,45 @@ class $d97a985115b478af$export$614db49f3febe941 {
     }
     // add a node
     add_node(nodeID, data) {
-        this.nodes[nodeID] = data;
+        this.nodes.set(nodeID, data);
     }
     // add an edge
     add_edge(start, end, data) {
-        const newEdge = new Edge(start, end, data);
+        const newEdge = new (0, $i8obY.Edge)(start, end, data);
         // this is a new edge that we add to the edges
         this.edges.set(this.edges.size, newEdge);
         // also add this to the node neighbours
         const relevantNode = this.nodes.get(start);
         relevantNode.neighbours.push(end);
     }
-    // get a sparse reprentation of the graph
+    // get an adjacency list reprentation of the graph
+    // this onlu has the indices and not the actual data
+    // associated with the node to speed things up
     get_adjacency() {
         const SparseMap = new Map();
         // iterate through the node list
         for (const key of this.nodes.keys())SparseMap.set(key, this.nodes.get(key).neighbours);
         return SparseMap;
     }
-    // set position based on simulated array
+    // set position based on an array of positions
+    // this could be anything (we use kamada kawai )
     apply_position_map(data) {
-        for (const n of data.keys())this.nodes.get(n).data = {
+        for (let n of data.keys())this.nodes.get(n).data = {
             ...this.nodes.get(n).data,
             pos: data.get(n)
         };
     }
     // create new edge pos representation
+    // same approach for applying the key data
     apply_edge_pos_maps(data) {
-        for (const key of data.keys())this.edges.get(key).data = {
+        for (let key of data.keys())this.edges.get(key).data = {
             ...this.edges.get(key).data,
             ldata: data.get(key)
         };
     }
     // get the edge reps
-    get_edge_lines() {
+    // this returns all the edge map readings
+    get_edge_map() {
         const lines = new Map();
         for (const key of this.edges.keys()){
             const edge = this.edges.get(key).data.ldata;
@@ -711,14 +808,30 @@ class $d97a985115b478af$export$614db49f3febe941 {
         if (layout.emap) this.apply_edge_pos_maps(layout.emap);
     }
     // get the positon map of the graph
-    get_position_map() {
-        const returnObject = {
-            pmap: new Map(),
-            emap: new Map()
+    get_map() {
+        return {
+            pmap: this.get_position_map(),
+            emap: this.get_edge_map()
         };
-        for (const node of this.nodes.keys())returnObject.pmap.set(node, this.nodes.get(node).data.pos);
-        for (const edge of this.edges.keys())returnObject.emap.set(edge, this.edges.get(edge).data.ldata);
-        return returnObject;
+    }
+    get_position_map() {
+        const pmap = new Map();
+        for (const node of this.nodes.keys())pmap.set(node, this.nodes.get(node).data.pos);
+        return pmap;
+    }
+}
+
+});
+parcelRequire.register("i8obY", function(module, exports) {
+
+$parcel$export(module.exports, "Edge", () => $a077862b0141e79e$export$b9d9805c9b77a56d);
+class $a077862b0141e79e$export$b9d9805c9b77a56d {
+    constructor(start, end, data){
+        this.start = start;
+        this.end = end;
+        this.data = {
+            ...data
+        };
     }
 }
 
@@ -727,22 +840,380 @@ class $d97a985115b478af$export$614db49f3febe941 {
 
 
 
-$parcel$export(module.exports, "Graph", () => (parcelRequire("iFDmY")).Graph);
-$parcel$export(module.exports, "GraphMethods", () => (parcelRequire("jDJ15")).default);
-$parcel$export(module.exports, "SampleData", () => $c45b4e4a441b9114$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "Constructors", () => $1de12fba3c0269cf$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "Drawing", () => (parcelRequire("is5Zp")).default);
-$parcel$export(module.exports, "Geometry", () => (parcelRequire("i1Hf9")).default);
-$parcel$export(module.exports, "Utilities", () => (parcelRequire("fDRV6")).default);
-$parcel$export(module.exports, "threeDWrapper", () => $a5f0f7b27f7e3a97$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "GraphDrawer", () => $291fd03f386082c6$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "Simulation", () => $8b47958e2fc13100$export$156b30a852a4aab);
+parcelRequire.register("eqUI8", function(module, exports) {
 
-var $iFDmY = parcelRequire("iFDmY");
+$parcel$export(module.exports, "default", () => $f6fe6fbbee6445e9$export$2e2bcd8739ae039);
 
-var $jDJ15 = parcelRequire("jDJ15");
-const $346b2f0b202e01a8$export$b6cdfb6bd6195507 = {
-    "nodes": [
+
+var $1jyjM = parcelRequire("1jyjM");
+
+
+
+
+var $bWT2q = parcelRequire("bWT2q");
+
+var $8lQGS = parcelRequire("8lQGS");
+
+var $cWcXJ = parcelRequire("cWcXJ");
+parcelRequire("9TL8g");
+// Draw the graph out as a bunch of vertices
+// As like tiny squares
+function DrawTHREEGraphVertices(Graph1, bounds, size = 1, color = 0xffffff, alpha = 1) {
+    const positionAttribute = [];
+    // get the corresponding points list
+    const pmap = Graph1.get_position_map();
+    // declare the sizes and colors
+    let sizes;
+    let colors;
+    if (typeof size == "number") sizes = Array(Graph1.nodes.size).fill(size);
+    else sizes = size;
+    colors = Array(Graph1.nodes.size).fill(color);
+    const labels = [];
+    const colorVal = new $h9nKb$three.Color();
+    colorVal.setRGB(255, 255, 255); // white as the default
+    // process the data set
+    let i = 0;
+    let nodeData;
+    for (let node of Graph1.nodes.keys()){
+        nodeData = pmap.get(node);
+        positionAttribute.push(nodeData.x * bounds, nodeData.y * bounds, nodeData.z * bounds);
+        colorVal.toArray(colors, i * 3);
+        labels.push(node);
+        i += 1;
+    }
+    const geometry = new $h9nKb$three.BufferGeometry();
+    // geometry attribute
+    geometry.setAttribute("position", new $h9nKb$three.Float32BufferAttribute(positionAttribute, 3));
+    // color attribute
+    geometry.setAttribute("customColor", new $h9nKb$three.Float32BufferAttribute(colors, 3));
+    // size attribute
+    geometry.setAttribute("size", new $h9nKb$three.Float32BufferAttribute(sizes, 1));
+    // label attribute
+    geometry.setAttribute("label", new $h9nKb$three.Int32BufferAttribute(labels, 1));
+    geometry.name = "nodes";
+    // example material
+    const PointMaterial = new $h9nKb$three.ShaderMaterial({
+        uniforms: {
+            color: {
+                value: new $h9nKb$three.Color(0xffffff)
+            },
+            pointTexture: {
+                value: new $h9nKb$three.TextureLoader().load("./Textures/Square.png")
+            },
+            alphaTest: {
+                value: alpha
+            }
+        },
+        vertexShader: (0, $bWT2q.vertexShader),
+        fragmentShader: (0, $8lQGS.fragmentShader)
+    });
+    const vertices = new $h9nKb$three.Group();
+    vertices.add(new $h9nKb$three.Points(geometry, PointMaterial));
+    return vertices;
+}
+// then make a thing which draws out all the edges (THICK)
+function DrawTHREEGraphEdgesThick(G, bounds, thickness = 0.2, color = 0xffffff) {
+    // add the interpolation function
+    const lineMap = G.get_edge_map();
+    return DrawThickEdgesFromEdgeMap(lineMap, bounds, thickness, color);
+}
+// draw a thing to draw out all the edges from the edge map stuff
+function DrawThickEdgesFromEdgeMap(emap, bounds, thickness = 0.2, color = 0xffffff) {
+    // this is the line thing
+    const mat = new (0, $h9nKb$threeexamplesjsmlinesLineMaterial.LineMaterial)({
+        color: color,
+        linewidth: thickness,
+        vertexColors: true,
+        //resolution:  // to be set by renderer, eventually
+        dashed: false,
+        alphaToCoverage: true
+    });
+    const meshes = new $h9nKb$three.Group();
+    for (let lval of emap.values()){
+        const mcolor = new $h9nKb$three.Color();
+        // convert the color that we shall be using
+        mcolor.setHex(color);
+        const pnts = [];
+        const cols = [];
+        lval.points.forEach((pnt)=>{
+            pnts.push(pnt.x * bounds - bounds / 2, pnt.y * bounds - bounds / 2, pnt.z * bounds - bounds / 2);
+            cols.push(mcolor.r, mcolor.g, mcolor.b);
+        });
+        const geo = new (0, $h9nKb$threeexamplesjsmlinesLineGeometry.LineGeometry)();
+        geo.setPositions(pnts);
+        geo.setColors(cols);
+        const line = new (0, $h9nKb$threeexamplesjsmlinesLine2js.Line2)(geo, mat);
+        line.computeLineDistances();
+        line.scale.set(1, 1, 1);
+        meshes.add(line);
+    }
+    return meshes;
+}
+// make a thing that draws out all the lines (Thin)
+function DrawTHREEGraphEdgesThin(G, bounds, color = 0xffffff) {
+    // first get the edge map positions
+    const emap = G.get_edge_map();
+    return DrawThinEdgesFromEdgeMap(emap, bounds, color);
+}
+// function to draw edges from edge map
+function DrawThinEdgesFromEdgeMap(emap, bounds, color = 0xffffff) {
+    const material = new $h9nKb$three.LineBasicMaterial({
+        color: color
+    });
+    const lines = new $h9nKb$three.Group();
+    let points;
+    for (const edge of emap.values()){
+        points = [];
+        // get the edge data
+        const ldata = edge.points;
+        ldata.forEach((element)=>{
+            points.push(new $h9nKb$three.Vector3(element.x * bounds, element.y * bounds, element.z * bounds));
+        });
+        // then make the line thing
+        const geometry = new $h9nKb$three.BufferGeometry().setFromPoints(points);
+        const line = new $h9nKb$three.Line(geometry, material);
+        lines.add(line);
+    }
+    return lines;
+}
+// draw the cube box graph here
+function AddBoxBasedImaging(nodeMap, bounds, color = 0xffffff, size = 10) {
+    // precompute all the sizes
+    let sizes;
+    if (typeof size == "number") sizes = Array(nodeMap.size).fill(size);
+    else sizes = size;
+    // returns a group
+    const group = new $h9nKb$three.Group();
+    const material = new $h9nKb$three.MeshBasicMaterial({
+        color: color
+    });
+    let nodeData;
+    let geometry;
+    let nodeMesh;
+    for(let i = 0; i < nodeMap.size; i++){
+        nodeData = nodeMap.get(i);
+        geometry = new $h9nKb$three.BoxGeometry(sizes[i]);
+        geometry.name = i.toString();
+        nodeMesh = new $h9nKb$three.Mesh(geometry, material);
+        nodeMesh.position.set(nodeData.x * bounds, nodeData.y * bounds, nodeData.z * bounds);
+        group.add(nodeMesh);
+    }
+    return group;
+}
+// Draw BoxBased imaging from a graph
+function DrawTHREEBoxBasedVertices(graph, bounds, color = 0xffffff, size = 10) {
+    const pmap = graph.get_position_map();
+    const Bgroup = AddBoxBasedImaging(pmap, bounds, color, size);
+    return Bgroup;
+}
+// draw cylinders where required
+function AddCylinderBasedImaging(nodeMap, divisonLength, color = 0xffffff, size = 10) {
+    // precompute all the sizes
+    let sizes;
+    if (typeof size == "number") sizes.Array(nodeMap.size).fill(size);
+    else sizes = size;
+    // returns a group
+    const group = new $h9nKb$three.Group();
+    const material = new $h9nKb$three.MeshBasicMaterial({
+        color: color
+    });
+    let radius, circumfurence, segments;
+    let nodeData;
+    for(let i = 0; i < nodeMap.size; i++){
+        nodeData = nodeMap.get(i);
+        radius = sizes[i];
+        circumfurence = 2 * radius * Math.PI;
+        segments = Math.ceil(circumfurence / divisonLength);
+        const geometry = new $h9nKb$three.CylinderGeometry(radius, radius, 10, segments);
+        geometry.name = i.toString();
+        const nodeMesh = new $h9nKb$three.Mesh(geometry, material);
+        nodeMesh.position.set(nodeData.x, nodeData.y, nodeData.z);
+        group.add(nodeMesh);
+    }
+    return group;
+}
+// draw the sparse graph as groups
+// this seperates all the points based on some or the other group
+async function AddInModularityBasedPointGroups(Graph2, propertyName) {
+    // returns an array of groups
+    const groups = new Map();
+    let ndata;
+    let modularity;
+    for (let node of Graph2.nodes.keys()){
+        ndata = Graph2.nodes.get(node);
+        modularity = eval(`ndata.data.${propertyName}}`);
+        if (groups.has(modularity)) groups.get(modularity).push(node);
+        else groups.set(modularity, [
+            node
+        ]);
+    }
+    // then counstruct a bunch of subraphs
+    const meshGraphVertices = new Map();
+    const meshGraphEdges = new Map();
+    let subgraphGroup;
+    let subgraph;
+    let pointRep;
+    let edges;
+    for (let modularityGroup of groups.keys()){
+        subgraphGroup = groups.get(modularityGroup);
+        // returns an array
+        subgraph = await (0, $cWcXJ.default).SelectSubgraph(Graph2, subgraphGroup);
+        // then make the vertex thing
+        pointRep = DrawTHREEGraphVertices(subgraph, 1);
+        meshGraphVertices.set(modularityGroup, pointRep);
+        // make the edges
+        edges = DrawSimplifiedEdges(subgraph, 0.03);
+        meshGraphEdges.set(modularityGroup, edges);
+    }
+    const ROBJ = {
+        nodeGroups: meshGraphVertices,
+        EdgeGroups: meshGraphEdges
+    };
+    return ROBJ;
+}
+function DrawSimplifiedEdges(G, amount, color = 0xffffff) {
+    const lineGroup = new $h9nKb$three.Group();
+    const material = new $h9nKb$three.LineBasicMaterial({
+        color: color
+    });
+    let start;
+    let end;
+    let points;
+    for (let edge of G.edges.values())if (Math.random() <= amount) {
+        start = G.nodes.get(edge.start).data.pos;
+        end = G.nodes.get(edge.end).data.pos;
+        points = [];
+        points.push(new $h9nKb$three.Vector3(start.x, start.y, start.z));
+        points.push(new $h9nKb$three.Vector3(end.x, end.y, end.z));
+        const geometry = new $h9nKb$three.BufferGeometry().setFromPoints(points);
+        const line = new $h9nKb$three.Line(geometry, material);
+        lineGroup.add(line);
+    }
+    return lineGroup;
+}
+function ChangeTheVertexColours(vertices, indexArray, color) {
+    let Attrib = vertices.geometry.attributes;
+    let k = 0;
+    const newCol = (0, $1jyjM.hexToRgb)(color);
+    indexArray.forEach((node)=>{
+        k = node * 3; // @ts-ignore
+        Attrib.customColor.array[k] = newCol.r; // @ts-ignore
+        Attrib.customColor.array[k + 1] = newCol.g; // @ts-ignore
+        Attrib.customColor.array[k + 2] = newCol.b;
+    });
+    Attrib.customColor.needsUpdate = true;
+}
+function ResetVertexColors(vertices) {
+    let Attrib = vertices.geometry.attributes;
+    let k = 0;
+    for(let i = 0; i < Attrib.customColor.count; i++){
+        k = i * 3; // @ts-ignore
+        Attrib.customColor.array[k] = 255; // @ts-ignore
+        Attrib.customColor.array[k + 1] = 255; // @ts-ignore
+        Attrib.customColor.array[k + 2] = 255;
+    }
+    Attrib.customColor.needsUpdate = true;
+}
+var $f6fe6fbbee6445e9$export$2e2bcd8739ae039 = {
+    DrawTHREEGraphVertices: DrawTHREEGraphVertices,
+    DrawTHREEGraphEdgesThick: DrawTHREEGraphEdgesThick,
+    DrawTHREEGraphEdgesThin: DrawTHREEGraphEdgesThin,
+    AddBoxBasedImaging: AddBoxBasedImaging,
+    AddInModularityBasedPointGroups: AddInModularityBasedPointGroups,
+    DrawThinEdgesFromEdgeMap: DrawThinEdgesFromEdgeMap,
+    DrawThickEdgesFromEdgeMap: DrawThickEdgesFromEdgeMap,
+    AddCylinderBasedImaging: AddCylinderBasedImaging,
+    DrawSimplifiedEdges: DrawSimplifiedEdges,
+    ChangeTheVertexColours: ChangeTheVertexColours,
+    ResetVertexColors: ResetVertexColors,
+    DrawTHREEBoxBasedVertices: DrawTHREEBoxBasedVertices
+};
+
+});
+parcelRequire.register("1jyjM", function(module, exports) {
+
+$parcel$export(module.exports, "hexToRgb", () => $a40c0a72ef2952b0$export$5a544e13ad4e1fa5);
+///////////////
+// color convert by Tim Down
+// https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
+function $a40c0a72ef2952b0$var$componentToHex(c) {
+    var hex = c.toString(16);
+    return hex.length == 1 ? "0" + hex : hex;
+}
+function $a40c0a72ef2952b0$export$34d09c4a771c46ef(r, g, b) {
+    return "#" + $a40c0a72ef2952b0$var$componentToHex(r) + $a40c0a72ef2952b0$var$componentToHex(g) + $a40c0a72ef2952b0$var$componentToHex(b);
+}
+function $a40c0a72ef2952b0$export$5a544e13ad4e1fa5(hex) {
+    // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+    var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+    hex = hex.toString().replace(shorthandRegex, function(m, r, g, b) {
+        return r + r + g + g + b + b;
+    });
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+    } : null;
+}
+
+});
+
+parcelRequire.register("bWT2q", function(module, exports) {
+
+$parcel$export(module.exports, "vertexShader", () => $a7829b923b8d65d1$export$84657c60382b0f83);
+const $a7829b923b8d65d1$export$84657c60382b0f83 = `
+attribute float size;
+attribute vec3 customColor;
+
+varying vec3 vColor;
+
+void main() {
+    vColor = customColor;
+    vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+    gl_PointSize = size * ( 300.0 / -mvPosition.z );
+    gl_Position = projectionMatrix * mvPosition;
+}
+`;
+
+});
+
+parcelRequire.register("8lQGS", function(module, exports) {
+
+$parcel$export(module.exports, "fragmentShader", () => $99612fb76518d7f6$export$4391ef72fa03c19);
+const $99612fb76518d7f6$export$4391ef72fa03c19 = `
+uniform vec3 color;
+uniform sampler2D pointTexture;
+uniform float alphaTest;
+
+varying vec3 vColor;
+
+void main() {
+    gl_FragColor = vec4( color * vColor, 1.0 );
+    gl_FragColor = gl_FragColor * texture2D( pointTexture, gl_PointCoord );
+    if ( gl_FragColor.a < alphaTest ) discard;
+}
+`;
+
+});
+
+
+
+$parcel$export(module.exports, "Graph", () => (parcelRequire("9TL8g")).Graph);
+$parcel$export(module.exports, "GraphMethods", () => (parcelRequire("cWcXJ")).default);
+$parcel$export(module.exports, "SampleData", () => $23157da2f76f8491$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "Constructors", () => $713effe557802f7b$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "Drawing", () => (parcelRequire("jYcHE")).default);
+$parcel$export(module.exports, "Geometry", () => (parcelRequire("fd3jp")).default);
+$parcel$export(module.exports, "Utilities", () => (parcelRequire("6Xdhg")).default);
+$parcel$export(module.exports, "threeDWrapper", () => (parcelRequire("eqUI8")).default);
+$parcel$export(module.exports, "GraphDrawer", () => $5b0769bb04ea8018$export$2e2bcd8739ae039);
+
+var $9TL8g = parcelRequire("9TL8g");
+
+var $cWcXJ = parcelRequire("cWcXJ");
+const $86fe052ff5a9729f$export$b6cdfb6bd6195507 = {
+    nodes: [
         0,
         1,
         2,
@@ -776,9 +1247,9 @@ const $346b2f0b202e01a8$export$b6cdfb6bd6195507 = {
         30,
         31,
         32,
-        33
+        33, 
     ],
-    "edges": [
+    edges: [
         [
             0,
             1
@@ -1090,12 +1561,12 @@ const $346b2f0b202e01a8$export$b6cdfb6bd6195507 = {
         [
             32,
             33
-        ]
+        ], 
     ]
 };
 
 
-const $c4766e1c761bd447$export$aa88f89bcd11f8a9 = {
+const $5bb64a4bf797bbb0$export$aa88f89bcd11f8a9 = {
     nodes: [
         {
             id: 0,
@@ -1620,8 +2091,8 @@ const $c4766e1c761bd447$export$aa88f89bcd11f8a9 = {
 
 
 
-var $iFDmY = parcelRequire("iFDmY");
-class $fe13961f472f5abd$export$3e8a3cc8713efbec {
+var $9TL8g = parcelRequire("9TL8g");
+class $2ba0ecfda52ea401$export$1e3a09c15b213958 {
     constructor(data){
         // this data is an arbitrary thing with which I can create any object
         this.data = {
@@ -1633,65 +2104,57 @@ class $fe13961f472f5abd$export$3e8a3cc8713efbec {
 }
 
 
-class $8f322e21d4fb4fd7$export$b9d9805c9b77a56d {
-    constructor(start, end, data){
-        this.start = start;
-        this.end = end;
-        this.data = {
-            ...data
-        };
-    }
-}
 
-
+var $i8obY = parcelRequire("i8obY");
 // construct a graph based on an edge list etc
-async function $1de12fba3c0269cf$var$ConstructGraphNodeEdgesList(nodes, edges) {
+async function $713effe557802f7b$var$ConstructGraphNodeEdgesList(nodes, edges) {
     // make a node OBJ
     const nodeOBJ = new Map();
     for(let i = 0; i < nodes.length; i++){
-        const n = new (0, $fe13961f472f5abd$export$3e8a3cc8713efbec)(nodes[i].data);
+        const n = new (0, $2ba0ecfda52ea401$export$1e3a09c15b213958)(nodes[i].data);
         nodeOBJ.set(nodes[i], n);
     }
     // make an edge object
     const edgeOBJ = new Map();
     for(let i1 = 0; i1 < edges.length; i1++){
-        const e = new (0, $8f322e21d4fb4fd7$export$b9d9805c9b77a56d)(edges[i1][0], edges[i1][1], edges[i1].data);
+        const e = new (0, $i8obY.Edge)(edges[i1][0], edges[i1][1], edges[i1].data);
         edgeOBJ.set(i1, e);
     }
     // make a graph object
-    const G = await (0, $iFDmY.Graph).create(nodeOBJ, edgeOBJ);
+    const G = await (0, $9TL8g.Graph).create(nodeOBJ, edgeOBJ);
     return G;
 }
-var $1de12fba3c0269cf$export$2e2bcd8739ae039 = {
-    ConstructGraphNodeEdgesList: $1de12fba3c0269cf$var$ConstructGraphNodeEdgesList
+var $713effe557802f7b$export$2e2bcd8739ae039 = {
+    ConstructGraphNodeEdgesList: $713effe557802f7b$var$ConstructGraphNodeEdgesList
 };
 
 
 
-var $iFDmY = parcelRequire("iFDmY");
+var $9TL8g = parcelRequire("9TL8g");
 
-var $99CHB = parcelRequire("99CHB");
+var $fw40F = parcelRequire("fw40F");
 
 
+var $i8obY = parcelRequire("i8obY");
 
-var $is5Zp = parcelRequire("is5Zp");
-async function $c45b4e4a441b9114$var$LoadZKC() {
+var $jYcHE = parcelRequire("jYcHE");
+async function $23157da2f76f8491$var$LoadZKC() {
     // load up the dataset representation
-    const data = (0, $346b2f0b202e01a8$export$b6cdfb6bd6195507);
-    const G = await (0, $1de12fba3c0269cf$export$2e2bcd8739ae039).ConstructGraphNodeEdgesList(data.nodes, data.edges);
+    const data = (0, $86fe052ff5a9729f$export$b6cdfb6bd6195507);
+    const G = await (0, $713effe557802f7b$export$2e2bcd8739ae039).ConstructGraphNodeEdgesList(data.nodes, data.edges);
     return G;
 }
-async function $c45b4e4a441b9114$var$LoadZKCSimulated() {
+async function $23157da2f76f8491$var$LoadZKCSimulated() {
     // make a map
-    const data = (0, $c4766e1c761bd447$export$aa88f89bcd11f8a9);
+    const data = (0, $5bb64a4bf797bbb0$export$aa88f89bcd11f8a9);
     const nodes = new Map();
     const edges = new Map();
     // set the node map
     data.nodes.forEach((node)=>{
         const id = node.id;
-        const pos = new (0, $99CHB.Point)(node.px * 50, 0, node.py * 50);
+        const pos = new (0, $fw40F.Point)(node.px * 50, 0, node.py * 50);
         const modularity = node.member;
-        const n = new (0, $fe13961f472f5abd$export$3e8a3cc8713efbec)({
+        const n = new (0, $2ba0ecfda52ea401$export$1e3a09c15b213958)({
             pos: pos,
             size: 10,
             info: "Node Info",
@@ -1704,331 +2167,44 @@ async function $c45b4e4a441b9114$var$LoadZKCSimulated() {
         const edge = data.edges[i];
         const start = edge[0];
         const end = edge[1];
-        const e = new (0, $8f322e21d4fb4fd7$export$b9d9805c9b77a56d)(start, end, {});
+        const e = new (0, $i8obY.Edge)(start, end, {});
         edges.set(i, e);
     }
     // make a graph object
-    const G = await (0, $iFDmY.Graph).create(nodes, edges);
-    const lmap = (0, $is5Zp.default).DrawEdgeLines(G, 10);
+    const G = await (0, $9TL8g.Graph).create(nodes, edges);
+    const lmap = (0, $jYcHE.default).DrawEdgeLines(G, 10);
     G.apply_edge_pos_maps(lmap);
     return G;
 }
 var // exports
-$c45b4e4a441b9114$export$2e2bcd8739ae039 = {
-    LoadZKC: $c45b4e4a441b9114$var$LoadZKC,
-    LoadZKCSimulated: $c45b4e4a441b9114$var$LoadZKCSimulated
+$23157da2f76f8491$export$2e2bcd8739ae039 = {
+    LoadZKC: $23157da2f76f8491$var$LoadZKC,
+    LoadZKCSimulated: $23157da2f76f8491$var$LoadZKCSimulated
 };
 
 
 
 
-var $is5Zp = parcelRequire("is5Zp");
+var $jYcHE = parcelRequire("jYcHE");
 
-var $i1Hf9 = parcelRequire("i1Hf9");
+var $fd3jp = parcelRequire("fd3jp");
 
-var $fDRV6 = parcelRequire("fDRV6");
+var $6Xdhg = parcelRequire("6Xdhg");
 
-
-
-
-const $75f01f84c4c7d967$export$84657c60382b0f83 = `
-attribute float size;
-attribute vec3 customColor;
-
-varying vec3 vColor;
-
-void main() {
-    vColor = customColor;
-    vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
-    gl_PointSize = size * ( 300.0 / -mvPosition.z );
-    gl_Position = projectionMatrix * mvPosition;
-}
-`;
-
-
-const $a85b0528a4744ce3$export$4391ef72fa03c19 = `
-uniform vec3 color;
-uniform sampler2D pointTexture;
-uniform float alphaTest;
-
-varying vec3 vColor;
-
-void main() {
-    gl_FragColor = vec4( color * vColor, 1.0 );
-    gl_FragColor = gl_FragColor * texture2D( pointTexture, gl_PointCoord );
-    if ( gl_FragColor.a < alphaTest ) discard;
-}
-`;
+var $eqUI8 = parcelRequire("eqUI8");
 
 
 
-var $jDJ15 = parcelRequire("jDJ15");
-// Draw the graph out as a bunch of vertices
-function $a5f0f7b27f7e3a97$var$DrawTHREEGraphVertices(Graph, bounds) {
-    const positionAttribute = [];
-    const sizes = [];
-    const colors = [];
-    const labels = [];
-    const color = new $htxhw$three.Color();
-    // process the data set
-    let i = 0;
-    for (const node of Graph.nodes.keys()){
-        const nodeData = Graph.nodes.get(node);
-        positionAttribute.push(nodeData.data.pos.x * bounds, nodeData.data.pos.y * bounds, nodeData.data.pos.z * bounds);
-        color.setRGB(255, 255, 255);
-        color.toArray(colors, i * 3);
-        if (nodeData.data.size != undefined) sizes.push(nodeData.data.size);
-        else sizes.push(4);
-        labels.push(node);
-        i += 1;
-    }
-    const geometry = new $htxhw$three.BufferGeometry();
-    // geometry attribute
-    geometry.setAttribute("position", new $htxhw$three.Float32BufferAttribute(positionAttribute, 3));
-    // color attribute
-    geometry.setAttribute("customColor", new $htxhw$three.Float32BufferAttribute(colors, 3));
-    // size attribute
-    geometry.setAttribute("size", new $htxhw$three.Float32BufferAttribute(sizes, 1));
-    // label attribute
-    geometry.setAttribute("label", new $htxhw$three.Int32BufferAttribute(labels, 1));
-    geometry.name = "THIS IS THE VERTEX GROUP";
-    // example material
-    const PointMaterial = new $htxhw$three.ShaderMaterial({
-        uniforms: {
-            color: {
-                value: new $htxhw$three.Color(0xffffff)
-            },
-            pointTexture: {
-                value: new $htxhw$three.TextureLoader().load("./Textures/Square.png")
-            },
-            alphaTest: {
-                value: 0.9
-            }
-        },
-        vertexShader: (0, $75f01f84c4c7d967$export$84657c60382b0f83),
-        fragmentShader: (0, $a85b0528a4744ce3$export$4391ef72fa03c19)
-    });
-    const vertices = new $htxhw$three.Points(geometry, PointMaterial);
-    return vertices;
-}
-// then make a thing which draws out all the edges (THICK)
-function $a5f0f7b27f7e3a97$var$DrawTHREEGraphEdgesThick(G, bounds) {
-    return $a5f0f7b27f7e3a97$var$DrawThickEdgesFromEdgeMap(G.edges, bounds);
-}
-// draw a thing to draw out all the edges from the edge map stuff
-function $a5f0f7b27f7e3a97$var$DrawThickEdgesFromEdgeMap(emap, bounds) {
-    // this is the line thing
-    const mat = new (0, $htxhw$threeexamplesjsmlinesLineMaterialjs.LineMaterial)({
-        color: 0xffffff,
-        linewidth: 0.02,
-        vertexColors: true,
-        //resolution:  // to be set by renderer, eventually
-        dashed: false,
-        alphaToCoverage: true
-    });
-    const meshes = new $htxhw$three.Group();
-    for (const edge of emap.values()){
-        const lval = edge.data.ldata;
-        const color = new $htxhw$three.Color();
-        color.setHSL(1.0, 1.0, 1.0);
-        const pnts = [];
-        const cols = [];
-        lval.points.forEach((pnt)=>{
-            pnts.push(pnt.x * bounds - bounds / 2, pnt.y * bounds - bounds / 2, pnt.z * bounds - bounds / 2);
-            cols.push(color.r, color.g, color.b);
-        });
-        const geo = new (0, $htxhw$threeexamplesjsmlinesLineGeometryjs.LineGeometry)();
-        geo.setPositions(pnts);
-        geo.setColors(cols);
-        const line = new (0, $htxhw$threeexamplesjsmlinesLine2js.Line2)(geo, mat);
-        line.computeLineDistances();
-        line.scale.set(1, 1, 1);
-        meshes.add(line);
-    }
-    return meshes;
-}
-// make a thing that draws out all the lines (Thin)
-function $a5f0f7b27f7e3a97$var$DrawTHREEGraphEdgesThin(G, bounds) {
-    return $a5f0f7b27f7e3a97$var$DrawThinEdgesFromEdgeMap(G.edges, bounds);
-}
-// function to draw edges from edge map
-function $a5f0f7b27f7e3a97$var$DrawThinEdgesFromEdgeMap(emap, bounds) {
-    const material = new $htxhw$three.LineBasicMaterial({
-        color: 0x90e0ef
-    });
-    const lines = new $htxhw$three.Group();
-    for (const edge of emap.values()){
-        const points = [];
-        // get the edge data
-        const ldata = edge.data.ldata.points;
-        ldata.forEach((element)=>{
-            points.push(new $htxhw$three.Vector3(element.x * bounds, element.y * bounds, element.z * bounds));
-        });
-        // then make the line thing
-        const geometry = new $htxhw$three.BufferGeometry().setFromPoints(points);
-        const line = new $htxhw$three.Line(geometry, material);
-        lines.add(line);
-    }
-    return lines;
-}
-// draw the cube box graph here
-function $a5f0f7b27f7e3a97$var$AddBoxBasedImaging(vertexMap, bounds) {
-    // returns a group
-    const group = new $htxhw$three.Group();
-    const material = new $htxhw$three.MeshBasicMaterial({
-        color: 0x0466c8
-    });
-    for (const node of vertexMap.keys()){
-        const nodeData = vertexMap.get(node);
-        const geometry = new $htxhw$three.BoxGeometry(nodeData.data.size, nodeData.data.size, nodeData.data.size);
-        geometry.name = node;
-        const nodeMesh = new $htxhw$three.Mesh(geometry, material);
-        nodeMesh.position.set(nodeData.data.pos.x * bounds, nodeData.data.pos.y * bounds, nodeData.data.pos.z * bounds);
-        group.add(nodeMesh);
-    }
-    return group;
-}
-// Draw BoxBased imaging from a graph
-function $a5f0f7b27f7e3a97$var$DrawTHREEBoxBasedVertices(graph, bounds) {
-    const Bgroup = $a5f0f7b27f7e3a97$var$AddBoxBasedImaging(graph.nodes, bounds);
-    return Bgroup;
-}
-// draw Cylinder based imaging given a graph
-function $a5f0f7b27f7e3a97$var$DrawCylinderBasedVertices(graph, bounds, divisons) {
-    const ds = divisons || 1;
-    const Cgroup = $a5f0f7b27f7e3a97$var$AddCylinderBasedImaging(graph.nodes, ds, bounds);
-    return Cgroup;
-}
-// draw cylinders where required
-function $a5f0f7b27f7e3a97$var$AddCylinderBasedImaging(vertexMap, divisonLength, bounds) {
-    // returns a group
-    const group = new $htxhw$three.Group();
-    const material = new $htxhw$three.MeshBasicMaterial({
-        color: 0xffffff
-    });
-    let radius, circumfurence, segments;
-    for (const node of vertexMap.keys()){
-        const nodeData = vertexMap.get(node);
-        radius = nodeData.data.size;
-        circumfurence = 2 * radius * Math.PI;
-        segments = Math.ceil(circumfurence / divisonLength);
-        const geometry = new $htxhw$three.CylinderGeometry(radius, radius, 10, segments);
-        geometry.name = node;
-        const nodeMesh = new $htxhw$three.Mesh(geometry, material);
-        nodeMesh.position.set(nodeData.data.pos.x * bounds, nodeData.data.pos.y * bounds, nodeData.data.pos.z * bounds);
-        group.add(nodeMesh);
-    }
-    return group;
-}
-// draw the sparse graph as groups
-async function $a5f0f7b27f7e3a97$var$AddInModularityBasedPointGroups(Graph, modularityList) {
-    // returns an array of groups
-    const groups = new Map();
-    const otherNodes = [];
-    for (const node of Graph.nodes.keys()){
-        const ndata = Graph.nodes.get(node);
-        const modularity = ndata.data.modularity;
-        if (modularityList.includes(modularity)) {
-            if (groups.has(modularity)) groups.get(modularity).push(node);
-            else groups.set(modularity, [
-                node
-            ]);
-        } else otherNodes.push(node);
-    }
-    // then counstruct a bunch of subraphs
-    const meshGraphVertices = new Map();
-    const meshGraphEdges = new Map();
-    // make a seperate group of nodes that have less than 2 neighbours
-    console.log("Now started the process of vertex subdivision");
-    for (const modularityGroup of groups.keys()){
-        const subgraphGroup = groups.get(modularityGroup);
-        // returns an array
-        const subgraph = await (0, $jDJ15.default).SelectSubgraph(Graph, subgraphGroup);
-        // then make the vertex thing
-        const meshRep = $a5f0f7b27f7e3a97$var$DrawTHREEGraphVertices(subgraph, 1);
-        meshGraphVertices.set(modularityGroup, meshRep);
-        // make the edges
-        const edges = $a5f0f7b27f7e3a97$var$DrawSimplifiedEdges(subgraph, 0.03);
-        meshGraphEdges.set(modularityGroup, edges);
-    }
-    // now for all the vertices in the "other" Nodes map add in the
-    // rest of the stuff for us to play around with
-    const OtherNodes = await (0, $jDJ15.default).SelectSubgraph(Graph, otherNodes);
-    const LeafVertices = $a5f0f7b27f7e3a97$var$DrawTHREEGraphVertices(OtherNodes, 1);
-    const ROBJ = {
-        vertices: meshGraphVertices,
-        edges: meshGraphEdges,
-        leafs: LeafVertices
-    };
-    return ROBJ;
-}
-function $a5f0f7b27f7e3a97$var$DrawSimplifiedEdges(G, amount) {
-    const lineGroup = new $htxhw$three.Group();
-    const material = new $htxhw$three.LineBasicMaterial({
-        color: 0x90e0ef
-    });
-    for (const edge of G.edges.values())if (Math.random() <= amount) {
-        const start = G.nodes.get(edge.start).data.pos;
-        const end = G.nodes.get(edge.end).data.pos;
-        const points = [];
-        points.push(new $htxhw$three.Vector3(start.x, start.y, start.z));
-        points.push(new $htxhw$three.Vector3(end.x, end.y, end.z));
-        const geometry = new $htxhw$three.BufferGeometry().setFromPoints(points);
-        const line = new $htxhw$three.Line(geometry, material);
-        lineGroup.add(line);
-    }
-    return lineGroup;
-}
-function $a5f0f7b27f7e3a97$var$ChangeTheVertexColours(vertices, indexArray, color) {
-    let Attrib = vertices.geometry.attributes;
-    let k = 0;
-    indexArray.forEach((node)=>{
-        k = node * 3;
-        Attrib.customColor.array[k] = color.r;
-        Attrib.customColor.array[k + 1] = color.g;
-        Attrib.customColor.array[k + 2] = color.b;
-    });
-    Attrib.customColor.needsUpdate = true;
-}
-function $a5f0f7b27f7e3a97$var$ResetVertexColors(vertices) {
-    let Attrib = vertices.geometry.attributes;
-    let k = 0;
-    for(let i = 0; i < Attrib.customColor.count; i++){
-        k = i * 3;
-        Attrib.customColor.array[k] = 100;
-        Attrib.customColor.array[k + 1] = 237;
-        Attrib.customColor.array[k + 2] = 146;
-    }
-    Attrib.customColor.needsUpdate = true;
-}
-var $a5f0f7b27f7e3a97$export$2e2bcd8739ae039 = {
-    DrawTHREEGraphVertices: $a5f0f7b27f7e3a97$var$DrawTHREEGraphVertices,
-    DrawTHREEGraphEdgesThick: $a5f0f7b27f7e3a97$var$DrawTHREEGraphEdgesThick,
-    DrawTHREEGraphEdgesThin: $a5f0f7b27f7e3a97$var$DrawTHREEGraphEdgesThin,
-    AddBoxBasedImaging: $a5f0f7b27f7e3a97$var$AddBoxBasedImaging,
-    AddInModularityBasedPointGroups: $a5f0f7b27f7e3a97$var$AddInModularityBasedPointGroups,
-    DrawThinEdgesFromEdgeMap: $a5f0f7b27f7e3a97$var$DrawThinEdgesFromEdgeMap,
-    DrawThickEdgesFromEdgeMap: $a5f0f7b27f7e3a97$var$DrawThickEdgesFromEdgeMap,
-    AddCylinderBasedImaging: $a5f0f7b27f7e3a97$var$AddCylinderBasedImaging,
-    DrawSimplifiedEdges: $a5f0f7b27f7e3a97$var$DrawSimplifiedEdges,
-    ChangeTheVertexColours: $a5f0f7b27f7e3a97$var$ChangeTheVertexColours,
-    ResetVertexColors: $a5f0f7b27f7e3a97$var$ResetVertexColors,
-    DrawTHREEBoxBasedVertices: $a5f0f7b27f7e3a97$var$DrawTHREEBoxBasedVertices,
-    DrawCylinderBasedVertices: $a5f0f7b27f7e3a97$var$DrawCylinderBasedVertices
-};
-
-
-
-
-
+var $eqUI8 = parcelRequire("eqUI8");
 // this is the 3d graph drawing class with three js
-class $b343e0dd57ca25ab$export$4aefcc8a99cfbd66 {
+class $5b0769bb04ea8018$var$GraphDrawer3d {
     constructor(GraphDrawerOptions3d, graphs){
         this.canvas = GraphDrawerOptions3d.canvas;
         this.width = GraphDrawerOptions3d.width;
         this.height = GraphDrawerOptions3d.height;
-        this.nodeStyle = GraphDrawerOptions3d.nodeStyle || "POINT";
-        this.edgeStyle = GraphDrawerOptions3d.edgeStyle || "THIN";
+        // these maps are optional
+        // ive kepth them in as a way of managing all the
+        // geometry in the scene
         this.geometryMap = new Map();
         this.materialMap = new Map();
         this.meshMap = new Map();
@@ -2037,7 +2213,7 @@ class $b343e0dd57ca25ab$export$4aefcc8a99cfbd66 {
         this.camera;
         this.scene;
         // bounds is a global parameter that we change (think about this as scale)
-        this.bound = GraphDrawerOptions3d.bounds;
+        this.bounds = GraphDrawerOptions3d.bounds;
         // graph map is the hash map that holds all the
         // graphs that we are working with together
         this.graphs = new Map();
@@ -2049,53 +2225,38 @@ class $b343e0dd57ca25ab$export$4aefcc8a99cfbd66 {
     }
     async init() {
         const t1 = performance.now();
-        this.camera = new $htxhw$three.PerspectiveCamera();
+        this.camera = new $h9nKb$three.PerspectiveCamera();
         // start up a new scene
-        this.scene = new $htxhw$three.Scene();
+        this.scene = new $h9nKb$three.Scene();
         // set up a renderer
-        this.renderer = new $htxhw$three.WebGLRenderer({
+        this.renderer = new $h9nKb$three.WebGLRenderer({
             canvas: this.canvas,
             antialias: true
         });
         this.renderer.setSize(this.width, this.height);
         this.renderer.setClearColor(0xff00ff, 0);
         // add in a light
-        this.scene.add(new $htxhw$three.AmbientLight(0xffffff));
-        // add a spotlight 
-        const DirectionalLight = new $htxhw$three.DirectionalLight(0xffffff, 1);
+        this.scene.add(new $h9nKb$three.AmbientLight(0xffffff));
+        // add a spotlight
+        const DirectionalLight = new $h9nKb$three.DirectionalLight(0xffffff, 1);
         DirectionalLight.position.set(0, 10, 0);
         this.scene.add(DirectionalLight);
         // set up the control system
-        this.controls = new (0, $htxhw$threeexamplesjsmcontrolsOrbitControls.OrbitControls)(this.camera, this.renderer.domElement);
+        this.controls = new (0, $h9nKb$threeexamplesjsmcontrolsOrbitControls.OrbitControls)(this.camera, this.renderer.domElement);
         this.camera.position.set(0, 100, 100);
         this.controls.autoRotate = true;
         this.controls.maxPolarAngle = Math.PI * 0.5;
-        this.camera.enableDamping = true;
         this.controls.maxDistance = 1000;
         this.controls.minDistance = 10;
         this.controls.update();
         // add in the graph that we wanted this.graphs.get('ProvidedGraph')
         for (const graph of this.graphs.keys()){
-            // first add in the correct type of nodes 
-            if (this.nodeStyle == "BOX") {
-                const GeoGraph = (0, $a5f0f7b27f7e3a97$export$2e2bcd8739ae039).DrawTHREEBoxBasedVertices(this.graphs.get(graph), this.bound);
-                this.scene.add(GeoGraph);
-            } else if (this.nodeStyle == "CYLINDER") {
-                const GeoGraph = (0, $a5f0f7b27f7e3a97$export$2e2bcd8739ae039).DrawCylinderBasedVertices(this.graphs.get(graph), this.bound);
-                this.scene.add(GeoGraph);
-            } else if (this.nodeStyle == "POINT") {
-                const GeoGraph = (0, $a5f0f7b27f7e3a97$export$2e2bcd8739ae039).DrawTHREEGraphVertices(this.graphs.get(graph), this.bound);
-                this.scene.add(GeoGraph);
-            }
-            // then add in the correct type of edges
-            if (this.edgeStyle == "THICK") {
-                const ThickEdges = (0, $a5f0f7b27f7e3a97$export$2e2bcd8739ae039).DrawTHREEGraphEdgesThick(this.graphs.get(graph), this.bound);
-                this.scene.add(ThickEdges);
-            } else if (this.edgeStyle == "THIN") {
-                const ThinLines = (0, $a5f0f7b27f7e3a97$export$2e2bcd8739ae039).DrawTHREEGraphEdgesThin(this.graphs.get(graph), this.bound);
-                this.scene.add(ThinLines);
-            }
+            const GeoGraph = (0, $eqUI8.default).DrawTHREEBoxBasedVertices(this.graphs.get(graph), this.bounds);
+            this.scene.add(GeoGraph);
+            const ThickEdges = (0, $eqUI8.default).DrawTHREEGraphEdgesThick(this.graphs.get(graph), this.bounds);
+            this.scene.add(ThickEdges);
         }
+        // edges
         // finally print out that the initialization has finished
         const t2 = performance.now();
         console.log("initialization has finished");
@@ -2108,81 +2269,9 @@ class $b343e0dd57ca25ab$export$4aefcc8a99cfbd66 {
         this.controls.update();
     }
 }
-
-
-
-
-class $348f3b481a4551fe$export$1b8cf9af48396d5d {
-    constructor(GraphDrawerOptions3d, graphs){
-        this.canvas = GraphDrawerOptions3d.canvas;
-        this.width = GraphDrawerOptions3d.width;
-        this.height = GraphDrawerOptions3d.height;
-        this.layerMap = new Map();
-        this.deck;
-        // bounds is a global parameter that we change (think about this as scale)
-        this.bound = GraphDrawerOptions3d.bounds;
-        // graph map is the hash map that holds all the
-        // graphs that we are working with together
-        this.graphs = new Map();
-        // add the default graph to the graph map
-        for(let i = 0; i < graphs.length; i++){
-            const g = graphs[i];
-            this.graphs.set(i, g);
-        }
-    }
-    async init() {
-        const INITIAL_VIEW_STATE = {
-            latitude: 37.8,
-            longitude: -122.45,
-            zoom: 15
-        };
-        this.deck = new (0, $htxhw$deckglcore.Deck)({
-            canvas: this.canvas,
-            initialViewState: INITIAL_VIEW_STATE,
-            controller: true,
-            layers: [
-                new (0, $htxhw$deckgllayers.ScatterplotLayer)({
-                    data: [
-                        {
-                            position: [
-                                -122.45,
-                                37.8
-                            ],
-                            color: [
-                                255,
-                                0,
-                                0
-                            ],
-                            radius: 100
-                        }, 
-                    ],
-                    getColor: (d)=>d.color,
-                    getRadius: (d)=>d.radius
-                }), 
-            ]
-        });
-    }
-}
-
-
-var $291fd03f386082c6$export$2e2bcd8739ae039 = {
-    GraphDrawer3d: $b343e0dd57ca25ab$export$4aefcc8a99cfbd66,
-    GraphDrawerDeck: $348f3b481a4551fe$export$1b8cf9af48396d5d
+var $5b0769bb04ea8018$export$2e2bcd8739ae039 = {
+    GraphDrawer3d: $5b0769bb04ea8018$var$GraphDrawer3d
 };
-
-
-// make a simulation class object
-// This class ideally does everything
-// Which involves three primary things
-// change colors and change
-class $8b47958e2fc13100$export$156b30a852a4aab {
-    constructor(Graph, deltaTick){
-        this.Graph = Graph;
-        this.deltaTick = deltaTick || 1;
-        this.forces = new Map();
-    }
-    tick() {}
-}
 
 
 

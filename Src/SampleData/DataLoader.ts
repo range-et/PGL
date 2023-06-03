@@ -1,12 +1,12 @@
 // load up the ZKC dataset
-import { zkc } from "./ZKC.js";
-import { zkc_simulated } from "./ZKC_simulated.js";
-import GraphConstructors from "../HelperClasses/GraphConstructors.js";
-import { Graph } from "../Core/Graph.js";
-import { Point } from "../HelperClasses/Point.js";
-import { Vertex } from "../Core/Vertex.js";
-import { Edge } from "../Core/Edges.js";
-import Drawing from "../Drawing/Drawing.js";
+import { zkc } from "./ZKC";
+import { zkc_simulated } from "./ZKC_simulated";
+import GraphConstructors from "../HelperClasses/GraphConstructors";
+import { Graph } from "../Core/Graph";
+import { Point } from "../HelperClasses/Point";
+import { _Node } from "../Core/_Node";
+import { Edge } from "../Core/Edge";
+import Drawing from "../Drawing/Drawing";
 
 async function LoadZKC() {
   // load up the dataset representation
@@ -25,7 +25,7 @@ async function LoadZKCSimulated() {
     const id = node.id;
     const pos = new Point(node.px*50, 0, node.py*50);
     const modularity = node.member;
-    const n = new Vertex({ pos: pos, size:10, info:"Node Info", modularity:modularity });
+    const n = new _Node({ pos: pos, size:10, info:"Node Info", modularity:modularity });
     nodes.set(id, n);
   });
   // set the edge map

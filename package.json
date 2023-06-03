@@ -2,8 +2,9 @@
   "name": "pgl",
   "version": "1.0.0",
   "description": "A NetworkX like package for graphs in javascript ",
-  "source": "./Src/index.js",
+  "source": "./Src/index.ts",
   "main": "./Build/pgl.js",
+  "typecript": "./Build/pgl.ts",
   "module": "./Build/pgl_module.js",
   "scripts": {
     "watch": "parcel watch",
@@ -34,12 +35,10 @@
     }
   },
   "dependencies": {
-    "@deck.gl/core": "^8.8.4",
-    "@deck.gl/layers": "^8.8.4",
-    "three": "^0.141.0",
-    "vis-network": "^9.1.2"
+    "three": "^0.141.0"
   },
   "devDependencies": {
+    "@types/three": "^0.136.1",
     "parcel": "latest"
   }
 }
