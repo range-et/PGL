@@ -1,8 +1,8 @@
 import { Point } from "./Point";
-import { Line } from "./Line.js";
-import Utilities from "./Utilities.js";
+import { Line } from "./Line";
+import Utilities from "./Utilities";
 
-function line_from_start_end_divisions(start: Point, end: Point, divisions) {
+function line_from_start_end_divisions(start: Point, end: Point, divisions:number) {
   // create a start and end time
   const Start = new Point(start.x, start.y, start.z);
   const End = new Point(end.x, end.y, end.z);
@@ -22,14 +22,14 @@ function line_from_start_end_divisions(start: Point, end: Point, divisions) {
   return SubdividedLine;
 }
 
-function line_from_start_end_distance(start, end, distance) {
+function line_from_start_end_distance(start:Point, end:Point, distance:number) {
   const dist = Utilities.calculateDistance(start, end);
   const divs = Math.round(dist / distance) + 2;
   const subdivline = line_from_start_end_divisions(start, end, divs);
   return subdivline;
 }
 
-function centroid(points) {
+function centroid(points:Point[]) {
   let rx = 0;
   let ry = 0;
   let rz = 0;
@@ -48,7 +48,5 @@ function centroid(points) {
 export default {
   line_from_start_end_divisions,
   line_from_start_end_distance,
-  Point,
-  Line,
   centroid,
 };

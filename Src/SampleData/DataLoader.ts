@@ -1,11 +1,11 @@
 // load up the ZKC dataset
-import { zkc } from "./ZKC.js";
-import { zkc_simulated } from "./ZKC_simulated.js";
+import { zkc } from "./ZKC";
+import { zkc_simulated } from "./ZKC_simulated";
 import GraphConstructors from "../HelperClasses/GraphConstructors";
 import { Graph } from "../Core/Graph";
 import { Point } from "../HelperClasses/Point";
-import { _Node } from "../Core/_Node.js";
-import { Edge } from "../Core/Edges";
+import { _Node } from "../Core/_Node";
+import { Edge } from "../Core/Edge";
 import Drawing from "../Drawing/Drawing";
 
 async function LoadZKC() {

@@ -8,7 +8,7 @@ interface _Node {
 }
 
 class _Node {
-  constructor(data) {
+  constructor(data:any) {
     // this data is an arbitrary thing with which I can create any object
     this.data = { ...data };
     // the neighbours bit is explicity set from the code outside

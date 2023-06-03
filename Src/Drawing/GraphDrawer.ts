@@ -16,7 +16,7 @@ interface GraphDrawer3d {
   camera: THREE.PerspectiveCamera;
   scene: THREE.Scene;
   bounds: number;
-  graphs: Map<number,Graph>;
+  graphs: Map<number, Graph>;
 }
 
 // this is the 3d graph drawing class with three js
@@ -40,8 +40,8 @@ class GraphDrawer3d {
     this.canvas = GraphDrawerOptions3d.canvas;
     this.width = GraphDrawerOptions3d.width;
     this.height = GraphDrawerOptions3d.height;
-    // these maps are optional 
-    // ive kepth them in as a way of managing all the 
+    // these maps are optional
+    // ive kepth them in as a way of managing all the
     // geometry in the scene
     this.geometryMap = new Map();
     this.materialMap = new Map();
@@ -90,7 +90,6 @@ class GraphDrawer3d {
     this.camera.position.set(0, 100, 100);
     this.controls.autoRotate = true;
     this.controls.maxPolarAngle = Math.PI * 0.5;
-    this.camera.enableDamping = true;
     this.controls.maxDistance = 1000;
     this.controls.minDistance = 10;
     this.controls.update();
@@ -98,13 +97,13 @@ class GraphDrawer3d {
     // add in the graph that we wanted this.graphs.get('ProvidedGraph')
     for (const graph of this.graphs.keys()) {
       const GeoGraph = PGLTHREEWrapper.DrawTHREEBoxBasedVertices(
-        this.graphs.get(graph),
-        this.bound
+        this.graphs.get(graph)!,
+        this.bounds
       );
       this.scene.add(GeoGraph);
       const ThickEdges = PGLTHREEWrapper.DrawTHREEGraphEdgesThick(
-        this.graphs.get(graph),
-        this.bound
+        this.graphs.get(graph)!,
+        this.bounds
       );
       this.scene.add(ThickEdges);
     }

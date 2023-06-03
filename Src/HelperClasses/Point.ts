@@ -5,13 +5,16 @@ interface Point {
 }
 
 class Point {
-  constructor(x, y, z) {
+  constructor(x:number, y:number, z:number) {
     this.x = x;
     this.y = y;
     this.z = z;
   }
 
-  translate(Point) {
+  // Points are somewhat the same thing as a vector 
+  // So im using the same type instead of redeclaring the 
+  // Type
+  translate(Point:Point) {
     this.x = this.x + Point.x;
     this.y = this.y + Point.y;
     this.z = this.z + Point.z;

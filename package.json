@@ -2,8 +2,9 @@
   "name": "pgl",
   "version": "1.0.0",
   "description": "A NetworkX like package for graphs in javascript ",
-  "source": "./Src/index.js",
+  "source": "./Src/index.ts",
   "main": "./Build/pgl.js",
+  "typecript": "./Build/pgl.ts",
   "module": "./Build/pgl_module.js",
   "scripts": {
     "watch": "parcel watch",

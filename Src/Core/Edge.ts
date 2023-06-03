@@ -5,7 +5,7 @@ interface Edge {
 }
 
 class Edge {
-  constructor(start, end, data) {
+  constructor(start:number, end:number, data:any) {
     this.start = start;
     this.end = end;
     this.data = { ...data };

@@ -5,7 +5,7 @@ interface Line {
 }
 
 class Line {
-  constructor(points) {
+  constructor(points: Point[]) {
     this.points = [];
     points.forEach((p) => {
       const point = new Point(p.x, p.y, p.z);

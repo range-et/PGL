@@ -1,13 +1,13 @@
 import { Graph } from "../Core/Graph";
-import { Vertex } from "../Core/Vertex";
-import { Edge } from "../Core/Edges";
+import { _Node } from "../Core/_Node";
+import { Edge } from "../Core/Edge";
 
 // construct a graph based on an edge list etc
 async function ConstructGraphNodeEdgesList(nodes:any[], edges:any[]) {
   // make a node OBJ
   const nodeOBJ = new Map();
   for (let i = 0; i < nodes.length; i++) {
-    const n = new Vertex(nodes[i].data);
+    const n = new _Node(nodes[i].data);
     nodeOBJ.set(nodes[i], n);
   }
   // make an edge object

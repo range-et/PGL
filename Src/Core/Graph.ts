@@ -9,7 +9,7 @@ interface Graph {
 }
 
 class Graph {
-  constructor(nodes, edges) {
+  constructor(nodes: Map<number, _Node>, edges: Map<number, Edge>) {
     this.nodes = nodes;
     this.edges = edges;
     // execute Internal methods
@@ -33,7 +33,7 @@ class Graph {
   }
 
   // new create method
-  static async create(nodes, edges) {
+  static async create(nodes: Map<number, _Node>, edges: Map<number, Edge>) {
     const g = new Graph(nodes, edges);
     await g.initialize();
     return g;
@@ -68,12 +68,12 @@ class Graph {
   }
 
   // add a node
-  add_node(nodeID, data) {
-    this.nodes[nodeID] = data;
+  add_node(nodeID: number, data: _Node) {
+    this.nodes.set(nodeID, data);
   }
 
   // add an edge
-  add_edge(start, end, data) {
+  add_edge(start: number, end: number, data: any) {
     const newEdge = new Edge(start, end, data);
     // this is a new edge that we add to the edges
     this.edges.set(this.edges.size, newEdge);
@@ -83,10 +83,10 @@ class Graph {
   }
 
   // get an adjacency list reprentation of the graph
-  // this onlu has the indices and not the actual data 
+  // this onlu has the indices and not the actual data
   // associated with the node to speed things up
   get_adjacency() {
-    const SparseMap:Map<number,number[]> = new Map();
+    const SparseMap: Map<number, number[]> = new Map();
     // iterate through the node list
     for (const key of this.nodes.keys()) {
       SparseMap.set(key, this.nodes.get(key)!.neighbours);
@@ -96,16 +96,19 @@ class Graph {
 
   // set position based on an array of positions
   // this could be anything (we use kamada kawai )
-  apply_position_map(data) {
-    for (const n of data.keys()) {
-      this.nodes.get(n)!.data = { ...this.nodes.get(n)!.data, pos: data.get(n) };
+  apply_position_map(data: Map<number, Point>) {
+    for (let n of data.keys()) {
+      this.nodes.get(n)!.data = {
+        ...this.nodes.get(n)!.data,
+        pos: data.get(n),
+      };
     }
   }
 
   // create new edge pos representation
-  // same approach for applying the key data 
-  apply_edge_pos_maps(data) {
-    for (const key of data.keys()) {
+  // same approach for applying the key data
+  apply_edge_pos_maps(data: Map<number, Line>) {
+    for (let key of data.keys()) {
       this.edges.get(key)!.data = {
         ...this.edges.get(key)!.data,
         ldata: data.get(key),
@@ -114,9 +117,9 @@ class Graph {
   }
 
   // get the edge reps
-  // this returns all the edge map readings 
-  get_edge_lines() {
-    const lines:Map<number,Line> = new Map();
+  // this returns all the edge map readings
+  get_edge_map() {
+    const lines: Map<number, Line> = new Map();
     for (const key of this.edges.keys()) {
       const edge = this.edges.get(key)!.data.ldata;
       lines.set(key, edge);
@@ -125,7 +128,10 @@ class Graph {
   }
 
   // graph apply pos and edge map
-  apply_drawing_maps(layout) {
+  apply_drawing_maps(layout:{
+    pmap:Map<number,Point>
+    emap:Map<number,Line>
+  }) {
     if (layout.pmap) {
       this.apply_position_map(layout.pmap);
     }
@@ -135,19 +141,19 @@ class Graph {
   }
 
   // get the positon map of the graph
-  get_position_map() {
-    const pmap: Map<number,Point> = new Map();
-    const emap: Map<number,Line> = new Map();
+  get_map() {
+    return {
+      pmap: this.get_position_map(),
+      emap: this.get_edge_map(),
+    };
+  }
+
+  get_position_map(){
+    const pmap: Map<number, Point> = new Map();
     for (const node of this.nodes.keys()) {
       pmap.set(node, this.nodes.get(node)!.data.pos);
     }
-    for (const edge of this.edges.keys()) {
-      emap.set(edge, this.edges.get(edge)!.data.ldata);
-    }
-    return {
-      pmap: pmap,
-      emap: emap
-    };
+    return pmap
   }
 }
 
