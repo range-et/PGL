@@ -1,3 +1,5 @@
+import { Line } from "../HelperClasses/Line";
+import { Point } from "../HelperClasses/Point";
 import { _Node } from "./_Node";
 import { Edge } from "./Edge";
 
@@ -80,9 +82,11 @@ class Graph {
     relevantNode!.neighbours.push(end);
   }
 
-  // get a sparse reprentation of the graph
+  // get an adjacency list reprentation of the graph
+  // this onlu has the indices and not the actual data 
+  // associated with the node to speed things up
   get_adjacency() {
-    const SparseMap = new Map();
+    const SparseMap:Map<number,number[]> = new Map();
     // iterate through the node list
     for (const key of this.nodes.keys()) {
       SparseMap.set(key, this.nodes.get(key)!.neighbours);
@@ -90,7 +94,8 @@ class Graph {
     return SparseMap;
   }
 
-  // set position based on simulated array
+  // set position based on an array of positions
+  // this could be anything (we use kamada kawai )
   apply_position_map(data) {
     for (const n of data.keys()) {
       this.nodes.get(n)!.data = { ...this.nodes.get(n)!.data, pos: data.get(n) };
@@ -98,6 +103,7 @@ class Graph {
   }
 
   // create new edge pos representation
+  // same approach for applying the key data 
   apply_edge_pos_maps(data) {
     for (const key of data.keys()) {
       this.edges.get(key)!.data = {
@@ -108,8 +114,9 @@ class Graph {
   }
 
   // get the edge reps
+  // this returns all the edge map readings 
   get_edge_lines() {
-    const lines = new Map();
+    const lines:Map<number,Line> = new Map();
     for (const key of this.edges.keys()) {
       const edge = this.edges.get(key)!.data.ldata;
       lines.set(key, edge);
@@ -129,14 +136,18 @@ class Graph {
 
   // get the positon map of the graph
   get_position_map() {
-    const returnObject = { pmap: new Map(), emap: new Map() };
+    const pmap: Map<number,Point> = new Map();
+    const emap: Map<number,Line> = new Map();
     for (const node of this.nodes.keys()) {
-      returnObject.pmap.set(node, this.nodes.get(node)!.data.pos);
+      pmap.set(node, this.nodes.get(node)!.data.pos);
     }
     for (const edge of this.edges.keys()) {
-      returnObject.emap.set(edge, this.edges.get(edge)!.data.ldata);
+      emap.set(edge, this.edges.get(edge)!.data.ldata);
     }
-    return returnObject;
+    return {
+      pmap: pmap,
+      emap: emap
+    };
   }
 }
 

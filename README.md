@@ -44,7 +44,7 @@ await graph3d.init();
 // append the graph renderer to the container
 // and then drawing render calls
 animate();
-```
+```js
 
 ## An example of rendering a basic graph
 

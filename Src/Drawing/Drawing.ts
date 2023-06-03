@@ -1,18 +1,19 @@
-import Utilities from "../HelperClasses/Utilities.js";
-import GeometryHelpers from "../HelperClasses/GeometryHelpers.js";
-import { Point } from "../HelperClasses/Point.js";
-import GraphMethods from "../GraphAlgorithms/GraphMethods.js";
+import Utilities from "../HelperClasses/Utilities";
+import GeometryHelpers from "../HelperClasses/GeometryHelpers";
+import { Point } from "../HelperClasses/Point";
+import GraphMethods from "../GraphAlgorithms/GraphMethods";
+import { Graph } from "../Core/Graph";
 
 // draw kamada kawai
-async function SimulateKamadaKawai(G, iterations) {
+async function SimulateKamadaKawai(G:Graph, iterations:number, simulationBound:number=200) {
   const adjList = G.get_adjacency();
   // pos map
-  const PosMapX = new Map();
-  const PosMapY = new Map();
+  const PosMapX:Map<number,number[]> = new Map();
+  const PosMapY:Map<number,number[]> = new Map();
   let rx, ry;
   for (const node of adjList.keys()) {
-    rx = Math.random() * 200;
-    ry = Math.random() * 200;
+    rx = Math.random() * simulationBound;
+    ry = Math.random() * simulationBound;
     PosMapX.set(node, rx);
     PosMapY.set(node, ry);
   }
@@ -22,15 +23,15 @@ async function SimulateKamadaKawai(G, iterations) {
     for (const node of adjList.keys()) {
       // this chunk is for the attraction force
       // get the node pos
-      const neighbours = adjList.get(node);
+      const neighbours = adjList.get(node)!;
       // get the set of x's
-      const x_s = [];
+      const x_s:number[] = [];
       // get the set of y's
-      const y_s = [];
+      const y_s:number[] = [];
       // now iterate through the pos list and append
       neighbours.forEach((n_s) => {
-        const n_pos_x = PosMapX.get(n_s);
-        const n_pos_y = PosMapY.get(n_s);
+        const n_pos_x = PosMapX.get(n_s)!;
+        const n_pos_y = PosMapY.get(n_s)!;
         x_s.push(n_pos_x);
         y_s.push(n_pos_y);
       });

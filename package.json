@@ -34,10 +34,10 @@
     }
   },
   "dependencies": {
-    "@types/three": "^0.152.1",
     "three": "^0.141.0"
   },
   "devDependencies": {
+    "@types/three": "^0.136.1",
     "parcel": "latest"
   }
 }
