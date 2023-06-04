@@ -41,7 +41,7 @@ if (parcelRequire == null) {
 }
 parcelRequire.register("fbaIX", function(module, exports) {
 
-$parcel$export(module.exports, "default", () => $d99d34ebdb8221e2$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "default", () => $b0d033a86e1f8c84$export$2e2bcd8739ae039);
 
 var $Bx62R = parcelRequire("Bx62R");
 
@@ -52,222 +52,253 @@ var $5lBYP = parcelRequire("5lBYP");
 var $49USC = parcelRequire("49USC");
 
 var $SnOSE = parcelRequire("SnOSE");
-// draw kamada kawai
-async function SimulateKamadaKawai(G, iterations, simulationBound = 200, cohesionValue = 1) {
-    const adjList = G.get_adjacency();
-    // pos map
-    const PosMapX = new Map();
-    const PosMapY = new Map();
-    let rx, ry;
-    for (const node of adjList.keys()){
-        rx = Math.random() * simulationBound;
-        ry = Math.random() * simulationBound;
-        PosMapX.set(node, rx);
-        PosMapY.set(node, ry);
+var __awaiter = undefined && undefined.__awaiter || function(thisArg11, _arguments11, P11, generator11) {
+    function adopt11(value11) {
+        return value11 instanceof P11 ? value11 : new P11(function(resolve11) {
+            resolve11(value11);
+        });
     }
-    // start simulation
-    for(let i = 0; i < iterations; i++){
-        // calculate the clustering force
-        // these two keep track of the node being simulated's
-        // position - redeclaring is sorta unncessary
-        let nodeX;
-        let nodeY;
-        // also keep track of all the x_s and y_s
-        let x_s;
-        let y_s;
-        // also the same thing for the clustering force
-        let y_r;
-        let x_r;
-        // same thing for the cohesion values that get recalculated
-        let new_c_xpos_dispacement;
-        let new_c_ypos_dispacement;
-        for (const node of adjList.keys()){
-            // this chunk is for the attraction force
-            // get the node pos
-            const neighbours = adjList.get(node);
-            // remember always declare this nodes details
-            nodeX = PosMapX.get(node);
-            nodeY = PosMapY.get(node);
-            // get the set of x's
-            x_s = [];
-            // get the set of y's
-            y_s = [];
-            // now iterate through the pos list and append
-            neighbours.forEach((n_s)=>{
-                const n_pos_x = PosMapX.get(n_s);
-                const n_pos_y = PosMapY.get(n_s);
-                x_s.push(n_pos_x);
-                y_s.push(n_pos_y);
-            });
-            // now average out the values
-            const new_c_xpos = (0, $Bx62R.default).calculateAverage(x_s);
-            const new_c_ypos = (0, $Bx62R.default).calculateAverage(y_s);
-            // this chunk is for the repelling force
-            y_r = [];
-            x_r = [];
-            let diffx;
-            let diffy;
-            let othernodeX;
-            let othernodeY;
-            // then find the element
-            for (const otherNode of G.nodes.keys())// get the position of all the other nodes
-            if (otherNode != node) {
-                // calculate inverse distance
-                othernodeX = PosMapX.get(otherNode);
-                othernodeY = PosMapY.get(otherNode);
-                diffx = othernodeX - nodeX;
-                diffy = othernodeY - nodeY;
-                // get the inverse square value
-                // add that to the *_r arrays
-                x_r.push(diffx);
-                y_r.push(diffy);
+    return new (P11 || (P11 = Promise))(function(resolve11, reject11) {
+        function fulfilled11(value11) {
+            try {
+                step11(generator11.next(value11));
+            } catch (e11) {
+                reject11(e11);
             }
-            // this is the repulsion value
-            const A_mult = 2;
-            const new_x_r_pos = A_mult * 1 / ((0, $Bx62R.default).calculateAverage(x_r) * (0, $Bx62R.default).calculateAverage(x_r));
-            const new_y_r_pos = A_mult * 1 / ((0, $Bx62R.default).calculateAverage(y_r) * (0, $Bx62R.default).calculateAverage(y_r));
-            // calculate the dispacement amount in c/y pos
-            // this is the cohesion value
-            const new_c_xpos_dispacement = cohesionValue * (new_c_xpos - nodeX);
-            const new_c_ypos_dispacement = cohesionValue * (new_c_ypos - nodeY);
-            // then add the x and y components of the two vectors
-            const new_xpos = new_x_r_pos + new_c_xpos_dispacement + nodeX;
-            const new_ypos = new_y_r_pos + new_c_ypos_dispacement + nodeY;
-            // now set these positions
-            PosMapX.set(node, new_xpos);
-            PosMapY.set(node, new_ypos);
         }
-    }
-    // return the position
-    // keep in mind three JS works with Y upwards and not Z
-    // in my head I work the other way round so Im swapping the Z and Y values here
-    let PosMap = new Map();
-    for (const p of PosMapX.keys())PosMap.set(p, new (0, $5lBYP.Point)(PosMapX.get(p), 0, PosMapY.get(p)));
-    // get / set positions
-    // move the points
-    // Since this simulation might have moved the whole graph off screen
-    // get the average pos
-    const sim_x = [];
-    const sim_y = [];
-    const sim_z = [];
-    let interimPoint;
-    for (const p1 of PosMap.keys()){
-        interimPoint = PosMap.get(p1);
-        sim_x.push(interimPoint.x);
-        sim_y.push(interimPoint.y);
-        sim_z.push(interimPoint.z);
-    }
-    const x_displacement = (0, $Bx62R.default).calculateAverage(sim_x);
-    const y_displacement = (0, $Bx62R.default).calculateAverage(sim_y);
-    const z_displacement = (0, $Bx62R.default).calculateAverage(sim_z);
-    const dispacementVector = new (0, $5lBYP.Point)(-x_displacement, -y_displacement, -z_displacement);
-    PosMap = MovePmap(PosMap, dispacementVector);
-    return PosMap;
+        function rejected11(value11) {
+            try {
+                step11(generator11["throw"](value11));
+            } catch (e11) {
+                reject11(e11);
+            }
+        }
+        function step11(result11) {
+            result11.done ? resolve11(result11.value) : adopt11(result11.value).then(fulfilled11, rejected11);
+        }
+        step11((generator11 = generator11.apply(thisArg11, _arguments11 || [])).next());
+    });
+};
+// draw kamada kawai
+function SimulateKamadaKawai(G11, iterations11, simulationBound11 = 200, cohesionValue11 = 1) {
+    return __awaiter(this, void 0, void 0, function*() {
+        const adjList11 = G11.get_adjacency();
+        // pos map
+        const PosMapX11 = new Map();
+        const PosMapY11 = new Map();
+        let rx11, ry11;
+        for (const node11 of adjList11.keys()){
+            rx11 = Math.random() * simulationBound11;
+            ry11 = Math.random() * simulationBound11;
+            PosMapX11.set(node11, rx11);
+            PosMapY11.set(node11, ry11);
+        }
+        // start simulation
+        for(let i11 = 0; i11 < iterations11; i11++){
+            // calculate the clustering force
+            // these two keep track of the node being simulated's
+            // position - redeclaring is sorta unncessary
+            let nodeX11;
+            let nodeY11;
+            // also keep track of all the x_s and y_s
+            let x_s11;
+            let y_s11;
+            // also the same thing for the clustering force
+            let y_r11;
+            let x_r11;
+            // same thing for the cohesion values that get recalculated
+            let new_c_xpos_dispacement11;
+            let new_c_ypos_dispacement11;
+            for (const node11 of adjList11.keys()){
+                // this chunk is for the attraction force
+                // get the node pos
+                const neighbours11 = adjList11.get(node11);
+                // remember always declare this nodes details
+                nodeX11 = PosMapX11.get(node11);
+                nodeY11 = PosMapY11.get(node11);
+                // get the set of x's
+                x_s11 = [];
+                // get the set of y's
+                y_s11 = [];
+                // now iterate through the pos list and append
+                neighbours11.forEach((n_s11)=>{
+                    const n_pos_x11 = PosMapX11.get(n_s11);
+                    const n_pos_y11 = PosMapY11.get(n_s11);
+                    x_s11.push(n_pos_x11);
+                    y_s11.push(n_pos_y11);
+                });
+                // now average out the values
+                const new_c_xpos11 = (0, $Bx62R.default).calculateAverage(x_s11);
+                const new_c_ypos11 = (0, $Bx62R.default).calculateAverage(y_s11);
+                // this chunk is for the repelling force
+                y_r11 = [];
+                x_r11 = [];
+                let diffx11;
+                let diffy11;
+                let othernodeX11;
+                let othernodeY11;
+                // then find the element
+                for (const otherNode11 of G11.nodes.keys())// get the position of all the other nodes
+                if (otherNode11 != node11) {
+                    // calculate inverse distance
+                    othernodeX11 = PosMapX11.get(otherNode11);
+                    othernodeY11 = PosMapY11.get(otherNode11);
+                    diffx11 = othernodeX11 - nodeX11;
+                    diffy11 = othernodeY11 - nodeY11;
+                    // get the inverse square value
+                    // add that to the *_r arrays
+                    x_r11.push(diffx11);
+                    y_r11.push(diffy11);
+                }
+                // this is the repulsion value
+                const A_mult11 = 2;
+                const new_x_r_pos11 = A_mult11 * 1 / ((0, $Bx62R.default).calculateAverage(x_r11) * (0, $Bx62R.default).calculateAverage(x_r11));
+                const new_y_r_pos11 = A_mult11 * 1 / ((0, $Bx62R.default).calculateAverage(y_r11) * (0, $Bx62R.default).calculateAverage(y_r11));
+                // calculate the dispacement amount in c/y pos
+                // this is the cohesion value
+                const new_c_xpos_dispacement11 = cohesionValue11 * (new_c_xpos11 - nodeX11);
+                const new_c_ypos_dispacement11 = cohesionValue11 * (new_c_ypos11 - nodeY11);
+                // then add the x and y components of the two vectors
+                const new_xpos11 = new_x_r_pos11 + new_c_xpos_dispacement11 + nodeX11;
+                const new_ypos11 = new_y_r_pos11 + new_c_ypos_dispacement11 + nodeY11;
+                // now set these positions
+                PosMapX11.set(node11, new_xpos11);
+                PosMapY11.set(node11, new_ypos11);
+            }
+        }
+        // return the position
+        // keep in mind three JS works with Y upwards and not Z
+        // in my head I work the other way round so Im swapping the Z and Y values here
+        let PosMap11 = new Map();
+        for (const p11 of PosMapX11.keys())PosMap11.set(p11, new (0, $5lBYP.Point)(PosMapX11.get(p11), 0, PosMapY11.get(p11)));
+        // get / set positions
+        // move the points
+        // Since this simulation might have moved the whole graph off screen
+        // get the average pos
+        const sim_x11 = [];
+        const sim_y11 = [];
+        const sim_z11 = [];
+        let interimPoint11;
+        for (const p11 of PosMap11.keys()){
+            interimPoint11 = PosMap11.get(p11);
+            sim_x11.push(interimPoint11.x);
+            sim_y11.push(interimPoint11.y);
+            sim_z11.push(interimPoint11.z);
+        }
+        const x_displacement11 = (0, $Bx62R.default).calculateAverage(sim_x11);
+        const y_displacement11 = (0, $Bx62R.default).calculateAverage(sim_y11);
+        const z_displacement11 = (0, $Bx62R.default).calculateAverage(sim_z11);
+        const dispacementVector11 = new (0, $5lBYP.Point)(-x_displacement11, -y_displacement11, -z_displacement11);
+        PosMap11 = MovePmap(PosMap11, dispacementVector11);
+        return PosMap11;
+    });
 }
 // instanciate a random set of positions
-function InstanciateRandomPositions(G) {
-    const adjList = G.get_adjacency();
-    const PosMapX = new Map();
-    const PosMapY = new Map();
-    for (const node of adjList.keys()){
-        PosMapX.set(node, Math.random() * 200);
-        PosMapY.set(node, Math.random() * 200);
+function InstanciateRandomPositions(G11) {
+    const adjList11 = G11.get_adjacency();
+    const PosMapX11 = new Map();
+    const PosMapY11 = new Map();
+    for (const node11 of adjList11.keys()){
+        PosMapX11.set(node11, Math.random() * 200);
+        PosMapY11.set(node11, Math.random() * 200);
     }
-    let PosMap = new Map();
-    for (const p of PosMapX.keys())PosMap.set(p, new (0, $5lBYP.Point)(PosMapX.get(p), 0, PosMapY.get(p)));
-    G.apply_position_map(PosMap);
-    const lmap = DrawEdgeLines(G, 1);
+    let PosMap11 = new Map();
+    for (const p11 of PosMapX11.keys())PosMap11.set(p11, new (0, $5lBYP.Point)(PosMapX11.get(p11), 0, PosMapY11.get(p11)));
+    G11.apply_position_map(PosMap11);
+    const lmap11 = DrawEdgeLines(G11, 1);
     return {
-        pmap: PosMap,
-        emap: lmap
+        pmap: PosMap11,
+        emap: lmap11
     };
 }
 // draw the edge representations and then store them in the edge classes
-function DrawEdgeLines(G, divDistance) {
+function DrawEdgeLines(G11, divDistance11) {
     // this is the return map
-    const lineMap = new Map();
-    let edge;
-    let start;
-    let end;
-    for (const key of G.edges.keys()){
-        edge = G.edges.get(key);
+    const lineMap11 = new Map();
+    let edge11;
+    let start11;
+    let end11;
+    for (const key11 of G11.edges.keys()){
+        edge11 = G11.edges.get(key11);
         // get the start pos
-        start = G.nodes.get(edge.start).data.pos;
-        end = G.nodes.get(edge.end).data.pos;
-        const Line1 = (0, $bRGTV.default).line_from_start_end_distance(start, end, divDistance);
-        lineMap.set(key, Line1);
+        start11 = G11.nodes.get(edge11.start).data.pos;
+        end11 = G11.nodes.get(edge11.end).data.pos;
+        const Line11 = (0, $bRGTV.default).line_from_start_end_distance(start11, end11, divDistance11);
+        lineMap11.set(key11, Line11);
     }
-    return lineMap;
+    return lineMap11;
 }
 // now draw out the edge bundling thing
-async function DrawEdgeBundling(LineMap, iterations, distance) {
-    const returnArray = LineMap;
-    // variables that are getting reused
-    let line;
-    let otherLine;
-    let x_s;
-    let y_s;
-    let z_s;
-    let pnt;
-    let otherpoint;
-    let d;
-    let x_d;
-    let y_d;
-    let z_d;
-    let avgx;
-    let avgy;
-    let avgz;
-    // run it for whatever number of iterations
-    for(let i = 0; i < iterations; i++)// then iterate through every line
-    for (let key of returnArray.keys()){
-        // then get the line that we are working with
-        line = returnArray.get(key);
-        // then for each point in the line we have to move it closer to the other points
-        for(let ii = 1; ii < line.points.length - 1; ii++){
-            // then get the point that we need to work with
-            x_s = [];
-            y_s = [];
-            z_s = [];
-            pnt = line.points[ii];
-            // then run the point accumulation algoritm
-            for (let otherKey of returnArray.keys())if (otherKey != key) {
-                // then get the other line
-                otherLine = returnArray.get(otherKey);
-                for(let iii = 1; iii < otherLine.points.length - 1; iii++){
-                    otherpoint = otherLine.points[iii];
-                    d = (0, $Bx62R.default).calculateSquaredDistance(pnt, otherpoint);
-                    if (d <= Math.pow(distance, 2)) {
-                        x_d = otherpoint.x - pnt.x;
-                        y_d = otherpoint.y - pnt.y;
-                        z_d = otherpoint.z - pnt.z;
-                        x_s.push(x_d);
-                        y_s.push(y_d);
-                        z_s.push(z_d);
+function DrawEdgeBundling(LineMap11, iterations11, distance11) {
+    return __awaiter(this, void 0, void 0, function*() {
+        const returnArray11 = LineMap11;
+        // variables that are getting reused
+        let line11;
+        let otherLine11;
+        let x_s11;
+        let y_s11;
+        let z_s11;
+        let pnt11;
+        let otherpoint11;
+        let d11;
+        let x_d11;
+        let y_d11;
+        let z_d11;
+        let avgx11;
+        let avgy11;
+        let avgz11;
+        // run it for whatever number of iterations
+        for(let i11 = 0; i11 < iterations11; i11++)// then iterate through every line
+        for (let key11 of returnArray11.keys()){
+            // then get the line that we are working with
+            line11 = returnArray11.get(key11);
+            // then for each point in the line we have to move it closer to the other points
+            for(let ii11 = 1; ii11 < line11.points.length - 1; ii11++){
+                // then get the point that we need to work with
+                x_s11 = [];
+                y_s11 = [];
+                z_s11 = [];
+                pnt11 = line11.points[ii11];
+                // then run the point accumulation algoritm
+                for (let otherKey11 of returnArray11.keys())if (otherKey11 != key11) {
+                    // then get the other line
+                    otherLine11 = returnArray11.get(otherKey11);
+                    for(let iii11 = 1; iii11 < otherLine11.points.length - 1; iii11++){
+                        otherpoint11 = otherLine11.points[iii11];
+                        d11 = (0, $Bx62R.default).calculateSquaredDistance(pnt11, otherpoint11);
+                        if (d11 <= Math.pow(distance11, 2)) {
+                            x_d11 = otherpoint11.x - pnt11.x;
+                            y_d11 = otherpoint11.y - pnt11.y;
+                            z_d11 = otherpoint11.z - pnt11.z;
+                            x_s11.push(x_d11);
+                            y_s11.push(y_d11);
+                            z_s11.push(z_d11);
+                        }
                     }
                 }
+                // now create a new displacement amount
+                avgx11 = pnt11.x + 0.8 * ((0, $Bx62R.default).calculateAverage(x_s11) || 0);
+                avgy11 = pnt11.y + 0.8 * ((0, $Bx62R.default).calculateAverage(y_s11) || 0);
+                avgz11 = pnt11.z + 0.8 * ((0, $Bx62R.default).calculateAverage(z_s11) || 0);
+                const newPoint11 = new (0, $5lBYP.Point)(avgx11, avgy11, avgz11);
+                line11.points[ii11] = newPoint11;
             }
-            // now create a new displacement amount
-            avgx = pnt.x + 0.8 * ((0, $Bx62R.default).calculateAverage(x_s) || 0);
-            avgy = pnt.y + 0.8 * ((0, $Bx62R.default).calculateAverage(y_s) || 0);
-            avgz = pnt.z + 0.8 * ((0, $Bx62R.default).calculateAverage(z_s) || 0);
-            const newPoint = new (0, $5lBYP.Point)(avgx, avgy, avgz);
-            line.points[ii] = newPoint;
         }
-    }
-    // now return that new map
-    return returnArray;
+        // now return that new map
+        return returnArray11;
+    });
 }
 // displace the th edges
 // sorta like and arc in the middle of the thing
-function DisplaceEdgeInY(LineMap, displacement) {
-    for (const key of LineMap.keys()){
-        const line = LineMap.get(key);
+function DisplaceEdgeInY(LineMap11, displacement11) {
+    for (const key11 of LineMap11.keys()){
+        const line11 = LineMap11.get(key11);
         // now for all the points in this
-        let pnt, ydisval;
-        for(let i = 0; i < line.points.length; i++){
-            pnt = line.points[i];
-            ydisval = displacement * Math.sin(Math.PI * i / (line.points.length - 1));
-            pnt.y = pnt.y + ydisval;
+        let pnt11, ydisval11;
+        for(let i11 = 0; i11 < line11.points.length; i11++){
+            pnt11 = line11.points[i11];
+            ydisval11 = displacement11 * Math.sin(Math.PI * i11 / (line11.points.length - 1));
+            pnt11.y = pnt11.y + ydisval11;
         }
     }
 }
@@ -281,142 +312,144 @@ function DisplaceVertices(nodeMap, parameter, displacement) {
         if (value >= max) max = value;
     }
     // go through the nodes again and set the values
-    for (const node1 of nodeMap.values()){
+    for (const node of nodeMap.values()){
         value = eval("node.data." + parameter);
         ydisplacement = value / max * displacement;
         // now filter the values so that we know that the values are between a max and a min
         ydisplacement = Math.max(0, ydisplacement); // this sets the lower bound to be something
         ydisplacement = Math.min(displacement, ydisplacement); // this sets the upper bound of the thing
-        node1.data.pos.y = ydisplacement;
+        node.data.pos.y = ydisplacement;
     }
 }
 // draw the circular vertical packing crypto like drawing
-async function HivePlot(G, selectedNode, step, startP) {
-    const adj = G.get_adjacency();
-    const DijkstraDepth = await (0, $SnOSE.default).Dijkstra(G, selectedNode);
-    // calculate the number of steps that I am searching through
-    const steps = Math.max(...[
-        ...DijkstraDepth.values()
-    ]);
-    // step map
-    const stepMap = new Map();
-    // now create a stepped ring of stuff
-    for(let i = 0; i <= steps; i++){
-        const ntier = [];
-        for (const nkey of DijkstraDepth.keys())if (i == DijkstraDepth.get(nkey)) ntier.push(nkey);
-        stepMap.set(i, ntier);
-    }
-    // the returning pos map
-    const Pmap = new Map();
-    // now find the relevant node Positions
-    // get the start positions
-    const xoff = startP.x || 0;
-    const yoff = startP.y || 0;
-    const zoff = startP.z || 0;
-    // set the positions
-    for (const node of adj.keys()){
-        const yval = DijkstraDepth.get(node) * step;
-        const depthArr = stepMap.get(DijkstraDepth.get(node));
-        const angle = 2 * Math.PI * (depthArr.indexOf(node) / depthArr.length);
-        const xval = Math.sin(angle) * yval;
-        const zval = Math.cos(angle) * yval;
-        // construct a new point
-        const pnt = new (0, $5lBYP.Point)(xval + xoff, -yval + yoff, zval + zoff);
-        Pmap.set(node, pnt);
-    }
-    // simulate the lines
-    G.apply_position_map(Pmap);
-    const lmap = DrawEdgeLines(G, 1);
-    const newLmap = await DrawEdgeBundling(lmap, 12, 5);
-    return {
-        pmap: Pmap,
-        emap: newLmap
-    };
+function HivePlot(G11, selectedNode11, step11, startP11) {
+    return __awaiter(this, void 0, void 0, function*() {
+        const adj11 = G11.get_adjacency();
+        const DijkstraDepth11 = yield (0, $SnOSE.default).Dijkstra(G11, selectedNode11);
+        // calculate the number of steps that I am searching through
+        const steps11 = Math.max(...[
+            ...DijkstraDepth11.values()
+        ]);
+        // step map
+        const stepMap11 = new Map();
+        // now create a stepped ring of stuff
+        for(let i11 = 0; i11 <= steps11; i11++){
+            const ntier11 = [];
+            for (const nkey11 of DijkstraDepth11.keys())if (i11 == DijkstraDepth11.get(nkey11)) ntier11.push(nkey11);
+            stepMap11.set(i11, ntier11);
+        }
+        // the returning pos map
+        const Pmap11 = new Map();
+        // now find the relevant node Positions
+        // get the start positions
+        const xoff11 = startP11.x || 0;
+        const yoff11 = startP11.y || 0;
+        const zoff11 = startP11.z || 0;
+        // set the positions
+        for (const node11 of adj11.keys()){
+            const yval11 = DijkstraDepth11.get(node11) * step11;
+            const depthArr11 = stepMap11.get(DijkstraDepth11.get(node11));
+            const angle11 = 2 * Math.PI * (depthArr11.indexOf(node11) / depthArr11.length);
+            const xval11 = Math.sin(angle11) * yval11;
+            const zval11 = Math.cos(angle11) * yval11;
+            // construct a new point
+            const pnt11 = new (0, $5lBYP.Point)(xval11 + xoff11, -yval11 + yoff11, zval11 + zoff11);
+            Pmap11.set(node11, pnt11);
+        }
+        // simulate the lines
+        G11.apply_position_map(Pmap11);
+        const lmap11 = DrawEdgeLines(G11, 1);
+        const newLmap11 = yield DrawEdgeBundling(lmap11, 12, 5);
+        return {
+            pmap: Pmap11,
+            emap: newLmap11
+        };
+    });
 }
 // move graph
-function MoveGraph(G, dispacement) {
-    const Gmap = G.get_map();
-    const NewPmap = MovePmap(Gmap.pmap, dispacement);
-    const NewEmap = MoveEmap(Gmap.emap, dispacement);
-    G.apply_drawing_maps({
-        pmap: NewPmap,
-        emap: NewEmap
+function MoveGraph(G11, dispacement11) {
+    const Gmap11 = G11.get_map();
+    const NewPmap11 = MovePmap(Gmap11.pmap, dispacement11);
+    const NewEmap11 = MoveEmap(Gmap11.emap, dispacement11);
+    G11.apply_drawing_maps({
+        pmap: NewPmap11,
+        emap: NewEmap11
     });
 }
 // move pmap
-function MovePmap(Pmap, displacement) {
-    const newPmap = new Map();
-    for (let node of Pmap.keys()){
-        const p = Pmap.get(node);
-        p.translate(displacement);
-        newPmap.set(node, p);
+function MovePmap(Pmap11, displacement11) {
+    const newPmap11 = new Map();
+    for (let node11 of Pmap11.keys()){
+        const p11 = Pmap11.get(node11);
+        p11.translate(displacement11);
+        newPmap11.set(node11, p11);
     }
-    return newPmap;
+    return newPmap11;
 }
 // move the edges
-function MoveEmap(Emap, dispacement) {
-    const newEmap = new Map();
+function MoveEmap(Emap11, dispacement11) {
+    const newEmap11 = new Map();
     // variables - instead of redeclaring
-    let interimPoints;
-    let interimLine;
-    let newLine;
-    for (let lineNumber of Emap.keys()){
+    let interimPoints11;
+    let interimLine11;
+    let newLine11;
+    for (let lineNumber11 of Emap11.keys()){
         // reset the interim points
-        interimPoints = [];
+        interimPoints11 = [];
         // get the line
-        interimLine = Emap.get(lineNumber);
+        interimLine11 = Emap11.get(lineNumber11);
         // move all the points
-        for (let pnt of interimLine.points){
-            pnt.translate(dispacement);
+        for (let pnt11 of interimLine11.points){
+            pnt11.translate(dispacement11);
             // add this to the new stack of lines
-            interimPoints.push(pnt);
+            interimPoints11.push(pnt11);
         }
         // create a new line
-        newLine = new (0, $49USC.Line)(interimPoints);
+        newLine11 = new (0, $49USC.Line)(interimPoints11);
         // add this to the new map
-        newEmap.set(lineNumber, newLine);
+        newEmap11.set(lineNumber11, newLine11);
     }
-    return newEmap;
+    return newEmap11;
 }
 // THIS IS THE BIT THATS A BIT CONFUSING
 /*
 Data for visualization is store in the graph under the elements data
-So for example - the position data under a point in the graph is under 
-- Graph.nodes.get(whatever node).data.pos 
+So for example - the position data under a point in the graph is under
+- Graph.nodes.get(whatever node).data.pos
 */ // commenting out because appears to be redundant
 // update edge lines after moving points or something
 // this redraws the lines based on distance
-function UpdateEdgeLinesDist(G, divDistance) {
-    let edge;
-    let start;
-    let end;
-    let line;
-    for (const key of G.edges.keys()){
-        edge = G.edges.get(key);
+function UpdateEdgeLinesDist(G11, divDistance11) {
+    let edge11;
+    let start11;
+    let end11;
+    let line11;
+    for (const key11 of G11.edges.keys()){
+        edge11 = G11.edges.get(key11);
         // get the start pos
-        start = G.nodes.get(edge.start).data.pos;
-        end = G.nodes.get(edge.end).data.pos;
-        line = (0, $bRGTV.default).line_from_start_end_distance(start, end, divDistance);
-        edge.data.ldata = line;
+        start11 = G11.nodes.get(edge11.start).data.pos;
+        end11 = G11.nodes.get(edge11.end).data.pos;
+        line11 = (0, $bRGTV.default).line_from_start_end_distance(start11, end11, divDistance11);
+        edge11.data.ldata = line11;
     }
 }
 // function Update EdgeLines based on the number of divisions
 // redraw the line based on divisions
-function UpdateEdgeLinesDivs(G, Divs) {
-    let edge;
-    let start;
-    let end;
-    let line;
-    for (const key of G.edges.keys()){
-        edge = G.edges.get(key);
+function UpdateEdgeLinesDivs(G11, Divs11) {
+    let edge11;
+    let start11;
+    let end11;
+    let line11;
+    for (const key11 of G11.edges.keys()){
+        edge11 = G11.edges.get(key11);
         // get the start pos
-        start = G.nodes.get(edge.start).data.pos;
-        end = G.nodes.get(edge.end).data.pos;
-        line = (0, $bRGTV.default).line_from_start_end_divisions(start, end, Divs);
-        edge.data.ldata = line;
+        start11 = G11.nodes.get(edge11.start).data.pos;
+        end11 = G11.nodes.get(edge11.end).data.pos;
+        line11 = (0, $bRGTV.default).line_from_start_end_divisions(start11, end11, Divs11);
+        edge11.data.ldata = line11;
     }
 }
-var $d99d34ebdb8221e2$export$2e2bcd8739ae039 = {
+var $b0d033a86e1f8c84$export$2e2bcd8739ae039 = {
     SimulateKamadaKawai: SimulateKamadaKawai,
     DrawEdgeLines: DrawEdgeLines,
     DrawEdgeBundling: DrawEdgeBundling,
@@ -433,28 +466,28 @@ var $d99d34ebdb8221e2$export$2e2bcd8739ae039 = {
 });
 parcelRequire.register("Bx62R", function(module, exports) {
 
-$parcel$export(module.exports, "default", () => $908bc14fa6261467$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "default", () => $070d21177a8c6418$export$2e2bcd8739ae039);
 // Calculate average
-function $908bc14fa6261467$var$calculateAverage(arr) {
+function $070d21177a8c6418$var$calculateAverage(arr) {
     let runningSum = 0;
     for(let i = 0; i < arr.length; i++)runningSum = runningSum + arr[i];
     const avg = runningSum / arr.length;
     return avg;
 }
 // calculate distance between two points
-function $908bc14fa6261467$var$calculateDistance(p1, p2) {
+function $070d21177a8c6418$var$calculateDistance(p1, p2) {
     const d = Math.pow(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2) + Math.pow(p1.z - p2.z, 2), 0.5);
     return d;
 }
 // calculate squared distance sometimes we dont really need
 // the actual root but just a rough idea
-function $908bc14fa6261467$var$calculateSquaredDistance(p1, p2) {
+function $070d21177a8c6418$var$calculateSquaredDistance(p1, p2) {
     const d = Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2) + Math.pow(p1.z - p2.z, 2);
     return d;
 }
 // get a random subset of something from a array of things
 // must provide the number of things we want from that array
-function $908bc14fa6261467$var$getRandomSubset(arr, n) {
+function $070d21177a8c6418$var$getRandomSubset(arr, n) {
     var result = new Array(n), len = arr.length, taken = new Array(len);
     if (n > len) throw new RangeError("getRandom: more elements taken than available");
     while(n--){
@@ -464,25 +497,25 @@ function $908bc14fa6261467$var$getRandomSubset(arr, n) {
     }
     return result;
 }
-var $908bc14fa6261467$export$2e2bcd8739ae039 = {
-    calculateAverage: $908bc14fa6261467$var$calculateAverage,
-    calculateDistance: $908bc14fa6261467$var$calculateDistance,
-    calculateSquaredDistance: $908bc14fa6261467$var$calculateSquaredDistance,
-    getRandomSubset: $908bc14fa6261467$var$getRandomSubset
+var $070d21177a8c6418$export$2e2bcd8739ae039 = {
+    calculateAverage: $070d21177a8c6418$var$calculateAverage,
+    calculateDistance: $070d21177a8c6418$var$calculateDistance,
+    calculateSquaredDistance: $070d21177a8c6418$var$calculateSquaredDistance,
+    getRandomSubset: $070d21177a8c6418$var$getRandomSubset
 };
 
 });
 
 parcelRequire.register("bRGTV", function(module, exports) {
 
-$parcel$export(module.exports, "default", () => $e396ed1669119142$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "default", () => $8a35ec2cb604faae$export$2e2bcd8739ae039);
 
 var $5lBYP = parcelRequire("5lBYP");
 
 var $49USC = parcelRequire("49USC");
 
 var $Bx62R = parcelRequire("Bx62R");
-function $e396ed1669119142$var$line_from_start_end_divisions(start, end, divisions) {
+function $8a35ec2cb604faae$var$line_from_start_end_divisions(start, end, divisions) {
     // create a start and end time
     const Start = new (0, $5lBYP.Point)(start.x, start.y, start.z);
     const End = new (0, $5lBYP.Point)(end.x, end.y, end.z);
@@ -501,13 +534,13 @@ function $e396ed1669119142$var$line_from_start_end_divisions(start, end, divisio
     const SubdividedLine = new (0, $49USC.Line)(points);
     return SubdividedLine;
 }
-function $e396ed1669119142$var$line_from_start_end_distance(start, end, distance) {
+function $8a35ec2cb604faae$var$line_from_start_end_distance(start, end, distance) {
     const dist = (0, $Bx62R.default).calculateDistance(start, end);
     const divs = Math.round(dist / distance) + 2;
-    const subdivline = $e396ed1669119142$var$line_from_start_end_divisions(start, end, divs);
+    const subdivline = $8a35ec2cb604faae$var$line_from_start_end_divisions(start, end, divs);
     return subdivline;
 }
-function $e396ed1669119142$var$centroid(points) {
+function $8a35ec2cb604faae$var$centroid(points) {
     let rx = 0;
     let ry = 0;
     let rz = 0;
@@ -519,20 +552,20 @@ function $e396ed1669119142$var$centroid(points) {
     rx = rx / points.length;
     ry = ry / points.length;
     rz = rz / points.length;
-    const centroid1 = new (0, $5lBYP.Point)(rx, ry, rz);
-    return centroid1;
+    const centroid = new (0, $5lBYP.Point)(rx, ry, rz);
+    return centroid;
 }
-var $e396ed1669119142$export$2e2bcd8739ae039 = {
-    line_from_start_end_divisions: $e396ed1669119142$var$line_from_start_end_divisions,
-    line_from_start_end_distance: $e396ed1669119142$var$line_from_start_end_distance,
-    centroid: $e396ed1669119142$var$centroid
+var $8a35ec2cb604faae$export$2e2bcd8739ae039 = {
+    line_from_start_end_divisions: $8a35ec2cb604faae$var$line_from_start_end_divisions,
+    line_from_start_end_distance: $8a35ec2cb604faae$var$line_from_start_end_distance,
+    centroid: $8a35ec2cb604faae$var$centroid
 };
 
 });
 parcelRequire.register("5lBYP", function(module, exports) {
 
-$parcel$export(module.exports, "Point", () => $f5c90f3289d7dc6c$export$baf26146a414f24a);
-class $f5c90f3289d7dc6c$export$baf26146a414f24a {
+$parcel$export(module.exports, "Point", () => $3e4c5ff7989cd674$export$baf26146a414f24a);
+class $3e4c5ff7989cd674$export$baf26146a414f24a {
     constructor(x, y, z){
         this.x = x;
         this.y = y;
@@ -541,10 +574,10 @@ class $f5c90f3289d7dc6c$export$baf26146a414f24a {
     // Points are somewhat the same thing as a vector 
     // So im using the same type instead of redeclaring the 
     // Type
-    translate(Point1) {
-        this.x = this.x + Point1.x;
-        this.y = this.y + Point1.y;
-        this.z = this.z + Point1.z;
+    translate(Point) {
+        this.x = this.x + Point.x;
+        this.y = this.y + Point.y;
+        this.z = this.z + Point.z;
     }
 }
 
@@ -552,10 +585,10 @@ class $f5c90f3289d7dc6c$export$baf26146a414f24a {
 
 parcelRequire.register("49USC", function(module, exports) {
 
-$parcel$export(module.exports, "Line", () => $73033bd78ac243c4$export$17d680238e50603e);
+$parcel$export(module.exports, "Line", () => $30741fdd1a477cf6$export$17d680238e50603e);
 
 var $5lBYP = parcelRequire("5lBYP");
-class $73033bd78ac243c4$export$17d680238e50603e {
+class $30741fdd1a477cf6$export$17d680238e50603e {
     constructor(points){
         this.points = [];
         points.forEach((p)=>{
@@ -570,136 +603,198 @@ class $73033bd78ac243c4$export$17d680238e50603e {
 
 parcelRequire.register("SnOSE", function(module, exports) {
 
-$parcel$export(module.exports, "default", () => $1323a7f17a5ee0da$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "default", () => $0a378558e9c2f574$export$2e2bcd8739ae039);
 
 var $fbPyv = parcelRequire("fbPyv");
+var $0a378558e9c2f574$var$__awaiter = undefined && undefined.__awaiter || function(thisArg, _arguments, P, generator) {
+    function adopt(value) {
+        return value instanceof P ? value : new P(function(resolve) {
+            resolve(value);
+        });
+    }
+    return new (P || (P = Promise))(function(resolve, reject) {
+        function fulfilled(value) {
+            try {
+                step(generator.next(value));
+            } catch (e) {
+                reject(e);
+            }
+        }
+        function rejected(value) {
+            try {
+                step(generator["throw"](value));
+            } catch (e) {
+                reject(e);
+            }
+        }
+        function step(result) {
+            result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+        }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 // do a BFS Search Starting from some point
 // searches the whole graph and returns a map of which node
 // was searched from where
 // to speed this up all the nodes are actually numbers
-async function $1323a7f17a5ee0da$var$BFSSearch(G, node) {
-    const adj = G.get_adjacency();
-    const exploredFromMap = new Map();
-    const explored = [];
-    const stack = [];
-    // queue the first node
-    stack.push(node);
-    exploredFromMap.set(node, -1);
-    // search through the whole graph
-    while(stack.length > 0){
-        const currentNode = stack.pop();
-        // add this current node to the explored list
-        explored.push(currentNode);
-        const neighbours = adj.get(currentNode);
-        for(let i = 0; i < neighbours.length; i++){
-            const neighbour = neighbours[i];
-            if (!explored.includes(neighbour)) {
-                stack.push(neighbour);
-                exploredFromMap.set(neighbour, currentNode);
+function $0a378558e9c2f574$var$BFSSearch(G, node) {
+    return $0a378558e9c2f574$var$__awaiter(this, void 0, void 0, function*() {
+        const adj = G.get_adjacency();
+        const exploredFromMap = new Map();
+        const explored = [];
+        const stack = [];
+        // queue the first node
+        stack.push(node);
+        exploredFromMap.set(node, -1);
+        // search through the whole graph
+        while(stack.length > 0){
+            const currentNode = stack.pop();
+            // add this current node to the explored list
+            explored.push(currentNode);
+            const neighbours = adj.get(currentNode);
+            for(let i = 0; i < neighbours.length; i++){
+                const neighbour = neighbours[i];
+                if (!explored.includes(neighbour)) {
+                    stack.push(neighbour);
+                    exploredFromMap.set(neighbour, currentNode);
+                }
             }
         }
-    }
-    // then return the explored from map
-    return exploredFromMap;
+        // then return the explored from map
+        return exploredFromMap;
+    });
 }
 // do a dijkstra Search Distance map
-async function $1323a7f17a5ee0da$var$Dijkstra(G, Node) {
-    const adj = G.get_adjacency();
-    const Dmap = new Map();
-    // get the explored from map
-    const exploredFromMap = await $1323a7f17a5ee0da$var$BFSSearch(G, Node);
-    // then for each element in the map go through
-    // contact trace where that element came from
-    for (const n of adj.keys()){
-        let i = 0;
-        let exploredFrom = exploredFromMap.get(n);
-        while(exploredFrom != -1){
-            exploredFrom = exploredFromMap.get(exploredFrom);
-            i += 1;
+function $0a378558e9c2f574$var$Dijkstra(G, Node) {
+    return $0a378558e9c2f574$var$__awaiter(this, void 0, void 0, function*() {
+        const adj = G.get_adjacency();
+        const Dmap = new Map();
+        // get the explored from map
+        const exploredFromMap = yield $0a378558e9c2f574$var$BFSSearch(G, Node);
+        // then for each element in the map go through
+        // contact trace where that element came from
+        for (const n of adj.keys()){
+            let i = 0;
+            let exploredFrom = exploredFromMap.get(n);
+            while(exploredFrom != -1){
+                exploredFrom = exploredFromMap.get(exploredFrom);
+                i += 1;
+            }
+            Dmap.set(n, i);
         }
-        Dmap.set(n, i);
-    }
-    // now return this map
-    return Dmap;
+        // now return this map
+        return Dmap;
+    });
 }
 // This file contains basic things like
 // Graph searches and stuff
 // this only returns one of the diameters that is the longest 
 // not all of them
-async function $1323a7f17a5ee0da$var$GraphDiameter(graph) {
-    // find the diameter of the graph
-    // start Dijkstra from some random node
-    let seed = Math.floor(Math.random() * graph.nodes.size);
-    let Dstart = await $1323a7f17a5ee0da$var$Dijkstra(graph, seed);
-    // iterate through all the values and then get
-    // the value that is the highest amongst the others
-    let currentDistance = -1;
-    for (const n of Dstart.keys()){
-        const dval = Dstart.get(n);
-        if (dval > currentDistance) {
-            seed = n;
-            currentDistance = dval;
+function $0a378558e9c2f574$var$GraphDiameter(graph) {
+    return $0a378558e9c2f574$var$__awaiter(this, void 0, void 0, function*() {
+        // find the diameter of the graph
+        // start Dijkstra from some random node
+        let seed = Math.floor(Math.random() * graph.nodes.size);
+        let Dstart = yield $0a378558e9c2f574$var$Dijkstra(graph, seed);
+        // iterate through all the values and then get
+        // the value that is the highest amongst the others
+        let currentDistance = -1;
+        for (const n of Dstart.keys()){
+            const dval = Dstart.get(n);
+            if (dval > currentDistance) {
+                seed = n;
+                currentDistance = dval;
+            }
         }
-    }
-    // then search from there to the furthest point again
-    const newStart = seed;
-    Dstart = await $1323a7f17a5ee0da$var$Dijkstra(graph, seed);
-    // repeat the thing
-    currentDistance = -1;
-    for (const n1 of Dstart.keys()){
-        const dval = Dstart.get(n1);
-        if (dval > currentDistance) {
-            seed = n1;
-            currentDistance = dval;
+        // then search from there to the furthest point again
+        const newStart = seed;
+        Dstart = yield $0a378558e9c2f574$var$Dijkstra(graph, seed);
+        // repeat the thing
+        currentDistance = -1;
+        for (const n of Dstart.keys()){
+            const dval = Dstart.get(n);
+            if (dval > currentDistance) {
+                seed = n;
+                currentDistance = dval;
+            }
         }
-    }
-    const returnObj = {
-        start: newStart,
-        end: seed,
-        distance: currentDistance
-    };
-    return returnObj;
+        const returnObj = {
+            start: newStart,
+            end: seed,
+            distance: currentDistance
+        };
+        return returnObj;
+    });
 }
 // Select a subrgaph
 // you must specify a list of nodes that you passed in
-async function $1323a7f17a5ee0da$var$SelectSubgraph(graph, nodeList) {
-    const prunedNodes = new Map();
-    const prunedEdges = new Map();
-    // set the prunded vertices list
-    nodeList.forEach((element)=>{
-        // get the element from the graph and set that
-        // data element in the  prunded vertices map
-        const ndata = graph.nodes.get(element);
-        prunedNodes.set(element, ndata);
-    });
-    // set the pruned edges list
-    let i = 0;
-    for (const edge of graph.edges.keys()){
-        const edgeData = graph.edges.get(edge);
-        if (nodeList.includes(edgeData.start) && nodeList.includes(edgeData.end)) {
-            prunedEdges.set(i, edgeData);
-            i += 1;
+function $0a378558e9c2f574$var$SelectSubgraph(graph, nodeList) {
+    return $0a378558e9c2f574$var$__awaiter(this, void 0, void 0, function*() {
+        const prunedNodes = new Map();
+        const prunedEdges = new Map();
+        // set the prunded vertices list
+        nodeList.forEach((element)=>{
+            // get the element from the graph and set that
+            // data element in the  prunded vertices map
+            const ndata = graph.nodes.get(element);
+            prunedNodes.set(element, ndata);
+        });
+        // set the pruned edges list
+        let i = 0;
+        for (const edge of graph.edges.keys()){
+            const edgeData = graph.edges.get(edge);
+            if (nodeList.includes(edgeData.start) && nodeList.includes(edgeData.end)) {
+                prunedEdges.set(i, edgeData);
+                i += 1;
+            }
         }
-    }
-    // construct a new graph that represents the new graph
-    const newGraph = await (0, $fbPyv.Graph).create(prunedNodes, prunedEdges);
-    return newGraph;
+        // construct a new graph that represents the new graph
+        const newGraph = yield (0, $fbPyv.Graph).create(prunedNodes, prunedEdges);
+        return newGraph;
+    });
 }
 var // this is where the exports happen
-$1323a7f17a5ee0da$export$2e2bcd8739ae039 = {
-    GraphDiameter: $1323a7f17a5ee0da$var$GraphDiameter,
-    Dijkstra: $1323a7f17a5ee0da$var$Dijkstra,
-    BFSSearch: $1323a7f17a5ee0da$var$BFSSearch,
-    SelectSubgraph: $1323a7f17a5ee0da$var$SelectSubgraph
+$0a378558e9c2f574$export$2e2bcd8739ae039 = {
+    GraphDiameter: $0a378558e9c2f574$var$GraphDiameter,
+    Dijkstra: $0a378558e9c2f574$var$Dijkstra,
+    BFSSearch: $0a378558e9c2f574$var$BFSSearch,
+    SelectSubgraph: $0a378558e9c2f574$var$SelectSubgraph
 };
 
 });
 parcelRequire.register("fbPyv", function(module, exports) {
 
-$parcel$export(module.exports, "Graph", () => $a171e2a516854606$export$614db49f3febe941);
+$parcel$export(module.exports, "Graph", () => $b0efdff792a30fe0$export$614db49f3febe941);
 
 var $5v7Uc = parcelRequire("5v7Uc");
-class $a171e2a516854606$export$614db49f3febe941 {
+var $b0efdff792a30fe0$var$__awaiter = undefined && undefined.__awaiter || function(thisArg, _arguments, P, generator) {
+    function adopt(value) {
+        return value instanceof P ? value : new P(function(resolve) {
+            resolve(value);
+        });
+    }
+    return new (P || (P = Promise))(function(resolve, reject) {
+        function fulfilled(value) {
+            try {
+                step(generator.next(value));
+            } catch (e) {
+                reject(e);
+            }
+        }
+        function rejected(value) {
+            try {
+                step(generator["throw"](value));
+            } catch (e) {
+                reject(e);
+            }
+        }
+        function step(result) {
+            result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+        }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+class $b0efdff792a30fe0$export$614db49f3febe941 {
     constructor(nodes, edges){
         this.nodes = nodes;
         this.edges = edges;
@@ -712,41 +807,47 @@ class $a171e2a516854606$export$614db49f3febe941 {
         console.log(message);
     }
     // initialize
-    async initialize() {
-        await this.constructAdjacencyList();
+    initialize() {
+        return $b0efdff792a30fe0$var$__awaiter(this, void 0, void 0, function*() {
+            yield this.constructAdjacencyList();
+        });
     }
     // new create method
-    static async create(nodes, edges) {
-        const g = new $a171e2a516854606$export$614db49f3febe941(nodes, edges);
-        await g.initialize();
-        return g;
+    static create(nodes, edges) {
+        return $b0efdff792a30fe0$var$__awaiter(this, void 0, void 0, function*() {
+            const g = new $b0efdff792a30fe0$export$614db49f3febe941(nodes, edges);
+            yield g.initialize();
+            return g;
+        });
     }
     // construct the adjacency list represntation
-    async constructAdjacencyList() {
-        // I'm constructing a Graph here so some of the stuff doesnt matter
-        this.edges.forEach((edge)=>{
-            // get the start point
-            const start = edge.start;
-            const end = edge.end;
-            // set the node property
-            if (this.nodes.get(start)) {
-                const relevantSNode = this.nodes.get(start);
-                relevantSNode.neighbours.push(end);
-            } else if (this.nodes.get(end)) {
-                const relevantENode = this.nodes.get(end);
-                relevantENode.neighbours.push(start);
+    constructAdjacencyList() {
+        return $b0efdff792a30fe0$var$__awaiter(this, void 0, void 0, function*() {
+            // I'm constructing a Graph here so some of the stuff doesnt matter
+            this.edges.forEach((edge)=>{
+                // get the start point
+                const start = edge.start;
+                const end = edge.end;
+                // set the node property
+                if (this.nodes.get(start)) {
+                    const relevantSNode = this.nodes.get(start);
+                    relevantSNode.neighbours.push(end);
+                } else if (this.nodes.get(end)) {
+                    const relevantENode = this.nodes.get(end);
+                    relevantENode.neighbours.push(start);
+                }
+            });
+            // then for each node then get the unique neighbours
+            for (const key of this.nodes.keys()){
+                const neighs = this.nodes.get(key).neighbours;
+                const new_neigh = [
+                    ...new Set(neighs)
+                ];
+                const selfIndex = new_neigh.indexOf(key);
+                if (selfIndex > -1) new_neigh.splice(selfIndex, 1); // 2nd parameter means remove one item only
+                this.nodes.get(key).neighbours = new_neigh;
             }
         });
-        // then for each node then get the unique neighbours
-        for (const key of this.nodes.keys()){
-            const neighs = this.nodes.get(key).neighbours;
-            const new_neigh = [
-                ...new Set(neighs)
-            ];
-            const selfIndex = new_neigh.indexOf(key);
-            if (selfIndex > -1) new_neigh.splice(selfIndex, 1); // 2nd parameter means remove one item only
-            this.nodes.get(key).neighbours = new_neigh;
-        }
     }
     // add a node
     add_node(nodeID, data) {
@@ -773,18 +874,16 @@ class $a171e2a516854606$export$614db49f3febe941 {
     // set position based on an array of positions
     // this could be anything (we use kamada kawai )
     apply_position_map(data) {
-        for (let n of data.keys())this.nodes.get(n).data = {
-            ...this.nodes.get(n).data,
+        for (let n of data.keys())this.nodes.get(n).data = Object.assign(Object.assign({}, this.nodes.get(n).data), {
             pos: data.get(n)
-        };
+        });
     }
     // create new edge pos representation
     // same approach for applying the key data
     apply_edge_pos_maps(data) {
-        for (let key of data.keys())this.edges.get(key).data = {
-            ...this.edges.get(key).data,
+        for (let key of data.keys())this.edges.get(key).data = Object.assign(Object.assign({}, this.edges.get(key).data), {
             ldata: data.get(key)
-        };
+        });
     }
     // get the edge reps
     // this returns all the edge map readings
@@ -818,14 +917,12 @@ class $a171e2a516854606$export$614db49f3febe941 {
 });
 parcelRequire.register("5v7Uc", function(module, exports) {
 
-$parcel$export(module.exports, "Edge", () => $f9cc8a54eaa04b21$export$b9d9805c9b77a56d);
-class $f9cc8a54eaa04b21$export$b9d9805c9b77a56d {
+$parcel$export(module.exports, "Edge", () => $4015fae18c47f5f9$export$b9d9805c9b77a56d);
+class $4015fae18c47f5f9$export$b9d9805c9b77a56d {
     constructor(start, end, data){
         this.start = start;
         this.end = end;
-        this.data = {
-            ...data
-        };
+        this.data = Object.assign({}, data);
     }
 }
 
@@ -836,7 +933,7 @@ class $f9cc8a54eaa04b21$export$b9d9805c9b77a56d {
 
 parcelRequire.register("gTJou", function(module, exports) {
 
-$parcel$export(module.exports, "default", () => $35377160f7cc1912$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "default", () => $c4d4feb6deac3a62$export$2e2bcd8739ae039);
 
 var $I1Jpx = parcelRequire("I1Jpx");
 
@@ -853,44 +950,70 @@ var $84wto = parcelRequire("84wto");
 var $jVEXT = parcelRequire("jVEXT");
 
 var $SnOSE = parcelRequire("SnOSE");
-parcelRequire("fbPyv");
+var __awaiter = undefined && undefined.__awaiter || function(thisArg11, _arguments11, P11, generator11) {
+    function adopt11(value11) {
+        return value11 instanceof P11 ? value11 : new P11(function(resolve11) {
+            resolve11(value11);
+        });
+    }
+    return new (P11 || (P11 = Promise))(function(resolve11, reject11) {
+        function fulfilled11(value11) {
+            try {
+                step11(generator11.next(value11));
+            } catch (e11) {
+                reject11(e11);
+            }
+        }
+        function rejected11(value11) {
+            try {
+                step11(generator11["throw"](value11));
+            } catch (e11) {
+                reject11(e11);
+            }
+        }
+        function step11(result11) {
+            result11.done ? resolve11(result11.value) : adopt11(result11.value).then(fulfilled11, rejected11);
+        }
+        step11((generator11 = generator11.apply(thisArg11, _arguments11 || [])).next());
+    });
+};
 // Draw the graph out as a bunch of vertices
 // As like tiny squares
-function DrawTHREEGraphVertices(Graph1, bounds, size = 1, color = 0xffffff, alpha = 1) {
-    const positionAttribute = [];
+function DrawTHREEGraphVertices(Graph11, bounds11, size11 = 1, color11 = 0xffffff, alpha11 = 1) {
+    const positionAttribute11 = [];
     // get the corresponding points list
-    const pmap = Graph1.get_position_map();
+    const pmap11 = Graph11.get_position_map();
     // declare the sizes and colors
-    let sizes;
-    let colors;
-    if (typeof size == "number") sizes = Array(Graph1.nodes.size).fill(size);
-    else sizes = size;
-    colors = Array(Graph1.nodes.size).fill(color);
-    const labels = [];
-    const colorVal = new $I1Jpx.Color();
-    colorVal.setRGB(255, 255, 255); // white as the default
+    let sizes11;
+    let colors11;
+    if (typeof size11 == "number") sizes11 = Array(Graph11.nodes.size).fill(size11);
+    else sizes11 = size11;
+    colors11 = Array(Graph11.nodes.size).fill(color11);
+    const labels11 = [];
+    const colorVal11 = new $I1Jpx.Color();
+    colorVal11.setRGB(255, 255, 255); // white as the default
     // process the data set
-    let i = 0;
-    let nodeData;
-    for (let node of Graph1.nodes.keys()){
-        nodeData = pmap.get(node);
-        positionAttribute.push(nodeData.x * bounds, nodeData.y * bounds, nodeData.z * bounds);
-        colorVal.toArray(colors, i * 3);
-        labels.push(node);
-        i += 1;
+    let i11 = 0;
+    let nodeData11;
+    for (let node11 of Graph11.nodes.keys()){
+        nodeData11 = pmap11.get(node11);
+        positionAttribute11.push(nodeData11.x * bounds11, nodeData11.y * bounds11, nodeData11.z * bounds11);
+        colorVal11.toArray(colors11, i11 * 3);
+        labels11.push(node11);
+        i11 += 1;
     }
-    const geometry = new $I1Jpx.BufferGeometry();
+    const geometry11 = new $I1Jpx.BufferGeometry();
     // geometry attribute
-    geometry.setAttribute("position", new $I1Jpx.Float32BufferAttribute(positionAttribute, 3));
+    geometry11.setAttribute("position", new $I1Jpx.Float32BufferAttribute(positionAttribute11, 3));
     // color attribute
-    geometry.setAttribute("customColor", new $I1Jpx.Float32BufferAttribute(colors, 3));
+    geometry11.setAttribute("customColor", new $I1Jpx.Float32BufferAttribute(colors11, 3));
     // size attribute
-    geometry.setAttribute("size", new $I1Jpx.Float32BufferAttribute(sizes, 1));
+    geometry11.setAttribute("size", new $I1Jpx.Float32BufferAttribute(sizes11, 1));
     // label attribute
-    geometry.setAttribute("label", new $I1Jpx.Int32BufferAttribute(labels, 1));
-    geometry.name = "nodes";
+    geometry11.setAttribute("label", new $I1Jpx.Int32BufferAttribute(labels11, 1));
+    geometry11.name = "nodes";
     // example material
-    const PointMaterial = new $I1Jpx.ShaderMaterial({
+    const PointMaterial11 = new $I1Jpx.ShaderMaterial({
         uniforms: {
             color: {
                 value: new $I1Jpx.Color(0xffffff)
@@ -899,220 +1022,222 @@ function DrawTHREEGraphVertices(Graph1, bounds, size = 1, color = 0xffffff, alph
                 value: new $I1Jpx.TextureLoader().load("./Textures/Square.png")
             },
             alphaTest: {
-                value: alpha
+                value: alpha11
             }
         },
         vertexShader: (0, $84wto.vertexShader),
         fragmentShader: (0, $jVEXT.fragmentShader)
     });
-    const vertices = new $I1Jpx.Group();
-    vertices.add(new $I1Jpx.Points(geometry, PointMaterial));
-    return vertices;
+    const vertices11 = new $I1Jpx.Group();
+    vertices11.add(new $I1Jpx.Points(geometry11, PointMaterial11));
+    return vertices11;
 }
 // then make a thing which draws out all the edges (THICK)
-function DrawTHREEGraphEdgesThick(G, bounds, thickness = 0.2, color = 0xffffff) {
+function DrawTHREEGraphEdgesThick(G11, bounds11, thickness11 = 0.2, color11 = 0xffffff) {
     // add the interpolation function
-    const lineMap = G.get_edge_map();
-    return DrawThickEdgesFromEdgeMap(lineMap, bounds, thickness, color);
+    const lineMap11 = G11.get_edge_map();
+    return DrawThickEdgesFromEdgeMap(lineMap11, bounds11, thickness11, color11);
 }
 // draw a thing to draw out all the edges from the edge map stuff
-function DrawThickEdgesFromEdgeMap(emap, bounds, thickness = 0.2, color = 0xffffff) {
+function DrawThickEdgesFromEdgeMap(emap11, bounds11, thickness11 = 0.2, color11 = 0xffffff) {
     // this is the line thing
-    const mat = new (0, $3si0u.LineMaterial)({
-        color: color,
-        linewidth: thickness,
+    const mat11 = new (0, $3si0u.LineMaterial)({
+        color: color11,
+        linewidth: thickness11,
         vertexColors: true,
         //resolution:  // to be set by renderer, eventually
         dashed: false,
         alphaToCoverage: true
     });
-    const meshes = new $I1Jpx.Group();
-    for (let lval of emap.values()){
-        const mcolor = new $I1Jpx.Color();
+    const meshes11 = new $I1Jpx.Group();
+    for (let lval11 of emap11.values()){
+        const mcolor11 = new $I1Jpx.Color();
         // convert the color that we shall be using
-        mcolor.setHex(color);
-        const pnts = [];
-        const cols = [];
-        lval.points.forEach((pnt)=>{
-            pnts.push(pnt.x * bounds - bounds / 2, pnt.y * bounds - bounds / 2, pnt.z * bounds - bounds / 2);
-            cols.push(mcolor.r, mcolor.g, mcolor.b);
+        mcolor11.setHex(color11);
+        const pnts11 = [];
+        const cols11 = [];
+        lval11.points.forEach((pnt11)=>{
+            pnts11.push(pnt11.x * bounds11 - bounds11 / 2, pnt11.y * bounds11 - bounds11 / 2, pnt11.z * bounds11 - bounds11 / 2);
+            cols11.push(mcolor11.r, mcolor11.g, mcolor11.b);
         });
-        const geo = new (0, $fzjq5.LineGeometry)();
-        geo.setPositions(pnts);
-        geo.setColors(cols);
-        const line = new (0, $gnXKD.Line2)(geo, mat);
-        line.computeLineDistances();
-        line.scale.set(1, 1, 1);
-        meshes.add(line);
+        const geo11 = new (0, $fzjq5.LineGeometry)();
+        geo11.setPositions(pnts11);
+        geo11.setColors(cols11);
+        const line11 = new (0, $gnXKD.Line2)(geo11, mat11);
+        line11.computeLineDistances();
+        line11.scale.set(1, 1, 1);
+        meshes11.add(line11);
     }
-    return meshes;
+    return meshes11;
 }
 // make a thing that draws out all the lines (Thin)
-function DrawTHREEGraphEdgesThin(G, bounds, color = 0xffffff) {
+function DrawTHREEGraphEdgesThin(G11, bounds11, color11 = 0xffffff) {
     // first get the edge map positions
-    const emap = G.get_edge_map();
-    return DrawThinEdgesFromEdgeMap(emap, bounds, color);
+    const emap11 = G11.get_edge_map();
+    return DrawThinEdgesFromEdgeMap(emap11, bounds11, color11);
 }
 // function to draw edges from edge map
-function DrawThinEdgesFromEdgeMap(emap, bounds, color = 0xffffff) {
-    const material = new $I1Jpx.LineBasicMaterial({
-        color: color
+function DrawThinEdgesFromEdgeMap(emap11, bounds11, color11 = 0xffffff) {
+    const material11 = new $I1Jpx.LineBasicMaterial({
+        color: color11
     });
-    const lines = new $I1Jpx.Group();
-    let points;
-    for (const edge of emap.values()){
-        points = [];
+    const lines11 = new $I1Jpx.Group();
+    let points11;
+    for (const edge11 of emap11.values()){
+        points11 = [];
         // get the edge data
-        const ldata = edge.points;
-        ldata.forEach((element)=>{
-            points.push(new $I1Jpx.Vector3(element.x * bounds, element.y * bounds, element.z * bounds));
+        const ldata11 = edge11.points;
+        ldata11.forEach((element11)=>{
+            points11.push(new $I1Jpx.Vector3(element11.x * bounds11, element11.y * bounds11, element11.z * bounds11));
         });
         // then make the line thing
-        const geometry = new $I1Jpx.BufferGeometry().setFromPoints(points);
-        const line = new $I1Jpx.Line(geometry, material);
-        lines.add(line);
+        const geometry11 = new $I1Jpx.BufferGeometry().setFromPoints(points11);
+        const line11 = new $I1Jpx.Line(geometry11, material11);
+        lines11.add(line11);
     }
-    return lines;
+    return lines11;
 }
 // draw the cube box graph here
-function AddBoxBasedImaging(nodeMap, bounds, color = 0xffffff, size = 10) {
+function AddBoxBasedImaging(nodeMap11, bounds11, color11 = 0xffffff, size11 = 10) {
     // precompute all the sizes
-    let sizes;
-    if (typeof size == "number") sizes = Array(nodeMap.size).fill(size);
-    else sizes = size;
+    let sizes11;
+    if (typeof size11 == "number") sizes11 = Array(nodeMap11.size).fill(size11);
+    else sizes11 = size11;
     // returns a group
-    const group = new $I1Jpx.Group();
-    const material = new $I1Jpx.MeshBasicMaterial({
-        color: color
+    const group11 = new $I1Jpx.Group();
+    const material11 = new $I1Jpx.MeshBasicMaterial({
+        color: color11
     });
-    let nodeData;
-    let geometry;
-    let nodeMesh;
-    for(let i = 0; i < nodeMap.size; i++){
-        nodeData = nodeMap.get(i);
-        geometry = new $I1Jpx.BoxGeometry(sizes[i]);
-        geometry.name = i.toString();
-        nodeMesh = new $I1Jpx.Mesh(geometry, material);
-        nodeMesh.position.set(nodeData.x * bounds, nodeData.y * bounds, nodeData.z * bounds);
-        group.add(nodeMesh);
+    let nodeData11;
+    let geometry11;
+    let nodeMesh11;
+    for(let i11 = 0; i11 < nodeMap11.size; i11++){
+        nodeData11 = nodeMap11.get(i11);
+        geometry11 = new $I1Jpx.BoxGeometry(sizes11[i11]);
+        geometry11.name = i11.toString();
+        nodeMesh11 = new $I1Jpx.Mesh(geometry11, material11);
+        nodeMesh11.position.set(nodeData11.x * bounds11, nodeData11.y * bounds11, nodeData11.z * bounds11);
+        group11.add(nodeMesh11);
     }
-    return group;
+    return group11;
 }
 // Draw BoxBased imaging from a graph
-function DrawTHREEBoxBasedVertices(graph, bounds, color = 0xffffff, size = 10) {
-    const pmap = graph.get_position_map();
-    const Bgroup = AddBoxBasedImaging(pmap, bounds, color, size);
-    return Bgroup;
+function DrawTHREEBoxBasedVertices(graph11, bounds11, color11 = 0xffffff, size11 = 10) {
+    const pmap11 = graph11.get_position_map();
+    const Bgroup11 = AddBoxBasedImaging(pmap11, bounds11, color11, size11);
+    return Bgroup11;
 }
 // draw cylinders where required
-function AddCylinderBasedImaging(nodeMap, divisonLength, color = 0xffffff, size = 10) {
+function AddCylinderBasedImaging(nodeMap11, divisonLength11, color11 = 0xffffff, size11 = 10) {
     // precompute all the sizes
-    let sizes;
-    if (typeof size == "number") sizes.Array(nodeMap.size).fill(size);
-    else sizes = size;
+    let sizes11;
+    if (typeof size11 == "number") sizes11.Array(nodeMap11.size).fill(size11);
+    else sizes11 = size11;
     // returns a group
-    const group = new $I1Jpx.Group();
-    const material = new $I1Jpx.MeshBasicMaterial({
-        color: color
+    const group11 = new $I1Jpx.Group();
+    const material11 = new $I1Jpx.MeshBasicMaterial({
+        color: color11
     });
-    let radius, circumfurence, segments;
-    let nodeData;
-    for(let i = 0; i < nodeMap.size; i++){
-        nodeData = nodeMap.get(i);
-        radius = sizes[i];
-        circumfurence = 2 * radius * Math.PI;
-        segments = Math.ceil(circumfurence / divisonLength);
-        const geometry = new $I1Jpx.CylinderGeometry(radius, radius, 10, segments);
-        geometry.name = i.toString();
-        const nodeMesh = new $I1Jpx.Mesh(geometry, material);
-        nodeMesh.position.set(nodeData.x, nodeData.y, nodeData.z);
-        group.add(nodeMesh);
+    let radius11, circumfurence11, segments11;
+    let nodeData11;
+    for(let i11 = 0; i11 < nodeMap11.size; i11++){
+        nodeData11 = nodeMap11.get(i11);
+        radius11 = sizes11[i11];
+        circumfurence11 = 2 * radius11 * Math.PI;
+        segments11 = Math.ceil(circumfurence11 / divisonLength11);
+        const geometry11 = new $I1Jpx.CylinderGeometry(radius11, radius11, 10, segments11);
+        geometry11.name = i11.toString();
+        const nodeMesh11 = new $I1Jpx.Mesh(geometry11, material11);
+        nodeMesh11.position.set(nodeData11.x, nodeData11.y, nodeData11.z);
+        group11.add(nodeMesh11);
     }
-    return group;
+    return group11;
 }
 // draw the sparse graph as groups
 // this seperates all the points based on some or the other group
-async function AddInModularityBasedPointGroups(Graph2, propertyName) {
-    // returns an array of groups
-    const groups = new Map();
-    let ndata;
-    let modularity;
-    for (let node of Graph2.nodes.keys()){
-        ndata = Graph2.nodes.get(node);
-        modularity = eval(`ndata.data.${propertyName}}`);
-        if (groups.has(modularity)) groups.get(modularity).push(node);
-        else groups.set(modularity, [
-            node
-        ]);
-    }
-    // then counstruct a bunch of subraphs
-    const meshGraphVertices = new Map();
-    const meshGraphEdges = new Map();
-    let subgraphGroup;
-    let subgraph;
-    let pointRep;
-    let edges;
-    for (let modularityGroup of groups.keys()){
-        subgraphGroup = groups.get(modularityGroup);
-        // returns an array
-        subgraph = await (0, $SnOSE.default).SelectSubgraph(Graph2, subgraphGroup);
-        // then make the vertex thing
-        pointRep = DrawTHREEGraphVertices(subgraph, 1);
-        meshGraphVertices.set(modularityGroup, pointRep);
-        // make the edges
-        edges = DrawSimplifiedEdges(subgraph, 0.03);
-        meshGraphEdges.set(modularityGroup, edges);
-    }
-    const ROBJ = {
-        nodeGroups: meshGraphVertices,
-        EdgeGroups: meshGraphEdges
-    };
-    return ROBJ;
-}
-function DrawSimplifiedEdges(G, amount, color = 0xffffff) {
-    const lineGroup = new $I1Jpx.Group();
-    const material = new $I1Jpx.LineBasicMaterial({
-        color: color
+function AddInModularityBasedPointGroups(Graph, propertyName) {
+    return __awaiter(this, void 0, void 0, function*() {
+        // returns an array of groups
+        const groups = new Map();
+        let ndata;
+        let modularity;
+        for (let node of Graph.nodes.keys()){
+            ndata = Graph.nodes.get(node);
+            modularity = eval(`ndata.data.${propertyName}}`);
+            if (groups.has(modularity)) groups.get(modularity).push(node);
+            else groups.set(modularity, [
+                node
+            ]);
+        }
+        // then counstruct a bunch of subraphs
+        const meshGraphVertices = new Map();
+        const meshGraphEdges = new Map();
+        let subgraphGroup;
+        let subgraph;
+        let pointRep;
+        let edges;
+        for (let modularityGroup of groups.keys()){
+            subgraphGroup = groups.get(modularityGroup);
+            // returns an array
+            subgraph = yield (0, $SnOSE.default).SelectSubgraph(Graph, subgraphGroup);
+            // then make the vertex thing
+            pointRep = DrawTHREEGraphVertices(subgraph, 1);
+            meshGraphVertices.set(modularityGroup, pointRep);
+            // make the edges
+            edges = DrawSimplifiedEdges(subgraph, 0.03);
+            meshGraphEdges.set(modularityGroup, edges);
+        }
+        const ROBJ = {
+            nodeGroups: meshGraphVertices,
+            EdgeGroups: meshGraphEdges
+        };
+        return ROBJ;
     });
-    let start;
-    let end;
-    let points;
-    for (let edge of G.edges.values())if (Math.random() <= amount) {
-        start = G.nodes.get(edge.start).data.pos;
-        end = G.nodes.get(edge.end).data.pos;
-        points = [];
-        points.push(new $I1Jpx.Vector3(start.x, start.y, start.z));
-        points.push(new $I1Jpx.Vector3(end.x, end.y, end.z));
-        const geometry = new $I1Jpx.BufferGeometry().setFromPoints(points);
-        const line = new $I1Jpx.Line(geometry, material);
-        lineGroup.add(line);
-    }
-    return lineGroup;
 }
-function ChangeTheVertexColours(vertices, indexArray, color) {
-    let Attrib = vertices.geometry.attributes;
-    let k = 0;
-    const newCol = (0, $56MZj.hexToRgb)(color);
-    indexArray.forEach((node)=>{
-        k = node * 3; // @ts-ignore
-        Attrib.customColor.array[k] = newCol.r; // @ts-ignore
-        Attrib.customColor.array[k + 1] = newCol.g; // @ts-ignore
-        Attrib.customColor.array[k + 2] = newCol.b;
+function DrawSimplifiedEdges(G11, amount11, color11 = 0xffffff) {
+    const lineGroup11 = new $I1Jpx.Group();
+    const material11 = new $I1Jpx.LineBasicMaterial({
+        color: color11
     });
-    Attrib.customColor.needsUpdate = true;
-}
-function ResetVertexColors(vertices) {
-    let Attrib = vertices.geometry.attributes;
-    let k = 0;
-    for(let i = 0; i < Attrib.customColor.count; i++){
-        k = i * 3; // @ts-ignore
-        Attrib.customColor.array[k] = 255; // @ts-ignore
-        Attrib.customColor.array[k + 1] = 255; // @ts-ignore
-        Attrib.customColor.array[k + 2] = 255;
+    let start11;
+    let end11;
+    let points11;
+    for (let edge11 of G11.edges.values())if (Math.random() <= amount11) {
+        start11 = G11.nodes.get(edge11.start).data.pos;
+        end11 = G11.nodes.get(edge11.end).data.pos;
+        points11 = [];
+        points11.push(new $I1Jpx.Vector3(start11.x, start11.y, start11.z));
+        points11.push(new $I1Jpx.Vector3(end11.x, end11.y, end11.z));
+        const geometry11 = new $I1Jpx.BufferGeometry().setFromPoints(points11);
+        const line11 = new $I1Jpx.Line(geometry11, material11);
+        lineGroup11.add(line11);
     }
-    Attrib.customColor.needsUpdate = true;
+    return lineGroup11;
 }
-var $35377160f7cc1912$export$2e2bcd8739ae039 = {
+function ChangeTheVertexColours(vertices11, indexArray11, color11) {
+    let Attrib11 = vertices11.geometry.attributes;
+    let k11 = 0;
+    const newCol11 = (0, $56MZj.hexToRgb)(color11);
+    indexArray11.forEach((node11)=>{
+        k11 = node11 * 3; // @ts-ignore
+        Attrib11.customColor.array[k11] = newCol11.r; // @ts-ignore
+        Attrib11.customColor.array[k11 + 1] = newCol11.g; // @ts-ignore
+        Attrib11.customColor.array[k11 + 2] = newCol11.b;
+    });
+    Attrib11.customColor.needsUpdate = true;
+}
+function ResetVertexColors(vertices11) {
+    let Attrib11 = vertices11.geometry.attributes;
+    let k11 = 0;
+    for(let i11 = 0; i11 < Attrib11.customColor.count; i11++){
+        k11 = i11 * 3; // @ts-ignore
+        Attrib11.customColor.array[k11] = 255; // @ts-ignore
+        Attrib11.customColor.array[k11 + 1] = 255; // @ts-ignore
+        Attrib11.customColor.array[k11 + 2] = 255;
+    }
+    Attrib11.customColor.needsUpdate = true;
+}
+var $c4d4feb6deac3a62$export$2e2bcd8739ae039 = {
     DrawTHREEGraphVertices: DrawTHREEGraphVertices,
     DrawTHREEGraphEdgesThick: DrawTHREEGraphEdgesThick,
     DrawTHREEGraphEdgesThin: DrawTHREEGraphEdgesThin,
@@ -1391,7 +1516,7 @@ const $084574008ccedf86$export$ca1dce8b5e1de74d = 1035; // fallback for WebGL 1
             event.target = this;
             // Make a copy, in case listeners are removed while iterating.
             const array = listenerArray.slice(0);
-            for(let i7 = 0, l = array.length; i7 < l; i7++)array[i7].call(this, event);
+            for(let i = 0, l = array.length; i < l; i++)array[i].call(this, event);
             event.target = null;
         }
     }
@@ -1954,8 +2079,8 @@ class $084574008ccedf86$export$8ff26dafa08918 {
     }
     determinant() {
         const te = this.elements;
-        const a = te[0], b = te[1], c = te[2], d = te[3], e = te[4], f = te[5], g = te[6], h = te[7], i8 = te[8];
-        return a * e * i8 - a * f * h - b * d * i8 + b * f * g + c * d * h - c * e * g;
+        const a = te[0], b = te[1], c = te[2], d = te[3], e = te[4], f = te[5], g = te[6], h = te[7], i = te[8];
+        return a * e * i - a * f * h - b * d * i + b * f * g + c * d * h - c * e * g;
     }
     invert() {
         const te = this.elements, n11 = te[0], n21 = te[1], n31 = te[2], n12 = te[3], n22 = te[4], n32 = te[5], n13 = te[6], n23 = te[7], n33 = te[8], t11 = n33 * n22 - n32 * n23, t12 = n32 * n13 - n33 * n12, t13 = n23 * n12 - n22 * n13, det = n11 * t11 + n21 * t12 + n31 * t13;
@@ -1973,17 +2098,17 @@ class $084574008ccedf86$export$8ff26dafa08918 {
         return this;
     }
     transpose() {
-        let tmp1;
+        let tmp;
         const m = this.elements;
-        tmp1 = m[1];
+        tmp = m[1];
         m[1] = m[3];
-        m[3] = tmp1;
-        tmp1 = m[2];
+        m[3] = tmp;
+        tmp = m[2];
         m[2] = m[6];
-        m[6] = tmp1;
-        tmp1 = m[5];
+        m[6] = tmp;
+        tmp = m[5];
         m[5] = m[7];
-        m[7] = tmp1;
+        m[7] = tmp;
         return this;
     }
     getNormalMatrix(matrix4) {
@@ -2045,13 +2170,13 @@ class $084574008ccedf86$export$8ff26dafa08918 {
     equals(matrix) {
         const te = this.elements;
         const me = matrix.elements;
-        for(let i9 = 0; i9 < 9; i9++){
-            if (te[i9] !== me[i9]) return false;
+        for(let i = 0; i < 9; i++){
+            if (te[i] !== me[i]) return false;
         }
         return true;
     }
     fromArray(array, offset = 0) {
-        for(let i10 = 0; i10 < 9; i10++)this.elements[i10] = array[i10 + offset];
+        for(let i = 0; i < 9; i++)this.elements[i] = array[i + offset];
         return this;
     }
     toArray(array = [], offset = 0) {
@@ -2073,8 +2198,8 @@ class $084574008ccedf86$export$8ff26dafa08918 {
 }
 function $084574008ccedf86$var$arrayNeedsUint32(array) {
     // assumes larger values usually on last
-    for(let i11 = array.length - 1; i11 >= 0; --i11){
-        if (array[i11] > 65535) return true;
+    for(let i = array.length - 1; i >= 0; --i){
+        if (array[i] > 65535) return true;
     }
     return false;
 }
@@ -2338,22 +2463,22 @@ class $084574008ccedf86$export$892596cec99bc70e {
         this.b = scalar;
         return this;
     }
-    setHex(hex, colorSpace = $084574008ccedf86$export$561f394b24edfcaa) {
+    setHex(hex, colorSpace1 = $084574008ccedf86$export$561f394b24edfcaa) {
         hex = Math.floor(hex);
         this.r = (hex >> 16 & 255) / 255;
         this.g = (hex >> 8 & 255) / 255;
         this.b = (hex & 255) / 255;
-        $084574008ccedf86$export$5e6fd513f44698c.toWorkingColorSpace(this, colorSpace);
+        $084574008ccedf86$export$5e6fd513f44698c.toWorkingColorSpace(this, colorSpace1);
         return this;
     }
-    setRGB(r, g, b, colorSpace = $084574008ccedf86$export$42429b3acfb233a4) {
+    setRGB(r, g, b, colorSpace1 = $084574008ccedf86$export$42429b3acfb233a4) {
         this.r = r;
         this.g = g;
         this.b = b;
-        $084574008ccedf86$export$5e6fd513f44698c.toWorkingColorSpace(this, colorSpace);
+        $084574008ccedf86$export$5e6fd513f44698c.toWorkingColorSpace(this, colorSpace1);
         return this;
     }
-    setHSL(h, s, l, colorSpace = $084574008ccedf86$export$42429b3acfb233a4) {
+    setHSL(h, s, l, colorSpace1 = $084574008ccedf86$export$42429b3acfb233a4) {
         // h,s,l ranges are in 0.0 - 1.0
         h = $084574008ccedf86$var$euclideanModulo(h, 1);
         s = $084574008ccedf86$var$clamp(s, 0, 1);
@@ -2366,10 +2491,10 @@ class $084574008ccedf86$export$892596cec99bc70e {
             this.g = $084574008ccedf86$var$hue2rgb(q, p, h);
             this.b = $084574008ccedf86$var$hue2rgb(q, p, h - 1 / 3);
         }
-        $084574008ccedf86$export$5e6fd513f44698c.toWorkingColorSpace(this, colorSpace);
+        $084574008ccedf86$export$5e6fd513f44698c.toWorkingColorSpace(this, colorSpace1);
         return this;
     }
-    setStyle(style, colorSpace = $084574008ccedf86$export$561f394b24edfcaa) {
+    setStyle(style, colorSpace1 = $084574008ccedf86$export$561f394b24edfcaa) {
         function handleAlpha(string) {
             if (string === undefined) return;
             if (parseFloat(string) < 1) console.warn("THREE.Color: Alpha component of " + style + " will be ignored.");
@@ -2388,7 +2513,7 @@ class $084574008ccedf86$export$892596cec99bc70e {
                         this.r = Math.min(255, parseInt(color[1], 10)) / 255;
                         this.g = Math.min(255, parseInt(color[2], 10)) / 255;
                         this.b = Math.min(255, parseInt(color[3], 10)) / 255;
-                        $084574008ccedf86$export$5e6fd513f44698c.toWorkingColorSpace(this, colorSpace);
+                        $084574008ccedf86$export$5e6fd513f44698c.toWorkingColorSpace(this, colorSpace1);
                         handleAlpha(color[4]);
                         return this;
                     }
@@ -2397,7 +2522,7 @@ class $084574008ccedf86$export$892596cec99bc70e {
                         this.r = Math.min(100, parseInt(color[1], 10)) / 100;
                         this.g = Math.min(100, parseInt(color[2], 10)) / 100;
                         this.b = Math.min(100, parseInt(color[3], 10)) / 100;
-                        $084574008ccedf86$export$5e6fd513f44698c.toWorkingColorSpace(this, colorSpace);
+                        $084574008ccedf86$export$5e6fd513f44698c.toWorkingColorSpace(this, colorSpace1);
                         handleAlpha(color[4]);
                         return this;
                     }
@@ -2410,7 +2535,7 @@ class $084574008ccedf86$export$892596cec99bc70e {
                         const s = parseInt(color[2], 10) / 100;
                         const l = parseInt(color[3], 10) / 100;
                         handleAlpha(color[4]);
-                        return this.setHSL(h, s, l, colorSpace);
+                        return this.setHSL(h, s, l, colorSpace1);
                     }
                     break;
             }
@@ -2423,25 +2548,25 @@ class $084574008ccedf86$export$892596cec99bc70e {
                 this.r = parseInt(hex.charAt(0) + hex.charAt(0), 16) / 255;
                 this.g = parseInt(hex.charAt(1) + hex.charAt(1), 16) / 255;
                 this.b = parseInt(hex.charAt(2) + hex.charAt(2), 16) / 255;
-                $084574008ccedf86$export$5e6fd513f44698c.toWorkingColorSpace(this, colorSpace);
+                $084574008ccedf86$export$5e6fd513f44698c.toWorkingColorSpace(this, colorSpace1);
                 return this;
             } else if (size === 6) {
                 // #ff0000
                 this.r = parseInt(hex.charAt(0) + hex.charAt(1), 16) / 255;
                 this.g = parseInt(hex.charAt(2) + hex.charAt(3), 16) / 255;
                 this.b = parseInt(hex.charAt(4) + hex.charAt(5), 16) / 255;
-                $084574008ccedf86$export$5e6fd513f44698c.toWorkingColorSpace(this, colorSpace);
+                $084574008ccedf86$export$5e6fd513f44698c.toWorkingColorSpace(this, colorSpace1);
                 return this;
             }
         }
-        if (style && style.length > 0) return this.setColorName(style, colorSpace);
+        if (style && style.length > 0) return this.setColorName(style, colorSpace1);
         return this;
     }
-    setColorName(style, colorSpace = $084574008ccedf86$export$561f394b24edfcaa) {
+    setColorName(style, colorSpace1 = $084574008ccedf86$export$561f394b24edfcaa) {
         // color keywords
         const hex = $084574008ccedf86$var$_colorKeywords[style.toLowerCase()];
         if (hex !== undefined) // red
-        this.setHex(hex, colorSpace);
+        this.setHex(hex, colorSpace1);
         else // unknown color
         console.warn("THREE.Color: Unknown color " + style);
         return this;
@@ -2475,16 +2600,16 @@ class $084574008ccedf86$export$892596cec99bc70e {
         this.copyLinearToSRGB(this);
         return this;
     }
-    getHex(colorSpace = $084574008ccedf86$export$561f394b24edfcaa) {
-        $084574008ccedf86$export$5e6fd513f44698c.fromWorkingColorSpace($084574008ccedf86$var$toComponents(this, $084574008ccedf86$var$_rgb), colorSpace);
+    getHex(colorSpace1 = $084574008ccedf86$export$561f394b24edfcaa) {
+        $084574008ccedf86$export$5e6fd513f44698c.fromWorkingColorSpace($084574008ccedf86$var$toComponents(this, $084574008ccedf86$var$_rgb), colorSpace1);
         return $084574008ccedf86$var$clamp($084574008ccedf86$var$_rgb.r * 255, 0, 255) << 16 ^ $084574008ccedf86$var$clamp($084574008ccedf86$var$_rgb.g * 255, 0, 255) << 8 ^ $084574008ccedf86$var$clamp($084574008ccedf86$var$_rgb.b * 255, 0, 255) << 0;
     }
-    getHexString(colorSpace = $084574008ccedf86$export$561f394b24edfcaa) {
-        return ("000000" + this.getHex(colorSpace).toString(16)).slice(-6);
+    getHexString(colorSpace1 = $084574008ccedf86$export$561f394b24edfcaa) {
+        return ("000000" + this.getHex(colorSpace1).toString(16)).slice(-6);
     }
-    getHSL(target, colorSpace = $084574008ccedf86$export$42429b3acfb233a4) {
+    getHSL(target, colorSpace1 = $084574008ccedf86$export$42429b3acfb233a4) {
         // h,s,l ranges are in 0.0 - 1.0
-        $084574008ccedf86$export$5e6fd513f44698c.fromWorkingColorSpace($084574008ccedf86$var$toComponents(this, $084574008ccedf86$var$_rgb), colorSpace);
+        $084574008ccedf86$export$5e6fd513f44698c.fromWorkingColorSpace($084574008ccedf86$var$toComponents(this, $084574008ccedf86$var$_rgb), colorSpace1);
         const r = $084574008ccedf86$var$_rgb.r, g = $084574008ccedf86$var$_rgb.g, b = $084574008ccedf86$var$_rgb.b;
         const max = Math.max(r, g, b);
         const min = Math.min(r, g, b);
@@ -2514,17 +2639,17 @@ class $084574008ccedf86$export$892596cec99bc70e {
         target.l = lightness;
         return target;
     }
-    getRGB(target, colorSpace = $084574008ccedf86$export$42429b3acfb233a4) {
-        $084574008ccedf86$export$5e6fd513f44698c.fromWorkingColorSpace($084574008ccedf86$var$toComponents(this, $084574008ccedf86$var$_rgb), colorSpace);
+    getRGB(target, colorSpace1 = $084574008ccedf86$export$42429b3acfb233a4) {
+        $084574008ccedf86$export$5e6fd513f44698c.fromWorkingColorSpace($084574008ccedf86$var$toComponents(this, $084574008ccedf86$var$_rgb), colorSpace1);
         target.r = $084574008ccedf86$var$_rgb.r;
         target.g = $084574008ccedf86$var$_rgb.g;
         target.b = $084574008ccedf86$var$_rgb.b;
         return target;
     }
-    getStyle(colorSpace = $084574008ccedf86$export$561f394b24edfcaa) {
-        $084574008ccedf86$export$5e6fd513f44698c.fromWorkingColorSpace($084574008ccedf86$var$toComponents(this, $084574008ccedf86$var$_rgb), colorSpace);
-        if (colorSpace !== $084574008ccedf86$export$561f394b24edfcaa) // Requires CSS Color Module Level 4 (https://www.w3.org/TR/css-color-4/).
-        return `color(${colorSpace} ${$084574008ccedf86$var$_rgb.r} ${$084574008ccedf86$var$_rgb.g} ${$084574008ccedf86$var$_rgb.b})`;
+    getStyle(colorSpace1 = $084574008ccedf86$export$561f394b24edfcaa) {
+        $084574008ccedf86$export$5e6fd513f44698c.fromWorkingColorSpace($084574008ccedf86$var$toComponents(this, $084574008ccedf86$var$_rgb), colorSpace1);
+        if (colorSpace1 !== $084574008ccedf86$export$561f394b24edfcaa) // Requires CSS Color Module Level 4 (https://www.w3.org/TR/css-color-4/).
+        return `color(${colorSpace1} ${$084574008ccedf86$var$_rgb.r} ${$084574008ccedf86$var$_rgb.g} ${$084574008ccedf86$var$_rgb.b})`;
         return `rgb(${$084574008ccedf86$var$_rgb.r * 255 | 0},${$084574008ccedf86$var$_rgb.g * 255 | 0},${$084574008ccedf86$var$_rgb.b * 255 | 0})`;
     }
     offsetHSL(h, s, l) {
@@ -2659,14 +2784,14 @@ class $084574008ccedf86$export$698882cf06df44aa {
             context.drawImage(image, 0, 0, image.width, image.height);
             const imageData = context.getImageData(0, 0, image.width, image.height);
             const data = imageData.data;
-            for(let i12 = 0; i12 < data.length; i12++)data[i12] = $084574008ccedf86$var$SRGBToLinear(data[i12] / 255) * 255;
+            for(let i = 0; i < data.length; i++)data[i] = $084574008ccedf86$var$SRGBToLinear(data[i] / 255) * 255;
             context.putImageData(imageData, 0, 0);
             return canvas;
         } else if (image.data) {
             const data = image.data.slice(0);
-            for(let i13 = 0; i13 < data.length; i13++)if (data instanceof Uint8Array || data instanceof Uint8ClampedArray) data[i13] = Math.floor($084574008ccedf86$var$SRGBToLinear(data[i13] / 255) * 255);
+            for(let i = 0; i < data.length; i++)if (data instanceof Uint8Array || data instanceof Uint8ClampedArray) data[i] = Math.floor($084574008ccedf86$var$SRGBToLinear(data[i] / 255) * 255);
             else // assuming float
-            data[i13] = $084574008ccedf86$var$SRGBToLinear(data[i13]);
+            data[i] = $084574008ccedf86$var$SRGBToLinear(data[i]);
             return {
                 data: data,
                 width: image.width,
@@ -2701,8 +2826,8 @@ class $084574008ccedf86$export$1d2df86270c81ecb {
             if (Array.isArray(data)) {
                 // cube texture
                 url = [];
-                for(let i14 = 0, l = data.length; i14 < l; i14++)if (data[i14].isDataTexture) url.push($084574008ccedf86$var$serializeImage(data[i14].image));
-                else url.push($084574008ccedf86$var$serializeImage(data[i14]));
+                for(let i = 0, l = data.length; i < l; i++)if (data[i].isDataTexture) url.push($084574008ccedf86$var$serializeImage(data[i].image));
+                else url.push($084574008ccedf86$var$serializeImage(data[i]));
             } else // texture
             url = $084574008ccedf86$var$serializeImage(data);
             output.url = url;
@@ -3432,9 +3557,9 @@ class $084574008ccedf86$export$bd934554fb721730 extends $084574008ccedf86$export
         this.isWebGLMultipleRenderTargets = true;
         const texture = this.texture;
         this.texture = [];
-        for(let i15 = 0; i15 < count; i15++){
-            this.texture[i15] = texture.clone();
-            this.texture[i15].isRenderTargetTexture = true;
+        for(let i = 0; i < count; i++){
+            this.texture[i] = texture.clone();
+            this.texture[i].isRenderTargetTexture = true;
         }
     }
     setSize(width, height, depth = 1) {
@@ -3442,10 +3567,10 @@ class $084574008ccedf86$export$bd934554fb721730 extends $084574008ccedf86$export
             this.width = width;
             this.height = height;
             this.depth = depth;
-            for(let i16 = 0, il = this.texture.length; i16 < il; i16++){
-                this.texture[i16].image.width = width;
-                this.texture[i16].image.height = height;
-                this.texture[i16].image.depth = depth;
+            for(let i = 0, il = this.texture.length; i < il; i++){
+                this.texture[i].image.width = width;
+                this.texture[i].image.height = height;
+                this.texture[i].image.depth = depth;
             }
             this.dispose();
         }
@@ -3464,9 +3589,9 @@ class $084574008ccedf86$export$bd934554fb721730 extends $084574008ccedf86$export
         this.stencilBuffer = source.stencilBuffer;
         if (source.depthTexture !== null) this.depthTexture = source.depthTexture.clone();
         this.texture.length = 0;
-        for(let i17 = 0, il = source.texture.length; i17 < il; i17++){
-            this.texture[i17] = source.texture[i17].clone();
-            this.texture[i17].isRenderTargetTexture = true;
+        for(let i = 0, il = source.texture.length; i < il; i++){
+            this.texture[i] = source.texture[i].clone();
+            this.texture[i].isRenderTargetTexture = true;
         }
         return this;
     }
@@ -4335,10 +4460,10 @@ class $084574008ccedf86$export$6f7d5a9418ab2aa3 {
         let maxX = -Infinity;
         let maxY = -Infinity;
         let maxZ = -Infinity;
-        for(let i18 = 0, l = array.length; i18 < l; i18 += 3){
-            const x = array[i18];
-            const y = array[i18 + 1];
-            const z = array[i18 + 2];
+        for(let i = 0, l = array.length; i < l; i += 3){
+            const x = array[i];
+            const y = array[i + 1];
+            const z = array[i + 2];
             if (x < minX) minX = x;
             if (y < minY) minY = y;
             if (z < minZ) minZ = z;
@@ -4357,10 +4482,10 @@ class $084574008ccedf86$export$6f7d5a9418ab2aa3 {
         let maxX = -Infinity;
         let maxY = -Infinity;
         let maxZ = -Infinity;
-        for(let i19 = 0, l = attribute.count; i19 < l; i19++){
-            const x = attribute.getX(i19);
-            const y = attribute.getY(i19);
-            const z = attribute.getZ(i19);
+        for(let i = 0, l = attribute.count; i < l; i++){
+            const x = attribute.getX(i);
+            const y = attribute.getY(i);
+            const z = attribute.getZ(i);
             if (x < minX) minX = x;
             if (y < minY) minY = y;
             if (z < minZ) minZ = z;
@@ -4374,7 +4499,7 @@ class $084574008ccedf86$export$6f7d5a9418ab2aa3 {
     }
     setFromPoints(points) {
         this.makeEmpty();
-        for(let i20 = 0, il = points.length; i20 < il; i20++)this.expandByPoint(points[i20]);
+        for(let i = 0, il = points.length; i < il; i++)this.expandByPoint(points[i]);
         return this;
     }
     setFromCenterAndSize(center, size) {
@@ -4433,8 +4558,8 @@ class $084574008ccedf86$export$6f7d5a9418ab2aa3 {
         if (geometry !== undefined) {
             if (precise && geometry.attributes != undefined && geometry.attributes.position !== undefined) {
                 const position = geometry.attributes.position;
-                for(let i21 = 0, l = position.count; i21 < l; i21++){
-                    $084574008ccedf86$var$_vector$b.fromBufferAttribute(position, i21).applyMatrix4(object.matrixWorld);
+                for(let i = 0, l = position.count; i < l; i++){
+                    $084574008ccedf86$var$_vector$b.fromBufferAttribute(position, i).applyMatrix4(object.matrixWorld);
                     this.expandByPoint($084574008ccedf86$var$_vector$b);
                 }
             } else {
@@ -4445,7 +4570,7 @@ class $084574008ccedf86$export$6f7d5a9418ab2aa3 {
             }
         }
         const children = object.children;
-        for(let i22 = 0, l = children.length; i22 < l; i22++)this.expandByObject(children[i22], precise);
+        for(let i = 0, l = children.length; i < l; i++)this.expandByObject(children[i], precise);
         return this;
     }
     containsPoint(point) {
@@ -4638,8 +4763,8 @@ const $084574008ccedf86$var$_extents = /*@__PURE__*/ new $084574008ccedf86$expor
 const $084574008ccedf86$var$_triangleNormal = /*@__PURE__*/ new $084574008ccedf86$export$64b5c384219d3699();
 const $084574008ccedf86$var$_testAxis = /*@__PURE__*/ new $084574008ccedf86$export$64b5c384219d3699();
 function $084574008ccedf86$var$satForAxes(axes, v0, v1, v2, extents) {
-    for(let i23 = 0, j = axes.length - 3; i23 <= j; i23 += 3){
-        $084574008ccedf86$var$_testAxis.fromArray(axes, i23);
+    for(let i = 0, j = axes.length - 3; i <= j; i += 3){
+        $084574008ccedf86$var$_testAxis.fromArray(axes, i);
         // project the aabb onto the separating axis
         const r = extents.x * Math.abs($084574008ccedf86$var$_testAxis.x) + extents.y * Math.abs($084574008ccedf86$var$_testAxis.y) + extents.z * Math.abs($084574008ccedf86$var$_testAxis.z);
         // project all 3 vertices of the triangle onto the separating axis
@@ -4672,7 +4797,7 @@ class $084574008ccedf86$export$805e8b72413ccaba {
         if (optionalCenter !== undefined) center.copy(optionalCenter);
         else $084574008ccedf86$var$_box$2.setFromPoints(points).getCenter(center);
         let maxRadiusSq = 0;
-        for(let i24 = 0, il = points.length; i24 < il; i24++)maxRadiusSq = Math.max(maxRadiusSq, center.distanceToSquared(points[i24]));
+        for(let i = 0, il = points.length; i < il; i++)maxRadiusSq = Math.max(maxRadiusSq, center.distanceToSquared(points[i]));
         this.radius = Math.sqrt(maxRadiusSq);
         return this;
     }
@@ -4987,25 +5112,25 @@ class $084574008ccedf86$export$a186db52eed6d40e {
         //   |Dot(D,N)|*b2 = sign(Dot(D,N))*Dot(D,Cross(E1,Q))
         //   |Dot(D,N)|*t = -sign(Dot(D,N))*Dot(Q,N)
         let DdN = this.direction.dot($084574008ccedf86$var$_normal$1);
-        let sign1;
+        let sign;
         if (DdN > 0) {
             if (backfaceCulling) return null;
-            sign1 = 1;
+            sign = 1;
         } else if (DdN < 0) {
-            sign1 = -1;
+            sign = -1;
             DdN = -DdN;
         } else return null;
         $084574008ccedf86$var$_diff.subVectors(this.origin, a);
-        const DdQxE2 = sign1 * this.direction.dot($084574008ccedf86$var$_edge2.crossVectors($084574008ccedf86$var$_diff, $084574008ccedf86$var$_edge2));
+        const DdQxE2 = sign * this.direction.dot($084574008ccedf86$var$_edge2.crossVectors($084574008ccedf86$var$_diff, $084574008ccedf86$var$_edge2));
         // b1 < 0, no intersection
         if (DdQxE2 < 0) return null;
-        const DdE1xQ = sign1 * this.direction.dot($084574008ccedf86$var$_edge1.cross($084574008ccedf86$var$_diff));
+        const DdE1xQ = sign * this.direction.dot($084574008ccedf86$var$_edge1.cross($084574008ccedf86$var$_diff));
         // b2 < 0, no intersection
         if (DdE1xQ < 0) return null;
         // b1+b2 > 1, no intersection
         if (DdQxE2 + DdE1xQ > DdN) return null;
         // Line intersects triangle, check if ray does.
-        const QdN = -sign1 * $084574008ccedf86$var$_diff.dot($084574008ccedf86$var$_normal$1);
+        const QdN = -sign * $084574008ccedf86$var$_diff.dot($084574008ccedf86$var$_normal$1);
         // t < 0, no intersection
         if (QdN < 0) return null;
         // Ray intersects triangle.
@@ -5328,25 +5453,25 @@ class $084574008ccedf86$export$2ae72fc923e5eb5 {
     }
     transpose() {
         const te = this.elements;
-        let tmp2;
-        tmp2 = te[1];
+        let tmp;
+        tmp = te[1];
         te[1] = te[4];
-        te[4] = tmp2;
-        tmp2 = te[2];
+        te[4] = tmp;
+        tmp = te[2];
         te[2] = te[8];
-        te[8] = tmp2;
-        tmp2 = te[6];
+        te[8] = tmp;
+        tmp = te[6];
         te[6] = te[9];
-        te[9] = tmp2;
-        tmp2 = te[3];
+        te[9] = tmp;
+        tmp = te[3];
         te[3] = te[12];
-        te[12] = tmp2;
-        tmp2 = te[7];
+        te[12] = tmp;
+        tmp = te[7];
         te[7] = te[13];
-        te[13] = tmp2;
-        tmp2 = te[11];
+        te[13] = tmp;
+        tmp = te[11];
         te[11] = te[14];
-        te[14] = tmp2;
+        te[14] = tmp;
         return this;
     }
     setPosition(x, y, z) {
@@ -5560,13 +5685,13 @@ class $084574008ccedf86$export$2ae72fc923e5eb5 {
     equals(matrix) {
         const te = this.elements;
         const me = matrix.elements;
-        for(let i25 = 0; i25 < 16; i25++){
-            if (te[i25] !== me[i25]) return false;
+        for(let i = 0; i < 16; i++){
+            if (te[i] !== me[i]) return false;
         }
         return true;
     }
     fromArray(array, offset = 0) {
-        for(let i26 = 0; i26 < 16; i26++)this.elements[i26] = array[i26 + offset];
+        for(let i = 0; i < 16; i++)this.elements[i] = array[i + offset];
         return this;
     }
     toArray(array = [], offset = 0) {
@@ -5985,7 +6110,7 @@ class $084574008ccedf86$export$e4dd07dff30cc924 extends $084574008ccedf86$export
     }
     add(object) {
         if (arguments.length > 1) {
-            for(let i27 = 0; i27 < arguments.length; i27++)this.add(arguments[i27]);
+            for(let i = 0; i < arguments.length; i++)this.add(arguments[i]);
             return this;
         }
         if (object === this) {
@@ -6002,7 +6127,7 @@ class $084574008ccedf86$export$e4dd07dff30cc924 extends $084574008ccedf86$export
     }
     remove(object) {
         if (arguments.length > 1) {
-            for(let i28 = 0; i28 < arguments.length; i28++)this.remove(arguments[i28]);
+            for(let i = 0; i < arguments.length; i++)this.remove(arguments[i]);
             return this;
         }
         const index = this.children.indexOf(object);
@@ -6019,8 +6144,8 @@ class $084574008ccedf86$export$e4dd07dff30cc924 extends $084574008ccedf86$export
         return this;
     }
     clear() {
-        for(let i29 = 0; i29 < this.children.length; i29++){
-            const object = this.children[i29];
+        for(let i = 0; i < this.children.length; i++){
+            const object = this.children[i];
             object.parent = null;
             object.dispatchEvent($084574008ccedf86$var$_removedEvent);
         }
@@ -6049,8 +6174,8 @@ class $084574008ccedf86$export$e4dd07dff30cc924 extends $084574008ccedf86$export
     }
     getObjectByProperty(name, value) {
         if (this[name] === value) return this;
-        for(let i30 = 0, l = this.children.length; i30 < l; i30++){
-            const child = this.children[i30];
+        for(let i = 0, l = this.children.length; i < l; i++){
+            const child = this.children[i];
             const object = child.getObjectByProperty(name, value);
             if (object !== undefined) return object;
         }
@@ -6079,13 +6204,13 @@ class $084574008ccedf86$export$e4dd07dff30cc924 extends $084574008ccedf86$export
     traverse(callback) {
         callback(this);
         const children = this.children;
-        for(let i31 = 0, l = children.length; i31 < l; i31++)children[i31].traverse(callback);
+        for(let i = 0, l = children.length; i < l; i++)children[i].traverse(callback);
     }
     traverseVisible(callback) {
         if (this.visible === false) return;
         callback(this);
         const children = this.children;
-        for(let i32 = 0, l = children.length; i32 < l; i32++)children[i32].traverseVisible(callback);
+        for(let i = 0, l = children.length; i < l; i++)children[i].traverseVisible(callback);
     }
     traverseAncestors(callback) {
         const parent = this.parent;
@@ -6108,7 +6233,7 @@ class $084574008ccedf86$export$e4dd07dff30cc924 extends $084574008ccedf86$export
         }
         // update children
         const children = this.children;
-        for(let i33 = 0, l = children.length; i33 < l; i33++)children[i33].updateMatrixWorld(force);
+        for(let i = 0, l = children.length; i < l; i++)children[i].updateMatrixWorld(force);
     }
     updateWorldMatrix(updateParents, updateChildren) {
         const parent = this.parent;
@@ -6119,7 +6244,7 @@ class $084574008ccedf86$export$e4dd07dff30cc924 extends $084574008ccedf86$export
         // update children
         if (updateChildren === true) {
             const children = this.children;
-            for(let i34 = 0, l = children.length; i34 < l; i34++)children[i34].updateWorldMatrix(false, true);
+            for(let i = 0, l = children.length; i < l; i++)children[i].updateWorldMatrix(false, true);
         }
     }
     toJSON(meta) {
@@ -6184,8 +6309,8 @@ class $084574008ccedf86$export$e4dd07dff30cc924 extends $084574008ccedf86$export
             const parameters = this.geometry.parameters;
             if (parameters !== undefined && parameters.shapes !== undefined) {
                 const shapes = parameters.shapes;
-                if (Array.isArray(shapes)) for(let i35 = 0, l = shapes.length; i35 < l; i35++){
-                    const shape = shapes[i35];
+                if (Array.isArray(shapes)) for(let i = 0, l = shapes.length; i < l; i++){
+                    const shape = shapes[i];
                     serialize(meta.shapes, shape);
                 }
                 else serialize(meta.shapes, shapes);
@@ -6202,20 +6327,20 @@ class $084574008ccedf86$export$e4dd07dff30cc924 extends $084574008ccedf86$export
         if (this.material !== undefined) {
             if (Array.isArray(this.material)) {
                 const uuids = [];
-                for(let i36 = 0, l = this.material.length; i36 < l; i36++)uuids.push(serialize(meta.materials, this.material[i36]));
+                for(let i = 0, l = this.material.length; i < l; i++)uuids.push(serialize(meta.materials, this.material[i]));
                 object.material = uuids;
             } else object.material = serialize(meta.materials, this.material);
         }
         //
         if (this.children.length > 0) {
             object.children = [];
-            for(let i37 = 0; i37 < this.children.length; i37++)object.children.push(this.children[i37].toJSON(meta).object);
+            for(let i = 0; i < this.children.length; i++)object.children.push(this.children[i].toJSON(meta).object);
         }
         //
         if (this.animations.length > 0) {
             object.animations = [];
-            for(let i38 = 0; i38 < this.animations.length; i38++){
-                const animation = this.animations[i38];
+            for(let i = 0; i < this.animations.length; i++){
+                const animation = this.animations[i];
                 object.animations.push(serialize(meta.animations, animation));
             }
         }
@@ -6273,8 +6398,8 @@ class $084574008ccedf86$export$e4dd07dff30cc924 extends $084574008ccedf86$export
         this.frustumCulled = source.frustumCulled;
         this.renderOrder = source.renderOrder;
         this.userData = JSON.parse(JSON.stringify(source.userData));
-        if (recursive === true) for(let i39 = 0; i39 < source.children.length; i39++){
-            const child = source.children[i39];
+        if (recursive === true) for(let i = 0; i < source.children.length; i++){
+            const child = source.children[i];
             this.add(child.clone());
         }
         return this;
@@ -6352,16 +6477,16 @@ class $084574008ccedf86$export$5a465592bfe74b48 {
         this.c.copy(c);
         return this;
     }
-    setFromPointsAndIndices(points, i0, i110, i210) {
+    setFromPointsAndIndices(points, i0, i1, i2) {
         this.a.copy(points[i0]);
-        this.b.copy(points[i110]);
-        this.c.copy(points[i210]);
+        this.b.copy(points[i1]);
+        this.c.copy(points[i2]);
         return this;
     }
-    setFromAttributeAndIndices(attribute, i0, i111, i211) {
+    setFromAttributeAndIndices(attribute, i0, i1, i2) {
         this.a.fromBufferAttribute(attribute, i0);
-        this.b.fromBufferAttribute(attribute, i111);
-        this.c.fromBufferAttribute(attribute, i211);
+        this.b.fromBufferAttribute(attribute, i1);
+        this.c.fromBufferAttribute(attribute, i2);
         return this;
     }
     clone() {
@@ -6551,7 +6676,7 @@ class $084574008ccedf86$export$a2d8b23205c25948 extends $084574008ccedf86$export
             textures: {},
             images: {}
         };
-        const data1 = {
+        const data = {
             metadata: {
                 version: 4.5,
                 type: "Material",
@@ -6559,121 +6684,121 @@ class $084574008ccedf86$export$a2d8b23205c25948 extends $084574008ccedf86$export
             }
         };
         // standard Material serialization
-        data1.uuid = this.uuid;
-        data1.type = this.type;
-        if (this.name !== "") data1.name = this.name;
-        if (this.color && this.color.isColor) data1.color = this.color.getHex();
-        if (this.roughness !== undefined) data1.roughness = this.roughness;
-        if (this.metalness !== undefined) data1.metalness = this.metalness;
-        if (this.sheen !== undefined) data1.sheen = this.sheen;
-        if (this.sheenColor && this.sheenColor.isColor) data1.sheenColor = this.sheenColor.getHex();
-        if (this.sheenRoughness !== undefined) data1.sheenRoughness = this.sheenRoughness;
-        if (this.emissive && this.emissive.isColor) data1.emissive = this.emissive.getHex();
-        if (this.emissiveIntensity && this.emissiveIntensity !== 1) data1.emissiveIntensity = this.emissiveIntensity;
-        if (this.specular && this.specular.isColor) data1.specular = this.specular.getHex();
-        if (this.specularIntensity !== undefined) data1.specularIntensity = this.specularIntensity;
-        if (this.specularColor && this.specularColor.isColor) data1.specularColor = this.specularColor.getHex();
-        if (this.shininess !== undefined) data1.shininess = this.shininess;
-        if (this.clearcoat !== undefined) data1.clearcoat = this.clearcoat;
-        if (this.clearcoatRoughness !== undefined) data1.clearcoatRoughness = this.clearcoatRoughness;
-        if (this.clearcoatMap && this.clearcoatMap.isTexture) data1.clearcoatMap = this.clearcoatMap.toJSON(meta).uuid;
-        if (this.clearcoatRoughnessMap && this.clearcoatRoughnessMap.isTexture) data1.clearcoatRoughnessMap = this.clearcoatRoughnessMap.toJSON(meta).uuid;
+        data.uuid = this.uuid;
+        data.type = this.type;
+        if (this.name !== "") data.name = this.name;
+        if (this.color && this.color.isColor) data.color = this.color.getHex();
+        if (this.roughness !== undefined) data.roughness = this.roughness;
+        if (this.metalness !== undefined) data.metalness = this.metalness;
+        if (this.sheen !== undefined) data.sheen = this.sheen;
+        if (this.sheenColor && this.sheenColor.isColor) data.sheenColor = this.sheenColor.getHex();
+        if (this.sheenRoughness !== undefined) data.sheenRoughness = this.sheenRoughness;
+        if (this.emissive && this.emissive.isColor) data.emissive = this.emissive.getHex();
+        if (this.emissiveIntensity && this.emissiveIntensity !== 1) data.emissiveIntensity = this.emissiveIntensity;
+        if (this.specular && this.specular.isColor) data.specular = this.specular.getHex();
+        if (this.specularIntensity !== undefined) data.specularIntensity = this.specularIntensity;
+        if (this.specularColor && this.specularColor.isColor) data.specularColor = this.specularColor.getHex();
+        if (this.shininess !== undefined) data.shininess = this.shininess;
+        if (this.clearcoat !== undefined) data.clearcoat = this.clearcoat;
+        if (this.clearcoatRoughness !== undefined) data.clearcoatRoughness = this.clearcoatRoughness;
+        if (this.clearcoatMap && this.clearcoatMap.isTexture) data.clearcoatMap = this.clearcoatMap.toJSON(meta).uuid;
+        if (this.clearcoatRoughnessMap && this.clearcoatRoughnessMap.isTexture) data.clearcoatRoughnessMap = this.clearcoatRoughnessMap.toJSON(meta).uuid;
         if (this.clearcoatNormalMap && this.clearcoatNormalMap.isTexture) {
-            data1.clearcoatNormalMap = this.clearcoatNormalMap.toJSON(meta).uuid;
-            data1.clearcoatNormalScale = this.clearcoatNormalScale.toArray();
+            data.clearcoatNormalMap = this.clearcoatNormalMap.toJSON(meta).uuid;
+            data.clearcoatNormalScale = this.clearcoatNormalScale.toArray();
         }
-        if (this.iridescence !== undefined) data1.iridescence = this.iridescence;
-        if (this.iridescenceIOR !== undefined) data1.iridescenceIOR = this.iridescenceIOR;
-        if (this.iridescenceThicknessRange !== undefined) data1.iridescenceThicknessRange = this.iridescenceThicknessRange;
-        if (this.iridescenceMap && this.iridescenceMap.isTexture) data1.iridescenceMap = this.iridescenceMap.toJSON(meta).uuid;
-        if (this.iridescenceThicknessMap && this.iridescenceThicknessMap.isTexture) data1.iridescenceThicknessMap = this.iridescenceThicknessMap.toJSON(meta).uuid;
-        if (this.map && this.map.isTexture) data1.map = this.map.toJSON(meta).uuid;
-        if (this.matcap && this.matcap.isTexture) data1.matcap = this.matcap.toJSON(meta).uuid;
-        if (this.alphaMap && this.alphaMap.isTexture) data1.alphaMap = this.alphaMap.toJSON(meta).uuid;
+        if (this.iridescence !== undefined) data.iridescence = this.iridescence;
+        if (this.iridescenceIOR !== undefined) data.iridescenceIOR = this.iridescenceIOR;
+        if (this.iridescenceThicknessRange !== undefined) data.iridescenceThicknessRange = this.iridescenceThicknessRange;
+        if (this.iridescenceMap && this.iridescenceMap.isTexture) data.iridescenceMap = this.iridescenceMap.toJSON(meta).uuid;
+        if (this.iridescenceThicknessMap && this.iridescenceThicknessMap.isTexture) data.iridescenceThicknessMap = this.iridescenceThicknessMap.toJSON(meta).uuid;
+        if (this.map && this.map.isTexture) data.map = this.map.toJSON(meta).uuid;
+        if (this.matcap && this.matcap.isTexture) data.matcap = this.matcap.toJSON(meta).uuid;
+        if (this.alphaMap && this.alphaMap.isTexture) data.alphaMap = this.alphaMap.toJSON(meta).uuid;
         if (this.lightMap && this.lightMap.isTexture) {
-            data1.lightMap = this.lightMap.toJSON(meta).uuid;
-            data1.lightMapIntensity = this.lightMapIntensity;
+            data.lightMap = this.lightMap.toJSON(meta).uuid;
+            data.lightMapIntensity = this.lightMapIntensity;
         }
         if (this.aoMap && this.aoMap.isTexture) {
-            data1.aoMap = this.aoMap.toJSON(meta).uuid;
-            data1.aoMapIntensity = this.aoMapIntensity;
+            data.aoMap = this.aoMap.toJSON(meta).uuid;
+            data.aoMapIntensity = this.aoMapIntensity;
         }
         if (this.bumpMap && this.bumpMap.isTexture) {
-            data1.bumpMap = this.bumpMap.toJSON(meta).uuid;
-            data1.bumpScale = this.bumpScale;
+            data.bumpMap = this.bumpMap.toJSON(meta).uuid;
+            data.bumpScale = this.bumpScale;
         }
         if (this.normalMap && this.normalMap.isTexture) {
-            data1.normalMap = this.normalMap.toJSON(meta).uuid;
-            data1.normalMapType = this.normalMapType;
-            data1.normalScale = this.normalScale.toArray();
+            data.normalMap = this.normalMap.toJSON(meta).uuid;
+            data.normalMapType = this.normalMapType;
+            data.normalScale = this.normalScale.toArray();
         }
         if (this.displacementMap && this.displacementMap.isTexture) {
-            data1.displacementMap = this.displacementMap.toJSON(meta).uuid;
-            data1.displacementScale = this.displacementScale;
-            data1.displacementBias = this.displacementBias;
+            data.displacementMap = this.displacementMap.toJSON(meta).uuid;
+            data.displacementScale = this.displacementScale;
+            data.displacementBias = this.displacementBias;
         }
-        if (this.roughnessMap && this.roughnessMap.isTexture) data1.roughnessMap = this.roughnessMap.toJSON(meta).uuid;
-        if (this.metalnessMap && this.metalnessMap.isTexture) data1.metalnessMap = this.metalnessMap.toJSON(meta).uuid;
-        if (this.emissiveMap && this.emissiveMap.isTexture) data1.emissiveMap = this.emissiveMap.toJSON(meta).uuid;
-        if (this.specularMap && this.specularMap.isTexture) data1.specularMap = this.specularMap.toJSON(meta).uuid;
-        if (this.specularIntensityMap && this.specularIntensityMap.isTexture) data1.specularIntensityMap = this.specularIntensityMap.toJSON(meta).uuid;
-        if (this.specularColorMap && this.specularColorMap.isTexture) data1.specularColorMap = this.specularColorMap.toJSON(meta).uuid;
+        if (this.roughnessMap && this.roughnessMap.isTexture) data.roughnessMap = this.roughnessMap.toJSON(meta).uuid;
+        if (this.metalnessMap && this.metalnessMap.isTexture) data.metalnessMap = this.metalnessMap.toJSON(meta).uuid;
+        if (this.emissiveMap && this.emissiveMap.isTexture) data.emissiveMap = this.emissiveMap.toJSON(meta).uuid;
+        if (this.specularMap && this.specularMap.isTexture) data.specularMap = this.specularMap.toJSON(meta).uuid;
+        if (this.specularIntensityMap && this.specularIntensityMap.isTexture) data.specularIntensityMap = this.specularIntensityMap.toJSON(meta).uuid;
+        if (this.specularColorMap && this.specularColorMap.isTexture) data.specularColorMap = this.specularColorMap.toJSON(meta).uuid;
         if (this.envMap && this.envMap.isTexture) {
-            data1.envMap = this.envMap.toJSON(meta).uuid;
-            if (this.combine !== undefined) data1.combine = this.combine;
+            data.envMap = this.envMap.toJSON(meta).uuid;
+            if (this.combine !== undefined) data.combine = this.combine;
         }
-        if (this.envMapIntensity !== undefined) data1.envMapIntensity = this.envMapIntensity;
-        if (this.reflectivity !== undefined) data1.reflectivity = this.reflectivity;
-        if (this.refractionRatio !== undefined) data1.refractionRatio = this.refractionRatio;
-        if (this.gradientMap && this.gradientMap.isTexture) data1.gradientMap = this.gradientMap.toJSON(meta).uuid;
-        if (this.transmission !== undefined) data1.transmission = this.transmission;
-        if (this.transmissionMap && this.transmissionMap.isTexture) data1.transmissionMap = this.transmissionMap.toJSON(meta).uuid;
-        if (this.thickness !== undefined) data1.thickness = this.thickness;
-        if (this.thicknessMap && this.thicknessMap.isTexture) data1.thicknessMap = this.thicknessMap.toJSON(meta).uuid;
-        if (this.attenuationDistance !== undefined) data1.attenuationDistance = this.attenuationDistance;
-        if (this.attenuationColor !== undefined) data1.attenuationColor = this.attenuationColor.getHex();
-        if (this.size !== undefined) data1.size = this.size;
-        if (this.shadowSide !== null) data1.shadowSide = this.shadowSide;
-        if (this.sizeAttenuation !== undefined) data1.sizeAttenuation = this.sizeAttenuation;
-        if (this.blending !== $084574008ccedf86$export$5b29a26d96ee6af0) data1.blending = this.blending;
-        if (this.side !== $084574008ccedf86$export$2ede184fc2998901) data1.side = this.side;
-        if (this.vertexColors) data1.vertexColors = true;
-        if (this.opacity < 1) data1.opacity = this.opacity;
-        if (this.transparent === true) data1.transparent = this.transparent;
-        data1.depthFunc = this.depthFunc;
-        data1.depthTest = this.depthTest;
-        data1.depthWrite = this.depthWrite;
-        data1.colorWrite = this.colorWrite;
-        data1.stencilWrite = this.stencilWrite;
-        data1.stencilWriteMask = this.stencilWriteMask;
-        data1.stencilFunc = this.stencilFunc;
-        data1.stencilRef = this.stencilRef;
-        data1.stencilFuncMask = this.stencilFuncMask;
-        data1.stencilFail = this.stencilFail;
-        data1.stencilZFail = this.stencilZFail;
-        data1.stencilZPass = this.stencilZPass;
+        if (this.envMapIntensity !== undefined) data.envMapIntensity = this.envMapIntensity;
+        if (this.reflectivity !== undefined) data.reflectivity = this.reflectivity;
+        if (this.refractionRatio !== undefined) data.refractionRatio = this.refractionRatio;
+        if (this.gradientMap && this.gradientMap.isTexture) data.gradientMap = this.gradientMap.toJSON(meta).uuid;
+        if (this.transmission !== undefined) data.transmission = this.transmission;
+        if (this.transmissionMap && this.transmissionMap.isTexture) data.transmissionMap = this.transmissionMap.toJSON(meta).uuid;
+        if (this.thickness !== undefined) data.thickness = this.thickness;
+        if (this.thicknessMap && this.thicknessMap.isTexture) data.thicknessMap = this.thicknessMap.toJSON(meta).uuid;
+        if (this.attenuationDistance !== undefined) data.attenuationDistance = this.attenuationDistance;
+        if (this.attenuationColor !== undefined) data.attenuationColor = this.attenuationColor.getHex();
+        if (this.size !== undefined) data.size = this.size;
+        if (this.shadowSide !== null) data.shadowSide = this.shadowSide;
+        if (this.sizeAttenuation !== undefined) data.sizeAttenuation = this.sizeAttenuation;
+        if (this.blending !== $084574008ccedf86$export$5b29a26d96ee6af0) data.blending = this.blending;
+        if (this.side !== $084574008ccedf86$export$2ede184fc2998901) data.side = this.side;
+        if (this.vertexColors) data.vertexColors = true;
+        if (this.opacity < 1) data.opacity = this.opacity;
+        if (this.transparent === true) data.transparent = this.transparent;
+        data.depthFunc = this.depthFunc;
+        data.depthTest = this.depthTest;
+        data.depthWrite = this.depthWrite;
+        data.colorWrite = this.colorWrite;
+        data.stencilWrite = this.stencilWrite;
+        data.stencilWriteMask = this.stencilWriteMask;
+        data.stencilFunc = this.stencilFunc;
+        data.stencilRef = this.stencilRef;
+        data.stencilFuncMask = this.stencilFuncMask;
+        data.stencilFail = this.stencilFail;
+        data.stencilZFail = this.stencilZFail;
+        data.stencilZPass = this.stencilZPass;
         // rotation (SpriteMaterial)
-        if (this.rotation !== undefined && this.rotation !== 0) data1.rotation = this.rotation;
-        if (this.polygonOffset === true) data1.polygonOffset = true;
-        if (this.polygonOffsetFactor !== 0) data1.polygonOffsetFactor = this.polygonOffsetFactor;
-        if (this.polygonOffsetUnits !== 0) data1.polygonOffsetUnits = this.polygonOffsetUnits;
-        if (this.linewidth !== undefined && this.linewidth !== 1) data1.linewidth = this.linewidth;
-        if (this.dashSize !== undefined) data1.dashSize = this.dashSize;
-        if (this.gapSize !== undefined) data1.gapSize = this.gapSize;
-        if (this.scale !== undefined) data1.scale = this.scale;
-        if (this.dithering === true) data1.dithering = true;
-        if (this.alphaTest > 0) data1.alphaTest = this.alphaTest;
-        if (this.alphaToCoverage === true) data1.alphaToCoverage = this.alphaToCoverage;
-        if (this.premultipliedAlpha === true) data1.premultipliedAlpha = this.premultipliedAlpha;
-        if (this.wireframe === true) data1.wireframe = this.wireframe;
-        if (this.wireframeLinewidth > 1) data1.wireframeLinewidth = this.wireframeLinewidth;
-        if (this.wireframeLinecap !== "round") data1.wireframeLinecap = this.wireframeLinecap;
-        if (this.wireframeLinejoin !== "round") data1.wireframeLinejoin = this.wireframeLinejoin;
-        if (this.flatShading === true) data1.flatShading = this.flatShading;
-        if (this.visible === false) data1.visible = false;
-        if (this.toneMapped === false) data1.toneMapped = false;
-        if (this.fog === false) data1.fog = false;
-        if (JSON.stringify(this.userData) !== "{}") data1.userData = this.userData;
+        if (this.rotation !== undefined && this.rotation !== 0) data.rotation = this.rotation;
+        if (this.polygonOffset === true) data.polygonOffset = true;
+        if (this.polygonOffsetFactor !== 0) data.polygonOffsetFactor = this.polygonOffsetFactor;
+        if (this.polygonOffsetUnits !== 0) data.polygonOffsetUnits = this.polygonOffsetUnits;
+        if (this.linewidth !== undefined && this.linewidth !== 1) data.linewidth = this.linewidth;
+        if (this.dashSize !== undefined) data.dashSize = this.dashSize;
+        if (this.gapSize !== undefined) data.gapSize = this.gapSize;
+        if (this.scale !== undefined) data.scale = this.scale;
+        if (this.dithering === true) data.dithering = true;
+        if (this.alphaTest > 0) data.alphaTest = this.alphaTest;
+        if (this.alphaToCoverage === true) data.alphaToCoverage = this.alphaToCoverage;
+        if (this.premultipliedAlpha === true) data.premultipliedAlpha = this.premultipliedAlpha;
+        if (this.wireframe === true) data.wireframe = this.wireframe;
+        if (this.wireframeLinewidth > 1) data.wireframeLinewidth = this.wireframeLinewidth;
+        if (this.wireframeLinecap !== "round") data.wireframeLinecap = this.wireframeLinecap;
+        if (this.wireframeLinejoin !== "round") data.wireframeLinejoin = this.wireframeLinejoin;
+        if (this.flatShading === true) data.flatShading = this.flatShading;
+        if (this.visible === false) data.visible = false;
+        if (this.toneMapped === false) data.toneMapped = false;
+        if (this.fog === false) data.fog = false;
+        if (JSON.stringify(this.userData) !== "{}") data.userData = this.userData;
         // TODO: Copied from Object3D.toJSON
         function extractFromCache(cache) {
             const values = [];
@@ -6687,10 +6812,10 @@ class $084574008ccedf86$export$a2d8b23205c25948 extends $084574008ccedf86$export
         if (isRootObject) {
             const textures = extractFromCache(meta.textures);
             const images = extractFromCache(meta.images);
-            if (textures.length > 0) data1.textures = textures;
-            if (images.length > 0) data1.images = images;
+            if (textures.length > 0) data.textures = textures;
+            if (images.length > 0) data.images = images;
         }
-        return data1;
+        return data;
     }
     clone() {
         return new this.constructor().copy(this);
@@ -6724,7 +6849,7 @@ class $084574008ccedf86$export$a2d8b23205c25948 extends $084574008ccedf86$export
         if (srcPlanes !== null) {
             const n = srcPlanes.length;
             dstPlanes = new Array(n);
-            for(let i40 = 0; i40 !== n; ++i40)dstPlanes[i40] = srcPlanes[i40].clone();
+            for(let i = 0; i !== n; ++i)dstPlanes[i] = srcPlanes[i].clone();
         }
         this.clippingPlanes = dstPlanes;
         this.clipIntersection = source.clipIntersection;
@@ -6849,7 +6974,7 @@ class $084574008ccedf86$export$8dea267bd6bde117 {
     copyAt(index1, attribute, index2) {
         index1 *= this.itemSize;
         index2 *= attribute.itemSize;
-        for(let i41 = 0, l = this.itemSize; i41 < l; i41++)this.array[index1 + i41] = attribute.array[index2 + i41];
+        for(let i = 0, l = this.itemSize; i < l; i++)this.array[index1 + i] = attribute.array[index2 + i];
         return this;
     }
     copyArray(array) {
@@ -6859,10 +6984,10 @@ class $084574008ccedf86$export$8dea267bd6bde117 {
     copyColorsArray(colors) {
         const array = this.array;
         let offset = 0;
-        for(let i42 = 0, l = colors.length; i42 < l; i42++){
-            let color = colors[i42];
+        for(let i = 0, l = colors.length; i < l; i++){
+            let color = colors[i];
             if (color === undefined) {
-                console.warn("THREE.BufferAttribute.copyColorsArray(): color is undefined", i42);
+                console.warn("THREE.BufferAttribute.copyColorsArray(): color is undefined", i);
                 color = new $084574008ccedf86$export$892596cec99bc70e();
             }
             array[offset++] = color.r;
@@ -6874,10 +6999,10 @@ class $084574008ccedf86$export$8dea267bd6bde117 {
     copyVector2sArray(vectors) {
         const array = this.array;
         let offset = 0;
-        for(let i43 = 0, l = vectors.length; i43 < l; i43++){
-            let vector = vectors[i43];
+        for(let i = 0, l = vectors.length; i < l; i++){
+            let vector = vectors[i];
             if (vector === undefined) {
-                console.warn("THREE.BufferAttribute.copyVector2sArray(): vector is undefined", i43);
+                console.warn("THREE.BufferAttribute.copyVector2sArray(): vector is undefined", i);
                 vector = new $084574008ccedf86$export$c977b3e384af9ae1();
             }
             array[offset++] = vector.x;
@@ -6888,10 +7013,10 @@ class $084574008ccedf86$export$8dea267bd6bde117 {
     copyVector3sArray(vectors) {
         const array = this.array;
         let offset = 0;
-        for(let i44 = 0, l = vectors.length; i44 < l; i44++){
-            let vector = vectors[i44];
+        for(let i = 0, l = vectors.length; i < l; i++){
+            let vector = vectors[i];
             if (vector === undefined) {
-                console.warn("THREE.BufferAttribute.copyVector3sArray(): vector is undefined", i44);
+                console.warn("THREE.BufferAttribute.copyVector3sArray(): vector is undefined", i);
                 vector = new $084574008ccedf86$export$64b5c384219d3699();
             }
             array[offset++] = vector.x;
@@ -6903,10 +7028,10 @@ class $084574008ccedf86$export$8dea267bd6bde117 {
     copyVector4sArray(vectors) {
         const array = this.array;
         let offset = 0;
-        for(let i45 = 0, l = vectors.length; i45 < l; i45++){
-            let vector = vectors[i45];
+        for(let i = 0, l = vectors.length; i < l; i++){
+            let vector = vectors[i];
             if (vector === undefined) {
-                console.warn("THREE.BufferAttribute.copyVector4sArray(): vector is undefined", i45);
+                console.warn("THREE.BufferAttribute.copyVector4sArray(): vector is undefined", i);
                 vector = new $084574008ccedf86$export$fa7daccca11cdbe3();
             }
             array[offset++] = vector.x;
@@ -6917,39 +7042,39 @@ class $084574008ccedf86$export$8dea267bd6bde117 {
         return this;
     }
     applyMatrix3(m) {
-        if (this.itemSize === 2) for(let i47 = 0, l = this.count; i47 < l; i47++){
-            $084574008ccedf86$var$_vector2$1.fromBufferAttribute(this, i47);
+        if (this.itemSize === 2) for(let i = 0, l = this.count; i < l; i++){
+            $084574008ccedf86$var$_vector2$1.fromBufferAttribute(this, i);
             $084574008ccedf86$var$_vector2$1.applyMatrix3(m);
-            this.setXY(i47, $084574008ccedf86$var$_vector2$1.x, $084574008ccedf86$var$_vector2$1.y);
+            this.setXY(i, $084574008ccedf86$var$_vector2$1.x, $084574008ccedf86$var$_vector2$1.y);
         }
-        else if (this.itemSize === 3) for(let i46 = 0, l1 = this.count; i46 < l1; i46++){
-            $084574008ccedf86$var$_vector$9.fromBufferAttribute(this, i46);
+        else if (this.itemSize === 3) for(let i = 0, l = this.count; i < l; i++){
+            $084574008ccedf86$var$_vector$9.fromBufferAttribute(this, i);
             $084574008ccedf86$var$_vector$9.applyMatrix3(m);
-            this.setXYZ(i46, $084574008ccedf86$var$_vector$9.x, $084574008ccedf86$var$_vector$9.y, $084574008ccedf86$var$_vector$9.z);
+            this.setXYZ(i, $084574008ccedf86$var$_vector$9.x, $084574008ccedf86$var$_vector$9.y, $084574008ccedf86$var$_vector$9.z);
         }
         return this;
     }
     applyMatrix4(m) {
-        for(let i48 = 0, l = this.count; i48 < l; i48++){
-            $084574008ccedf86$var$_vector$9.fromBufferAttribute(this, i48);
+        for(let i = 0, l = this.count; i < l; i++){
+            $084574008ccedf86$var$_vector$9.fromBufferAttribute(this, i);
             $084574008ccedf86$var$_vector$9.applyMatrix4(m);
-            this.setXYZ(i48, $084574008ccedf86$var$_vector$9.x, $084574008ccedf86$var$_vector$9.y, $084574008ccedf86$var$_vector$9.z);
+            this.setXYZ(i, $084574008ccedf86$var$_vector$9.x, $084574008ccedf86$var$_vector$9.y, $084574008ccedf86$var$_vector$9.z);
         }
         return this;
     }
     applyNormalMatrix(m) {
-        for(let i49 = 0, l = this.count; i49 < l; i49++){
-            $084574008ccedf86$var$_vector$9.fromBufferAttribute(this, i49);
+        for(let i = 0, l = this.count; i < l; i++){
+            $084574008ccedf86$var$_vector$9.fromBufferAttribute(this, i);
             $084574008ccedf86$var$_vector$9.applyNormalMatrix(m);
-            this.setXYZ(i49, $084574008ccedf86$var$_vector$9.x, $084574008ccedf86$var$_vector$9.y, $084574008ccedf86$var$_vector$9.z);
+            this.setXYZ(i, $084574008ccedf86$var$_vector$9.x, $084574008ccedf86$var$_vector$9.y, $084574008ccedf86$var$_vector$9.z);
         }
         return this;
     }
     transformDirection(m) {
-        for(let i50 = 0, l = this.count; i50 < l; i50++){
-            $084574008ccedf86$var$_vector$9.fromBufferAttribute(this, i50);
+        for(let i = 0, l = this.count; i < l; i++){
+            $084574008ccedf86$var$_vector$9.fromBufferAttribute(this, i);
             $084574008ccedf86$var$_vector$9.transformDirection(m);
-            this.setXYZ(i50, $084574008ccedf86$var$_vector$9.x, $084574008ccedf86$var$_vector$9.y, $084574008ccedf86$var$_vector$9.z);
+            this.setXYZ(i, $084574008ccedf86$var$_vector$9.x, $084574008ccedf86$var$_vector$9.y, $084574008ccedf86$var$_vector$9.z);
         }
         return this;
     }
@@ -7214,8 +7339,8 @@ class $084574008ccedf86$export$b7be63a67df8959 extends $084574008ccedf86$export$
     }
     setFromPoints(points) {
         const position = [];
-        for(let i51 = 0, l = points.length; i51 < l; i51++){
-            const point = points[i51];
+        for(let i = 0, l = points.length; i < l; i++){
+            const point = points[i];
             position.push(point.x, point.y, point.z || 0);
         }
         this.setAttribute("position", new $084574008ccedf86$export$cbe7a62641830ebd(position, 3));
@@ -7233,8 +7358,8 @@ class $084574008ccedf86$export$b7be63a67df8959 extends $084574008ccedf86$export$
         if (position !== undefined) {
             this.boundingBox.setFromBufferAttribute(position);
             // process morph attributes if present
-            if (morphAttributesPosition) for(let i52 = 0, il = morphAttributesPosition.length; i52 < il; i52++){
-                const morphAttribute = morphAttributesPosition[i52];
+            if (morphAttributesPosition) for(let i = 0, il = morphAttributesPosition.length; i < il; i++){
+                const morphAttribute = morphAttributesPosition[i];
                 $084574008ccedf86$var$_box$1.setFromBufferAttribute(morphAttribute);
                 if (this.morphTargetsRelative) {
                     $084574008ccedf86$var$_vector$8.addVectors(this.boundingBox.min, $084574008ccedf86$var$_box$1.min);
@@ -7263,8 +7388,8 @@ class $084574008ccedf86$export$b7be63a67df8959 extends $084574008ccedf86$export$
             const center = this.boundingSphere.center;
             $084574008ccedf86$var$_box$1.setFromBufferAttribute(position);
             // process morph attributes if present
-            if (morphAttributesPosition) for(let i55 = 0, il = morphAttributesPosition.length; i55 < il; i55++){
-                const morphAttribute = morphAttributesPosition[i55];
+            if (morphAttributesPosition) for(let i = 0, il = morphAttributesPosition.length; i < il; i++){
+                const morphAttribute = morphAttributesPosition[i];
                 $084574008ccedf86$var$_boxMorphTargets.setFromBufferAttribute(morphAttribute);
                 if (this.morphTargetsRelative) {
                     $084574008ccedf86$var$_vector$8.addVectors($084574008ccedf86$var$_box$1.min, $084574008ccedf86$var$_boxMorphTargets.min);
@@ -7280,13 +7405,13 @@ class $084574008ccedf86$export$b7be63a67df8959 extends $084574008ccedf86$export$
             // second, try to find a boundingSphere with a radius smaller than the
             // boundingSphere of the boundingBox: sqrt(3) smaller in the best case
             let maxRadiusSq = 0;
-            for(let i53 = 0, il1 = position.count; i53 < il1; i53++){
-                $084574008ccedf86$var$_vector$8.fromBufferAttribute(position, i53);
+            for(let i = 0, il = position.count; i < il; i++){
+                $084574008ccedf86$var$_vector$8.fromBufferAttribute(position, i);
                 maxRadiusSq = Math.max(maxRadiusSq, center.distanceToSquared($084574008ccedf86$var$_vector$8));
             }
             // process morph attributes if present
-            if (morphAttributesPosition) for(let i54 = 0, il2 = morphAttributesPosition.length; i54 < il2; i54++){
-                const morphAttribute = morphAttributesPosition[i54];
+            if (morphAttributesPosition) for(let i = 0, il = morphAttributesPosition.length; i < il; i++){
+                const morphAttribute = morphAttributesPosition[i];
                 const morphTargetsRelative = this.morphTargetsRelative;
                 for(let j = 0, jl = morphAttribute.count; j < jl; j++){
                     $084574008ccedf86$var$_vector$8.fromBufferAttribute(morphAttribute, j);
@@ -7318,9 +7443,9 @@ class $084574008ccedf86$export$b7be63a67df8959 extends $084574008ccedf86$export$
         if (this.hasAttribute("tangent") === false) this.setAttribute("tangent", new $084574008ccedf86$export$8dea267bd6bde117(new Float32Array(4 * nVertices), 4));
         const tangents = this.getAttribute("tangent").array;
         const tan1 = [], tan2 = [];
-        for(let i58 = 0; i58 < nVertices; i58++){
-            tan1[i58] = new $084574008ccedf86$export$64b5c384219d3699();
-            tan2[i58] = new $084574008ccedf86$export$64b5c384219d3699();
+        for(let i = 0; i < nVertices; i++){
+            tan1[i] = new $084574008ccedf86$export$64b5c384219d3699();
+            tan2[i] = new $084574008ccedf86$export$64b5c384219d3699();
         }
         const vA = new $084574008ccedf86$export$64b5c384219d3699(), vB = new $084574008ccedf86$export$64b5c384219d3699(), vC = new $084574008ccedf86$export$64b5c384219d3699(), uvA = new $084574008ccedf86$export$c977b3e384af9ae1(), uvB = new $084574008ccedf86$export$c977b3e384af9ae1(), uvC = new $084574008ccedf86$export$c977b3e384af9ae1(), sdir = new $084574008ccedf86$export$64b5c384219d3699(), tdir = new $084574008ccedf86$export$64b5c384219d3699();
         function handleTriangle(a, b, c) {
@@ -7353,32 +7478,32 @@ class $084574008ccedf86$export$b7be63a67df8959 extends $084574008ccedf86$export$
                 count: indices.length
             }
         ];
-        for(let i56 = 0, il = groups.length; i56 < il; ++i56){
-            const group = groups[i56];
+        for(let i = 0, il = groups.length; i < il; ++i){
+            const group = groups[i];
             const start = group.start;
             const count = group.count;
             for(let j = start, jl = start + count; j < jl; j += 3)handleTriangle(indices[j + 0], indices[j + 1], indices[j + 2]);
         }
-        const tmp3 = new $084574008ccedf86$export$64b5c384219d3699(), tmp2 = new $084574008ccedf86$export$64b5c384219d3699();
+        const tmp = new $084574008ccedf86$export$64b5c384219d3699(), tmp2 = new $084574008ccedf86$export$64b5c384219d3699();
         const n = new $084574008ccedf86$export$64b5c384219d3699(), n2 = new $084574008ccedf86$export$64b5c384219d3699();
         function handleVertex(v) {
             n.fromArray(normals, v * 3);
             n2.copy(n);
             const t = tan1[v];
             // Gram-Schmidt orthogonalize
-            tmp3.copy(t);
-            tmp3.sub(n.multiplyScalar(n.dot(t))).normalize();
+            tmp.copy(t);
+            tmp.sub(n.multiplyScalar(n.dot(t))).normalize();
             // Calculate handedness
             tmp2.crossVectors(n2, t);
             const test = tmp2.dot(tan2[v]);
             const w = test < 0.0 ? -1 : 1.0;
-            tangents[v * 4] = tmp3.x;
-            tangents[v * 4 + 1] = tmp3.y;
-            tangents[v * 4 + 2] = tmp3.z;
+            tangents[v * 4] = tmp.x;
+            tangents[v * 4 + 1] = tmp.y;
+            tangents[v * 4 + 2] = tmp.z;
             tangents[v * 4 + 3] = w;
         }
-        for(let i57 = 0, il3 = groups.length; i57 < il3; ++i57){
-            const group = groups[i57];
+        for(let i = 0, il = groups.length; i < il; ++i){
+            const group = groups[i];
             const start = group.start;
             const count = group.count;
             for(let j = start, jl = start + count; j < jl; j += 3){
@@ -7397,15 +7522,15 @@ class $084574008ccedf86$export$b7be63a67df8959 extends $084574008ccedf86$export$
                 normalAttribute = new $084574008ccedf86$export$8dea267bd6bde117(new Float32Array(positionAttribute.count * 3), 3);
                 this.setAttribute("normal", normalAttribute);
             } else // reset existing normals to zero
-            for(let i61 = 0, il = normalAttribute.count; i61 < il; i61++)normalAttribute.setXYZ(i61, 0, 0, 0);
+            for(let i = 0, il = normalAttribute.count; i < il; i++)normalAttribute.setXYZ(i, 0, 0, 0);
             const pA = new $084574008ccedf86$export$64b5c384219d3699(), pB = new $084574008ccedf86$export$64b5c384219d3699(), pC = new $084574008ccedf86$export$64b5c384219d3699();
             const nA = new $084574008ccedf86$export$64b5c384219d3699(), nB = new $084574008ccedf86$export$64b5c384219d3699(), nC = new $084574008ccedf86$export$64b5c384219d3699();
             const cb = new $084574008ccedf86$export$64b5c384219d3699(), ab = new $084574008ccedf86$export$64b5c384219d3699();
             // indexed elements
-            if (index) for(let i59 = 0, il4 = index.count; i59 < il4; i59 += 3){
-                const vA = index.getX(i59 + 0);
-                const vB = index.getX(i59 + 1);
-                const vC = index.getX(i59 + 2);
+            if (index) for(let i = 0, il = index.count; i < il; i += 3){
+                const vA = index.getX(i + 0);
+                const vB = index.getX(i + 1);
+                const vC = index.getX(i + 2);
                 pA.fromBufferAttribute(positionAttribute, vA);
                 pB.fromBufferAttribute(positionAttribute, vB);
                 pC.fromBufferAttribute(positionAttribute, vC);
@@ -7423,16 +7548,16 @@ class $084574008ccedf86$export$b7be63a67df8959 extends $084574008ccedf86$export$
                 normalAttribute.setXYZ(vC, nC.x, nC.y, nC.z);
             }
             else // non-indexed elements (unconnected triangle soup)
-            for(let i60 = 0, il5 = positionAttribute.count; i60 < il5; i60 += 3){
-                pA.fromBufferAttribute(positionAttribute, i60 + 0);
-                pB.fromBufferAttribute(positionAttribute, i60 + 1);
-                pC.fromBufferAttribute(positionAttribute, i60 + 2);
+            for(let i = 0, il = positionAttribute.count; i < il; i += 3){
+                pA.fromBufferAttribute(positionAttribute, i + 0);
+                pB.fromBufferAttribute(positionAttribute, i + 1);
+                pC.fromBufferAttribute(positionAttribute, i + 2);
                 cb.subVectors(pC, pB);
                 ab.subVectors(pA, pB);
                 cb.cross(ab);
-                normalAttribute.setXYZ(i60 + 0, cb.x, cb.y, cb.z);
-                normalAttribute.setXYZ(i60 + 1, cb.x, cb.y, cb.z);
-                normalAttribute.setXYZ(i60 + 2, cb.x, cb.y, cb.z);
+                normalAttribute.setXYZ(i + 0, cb.x, cb.y, cb.z);
+                normalAttribute.setXYZ(i + 1, cb.x, cb.y, cb.z);
+                normalAttribute.setXYZ(i + 2, cb.x, cb.y, cb.z);
             }
             this.normalizeNormals();
             normalAttribute.needsUpdate = true;
@@ -7456,16 +7581,16 @@ class $084574008ccedf86$export$b7be63a67df8959 extends $084574008ccedf86$export$
             const attributeArray2 = attribute2.array;
             const attributeOffset = attribute2.itemSize * offset;
             const length = Math.min(attributeArray2.length, attributeArray1.length - attributeOffset);
-            for(let i62 = 0, j = attributeOffset; i62 < length; i62++, j++)attributeArray1[j] = attributeArray2[i62];
+            for(let i = 0, j = attributeOffset; i < length; i++, j++)attributeArray1[j] = attributeArray2[i];
         }
         return this;
     }
     normalizeNormals() {
         const normals = this.attributes.normal;
-        for(let i63 = 0, il = normals.count; i63 < il; i63++){
-            $084574008ccedf86$var$_vector$8.fromBufferAttribute(normals, i63);
+        for(let i = 0, il = normals.count; i < il; i++){
+            $084574008ccedf86$var$_vector$8.fromBufferAttribute(normals, i);
             $084574008ccedf86$var$_vector$8.normalize();
-            normals.setXYZ(i63, $084574008ccedf86$var$_vector$8.x, $084574008ccedf86$var$_vector$8.y, $084574008ccedf86$var$_vector$8.z);
+            normals.setXYZ(i, $084574008ccedf86$var$_vector$8.x, $084574008ccedf86$var$_vector$8.y, $084574008ccedf86$var$_vector$8.z);
         }
     }
     toNonIndexed() {
@@ -7475,9 +7600,9 @@ class $084574008ccedf86$export$b7be63a67df8959 extends $084574008ccedf86$export$
             const normalized = attribute.normalized;
             const array2 = new array.constructor(indices.length * itemSize);
             let index = 0, index2 = 0;
-            for(let i65 = 0, l = indices.length; i65 < l; i65++){
-                if (attribute.isInterleavedBufferAttribute) index = indices[i65] * attribute.data.stride + attribute.offset;
-                else index = indices[i65] * itemSize;
+            for(let i = 0, l = indices.length; i < l; i++){
+                if (attribute.isInterleavedBufferAttribute) index = indices[i] * attribute.data.stride + attribute.offset;
+                else index = indices[i] * itemSize;
                 for(let j = 0; j < itemSize; j++)array2[index2++] = array[index++];
             }
             return new $084574008ccedf86$export$8dea267bd6bde117(array2, itemSize, normalized);
@@ -7488,31 +7613,31 @@ class $084574008ccedf86$export$b7be63a67df8959 extends $084574008ccedf86$export$
             return this;
         }
         const geometry2 = new $084574008ccedf86$export$b7be63a67df8959();
-        const indices1 = this.index.array;
+        const indices = this.index.array;
         const attributes = this.attributes;
         // attributes
         for(const name in attributes){
             const attribute = attributes[name];
-            const newAttribute = convertBufferAttribute(attribute, indices1);
+            const newAttribute = convertBufferAttribute(attribute, indices);
             geometry2.setAttribute(name, newAttribute);
         }
         // morph attributes
         const morphAttributes = this.morphAttributes;
-        for(const name1 in morphAttributes){
+        for(const name in morphAttributes){
             const morphArray = [];
-            const morphAttribute = morphAttributes[name1]; // morphAttribute: array of Float32BufferAttributes
-            for(let i66 = 0, il = morphAttribute.length; i66 < il; i66++){
-                const attribute = morphAttribute[i66];
-                const newAttribute = convertBufferAttribute(attribute, indices1);
+            const morphAttribute = morphAttributes[name]; // morphAttribute: array of Float32BufferAttributes
+            for(let i = 0, il = morphAttribute.length; i < il; i++){
+                const attribute = morphAttribute[i];
+                const newAttribute = convertBufferAttribute(attribute, indices);
                 morphArray.push(newAttribute);
             }
-            geometry2.morphAttributes[name1] = morphArray;
+            geometry2.morphAttributes[name] = morphArray;
         }
         geometry2.morphTargetsRelative = this.morphTargetsRelative;
         // groups
         const groups = this.groups;
-        for(let i64 = 0, l2 = groups.length; i64 < l2; i64++){
-            const group = groups[i64];
+        for(let i = 0, l = groups.length; i < l; i++){
+            const group = groups[i];
             geometry2.addGroup(group.start, group.count, group.materialIndex);
         }
         return geometry2;
@@ -7551,15 +7676,15 @@ class $084574008ccedf86$export$b7be63a67df8959 extends $084574008ccedf86$export$
         }
         const morphAttributes = {};
         let hasMorphAttributes = false;
-        for(const key1 in this.morphAttributes){
-            const attributeArray = this.morphAttributes[key1];
+        for(const key in this.morphAttributes){
+            const attributeArray = this.morphAttributes[key];
             const array = [];
-            for(let i67 = 0, il = attributeArray.length; i67 < il; i67++){
-                const attribute = attributeArray[i67];
+            for(let i = 0, il = attributeArray.length; i < il; i++){
+                const attribute = attributeArray[i];
                 array.push(attribute.toJSON(data.data));
             }
             if (array.length > 0) {
-                morphAttributes[key1] = array;
+                morphAttributes[key] = array;
                 hasMorphAttributes = true;
             }
         }
@@ -7602,17 +7727,17 @@ class $084574008ccedf86$export$b7be63a67df8959 extends $084574008ccedf86$export$
         }
         // morph attributes
         const morphAttributes = source.morphAttributes;
-        for(const name2 in morphAttributes){
+        for(const name in morphAttributes){
             const array = [];
-            const morphAttribute = morphAttributes[name2]; // morphAttribute: array of Float32BufferAttributes
-            for(let i68 = 0, l = morphAttribute.length; i68 < l; i68++)array.push(morphAttribute[i68].clone(data));
-            this.morphAttributes[name2] = array;
+            const morphAttribute = morphAttributes[name]; // morphAttribute: array of Float32BufferAttributes
+            for(let i = 0, l = morphAttribute.length; i < l; i++)array.push(morphAttribute[i].clone(data));
+            this.morphAttributes[name] = array;
         }
         this.morphTargetsRelative = source.morphTargetsRelative;
         // groups
         const groups = source.groups;
-        for(let i69 = 0, l = groups.length; i69 < l; i69++){
-            const group = groups[i69];
+        for(let i = 0, l = groups.length; i < l; i++){
+            const group = groups[i];
             this.addGroup(group.start, group.count, group.materialIndex);
         }
         // bounding box
@@ -7687,7 +7812,7 @@ class $084574008ccedf86$export$e176487c05830cc5 extends $084574008ccedf86$export
             }
         }
     }
-    raycast(raycaster, intersects1) {
+    raycast(raycaster, intersects) {
         const geometry = this.geometry;
         const material = this.material;
         const matrixWorld = this.matrixWorld;
@@ -7715,8 +7840,8 @@ class $084574008ccedf86$export$e176487c05830cc5 extends $084574008ccedf86$export
         const drawRange = geometry.drawRange;
         if (index !== null) {
             // indexed buffer geometry
-            if (Array.isArray(material)) for(let i70 = 0, il = groups.length; i70 < il; i70++){
-                const group = groups[i70];
+            if (Array.isArray(material)) for(let i = 0, il = groups.length; i < il; i++){
+                const group = groups[i];
                 const groupMaterial = material[group.materialIndex];
                 const start = Math.max(group.start, drawRange.start);
                 const end = Math.min(index.count, Math.min(group.start + group.count, drawRange.start + drawRange.count));
@@ -7728,28 +7853,28 @@ class $084574008ccedf86$export$e176487c05830cc5 extends $084574008ccedf86$export
                     if (intersection) {
                         intersection.faceIndex = Math.floor(j / 3); // triangle number in indexed buffer semantics
                         intersection.face.materialIndex = group.materialIndex;
-                        intersects1.push(intersection);
+                        intersects.push(intersection);
                     }
                 }
             }
             else {
                 const start = Math.max(0, drawRange.start);
                 const end = Math.min(index.count, drawRange.start + drawRange.count);
-                for(let i71 = start, il = end; i71 < il; i71 += 3){
-                    const a = index.getX(i71);
-                    const b = index.getX(i71 + 1);
-                    const c = index.getX(i71 + 2);
+                for(let i = start, il = end; i < il; i += 3){
+                    const a = index.getX(i);
+                    const b = index.getX(i + 1);
+                    const c = index.getX(i + 2);
                     intersection = $084574008ccedf86$var$checkBufferGeometryIntersection(this, material, raycaster, $084574008ccedf86$var$_ray$2, position, morphPosition, morphTargetsRelative, uv, uv2, a, b, c);
                     if (intersection) {
-                        intersection.faceIndex = Math.floor(i71 / 3); // triangle number in indexed buffer semantics
-                        intersects1.push(intersection);
+                        intersection.faceIndex = Math.floor(i / 3); // triangle number in indexed buffer semantics
+                        intersects.push(intersection);
                     }
                 }
             }
         } else if (position !== undefined) {
             // non-indexed buffer geometry
-            if (Array.isArray(material)) for(let i72 = 0, il = groups.length; i72 < il; i72++){
-                const group = groups[i72];
+            if (Array.isArray(material)) for(let i = 0, il = groups.length; i < il; i++){
+                const group = groups[i];
                 const groupMaterial = material[group.materialIndex];
                 const start = Math.max(group.start, drawRange.start);
                 const end = Math.min(position.count, Math.min(group.start + group.count, drawRange.start + drawRange.count));
@@ -7761,21 +7886,21 @@ class $084574008ccedf86$export$e176487c05830cc5 extends $084574008ccedf86$export
                     if (intersection) {
                         intersection.faceIndex = Math.floor(j / 3); // triangle number in non-indexed buffer semantics
                         intersection.face.materialIndex = group.materialIndex;
-                        intersects1.push(intersection);
+                        intersects.push(intersection);
                     }
                 }
             }
             else {
                 const start = Math.max(0, drawRange.start);
                 const end = Math.min(position.count, drawRange.start + drawRange.count);
-                for(let i73 = start, il = end; i73 < il; i73 += 3){
-                    const a = i73;
-                    const b = i73 + 1;
-                    const c = i73 + 2;
+                for(let i = start, il = end; i < il; i += 3){
+                    const a = i;
+                    const b = i + 1;
+                    const c = i + 2;
                     intersection = $084574008ccedf86$var$checkBufferGeometryIntersection(this, material, raycaster, $084574008ccedf86$var$_ray$2, position, morphPosition, morphTargetsRelative, uv, uv2, a, b, c);
                     if (intersection) {
-                        intersection.faceIndex = Math.floor(i73 / 3); // triangle number in non-indexed buffer semantics
-                        intersects1.push(intersection);
+                        intersection.faceIndex = Math.floor(i / 3); // triangle number in non-indexed buffer semantics
+                        intersects.push(intersection);
                     }
                 }
             }
@@ -7806,9 +7931,9 @@ function $084574008ccedf86$var$checkBufferGeometryIntersection(object, material,
         $084574008ccedf86$var$_morphA.set(0, 0, 0);
         $084574008ccedf86$var$_morphB.set(0, 0, 0);
         $084574008ccedf86$var$_morphC.set(0, 0, 0);
-        for(let i74 = 0, il = morphPosition.length; i74 < il; i74++){
-            const influence = morphInfluences[i74];
-            const morphAttribute = morphPosition[i74];
+        for(let i = 0, il = morphPosition.length; i < il; i++){
+            const influence = morphInfluences[i];
+            const morphAttribute = morphPosition[i];
             if (influence === 0) continue;
             $084574008ccedf86$var$_tempA.fromBufferAttribute(morphAttribute, a);
             $084574008ccedf86$var$_tempB.fromBufferAttribute(morphAttribute, b);
@@ -7859,13 +7984,13 @@ function $084574008ccedf86$var$checkBufferGeometryIntersection(object, material,
     return intersection;
 }
 class $084574008ccedf86$export$ab3456a079aa7d80 extends $084574008ccedf86$export$b7be63a67df8959 {
-    constructor(width1 = 1, height1 = 1, depth1 = 1, widthSegments = 1, heightSegments = 1, depthSegments = 1){
+    constructor(width = 1, height = 1, depth = 1, widthSegments = 1, heightSegments = 1, depthSegments = 1){
         super();
         this.type = "BoxGeometry";
         this.parameters = {
-            width: width1,
-            height: height1,
-            depth: depth1,
+            width: width,
+            height: height,
+            depth: depth,
             widthSegments: widthSegments,
             heightSegments: heightSegments,
             depthSegments: depthSegments
@@ -7884,12 +8009,12 @@ class $084574008ccedf86$export$ab3456a079aa7d80 extends $084574008ccedf86$export
         let numberOfVertices = 0;
         let groupStart = 0;
         // build each side of the box geometry
-        buildPlane("z", "y", "x", -1, -1, depth1, height1, width1, depthSegments, heightSegments, 0); // px
-        buildPlane("z", "y", "x", 1, -1, depth1, height1, -width1, depthSegments, heightSegments, 1); // nx
-        buildPlane("x", "z", "y", 1, 1, width1, depth1, height1, widthSegments, depthSegments, 2); // py
-        buildPlane("x", "z", "y", 1, -1, width1, depth1, -height1, widthSegments, depthSegments, 3); // ny
-        buildPlane("x", "y", "z", 1, -1, width1, height1, depth1, widthSegments, heightSegments, 4); // pz
-        buildPlane("x", "y", "z", -1, -1, width1, height1, -depth1, widthSegments, heightSegments, 5); // nz
+        buildPlane("z", "y", "x", -1, -1, depth, height, width, depthSegments, heightSegments, 0); // px
+        buildPlane("z", "y", "x", 1, -1, depth, height, -width, depthSegments, heightSegments, 1); // nx
+        buildPlane("x", "z", "y", 1, 1, width, depth, height, widthSegments, depthSegments, 2); // py
+        buildPlane("x", "z", "y", 1, -1, width, depth, -height, widthSegments, depthSegments, 3); // ny
+        buildPlane("x", "y", "z", 1, -1, width, height, depth, widthSegments, heightSegments, 4); // pz
+        buildPlane("x", "y", "z", -1, -1, width, height, -depth, widthSegments, heightSegments, 5); // nz
         // build geometry
         this.setIndex(indices);
         this.setAttribute("position", new $084574008ccedf86$export$cbe7a62641830ebd(vertices, 3));
@@ -7934,11 +8059,11 @@ class $084574008ccedf86$export$ab3456a079aa7d80 extends $084574008ccedf86$export
             // 1. you need three indices to draw a single face
             // 2. a single segment consists of two faces
             // 3. so we need to generate six (2*3) indices per segment
-            for(let iy1 = 0; iy1 < gridY; iy1++)for(let ix = 0; ix < gridX; ix++){
-                const a = numberOfVertices + ix + gridX1 * iy1;
-                const b = numberOfVertices + ix + gridX1 * (iy1 + 1);
-                const c = numberOfVertices + (ix + 1) + gridX1 * (iy1 + 1);
-                const d = numberOfVertices + (ix + 1) + gridX1 * iy1;
+            for(let iy = 0; iy < gridY; iy++)for(let ix = 0; ix < gridX; ix++){
+                const a = numberOfVertices + ix + gridX1 * iy;
+                const b = numberOfVertices + ix + gridX1 * (iy + 1);
+                const c = numberOfVertices + (ix + 1) + gridX1 * (iy + 1);
+                const d = numberOfVertices + (ix + 1) + gridX1 * iy;
                 // faces
                 indices.push(a, b, d);
                 indices.push(b, c, d);
@@ -7975,8 +8100,8 @@ class $084574008ccedf86$export$ab3456a079aa7d80 extends $084574008ccedf86$export
 function $084574008ccedf86$var$mergeUniforms(uniforms) {
     const merged = {};
     for(let u = 0; u < uniforms.length; u++){
-        const tmp4 = $084574008ccedf86$var$cloneUniforms(uniforms[u]);
-        for(const p in tmp4)merged[p] = tmp4[p];
+        const tmp = $084574008ccedf86$var$cloneUniforms(uniforms[u]);
+        for(const p in tmp)merged[p] = tmp[p];
     }
     return merged;
 }
@@ -8130,16 +8255,16 @@ class $084574008ccedf86$export$79f141de891a5fed extends $084574008ccedf86$export
     }
 }
 class $084574008ccedf86$export$74e4ae24825f68d7 extends $084574008ccedf86$export$79f141de891a5fed {
-    constructor(fov1 = 50, aspect1 = 1, near = 0.1, far = 2000){
+    constructor(fov = 50, aspect = 1, near = 0.1, far = 2000){
         super();
         this.isPerspectiveCamera = true;
         this.type = "PerspectiveCamera";
-        this.fov = fov1;
+        this.fov = fov;
         this.zoom = 1;
         this.near = near;
         this.far = far;
         this.focus = 10;
-        this.aspect = aspect1;
+        this.aspect = aspect;
         this.view = null;
         this.filmGauge = 35; // width of the film (default in millimeters)
         this.filmOffset = 0; // horizontal film offset (same unit as gauge)
@@ -8465,8 +8590,8 @@ class $084574008ccedf86$export$ac386671d651941e extends $084574008ccedf86$export
     }
     clear(renderer, color, depth, stencil) {
         const currentRenderTarget = renderer.getRenderTarget();
-        for(let i75 = 0; i75 < 6; i75++){
-            renderer.setRenderTarget(this, i75);
+        for(let i = 0; i < 6; i++){
+            renderer.setRenderTarget(this, i);
             renderer.clear(color, depth, stencil);
         }
         renderer.setRenderTarget(currentRenderTarget);
@@ -8600,7 +8725,7 @@ class $084574008ccedf86$export$35efe6f4c85463d2 {
     }
     copy(frustum) {
         const planes = this.planes;
-        for(let i76 = 0; i76 < 6; i76++)planes[i76].copy(frustum.planes[i76]);
+        for(let i = 0; i < 6; i++)planes[i].copy(frustum.planes[i]);
         return this;
     }
     setFromProjectionMatrix(m) {
@@ -8634,16 +8759,16 @@ class $084574008ccedf86$export$35efe6f4c85463d2 {
         const planes = this.planes;
         const center = sphere.center;
         const negRadius = -sphere.radius;
-        for(let i77 = 0; i77 < 6; i77++){
-            const distance = planes[i77].distanceToPoint(center);
+        for(let i = 0; i < 6; i++){
+            const distance = planes[i].distanceToPoint(center);
             if (distance < negRadius) return false;
         }
         return true;
     }
     intersectsBox(box) {
         const planes = this.planes;
-        for(let i78 = 0; i78 < 6; i78++){
-            const plane = planes[i78];
+        for(let i = 0; i < 6; i++){
+            const plane = planes[i];
             // corner at max distance
             $084574008ccedf86$var$_vector$7.x = plane.normal.x > 0 ? box.max.x : box.min.x;
             $084574008ccedf86$var$_vector$7.y = plane.normal.y > 0 ? box.max.y : box.min.y;
@@ -8654,8 +8779,8 @@ class $084574008ccedf86$export$35efe6f4c85463d2 {
     }
     containsPoint(point) {
         const planes = this.planes;
-        for(let i79 = 0; i79 < 6; i79++){
-            if (planes[i79].distanceToPoint(point) < 0) return false;
+        for(let i = 0; i < 6; i++){
+            if (planes[i].distanceToPoint(point) < 0) return false;
         }
         return true;
     }
@@ -8805,11 +8930,11 @@ class $084574008ccedf86$export$e789a11a194ca4e0 extends $084574008ccedf86$export
                 uvs.push(1 - iy / gridY);
             }
         }
-        for(let iy2 = 0; iy2 < gridY; iy2++)for(let ix = 0; ix < gridX; ix++){
-            const a = ix + gridX1 * iy2;
-            const b = ix + gridX1 * (iy2 + 1);
-            const c = ix + 1 + gridX1 * (iy2 + 1);
-            const d = ix + 1 + gridX1 * iy2;
+        for(let iy = 0; iy < gridY; iy++)for(let ix = 0; ix < gridX; ix++){
+            const a = ix + gridX1 * iy;
+            const b = ix + gridX1 * (iy + 1);
+            const c = ix + 1 + gridX1 * (iy + 1);
+            const d = ix + 1 + gridX1 * iy;
             indices.push(a, b, d);
             indices.push(b, c, d);
         }
@@ -9635,7 +9760,7 @@ const $084574008ccedf86$export$bee4a7d47f8f5014 = {
                 opacity: {
                     value: 1.0
                 }
-            }, 
+            }
         ]),
         vertexShader: $084574008ccedf86$export$955f9f2e84c43c8b.shadow_vert,
         fragmentShader: $084574008ccedf86$export$955f9f2e84c43c8b.shadow_frag
@@ -9737,9 +9862,9 @@ $084574008ccedf86$export$bee4a7d47f8f5014.physical = {
     vertexShader: $084574008ccedf86$export$955f9f2e84c43c8b.meshphysical_vert,
     fragmentShader: $084574008ccedf86$export$955f9f2e84c43c8b.meshphysical_frag
 };
-function $084574008ccedf86$var$WebGLBackground(renderer, cubemaps, state, objects, alpha1, premultipliedAlpha) {
+function $084574008ccedf86$var$WebGLBackground(renderer, cubemaps, state, objects, alpha, premultipliedAlpha) {
     const clearColor = new $084574008ccedf86$export$892596cec99bc70e(0x000000);
-    let clearAlpha = alpha1 === true ? 0 : 1;
+    let clearAlpha = alpha === true ? 0 : 1;
     let planeMesh;
     let boxMesh;
     let currentBackground = null;
@@ -9853,10 +9978,10 @@ function $084574008ccedf86$var$WebGLBackground(renderer, cubemaps, state, object
         render: render
     };
 }
-function $084574008ccedf86$var$WebGLBindingStates(gl, extensions, attributes1, capabilities) {
+function $084574008ccedf86$var$WebGLBindingStates(gl, extensions, attributes, capabilities) {
     const maxVertexAttributes = gl.getParameter(34921);
-    const extension1 = capabilities.isWebGL2 ? null : extensions.get("OES_vertex_array_object");
-    const vaoAvailable = capabilities.isWebGL2 || extension1 !== null;
+    const extension = capabilities.isWebGL2 ? null : extensions.get("OES_vertex_array_object");
+    const vaoAvailable = capabilities.isWebGL2 || extension !== null;
     const bindingStates = {};
     const defaultState = createBindingState(null);
     let currentState = defaultState;
@@ -9880,24 +10005,24 @@ function $084574008ccedf86$var$WebGLBindingStates(gl, extensions, attributes1, c
                 updateBuffers = true;
             }
         }
-        if (index !== null) attributes1.update(index, 34963);
+        if (index !== null) attributes.update(index, 34963);
         if (updateBuffers || forceUpdate) {
             forceUpdate = false;
             setupVertexAttributes(object, material, program, geometry);
-            if (index !== null) gl.bindBuffer(34963, attributes1.get(index).buffer);
+            if (index !== null) gl.bindBuffer(34963, attributes.get(index).buffer);
         }
     }
     function createVertexArrayObject() {
         if (capabilities.isWebGL2) return gl.createVertexArray();
-        return extension1.createVertexArrayOES();
+        return extension.createVertexArrayOES();
     }
     function bindVertexArrayObject(vao) {
         if (capabilities.isWebGL2) return gl.bindVertexArray(vao);
-        return extension1.bindVertexArrayOES(vao);
+        return extension.bindVertexArrayOES(vao);
     }
     function deleteVertexArrayObject(vao) {
         if (capabilities.isWebGL2) return gl.deleteVertexArray(vao);
-        return extension1.deleteVertexArrayOES(vao);
+        return extension.deleteVertexArrayOES(vao);
     }
     function getBindingState(geometry, program, material) {
         const wireframe = material.wireframe === true;
@@ -9922,10 +10047,10 @@ function $084574008ccedf86$var$WebGLBindingStates(gl, extensions, attributes1, c
         const newAttributes = [];
         const enabledAttributes = [];
         const attributeDivisors = [];
-        for(let i80 = 0; i80 < maxVertexAttributes; i80++){
-            newAttributes[i80] = 0;
-            enabledAttributes[i80] = 0;
-            attributeDivisors[i80] = 0;
+        for(let i = 0; i < maxVertexAttributes; i++){
+            newAttributes[i] = 0;
+            enabledAttributes[i] = 0;
+            attributeDivisors[i] = 0;
         }
         return {
             // for backward compatibility on non-VAO support browser
@@ -9990,7 +10115,7 @@ function $084574008ccedf86$var$WebGLBindingStates(gl, extensions, attributes1, c
     }
     function initAttributes() {
         const newAttributes = currentState.newAttributes;
-        for(let i81 = 0, il = newAttributes.length; i81 < il; i81++)newAttributes[i81] = 0;
+        for(let i = 0, il = newAttributes.length; i < il; i++)newAttributes[i] = 0;
     }
     function enableAttribute(attribute) {
         enableAttributeAndDivisor(attribute, 0);
@@ -10013,9 +10138,9 @@ function $084574008ccedf86$var$WebGLBindingStates(gl, extensions, attributes1, c
     function disableUnusedAttributes() {
         const newAttributes = currentState.newAttributes;
         const enabledAttributes = currentState.enabledAttributes;
-        for(let i82 = 0, il = enabledAttributes.length; i82 < il; i82++)if (enabledAttributes[i82] !== newAttributes[i82]) {
-            gl.disableVertexAttribArray(i82);
-            enabledAttributes[i82] = 0;
+        for(let i = 0, il = enabledAttributes.length; i < il; i++)if (enabledAttributes[i] !== newAttributes[i]) {
+            gl.disableVertexAttribArray(i);
+            enabledAttributes[i] = 0;
         }
     }
     function vertexAttribPointer(index, size, type, normalized, stride, offset) {
@@ -10041,7 +10166,7 @@ function $084574008ccedf86$var$WebGLBindingStates(gl, extensions, attributes1, c
                 if (geometryAttribute !== undefined) {
                     const normalized = geometryAttribute.normalized;
                     const size = geometryAttribute.itemSize;
-                    const attribute = attributes1.get(geometryAttribute);
+                    const attribute = attributes.get(geometryAttribute);
                     // TODO Attribute may not be available on context restore
                     if (attribute === undefined) continue;
                     const buffer = attribute.buffer;
@@ -10052,18 +10177,18 @@ function $084574008ccedf86$var$WebGLBindingStates(gl, extensions, attributes1, c
                         const stride = data.stride;
                         const offset = geometryAttribute.offset;
                         if (data.isInstancedInterleavedBuffer) {
-                            for(let i84 = 0; i84 < programAttribute.locationSize; i84++)enableAttributeAndDivisor(programAttribute.location + i84, data.meshPerAttribute);
+                            for(let i = 0; i < programAttribute.locationSize; i++)enableAttributeAndDivisor(programAttribute.location + i, data.meshPerAttribute);
                             if (object.isInstancedMesh !== true && geometry._maxInstanceCount === undefined) geometry._maxInstanceCount = data.meshPerAttribute * data.count;
-                        } else for(let i85 = 0; i85 < programAttribute.locationSize; i85++)enableAttribute(programAttribute.location + i85);
+                        } else for(let i = 0; i < programAttribute.locationSize; i++)enableAttribute(programAttribute.location + i);
                         gl.bindBuffer(34962, buffer);
-                        for(let i83 = 0; i83 < programAttribute.locationSize; i83++)vertexAttribPointer(programAttribute.location + i83, size / programAttribute.locationSize, type, normalized, stride * bytesPerElement, (offset + size / programAttribute.locationSize * i83) * bytesPerElement);
+                        for(let i = 0; i < programAttribute.locationSize; i++)vertexAttribPointer(programAttribute.location + i, size / programAttribute.locationSize, type, normalized, stride * bytesPerElement, (offset + size / programAttribute.locationSize * i) * bytesPerElement);
                     } else {
                         if (geometryAttribute.isInstancedBufferAttribute) {
-                            for(let i87 = 0; i87 < programAttribute.locationSize; i87++)enableAttributeAndDivisor(programAttribute.location + i87, geometryAttribute.meshPerAttribute);
+                            for(let i = 0; i < programAttribute.locationSize; i++)enableAttributeAndDivisor(programAttribute.location + i, geometryAttribute.meshPerAttribute);
                             if (object.isInstancedMesh !== true && geometry._maxInstanceCount === undefined) geometry._maxInstanceCount = geometryAttribute.meshPerAttribute * geometryAttribute.count;
-                        } else for(let i88 = 0; i88 < programAttribute.locationSize; i88++)enableAttribute(programAttribute.location + i88);
+                        } else for(let i = 0; i < programAttribute.locationSize; i++)enableAttribute(programAttribute.location + i);
                         gl.bindBuffer(34962, buffer);
-                        for(let i86 = 0; i86 < programAttribute.locationSize; i86++)vertexAttribPointer(programAttribute.location + i86, size / programAttribute.locationSize, type, normalized, size * bytesPerElement, size / programAttribute.locationSize * i86 * bytesPerElement);
+                        for(let i = 0; i < programAttribute.locationSize; i++)vertexAttribPointer(programAttribute.location + i, size / programAttribute.locationSize, type, normalized, size * bytesPerElement, size / programAttribute.locationSize * i * bytesPerElement);
                     }
                 } else if (materialDefaultAttributeValues !== undefined) {
                     const value = materialDefaultAttributeValues[name];
@@ -10203,11 +10328,11 @@ function $084574008ccedf86$var$WebGLCapabilities(gl, extensions, parameters) {
         return "lowp";
     }
     const isWebGL2 = typeof WebGL2RenderingContext !== "undefined" && gl instanceof WebGL2RenderingContext || typeof WebGL2ComputeRenderingContext !== "undefined" && gl instanceof WebGL2ComputeRenderingContext;
-    let precision1 = parameters.precision !== undefined ? parameters.precision : "highp";
-    const maxPrecision = getMaxPrecision(precision1);
-    if (maxPrecision !== precision1) {
-        console.warn("THREE.WebGLRenderer:", precision1, "not supported, using", maxPrecision, "instead.");
-        precision1 = maxPrecision;
+    let precision = parameters.precision !== undefined ? parameters.precision : "highp";
+    const maxPrecision = getMaxPrecision(precision);
+    if (maxPrecision !== precision) {
+        console.warn("THREE.WebGLRenderer:", precision, "not supported, using", maxPrecision, "instead.");
+        precision = maxPrecision;
     }
     const drawBuffers = isWebGL2 || extensions.has("WEBGL_draw_buffers");
     const logarithmicDepthBuffer = parameters.logarithmicDepthBuffer === true;
@@ -10228,7 +10353,7 @@ function $084574008ccedf86$var$WebGLCapabilities(gl, extensions, parameters) {
         drawBuffers: drawBuffers,
         getMaxAnisotropy: getMaxAnisotropy,
         getMaxPrecision: getMaxPrecision,
-        precision: precision1,
+        precision: precision,
         logarithmicDepthBuffer: logarithmicDepthBuffer,
         maxTextures: maxTextures,
         maxVertexTextures: maxVertexTextures,
@@ -10284,7 +10409,7 @@ function $084574008ccedf86$var$WebGLClipping(properties) {
             let dstArray = materialProperties.clippingState || null;
             uniform.value = dstArray; // ensure unique state
             dstArray = projectPlanes(planes, camera, lGlobal, useCache);
-            for(let i89 = 0; i89 !== lGlobal; ++i89)dstArray[i89] = globalState[i89];
+            for(let i = 0; i !== lGlobal; ++i)dstArray[i] = globalState[i];
             materialProperties.clippingState = dstArray;
             this.numIntersection = clipIntersection ? this.numPlanes : 0;
             this.numPlanes += nGlobal;
@@ -10307,10 +10432,10 @@ function $084574008ccedf86$var$WebGLClipping(properties) {
                 const flatSize = dstOffset + nPlanes * 4, viewMatrix = camera.matrixWorldInverse;
                 viewNormalMatrix.getNormalMatrix(viewMatrix);
                 if (dstArray === null || dstArray.length < flatSize) dstArray = new Float32Array(flatSize);
-                for(let i90 = 0, i410 = dstOffset; i90 !== nPlanes; ++i90, i410 += 4){
-                    plane.copy(planes[i90]).applyMatrix4(viewMatrix, viewNormalMatrix);
-                    plane.normal.toArray(dstArray, i410);
-                    dstArray[i410 + 3] = plane.constant;
+                for(let i = 0, i4 = dstOffset; i !== nPlanes; ++i, i4 += 4){
+                    plane.copy(planes[i]).applyMatrix4(viewMatrix, viewNormalMatrix);
+                    plane.normal.toArray(dstArray, i4);
+                    dstArray[i4 + 3] = plane.constant;
                 }
             }
             uniform.value = dstArray;
@@ -10579,7 +10704,7 @@ const $084574008ccedf86$var$_axisDirections = [
     _dispose() {
         if (this._blurMaterial !== null) this._blurMaterial.dispose();
         if (this._pingPongRenderTarget !== null) this._pingPongRenderTarget.dispose();
-        for(let i91 = 0; i91 < this._lodPlanes.length; i91++)this._lodPlanes[i91].dispose();
+        for(let i = 0; i < this._lodPlanes.length; i++)this._lodPlanes[i].dispose();
     }
     _cleanup(outputTarget) {
         this._renderer.setRenderTarget($084574008ccedf86$var$_oldTarget);
@@ -10623,9 +10748,9 @@ const $084574008ccedf86$var$_axisDirections = [
         this._renderer.compile(tmpMesh, $084574008ccedf86$var$_flatCamera);
     }
     _sceneToCubeUV(scene, near, far, cubeUVRenderTarget) {
-        const fov2 = 90;
-        const aspect2 = 1;
-        const cubeCamera = new $084574008ccedf86$export$74e4ae24825f68d7(fov2, aspect2, near, far);
+        const fov = 90;
+        const aspect = 1;
+        const cubeCamera = new $084574008ccedf86$export$74e4ae24825f68d7(fov, aspect, near, far);
         const upSign = [
             1,
             -1,
@@ -10667,20 +10792,20 @@ const $084574008ccedf86$var$_axisDirections = [
             backgroundMaterial.color.copy($084574008ccedf86$var$_clearColor);
             useSolidColor = true;
         }
-        for(let i92 = 0; i92 < 6; i92++){
-            const col = i92 % 3;
+        for(let i = 0; i < 6; i++){
+            const col = i % 3;
             if (col === 0) {
-                cubeCamera.up.set(0, upSign[i92], 0);
-                cubeCamera.lookAt(forwardSign[i92], 0, 0);
+                cubeCamera.up.set(0, upSign[i], 0);
+                cubeCamera.lookAt(forwardSign[i], 0, 0);
             } else if (col === 1) {
-                cubeCamera.up.set(0, 0, upSign[i92]);
-                cubeCamera.lookAt(0, forwardSign[i92], 0);
+                cubeCamera.up.set(0, 0, upSign[i]);
+                cubeCamera.lookAt(0, forwardSign[i], 0);
             } else {
-                cubeCamera.up.set(0, upSign[i92], 0);
-                cubeCamera.lookAt(0, 0, forwardSign[i92]);
+                cubeCamera.up.set(0, upSign[i], 0);
+                cubeCamera.lookAt(0, 0, forwardSign[i]);
             }
             const size = this._cubeSize;
-            $084574008ccedf86$var$_setViewport(cubeUVRenderTarget, col * size, i92 > 2 ? size : 0, size, size);
+            $084574008ccedf86$var$_setViewport(cubeUVRenderTarget, col * size, i > 2 ? size : 0, size, size);
             renderer.setRenderTarget(cubeUVRenderTarget);
             if (useSolidColor) renderer.render(backgroundBox, cubeCamera);
             renderer.render(scene, cubeCamera);
@@ -10711,10 +10836,10 @@ const $084574008ccedf86$var$_axisDirections = [
         const renderer = this._renderer;
         const autoClear = renderer.autoClear;
         renderer.autoClear = false;
-        for(let i93 = 1; i93 < this._lodPlanes.length; i93++){
-            const sigma = Math.sqrt(this._sigmas[i93] * this._sigmas[i93] - this._sigmas[i93 - 1] * this._sigmas[i93 - 1]);
-            const poleAxis = $084574008ccedf86$var$_axisDirections[(i93 - 1) % $084574008ccedf86$var$_axisDirections.length];
-            this._blur(cubeUVRenderTarget, i93 - 1, i93, sigma, poleAxis);
+        for(let i = 1; i < this._lodPlanes.length; i++){
+            const sigma = Math.sqrt(this._sigmas[i] * this._sigmas[i] - this._sigmas[i - 1] * this._sigmas[i - 1]);
+            const poleAxis = $084574008ccedf86$var$_axisDirections[(i - 1) % $084574008ccedf86$var$_axisDirections.length];
+            this._blur(cubeUVRenderTarget, i - 1, i, sigma, poleAxis);
         }
         renderer.autoClear = autoClear;
     }
@@ -10744,14 +10869,14 @@ const $084574008ccedf86$var$_axisDirections = [
         if (samples > $084574008ccedf86$var$MAX_SAMPLES) console.warn(`sigmaRadians, ${sigmaRadians}, is too large and will clip, as it requested ${samples} samples when the maximum is set to ${$084574008ccedf86$var$MAX_SAMPLES}`);
         const weights = [];
         let sum = 0;
-        for(let i95 = 0; i95 < $084574008ccedf86$var$MAX_SAMPLES; ++i95){
-            const x = i95 / sigmaPixels;
+        for(let i = 0; i < $084574008ccedf86$var$MAX_SAMPLES; ++i){
+            const x = i / sigmaPixels;
             const weight = Math.exp(-x * x / 2);
             weights.push(weight);
-            if (i95 === 0) sum += weight;
-            else if (i95 < samples) sum += 2 * weight;
+            if (i === 0) sum += weight;
+            else if (i < samples) sum += 2 * weight;
         }
-        for(let i94 = 0; i94 < weights.length; i94++)weights[i94] = weights[i94] / sum;
+        for(let i = 0; i < weights.length; i++)weights[i] = weights[i] / sum;
         blurUniforms["envMap"].value = targetIn.texture;
         blurUniforms["samples"].value = samples;
         blurUniforms["weights"].value = weights;
@@ -10774,12 +10899,12 @@ function $084574008ccedf86$var$_createPlanes(lodMax) {
     const sigmas = [];
     let lod = lodMax;
     const totalLods = lodMax - $084574008ccedf86$var$LOD_MIN + 1 + $084574008ccedf86$var$EXTRA_LOD_SIGMA.length;
-    for(let i96 = 0; i96 < totalLods; i96++){
+    for(let i = 0; i < totalLods; i++){
         const sizeLod = Math.pow(2, lod);
         sizeLods.push(sizeLod);
         let sigma = 1.0 / sizeLod;
-        if (i96 > lodMax - $084574008ccedf86$var$LOD_MIN) sigma = $084574008ccedf86$var$EXTRA_LOD_SIGMA[i96 - lodMax + $084574008ccedf86$var$LOD_MIN - 1];
-        else if (i96 === 0) sigma = 0;
+        if (i > lodMax - $084574008ccedf86$var$LOD_MIN) sigma = $084574008ccedf86$var$EXTRA_LOD_SIGMA[i - lodMax + $084574008ccedf86$var$LOD_MIN - 1];
+        else if (i === 0) sigma = 0;
         sigmas.push(sigma);
         const texelSize = 1.0 / (sizeLod - 2);
         const min = -texelSize;
@@ -11131,7 +11256,7 @@ function $084574008ccedf86$var$WebGLCubeUVMaps(renderer) {
     function isCubeTextureComplete(image) {
         let count = 0;
         const length = 6;
-        for(let i97 = 0; i97 < length; i97++)if (image[i97] !== undefined) count++;
+        for(let i = 0; i < length; i++)if (image[i] !== undefined) count++;
         return count === length;
     }
     function onTextureDispose(event) {
@@ -11238,9 +11363,9 @@ function $084574008ccedf86$var$WebGLGeometries(gl, attributes, info, bindingStat
         for(const name in geometryAttributes)attributes.update(geometryAttributes[name], 34962);
         // morph targets
         const morphAttributes = geometry.morphAttributes;
-        for(const name3 in morphAttributes){
-            const array = morphAttributes[name3];
-            for(let i98 = 0, l = array.length; i98 < l; i98++)attributes.update(array[i98], 34962);
+        for(const name in morphAttributes){
+            const array = morphAttributes[name];
+            for(let i = 0, l = array.length; i < l; i++)attributes.update(array[i], 34962);
         }
     }
     function updateWireframeAttribute(geometry) {
@@ -11251,19 +11376,19 @@ function $084574008ccedf86$var$WebGLGeometries(gl, attributes, info, bindingStat
         if (geometryIndex !== null) {
             const array = geometryIndex.array;
             version = geometryIndex.version;
-            for(let i99 = 0, l = array.length; i99 < l; i99 += 3){
-                const a = array[i99 + 0];
-                const b = array[i99 + 1];
-                const c = array[i99 + 2];
+            for(let i = 0, l = array.length; i < l; i += 3){
+                const a = array[i + 0];
+                const b = array[i + 1];
+                const c = array[i + 2];
                 indices.push(a, b, b, c, c, a);
             }
         } else {
             const array = geometryPosition.array;
             version = geometryPosition.version;
-            for(let i100 = 0, l = array.length / 3 - 1; i100 < l; i100 += 3){
-                const a = i100 + 0;
-                const b = i100 + 1;
-                const c = i100 + 2;
+            for(let i = 0, l = array.length / 3 - 1; i < l; i += 3){
+                const a = i + 0;
+                const b = i + 1;
+                const c = i + 2;
                 indices.push(a, b, b, c, c, a);
             }
         }
@@ -11403,8 +11528,8 @@ function $084574008ccedf86$var$WebGLMorphtargets(gl, capabilities, textures) {
     const morphTextures = new WeakMap();
     const morph = new $084574008ccedf86$export$fa7daccca11cdbe3();
     const workInfluences = [];
-    for(let i101 = 0; i101 < 8; i101++)workInfluences[i101] = [
-        i101,
+    for(let i = 0; i < 8; i++)workInfluences[i] = [
+        i,
         0
     ];
     function update(object, geometry, material, program) {
@@ -11439,11 +11564,11 @@ function $084574008ccedf86$var$WebGLMorphtargets(gl, capabilities, textures) {
                 texture.needsUpdate = true;
                 // fill buffer
                 const vertexDataStride = vertexDataCount * 4;
-                for(let i102 = 0; i102 < morphTargetsCount; i102++){
-                    const morphTarget = morphTargets[i102];
-                    const morphNormal = morphNormals[i102];
-                    const morphColor = morphColors[i102];
-                    const offset = width * height * 4 * i102;
+                for(let i = 0; i < morphTargetsCount; i++){
+                    const morphTarget = morphTargets[i];
+                    const morphNormal = morphNormals[i];
+                    const morphColor = morphColors[i];
+                    const offset = width * height * 4 * i;
                     for(let j = 0; j < morphTarget.count; j++){
                         const stride = j * vertexDataStride;
                         if (hasMorphPosition === true) {
@@ -11487,7 +11612,7 @@ function $084574008ccedf86$var$WebGLMorphtargets(gl, capabilities, textures) {
             }
             //
             let morphInfluencesSum = 0;
-            for(let i103 = 0; i103 < objectInfluences.length; i103++)morphInfluencesSum += objectInfluences[i103];
+            for(let i = 0; i < objectInfluences.length; i++)morphInfluencesSum += objectInfluences[i];
             const morphBaseInfluence = geometry.morphTargetsRelative ? 1 : 1 - morphInfluencesSum;
             program.getUniforms().setValue(gl, "morphTargetBaseInfluence", morphBaseInfluence);
             program.getUniforms().setValue(gl, "morphTargetInfluences", objectInfluences);
@@ -11501,43 +11626,43 @@ function $084574008ccedf86$var$WebGLMorphtargets(gl, capabilities, textures) {
             if (influences === undefined || influences.length !== length) {
                 // initialise list
                 influences = [];
-                for(let i106 = 0; i106 < length; i106++)influences[i106] = [
-                    i106,
+                for(let i = 0; i < length; i++)influences[i] = [
+                    i,
                     0
                 ];
                 influencesList[geometry.id] = influences;
             }
             // Collect influences
-            for(let i107 = 0; i107 < length; i107++){
-                const influence = influences[i107];
-                influence[0] = i107;
-                influence[1] = objectInfluences[i107];
+            for(let i = 0; i < length; i++){
+                const influence = influences[i];
+                influence[0] = i;
+                influence[1] = objectInfluences[i];
             }
             influences.sort($084574008ccedf86$var$absNumericalSort);
-            for(let i104 = 0; i104 < 8; i104++)if (i104 < length && influences[i104][1]) {
-                workInfluences[i104][0] = influences[i104][0];
-                workInfluences[i104][1] = influences[i104][1];
+            for(let i = 0; i < 8; i++)if (i < length && influences[i][1]) {
+                workInfluences[i][0] = influences[i][0];
+                workInfluences[i][1] = influences[i][1];
             } else {
-                workInfluences[i104][0] = Number.MAX_SAFE_INTEGER;
-                workInfluences[i104][1] = 0;
+                workInfluences[i][0] = Number.MAX_SAFE_INTEGER;
+                workInfluences[i][1] = 0;
             }
             workInfluences.sort($084574008ccedf86$var$numericalSort);
             const morphTargets = geometry.morphAttributes.position;
             const morphNormals = geometry.morphAttributes.normal;
             let morphInfluencesSum = 0;
-            for(let i105 = 0; i105 < 8; i105++){
-                const influence = workInfluences[i105];
+            for(let i = 0; i < 8; i++){
+                const influence = workInfluences[i];
                 const index = influence[0];
                 const value = influence[1];
                 if (index !== Number.MAX_SAFE_INTEGER && value) {
-                    if (morphTargets && geometry.getAttribute("morphTarget" + i105) !== morphTargets[index]) geometry.setAttribute("morphTarget" + i105, morphTargets[index]);
-                    if (morphNormals && geometry.getAttribute("morphNormal" + i105) !== morphNormals[index]) geometry.setAttribute("morphNormal" + i105, morphNormals[index]);
-                    morphInfluences[i105] = value;
+                    if (morphTargets && geometry.getAttribute("morphTarget" + i) !== morphTargets[index]) geometry.setAttribute("morphTarget" + i, morphTargets[index]);
+                    if (morphNormals && geometry.getAttribute("morphNormal" + i) !== morphNormals[index]) geometry.setAttribute("morphNormal" + i, morphNormals[index]);
+                    morphInfluences[i] = value;
                     morphInfluencesSum += value;
                 } else {
-                    if (morphTargets && geometry.hasAttribute("morphTarget" + i105) === true) geometry.deleteAttribute("morphTarget" + i105);
-                    if (morphNormals && geometry.hasAttribute("morphNormal" + i105) === true) geometry.deleteAttribute("morphNormal" + i105);
-                    morphInfluences[i105] = 0;
+                    if (morphTargets && geometry.hasAttribute("morphTarget" + i) === true) geometry.deleteAttribute("morphTarget" + i);
+                    if (morphNormals && geometry.hasAttribute("morphNormal" + i) === true) geometry.deleteAttribute("morphNormal" + i);
+                    morphInfluences[i] = 0;
                 }
             }
             // GLSL shader uses formula baseinfluence * base + sum(target * influence)
@@ -11651,22 +11776,22 @@ function $084574008ccedf86$var$flatten(array, nBlocks, blockSize) {
     }
     if (nBlocks !== 0) {
         firstElem.toArray(r, 0);
-        for(let i108 = 1, offset = 0; i108 !== nBlocks; ++i108){
+        for(let i = 1, offset = 0; i !== nBlocks; ++i){
             offset += blockSize;
-            array[i108].toArray(r, offset);
+            array[i].toArray(r, offset);
         }
     }
     return r;
 }
 function $084574008ccedf86$var$arraysEqual(a, b) {
     if (a.length !== b.length) return false;
-    for(let i109 = 0, l = a.length; i109 < l; i109++){
-        if (a[i109] !== b[i109]) return false;
+    for(let i = 0, l = a.length; i < l; i++){
+        if (a[i] !== b[i]) return false;
     }
     return true;
 }
 function $084574008ccedf86$var$copyArray(a, b) {
-    for(let i110 = 0, l = b.length; i110 < l; i110++)a[i110] = b[i110];
+    for(let i = 0, l = b.length; i < l; i++)a[i] = b[i];
 }
 // Texture unit allocation
 function $084574008ccedf86$var$allocTexUnits(textures, n) {
@@ -11675,7 +11800,7 @@ function $084574008ccedf86$var$allocTexUnits(textures, n) {
         r = new Int32Array(n);
         $084574008ccedf86$var$arrayCacheI32[n] = r;
     }
-    for(let i111 = 0; i111 !== n; ++i111)r[i111] = textures.allocateTextureUnit();
+    for(let i = 0; i !== n; ++i)r[i] = textures.allocateTextureUnit();
     return r;
 }
 // --- Setters ---
@@ -11995,25 +12120,25 @@ function $084574008ccedf86$var$setValueT1Array(gl, v, textures) {
     const n = v.length;
     const units = $084574008ccedf86$var$allocTexUnits(textures, n);
     gl.uniform1iv(this.addr, units);
-    for(let i112 = 0; i112 !== n; ++i112)textures.setTexture2D(v[i112] || $084574008ccedf86$var$emptyTexture, units[i112]);
+    for(let i = 0; i !== n; ++i)textures.setTexture2D(v[i] || $084574008ccedf86$var$emptyTexture, units[i]);
 }
 function $084574008ccedf86$var$setValueT3DArray(gl, v, textures) {
     const n = v.length;
     const units = $084574008ccedf86$var$allocTexUnits(textures, n);
     gl.uniform1iv(this.addr, units);
-    for(let i113 = 0; i113 !== n; ++i113)textures.setTexture3D(v[i113] || $084574008ccedf86$var$empty3dTexture, units[i113]);
+    for(let i = 0; i !== n; ++i)textures.setTexture3D(v[i] || $084574008ccedf86$var$empty3dTexture, units[i]);
 }
 function $084574008ccedf86$var$setValueT6Array(gl, v, textures) {
     const n = v.length;
     const units = $084574008ccedf86$var$allocTexUnits(textures, n);
     gl.uniform1iv(this.addr, units);
-    for(let i114 = 0; i114 !== n; ++i114)textures.setTextureCube(v[i114] || $084574008ccedf86$var$emptyCubeTexture, units[i114]);
+    for(let i = 0; i !== n; ++i)textures.setTextureCube(v[i] || $084574008ccedf86$var$emptyCubeTexture, units[i]);
 }
 function $084574008ccedf86$var$setValueT2DArrayArray(gl, v, textures) {
     const n = v.length;
     const units = $084574008ccedf86$var$allocTexUnits(textures, n);
     gl.uniform1iv(this.addr, units);
-    for(let i115 = 0; i115 !== n; ++i115)textures.setTexture2DArray(v[i115] || $084574008ccedf86$var$emptyArrayTexture, units[i115]);
+    for(let i = 0; i !== n; ++i)textures.setTexture2DArray(v[i] || $084574008ccedf86$var$emptyArrayTexture, units[i]);
 }
 // Helper to pick the right setter for a pure (bottom-level) array
 function $084574008ccedf86$var$getPureArraySetter(type) {
@@ -12102,8 +12227,8 @@ class $084574008ccedf86$var$StructuredUniform {
     }
     setValue(gl, value, textures) {
         const seq = this.seq;
-        for(let i116 = 0, n = seq.length; i116 !== n; ++i116){
-            const u = seq[i116];
+        for(let i = 0, n = seq.length; i !== n; ++i){
+            const u = seq[i];
             u.setValue(gl, value[u.id], textures);
         }
     }
@@ -12154,8 +12279,8 @@ class $084574008ccedf86$var$WebGLUniforms {
         this.seq = [];
         this.map = {};
         const n = gl.getProgramParameter(program, 35718);
-        for(let i117 = 0; i117 < n; ++i117){
-            const info = gl.getActiveUniform(program, i117), addr = gl.getUniformLocation(program, info.name);
+        for(let i = 0; i < n; ++i){
+            const info = gl.getActiveUniform(program, i), addr = gl.getUniformLocation(program, info.name);
             $084574008ccedf86$var$parseUniform(info, addr, this);
         }
     }
@@ -12168,16 +12293,16 @@ class $084574008ccedf86$var$WebGLUniforms {
         if (v !== undefined) this.setValue(gl, name, v);
     }
     static upload(gl, seq, values, textures) {
-        for(let i118 = 0, n = seq.length; i118 !== n; ++i118){
-            const u = seq[i118], v = values[u.id];
+        for(let i = 0, n = seq.length; i !== n; ++i){
+            const u = seq[i], v = values[u.id];
             if (v.needsUpdate !== false) // note: always updating when .needsUpdate is undefined
             u.setValue(gl, v.value, textures);
         }
     }
     static seqWithValue(seq, values) {
         const r = [];
-        for(let i119 = 0, n = seq.length; i119 !== n; ++i119){
-            const u = seq[i119];
+        for(let i = 0, n = seq.length; i !== n; ++i){
+            const u = seq[i];
             if (u.id in values) r.push(u);
         }
         return r;
@@ -12195,9 +12320,9 @@ function $084574008ccedf86$var$handleSource(string, errorLine) {
     const lines2 = [];
     const from = Math.max(errorLine - 6, 0);
     const to = Math.min(errorLine + 6, lines.length);
-    for(let i120 = from; i120 < to; i120++){
-        const line = i120 + 1;
-        lines2.push(`${line === errorLine ? ">" : " "} ${line}: ${lines[i120]}`);
+    for(let i = from; i < to; i++){
+        const line = i + 1;
+        lines2.push(`${line === errorLine ? ">" : " "} ${line}: ${lines[i]}`);
     }
     return lines2.join("\n");
 }
@@ -12282,8 +12407,8 @@ function $084574008ccedf86$var$generateDefines(defines) {
 function $084574008ccedf86$var$fetchAttributeLocations(gl, program) {
     const attributes = {};
     const n = gl.getProgramParameter(program, 35721);
-    for(let i121 = 0; i121 < n; i121++){
-        const info = gl.getActiveAttrib(program, i121);
+    for(let i = 0; i < n; i++){
+        const info = gl.getActiveAttrib(program, i);
         const name = info.name;
         let locationSize = 1;
         if (info.type === 35674) locationSize = 2;
@@ -12329,7 +12454,7 @@ function $084574008ccedf86$var$deprecatedLoopReplacer(match, start, end, snippet
 }
 function $084574008ccedf86$var$loopReplacer(match, start, end, snippet) {
     let string = "";
-    for(let i122 = parseInt(start); i122 < parseInt(end); i122++)string += snippet.replace(/\[\s*i\s*\]/g, "[ " + i122 + " ]").replace(/UNROLLED_LOOP_INDEX/g, i122);
+    for(let i = parseInt(start); i < parseInt(end); i++)string += snippet.replace(/\[\s*i\s*\]/g, "[ " + i + " ]").replace(/UNROLLED_LOOP_INDEX/g, i);
     return string;
 }
 //
@@ -13071,8 +13196,8 @@ function $084574008ccedf86$var$WebGLPrograms(renderer, cubemaps, cubeuvmaps, ext
     function releaseProgram(program) {
         if (--program.usedTimes === 0) {
             // Remove from unordered set
-            const i123 = programs.indexOf(program);
-            programs[i123] = programs[programs.length - 1];
+            const i = programs.indexOf(program);
+            programs[i] = programs[programs.length - 1];
             programs.pop();
             // Free WebGL resources
             program.destroy();
@@ -13193,8 +13318,8 @@ function $084574008ccedf86$var$WebGLRenderList() {
     }
     function finish() {
         // Clear references from inactive renderItems in the list
-        for(let i124 = renderItemsIndex, il = renderItems.length; i124 < il; i124++){
-            const renderItem = renderItems[i124];
+        for(let i = renderItemsIndex, il = renderItems.length; i < il; i++){
+            const renderItem = renderItems[i];
             if (renderItem.id === null) break;
             renderItem.id = null;
             renderItem.object = null;
@@ -13371,13 +13496,13 @@ function $084574008ccedf86$var$WebGLLights(extensions, capabilities) {
         pointShadowMatrix: [],
         hemi: []
     };
-    for(let i125 = 0; i125 < 9; i125++)state.probe.push(new $084574008ccedf86$export$64b5c384219d3699());
+    for(let i = 0; i < 9; i++)state.probe.push(new $084574008ccedf86$export$64b5c384219d3699());
     const vector3 = new $084574008ccedf86$export$64b5c384219d3699();
     const matrix4 = new $084574008ccedf86$export$2ae72fc923e5eb5();
     const matrix42 = new $084574008ccedf86$export$2ae72fc923e5eb5();
     function setup(lights, physicallyCorrectLights) {
         let r = 0, g = 0, b = 0;
-        for(let i127 = 0; i127 < 9; i127++)state.probe[i127].set(0, 0, 0);
+        for(let i = 0; i < 9; i++)state.probe[i].set(0, 0, 0);
         let directionalLength = 0;
         let pointLength = 0;
         let spotLength = 0;
@@ -13389,8 +13514,8 @@ function $084574008ccedf86$var$WebGLLights(extensions, capabilities) {
         lights.sort($084574008ccedf86$var$shadowCastingLightsFirst);
         // artist-friendly light intensity scaling factor
         const scaleFactor = physicallyCorrectLights !== true ? Math.PI : 1;
-        for(let i126 = 0, l = lights.length; i126 < l; i126++){
-            const light = lights[i126];
+        for(let i = 0, l = lights.length; i < l; i++){
+            const light = lights[i];
             const color = light.color;
             const intensity = light.intensity;
             const distance = light.distance;
@@ -13531,8 +13656,8 @@ function $084574008ccedf86$var$WebGLLights(extensions, capabilities) {
         let rectAreaLength = 0;
         let hemiLength = 0;
         const viewMatrix = camera.matrixWorldInverse;
-        for(let i128 = 0, l = lights.length; i128 < l; i128++){
-            const light = lights[i128];
+        for(let i = 0, l = lights.length; i < l; i++){
+            const light = lights[i];
             if (light.isDirectionalLight) {
                 const uniforms = state.directional[directionalLength];
                 uniforms.direction.setFromMatrixPosition(light.matrixWorld);
@@ -13759,8 +13884,8 @@ function $084574008ccedf86$var$WebGLShadowMap(_renderer, _objects, _capabilities
         _state.buffers.depth.setTest(true);
         _state.setScissorTest(false);
         // render depth map
-        for(let i129 = 0, il = lights.length; i129 < il; i129++){
-            const light = lights[i129];
+        for(let i = 0, il = lights.length; i < il; i++){
+            const light = lights[i];
             const shadow = light.shadow;
             if (shadow === undefined) {
                 console.warn("THREE.WebGLShadowMap:", light, "has no shadow.");
@@ -13907,7 +14032,7 @@ function $084574008ccedf86$var$WebGLShadowMap(_renderer, _objects, _capabilities
             }
         }
         const children = object.children;
-        for(let i130 = 0, l = children.length; i130 < l; i130++)renderObject(children[i130], camera, shadowCamera, light, type);
+        for(let i = 0, l = children.length; i < l; i++)renderObject(children[i], camera, shadowCamera, light, type);
     }
 }
 function $084574008ccedf86$var$WebGLState(gl, extensions, capabilities) {
@@ -14120,7 +14245,7 @@ function $084574008ccedf86$var$WebGLState(gl, extensions, capabilities) {
         gl.bindTexture(type, texture);
         gl.texParameteri(type, 10241, 9728);
         gl.texParameteri(type, 10240, 9728);
-        for(let i131 = 0; i131 < count; i131++)gl.texImage2D(target + i131, 0, 6408, 1, 1, 0, 6408, 5121, data);
+        for(let i = 0; i < count; i++)gl.texImage2D(target + i, 0, 6408, 1, 1, 0, 6408, 5121, data);
         return texture;
     }
     const emptyTextures = {};
@@ -14162,7 +14287,7 @@ function $084574008ccedf86$var$WebGLState(gl, extensions, capabilities) {
         }
         return false;
     }
-    function drawBuffers1(renderTarget, framebuffer) {
+    function drawBuffers(renderTarget, framebuffer) {
         let drawBuffers = defaultDrawbuffers;
         let needsUpdate = false;
         if (renderTarget) {
@@ -14174,7 +14299,7 @@ function $084574008ccedf86$var$WebGLState(gl, extensions, capabilities) {
             if (renderTarget.isWebGLMultipleRenderTargets) {
                 const textures = renderTarget.texture;
                 if (drawBuffers.length !== textures.length || drawBuffers[0] !== 36064) {
-                    for(let i132 = 0, il = textures.length; i132 < il; i132++)drawBuffers[i132] = 36064 + i132;
+                    for(let i = 0, il = textures.length; i < il; i++)drawBuffers[i] = 36064 + i;
                     drawBuffers.length = textures.length;
                     needsUpdate = true;
                 }
@@ -14456,13 +14581,13 @@ function $084574008ccedf86$var$WebGLState(gl, extensions, capabilities) {
         }
     }
     //
-    function scissor1(scissor) {
+    function scissor(scissor) {
         if (currentScissor.equals(scissor) === false) {
             gl.scissor(scissor.x, scissor.y, scissor.z, scissor.w);
             currentScissor.copy(scissor);
         }
     }
-    function viewport1(viewport) {
+    function viewport(viewport) {
         if (currentViewport.equals(viewport) === false) {
             gl.viewport(viewport.x, viewport.y, viewport.z, viewport.w);
             currentViewport.copy(viewport);
@@ -14540,7 +14665,7 @@ function $084574008ccedf86$var$WebGLState(gl, extensions, capabilities) {
         enable: enable,
         disable: disable,
         bindFramebuffer: bindFramebuffer,
-        drawBuffers: drawBuffers1,
+        drawBuffers: drawBuffers,
         useProgram: useProgram,
         setBlending: setBlending,
         setMaterial: setMaterial,
@@ -14560,8 +14685,8 @@ function $084574008ccedf86$var$WebGLState(gl, extensions, capabilities) {
         texSubImage2D: texSubImage2D,
         texSubImage3D: texSubImage3D,
         compressedTexSubImage2D: compressedTexSubImage2D,
-        scissor: scissor1,
-        viewport: viewport1,
+        scissor: scissor,
+        viewport: viewport,
         reset: reset
     };
 }
@@ -14574,7 +14699,7 @@ function $084574008ccedf86$var$WebGLTextures(_gl, extensions, state, properties,
     const multisampledRTTExt = extensions.has("WEBGL_multisampled_render_to_texture") ? extensions.get("WEBGL_multisampled_render_to_texture") : null;
     const supportsInvalidateFramebuffer = /OculusBrowser/g.test(navigator.userAgent);
     const _videoTextures = new WeakMap();
-    let _canvas1;
+    let _canvas;
     const _sources = new WeakMap(); // maps WebglTexture objects to instances of Source
     // cordova iOS (as of 5.0) still uses UIWebView, which provides OffscreenCanvas,
     // also OffscreenCanvas.getContext("webgl"), but not OffscreenCanvas.getContext("2d")!
@@ -14601,9 +14726,9 @@ function $084574008ccedf86$var$WebGLTextures(_gl, extensions, state, properties,
                 const floor = needsPowerOfTwo ? $084574008ccedf86$var$floorPowerOfTwo : Math.floor;
                 const width = floor(scale * image.width);
                 const height = floor(scale * image.height);
-                if (_canvas1 === undefined) _canvas1 = createCanvas(width, height);
+                if (_canvas === undefined) _canvas = createCanvas(width, height);
                 // cube textures can't reuse the same canvas
-                const canvas = needsNewCanvas ? createCanvas(width, height) : _canvas1;
+                const canvas = needsNewCanvas ? createCanvas(width, height) : _canvas;
                 canvas.width = width;
                 canvas.height = height;
                 const context = canvas.getContext("2d");
@@ -14716,26 +14841,26 @@ function $084574008ccedf86$var$WebGLTextures(_gl, extensions, state, properties,
             info.memory.textures--;
         }
         if (renderTarget.depthTexture) renderTarget.depthTexture.dispose();
-        if (renderTarget.isWebGLCubeRenderTarget) for(let i134 = 0; i134 < 6; i134++){
-            _gl.deleteFramebuffer(renderTargetProperties.__webglFramebuffer[i134]);
-            if (renderTargetProperties.__webglDepthbuffer) _gl.deleteRenderbuffer(renderTargetProperties.__webglDepthbuffer[i134]);
+        if (renderTarget.isWebGLCubeRenderTarget) for(let i = 0; i < 6; i++){
+            _gl.deleteFramebuffer(renderTargetProperties.__webglFramebuffer[i]);
+            if (renderTargetProperties.__webglDepthbuffer) _gl.deleteRenderbuffer(renderTargetProperties.__webglDepthbuffer[i]);
         }
         else {
             _gl.deleteFramebuffer(renderTargetProperties.__webglFramebuffer);
             if (renderTargetProperties.__webglDepthbuffer) _gl.deleteRenderbuffer(renderTargetProperties.__webglDepthbuffer);
             if (renderTargetProperties.__webglMultisampledFramebuffer) _gl.deleteFramebuffer(renderTargetProperties.__webglMultisampledFramebuffer);
             if (renderTargetProperties.__webglColorRenderbuffer) {
-                for(let i135 = 0; i135 < renderTargetProperties.__webglColorRenderbuffer.length; i135++)if (renderTargetProperties.__webglColorRenderbuffer[i135]) _gl.deleteRenderbuffer(renderTargetProperties.__webglColorRenderbuffer[i135]);
+                for(let i = 0; i < renderTargetProperties.__webglColorRenderbuffer.length; i++)if (renderTargetProperties.__webglColorRenderbuffer[i]) _gl.deleteRenderbuffer(renderTargetProperties.__webglColorRenderbuffer[i]);
             }
             if (renderTargetProperties.__webglDepthRenderbuffer) _gl.deleteRenderbuffer(renderTargetProperties.__webglDepthRenderbuffer);
         }
-        if (renderTarget.isWebGLMultipleRenderTargets) for(let i133 = 0, il = texture.length; i133 < il; i133++){
-            const attachmentProperties = properties.get(texture[i133]);
+        if (renderTarget.isWebGLMultipleRenderTargets) for(let i = 0, il = texture.length; i < il; i++){
+            const attachmentProperties = properties.get(texture[i]);
             if (attachmentProperties.__webglTexture) {
                 _gl.deleteTexture(attachmentProperties.__webglTexture);
                 info.memory.textures--;
             }
-            properties.remove(texture[i133]);
+            properties.remove(texture[i]);
         }
         properties.remove(texture);
         properties.remove(renderTarget);
@@ -14960,10 +15085,10 @@ function $084574008ccedf86$var$WebGLTextures(_gl, extensions, state, properties,
                 // set 0 level mipmap and then use GL to generate other mipmap levels
                 if (mipmaps.length > 0 && supportsMips) {
                     if (useTexStorage && allocateMemory) state.texStorage2D(3553, levels, glInternalFormat, mipmaps[0].width, mipmaps[0].height);
-                    for(let i136 = 0, il = mipmaps.length; i136 < il; i136++){
-                        mipmap = mipmaps[i136];
-                        if (useTexStorage) state.texSubImage2D(3553, i136, 0, 0, mipmap.width, mipmap.height, glFormat, glType, mipmap.data);
-                        else state.texImage2D(3553, i136, glInternalFormat, mipmap.width, mipmap.height, 0, glFormat, glType, mipmap.data);
+                    for(let i = 0, il = mipmaps.length; i < il; i++){
+                        mipmap = mipmaps[i];
+                        if (useTexStorage) state.texSubImage2D(3553, i, 0, 0, mipmap.width, mipmap.height, glFormat, glType, mipmap.data);
+                        else state.texImage2D(3553, i, glInternalFormat, mipmap.width, mipmap.height, 0, glFormat, glType, mipmap.data);
                     }
                     texture.generateMipmaps = false;
                 } else if (useTexStorage) {
@@ -14972,15 +15097,15 @@ function $084574008ccedf86$var$WebGLTextures(_gl, extensions, state, properties,
                 } else state.texImage2D(3553, 0, glInternalFormat, image.width, image.height, 0, glFormat, glType, image.data);
             } else if (texture.isCompressedTexture) {
                 if (useTexStorage && allocateMemory) state.texStorage2D(3553, levels, glInternalFormat, mipmaps[0].width, mipmaps[0].height);
-                for(let i137 = 0, il = mipmaps.length; i137 < il; i137++){
-                    mipmap = mipmaps[i137];
+                for(let i = 0, il = mipmaps.length; i < il; i++){
+                    mipmap = mipmaps[i];
                     if (texture.format !== $084574008ccedf86$export$3f8bb04b555a363c) {
                         if (glFormat !== null) {
-                            if (useTexStorage) state.compressedTexSubImage2D(3553, i137, 0, 0, mipmap.width, mipmap.height, glFormat, mipmap.data);
-                            else state.compressedTexImage2D(3553, i137, glInternalFormat, mipmap.width, mipmap.height, 0, mipmap.data);
+                            if (useTexStorage) state.compressedTexSubImage2D(3553, i, 0, 0, mipmap.width, mipmap.height, glFormat, mipmap.data);
+                            else state.compressedTexImage2D(3553, i, glInternalFormat, mipmap.width, mipmap.height, 0, mipmap.data);
                         } else console.warn("THREE.WebGLRenderer: Attempt to load unsupported compressed texture format in .uploadTexture()");
-                    } else if (useTexStorage) state.texSubImage2D(3553, i137, 0, 0, mipmap.width, mipmap.height, glFormat, glType, mipmap.data);
-                    else state.texImage2D(3553, i137, glInternalFormat, mipmap.width, mipmap.height, 0, glFormat, glType, mipmap.data);
+                    } else if (useTexStorage) state.texSubImage2D(3553, i, 0, 0, mipmap.width, mipmap.height, glFormat, glType, mipmap.data);
+                    else state.texImage2D(3553, i, glInternalFormat, mipmap.width, mipmap.height, 0, glFormat, glType, mipmap.data);
                 }
             } else if (texture.isDataArrayTexture) {
                 if (useTexStorage) {
@@ -14997,8 +15122,8 @@ function $084574008ccedf86$var$WebGLTextures(_gl, extensions, state, properties,
                     if (useTexStorage) state.texStorage2D(3553, levels, glInternalFormat, image.width, image.height);
                     else {
                         let width = image.width, height = image.height;
-                        for(let i138 = 0; i138 < levels; i138++){
-                            state.texImage2D(3553, i138, glInternalFormat, width, height, 0, glFormat, glType, null);
+                        for(let i = 0; i < levels; i++){
+                            state.texImage2D(3553, i, glInternalFormat, width, height, 0, glFormat, glType, null);
                             width >>= 1;
                             height >>= 1;
                         }
@@ -15011,10 +15136,10 @@ function $084574008ccedf86$var$WebGLTextures(_gl, extensions, state, properties,
                 // set 0 level mipmap and then use GL to generate other mipmap levels
                 if (mipmaps.length > 0 && supportsMips) {
                     if (useTexStorage && allocateMemory) state.texStorage2D(3553, levels, glInternalFormat, mipmaps[0].width, mipmaps[0].height);
-                    for(let i139 = 0, il = mipmaps.length; i139 < il; i139++){
-                        mipmap = mipmaps[i139];
-                        if (useTexStorage) state.texSubImage2D(3553, i139, 0, 0, glFormat, glType, mipmap);
-                        else state.texImage2D(3553, i139, glInternalFormat, glFormat, glType, mipmap);
+                    for(let i = 0, il = mipmaps.length; i < il; i++){
+                        mipmap = mipmaps[i];
+                        if (useTexStorage) state.texSubImage2D(3553, i, 0, 0, glFormat, glType, mipmap);
+                        else state.texImage2D(3553, i, glInternalFormat, glFormat, glType, mipmap);
                     }
                     texture.generateMipmaps = false;
                 } else if (useTexStorage) {
@@ -15042,10 +15167,10 @@ function $084574008ccedf86$var$WebGLTextures(_gl, extensions, state, properties,
             const isCompressed = texture.isCompressedTexture || texture.image[0].isCompressedTexture;
             const isDataTexture = texture.image[0] && texture.image[0].isDataTexture;
             const cubeImage = [];
-            for(let i140 = 0; i140 < 6; i140++){
-                if (!isCompressed && !isDataTexture) cubeImage[i140] = resizeImage(texture.image[i140], false, true, maxCubemapSize);
-                else cubeImage[i140] = isDataTexture ? texture.image[i140].image : texture.image[i140];
-                cubeImage[i140] = verifyColorSpace(texture, cubeImage[i140]);
+            for(let i = 0; i < 6; i++){
+                if (!isCompressed && !isDataTexture) cubeImage[i] = resizeImage(texture.image[i], false, true, maxCubemapSize);
+                else cubeImage[i] = isDataTexture ? texture.image[i].image : texture.image[i];
+                cubeImage[i] = verifyColorSpace(texture, cubeImage[i]);
             }
             const image = cubeImage[0], supportsMips = isPowerOfTwo$1(image) || isWebGL2, glFormat = utils.convert(texture.format, texture.encoding), glType = utils.convert(texture.type), glInternalFormat = getInternalFormat(texture.internalFormat, glFormat, glType, texture.encoding);
             const useTexStorage = isWebGL2 && texture.isVideoTexture !== true;
@@ -15055,17 +15180,17 @@ function $084574008ccedf86$var$WebGLTextures(_gl, extensions, state, properties,
             let mipmaps;
             if (isCompressed) {
                 if (useTexStorage && allocateMemory) state.texStorage2D(34067, levels, glInternalFormat, image.width, image.height);
-                for(let i141 = 0; i141 < 6; i141++){
-                    mipmaps = cubeImage[i141].mipmaps;
+                for(let i = 0; i < 6; i++){
+                    mipmaps = cubeImage[i].mipmaps;
                     for(let j = 0; j < mipmaps.length; j++){
                         const mipmap = mipmaps[j];
                         if (texture.format !== $084574008ccedf86$export$3f8bb04b555a363c) {
                             if (glFormat !== null) {
-                                if (useTexStorage) state.compressedTexSubImage2D(34069 + i141, j, 0, 0, mipmap.width, mipmap.height, glFormat, mipmap.data);
-                                else state.compressedTexImage2D(34069 + i141, j, glInternalFormat, mipmap.width, mipmap.height, 0, mipmap.data);
+                                if (useTexStorage) state.compressedTexSubImage2D(34069 + i, j, 0, 0, mipmap.width, mipmap.height, glFormat, mipmap.data);
+                                else state.compressedTexImage2D(34069 + i, j, glInternalFormat, mipmap.width, mipmap.height, 0, mipmap.data);
                             } else console.warn("THREE.WebGLRenderer: Attempt to load unsupported compressed texture format in .setTextureCube()");
-                        } else if (useTexStorage) state.texSubImage2D(34069 + i141, j, 0, 0, mipmap.width, mipmap.height, glFormat, glType, mipmap.data);
-                        else state.texImage2D(34069 + i141, j, glInternalFormat, mipmap.width, mipmap.height, 0, glFormat, glType, mipmap.data);
+                        } else if (useTexStorage) state.texSubImage2D(34069 + i, j, 0, 0, mipmap.width, mipmap.height, glFormat, glType, mipmap.data);
+                        else state.texImage2D(34069 + i, j, glInternalFormat, mipmap.width, mipmap.height, 0, glFormat, glType, mipmap.data);
                     }
                 }
             } else {
@@ -15077,22 +15202,22 @@ function $084574008ccedf86$var$WebGLTextures(_gl, extensions, state, properties,
                     if (mipmaps.length > 0) levels++;
                     state.texStorage2D(34067, levels, glInternalFormat, cubeImage[0].width, cubeImage[0].height);
                 }
-                for(let i142 = 0; i142 < 6; i142++)if (isDataTexture) {
-                    if (useTexStorage) state.texSubImage2D(34069 + i142, 0, 0, 0, cubeImage[i142].width, cubeImage[i142].height, glFormat, glType, cubeImage[i142].data);
-                    else state.texImage2D(34069 + i142, 0, glInternalFormat, cubeImage[i142].width, cubeImage[i142].height, 0, glFormat, glType, cubeImage[i142].data);
+                for(let i = 0; i < 6; i++)if (isDataTexture) {
+                    if (useTexStorage) state.texSubImage2D(34069 + i, 0, 0, 0, cubeImage[i].width, cubeImage[i].height, glFormat, glType, cubeImage[i].data);
+                    else state.texImage2D(34069 + i, 0, glInternalFormat, cubeImage[i].width, cubeImage[i].height, 0, glFormat, glType, cubeImage[i].data);
                     for(let j = 0; j < mipmaps.length; j++){
                         const mipmap = mipmaps[j];
-                        const mipmapImage = mipmap.image[i142].image;
-                        if (useTexStorage) state.texSubImage2D(34069 + i142, j + 1, 0, 0, mipmapImage.width, mipmapImage.height, glFormat, glType, mipmapImage.data);
-                        else state.texImage2D(34069 + i142, j + 1, glInternalFormat, mipmapImage.width, mipmapImage.height, 0, glFormat, glType, mipmapImage.data);
+                        const mipmapImage = mipmap.image[i].image;
+                        if (useTexStorage) state.texSubImage2D(34069 + i, j + 1, 0, 0, mipmapImage.width, mipmapImage.height, glFormat, glType, mipmapImage.data);
+                        else state.texImage2D(34069 + i, j + 1, glInternalFormat, mipmapImage.width, mipmapImage.height, 0, glFormat, glType, mipmapImage.data);
                     }
                 } else {
-                    if (useTexStorage) state.texSubImage2D(34069 + i142, 0, 0, 0, glFormat, glType, cubeImage[i142]);
-                    else state.texImage2D(34069 + i142, 0, glInternalFormat, glFormat, glType, cubeImage[i142]);
+                    if (useTexStorage) state.texSubImage2D(34069 + i, 0, 0, 0, glFormat, glType, cubeImage[i]);
+                    else state.texImage2D(34069 + i, 0, glInternalFormat, glFormat, glType, cubeImage[i]);
                     for(let j = 0; j < mipmaps.length; j++){
                         const mipmap = mipmaps[j];
-                        if (useTexStorage) state.texSubImage2D(34069 + i142, j + 1, 0, 0, glFormat, glType, mipmap.image[i142]);
-                        else state.texImage2D(34069 + i142, j + 1, glInternalFormat, glFormat, glType, mipmap.image[i142]);
+                        if (useTexStorage) state.texSubImage2D(34069 + i, j + 1, 0, 0, glFormat, glType, mipmap.image[i]);
+                        else state.texImage2D(34069 + i, j + 1, glInternalFormat, glFormat, glType, mipmap.image[i]);
                     }
                 }
             }
@@ -15145,8 +15270,8 @@ function $084574008ccedf86$var$WebGLTextures(_gl, extensions, state, properties,
             const textures = renderTarget.isWebGLMultipleRenderTargets === true ? renderTarget.texture : [
                 renderTarget.texture
             ];
-            for(let i143 = 0; i143 < textures.length; i143++){
-                const texture = textures[i143];
+            for(let i = 0; i < textures.length; i++){
+                const texture = textures[i];
                 const glFormat = utils.convert(texture.format, texture.encoding);
                 const glType = utils.convert(texture.type);
                 const glInternalFormat = getInternalFormat(texture.internalFormat, glFormat, glType, texture.encoding);
@@ -15190,10 +15315,10 @@ function $084574008ccedf86$var$WebGLTextures(_gl, extensions, state, properties,
             setupDepthTexture(renderTargetProperties.__webglFramebuffer, renderTarget);
         } else if (isCube) {
             renderTargetProperties.__webglDepthbuffer = [];
-            for(let i144 = 0; i144 < 6; i144++){
-                state.bindFramebuffer(36160, renderTargetProperties.__webglFramebuffer[i144]);
-                renderTargetProperties.__webglDepthbuffer[i144] = _gl.createRenderbuffer();
-                setupRenderBufferStorage(renderTargetProperties.__webglDepthbuffer[i144], renderTarget, false);
+            for(let i = 0; i < 6; i++){
+                state.bindFramebuffer(36160, renderTargetProperties.__webglFramebuffer[i]);
+                renderTargetProperties.__webglDepthbuffer[i] = _gl.createRenderbuffer();
+                setupRenderBufferStorage(renderTargetProperties.__webglDepthbuffer[i], renderTarget, false);
             }
         } else {
             state.bindFramebuffer(36160, renderTargetProperties.__webglFramebuffer);
@@ -15225,14 +15350,14 @@ function $084574008ccedf86$var$WebGLTextures(_gl, extensions, state, properties,
         // Setup framebuffer
         if (isCube) {
             renderTargetProperties.__webglFramebuffer = [];
-            for(let i145 = 0; i145 < 6; i145++)renderTargetProperties.__webglFramebuffer[i145] = _gl.createFramebuffer();
+            for(let i = 0; i < 6; i++)renderTargetProperties.__webglFramebuffer[i] = _gl.createFramebuffer();
         } else {
             renderTargetProperties.__webglFramebuffer = _gl.createFramebuffer();
             if (isMultipleRenderTargets) {
                 if (capabilities.drawBuffers) {
                     const textures = renderTarget.texture;
-                    for(let i146 = 0, il = textures.length; i146 < il; i146++){
-                        const attachmentProperties = properties.get(textures[i146]);
+                    for(let i = 0, il = textures.length; i < il; i++){
+                        const attachmentProperties = properties.get(textures[i]);
                         if (attachmentProperties.__webglTexture === undefined) {
                             attachmentProperties.__webglTexture = _gl.createTexture();
                             info.memory.textures++;
@@ -15247,16 +15372,16 @@ function $084574008ccedf86$var$WebGLTextures(_gl, extensions, state, properties,
                 renderTargetProperties.__webglMultisampledFramebuffer = _gl.createFramebuffer();
                 renderTargetProperties.__webglColorRenderbuffer = [];
                 state.bindFramebuffer(36160, renderTargetProperties.__webglMultisampledFramebuffer);
-                for(let i147 = 0; i147 < textures.length; i147++){
-                    const texture = textures[i147];
-                    renderTargetProperties.__webglColorRenderbuffer[i147] = _gl.createRenderbuffer();
-                    _gl.bindRenderbuffer(36161, renderTargetProperties.__webglColorRenderbuffer[i147]);
+                for(let i = 0; i < textures.length; i++){
+                    const texture = textures[i];
+                    renderTargetProperties.__webglColorRenderbuffer[i] = _gl.createRenderbuffer();
+                    _gl.bindRenderbuffer(36161, renderTargetProperties.__webglColorRenderbuffer[i]);
                     const glFormat = utils.convert(texture.format, texture.encoding);
                     const glType = utils.convert(texture.type);
                     const glInternalFormat = getInternalFormat(texture.internalFormat, glFormat, glType, texture.encoding);
                     const samples = getRenderTargetSamples(renderTarget);
                     _gl.renderbufferStorageMultisample(36161, samples, glInternalFormat, renderTarget.width, renderTarget.height);
-                    _gl.framebufferRenderbuffer(36160, 36064 + i147, 36161, renderTargetProperties.__webglColorRenderbuffer[i147]);
+                    _gl.framebufferRenderbuffer(36160, 36064 + i, 36161, renderTargetProperties.__webglColorRenderbuffer[i]);
                 }
                 _gl.bindRenderbuffer(36161, null);
                 if (renderTarget.depthBuffer) {
@@ -15270,17 +15395,17 @@ function $084574008ccedf86$var$WebGLTextures(_gl, extensions, state, properties,
         if (isCube) {
             state.bindTexture(34067, textureProperties.__webglTexture);
             setTextureParameters(34067, texture, supportsMips);
-            for(let i148 = 0; i148 < 6; i148++)setupFrameBufferTexture(renderTargetProperties.__webglFramebuffer[i148], renderTarget, texture, 36064, 34069 + i148);
+            for(let i = 0; i < 6; i++)setupFrameBufferTexture(renderTargetProperties.__webglFramebuffer[i], renderTarget, texture, 36064, 34069 + i);
             if (textureNeedsGenerateMipmaps(texture, supportsMips)) generateMipmap(34067);
             state.unbindTexture();
         } else if (isMultipleRenderTargets) {
             const textures = renderTarget.texture;
-            for(let i149 = 0, il = textures.length; i149 < il; i149++){
-                const attachment = textures[i149];
+            for(let i = 0, il = textures.length; i < il; i++){
+                const attachment = textures[i];
                 const attachmentProperties = properties.get(attachment);
                 state.bindTexture(3553, attachmentProperties.__webglTexture);
                 setTextureParameters(3553, attachment, supportsMips);
-                setupFrameBufferTexture(renderTargetProperties.__webglFramebuffer, renderTarget, attachment, 36064 + i149, 3553);
+                setupFrameBufferTexture(renderTargetProperties.__webglFramebuffer, renderTarget, attachment, 36064 + i, 3553);
                 if (textureNeedsGenerateMipmaps(attachment, supportsMips)) generateMipmap(3553);
             }
             state.unbindTexture();
@@ -15304,8 +15429,8 @@ function $084574008ccedf86$var$WebGLTextures(_gl, extensions, state, properties,
         const textures = renderTarget.isWebGLMultipleRenderTargets === true ? renderTarget.texture : [
             renderTarget.texture
         ];
-        for(let i150 = 0, il = textures.length; i150 < il; i150++){
-            const texture = textures[i150];
+        for(let i = 0, il = textures.length; i < il; i++){
+            const texture = textures[i];
             if (textureNeedsGenerateMipmaps(texture, supportsMips)) {
                 const target = renderTarget.isWebGLCubeRenderTarget ? 34067 : 3553;
                 const webglTexture = properties.get(texture).__webglTexture;
@@ -15328,23 +15453,23 @@ function $084574008ccedf86$var$WebGLTextures(_gl, extensions, state, properties,
             const renderTargetProperties = properties.get(renderTarget);
             const isMultipleRenderTargets = renderTarget.isWebGLMultipleRenderTargets === true;
             // If MRT we need to remove FBO attachments
-            if (isMultipleRenderTargets) for(let i153 = 0; i153 < textures.length; i153++){
+            if (isMultipleRenderTargets) for(let i = 0; i < textures.length; i++){
                 state.bindFramebuffer(36160, renderTargetProperties.__webglMultisampledFramebuffer);
-                _gl.framebufferRenderbuffer(36160, 36064 + i153, 36161, null);
+                _gl.framebufferRenderbuffer(36160, 36064 + i, 36161, null);
                 state.bindFramebuffer(36160, renderTargetProperties.__webglFramebuffer);
-                _gl.framebufferTexture2D(36009, 36064 + i153, 3553, null, 0);
+                _gl.framebufferTexture2D(36009, 36064 + i, 3553, null, 0);
             }
             state.bindFramebuffer(36008, renderTargetProperties.__webglMultisampledFramebuffer);
             state.bindFramebuffer(36009, renderTargetProperties.__webglFramebuffer);
-            for(let i151 = 0; i151 < textures.length; i151++){
-                invalidationArray.push(36064 + i151);
+            for(let i = 0; i < textures.length; i++){
+                invalidationArray.push(36064 + i);
                 if (renderTarget.depthBuffer) invalidationArray.push(depthStyle);
                 const ignoreDepthValues = renderTargetProperties.__ignoreDepthValues !== undefined ? renderTargetProperties.__ignoreDepthValues : false;
                 if (ignoreDepthValues === false) {
                     if (renderTarget.depthBuffer) mask |= 256;
                     if (renderTarget.stencilBuffer) mask |= 1024;
                 }
-                if (isMultipleRenderTargets) _gl.framebufferRenderbuffer(36008, 36064, 36161, renderTargetProperties.__webglColorRenderbuffer[i151]);
+                if (isMultipleRenderTargets) _gl.framebufferRenderbuffer(36008, 36064, 36161, renderTargetProperties.__webglColorRenderbuffer[i]);
                 if (ignoreDepthValues === true) {
                     _gl.invalidateFramebuffer(36008, [
                         depthStyle
@@ -15354,7 +15479,7 @@ function $084574008ccedf86$var$WebGLTextures(_gl, extensions, state, properties,
                     ]);
                 }
                 if (isMultipleRenderTargets) {
-                    const webglTexture = properties.get(textures[i151]).__webglTexture;
+                    const webglTexture = properties.get(textures[i]).__webglTexture;
                     _gl.framebufferTexture2D(36009, 36064, 3553, webglTexture, 0);
                 }
                 _gl.blitFramebuffer(0, 0, width, height, 0, 0, width, height, mask, 9728);
@@ -15363,12 +15488,12 @@ function $084574008ccedf86$var$WebGLTextures(_gl, extensions, state, properties,
             state.bindFramebuffer(36008, null);
             state.bindFramebuffer(36009, null);
             // If MRT since pre-blit we removed the FBO we need to reconstruct the attachments
-            if (isMultipleRenderTargets) for(let i152 = 0; i152 < textures.length; i152++){
+            if (isMultipleRenderTargets) for(let i = 0; i < textures.length; i++){
                 state.bindFramebuffer(36160, renderTargetProperties.__webglMultisampledFramebuffer);
-                _gl.framebufferRenderbuffer(36160, 36064 + i152, 36161, renderTargetProperties.__webglColorRenderbuffer[i152]);
-                const webglTexture = properties.get(textures[i152]).__webglTexture;
+                _gl.framebufferRenderbuffer(36160, 36064 + i, 36161, renderTargetProperties.__webglColorRenderbuffer[i]);
+                const webglTexture = properties.get(textures[i]).__webglTexture;
                 state.bindFramebuffer(36160, renderTargetProperties.__webglFramebuffer);
-                _gl.framebufferTexture2D(36009, 36064 + i152, 3553, webglTexture, 0);
+                _gl.framebufferTexture2D(36009, 36064 + i, 3553, webglTexture, 0);
             }
             state.bindFramebuffer(36009, renderTargetProperties.__webglMultisampledFramebuffer);
         }
@@ -15755,15 +15880,15 @@ class $084574008ccedf86$var$WebXRManager extends $084574008ccedf86$export$ec8b66
         const controllers = [];
         const inputSourcesMap = new Map();
         //
-        const cameraL1 = new $084574008ccedf86$export$74e4ae24825f68d7();
-        cameraL1.layers.enable(1);
-        cameraL1.viewport = new $084574008ccedf86$export$fa7daccca11cdbe3();
-        const cameraR1 = new $084574008ccedf86$export$74e4ae24825f68d7();
-        cameraR1.layers.enable(2);
-        cameraR1.viewport = new $084574008ccedf86$export$fa7daccca11cdbe3();
-        const cameras1 = [
-            cameraL1,
-            cameraR1
+        const cameraL = new $084574008ccedf86$export$74e4ae24825f68d7();
+        cameraL.layers.enable(1);
+        cameraL.viewport = new $084574008ccedf86$export$fa7daccca11cdbe3();
+        const cameraR = new $084574008ccedf86$export$74e4ae24825f68d7();
+        cameraR.layers.enable(2);
+        cameraR.viewport = new $084574008ccedf86$export$fa7daccca11cdbe3();
+        const cameras = [
+            cameraL,
+            cameraR
         ];
         const cameraVR = new $084574008ccedf86$export$56b937d9e5581166();
         cameraVR.layers.enable(1);
@@ -15939,13 +16064,13 @@ class $084574008ccedf86$var$WebXRManager extends $084574008ccedf86$export$ec8b66
         function onInputSourcesChange(event) {
             const inputSources = session.inputSources;
             // Assign controllers to available inputSources
-            for(let i156 = 0; i156 < inputSources.length; i156++){
-                const index = inputSources[i156].handedness === "right" ? 1 : 0;
-                inputSourcesMap.set(inputSources[i156], controllers[index]);
+            for(let i = 0; i < inputSources.length; i++){
+                const index = inputSources[i].handedness === "right" ? 1 : 0;
+                inputSourcesMap.set(inputSources[i], controllers[index]);
             }
             // Notify disconnected
-            for(let i154 = 0; i154 < event.removed.length; i154++){
-                const inputSource = event.removed[i154];
+            for(let i = 0; i < event.removed.length; i++){
+                const inputSource = event.removed[i];
                 const controller = inputSourcesMap.get(inputSource);
                 if (controller) {
                     controller.dispatchEvent({
@@ -15956,8 +16081,8 @@ class $084574008ccedf86$var$WebXRManager extends $084574008ccedf86$export$ec8b66
                 }
             }
             // Notify connected
-            for(let i155 = 0; i155 < event.added.length; i155++){
-                const inputSource = event.added[i155];
+            for(let i = 0; i < event.added.length; i++){
+                const inputSource = event.added[i];
                 const controller = inputSourcesMap.get(inputSource);
                 if (controller) controller.dispatchEvent({
                     type: "connected",
@@ -16018,8 +16143,8 @@ class $084574008ccedf86$var$WebXRManager extends $084574008ccedf86$export$ec8b66
         }
         this.updateCamera = function(camera) {
             if (session === null) return;
-            cameraVR.near = cameraR1.near = cameraL1.near = camera.near;
-            cameraVR.far = cameraR1.far = cameraL1.far = camera.far;
+            cameraVR.near = cameraR.near = cameraL.near = camera.near;
+            cameraVR.far = cameraR.far = cameraL.far = camera.far;
             if (_currentDepthNear !== cameraVR.near || _currentDepthFar !== cameraVR.far) {
                 // Note that the new renderState won't apply until the next frame. See #18320
                 session.updateRenderState({
@@ -16032,7 +16157,7 @@ class $084574008ccedf86$var$WebXRManager extends $084574008ccedf86$export$ec8b66
             const parent = camera.parent;
             const cameras = cameraVR.cameras;
             updateCamera(cameraVR, parent);
-            for(let i158 = 0; i158 < cameras.length; i158++)updateCamera(cameras[i158], parent);
+            for(let i = 0; i < cameras.length; i++)updateCamera(cameras[i], parent);
             cameraVR.matrixWorld.decompose(cameraVR.position, cameraVR.quaternion, cameraVR.scale);
             // update user camera and its children
             camera.position.copy(cameraVR.position);
@@ -16041,11 +16166,11 @@ class $084574008ccedf86$var$WebXRManager extends $084574008ccedf86$export$ec8b66
             camera.matrix.copy(cameraVR.matrix);
             camera.matrixWorld.copy(cameraVR.matrixWorld);
             const children = camera.children;
-            for(let i157 = 0, l = children.length; i157 < l; i157++)children[i157].updateMatrixWorld(true);
+            for(let i = 0, l = children.length; i < l; i++)children[i].updateMatrixWorld(true);
             // update projection matrix for proper view frustum culling
-            if (cameras.length === 2) setProjectionFromUnion(cameraVR, cameraL1, cameraR1);
+            if (cameras.length === 2) setProjectionFromUnion(cameraVR, cameraL, cameraR);
             else // assume single camera setup (AR)
-            cameraVR.projectionMatrix.copy(cameraL1.projectionMatrix);
+            cameraVR.projectionMatrix.copy(cameraL.projectionMatrix);
         };
         this.getCamera = function() {
             return cameraVR;
@@ -16078,37 +16203,37 @@ class $084574008ccedf86$var$WebXRManager extends $084574008ccedf86$export$ec8b66
                     cameraVR.cameras.length = 0;
                     cameraVRNeedsUpdate = true;
                 }
-                for(let i159 = 0; i159 < views.length; i159++){
-                    const view = views[i159];
+                for(let i = 0; i < views.length; i++){
+                    const view = views[i];
                     let viewport = null;
                     if (glBaseLayer !== null) viewport = glBaseLayer.getViewport(view);
                     else {
                         const glSubImage = glBinding.getViewSubImage(glProjLayer, view);
                         viewport = glSubImage.viewport;
                         // For side-by-side projection, we only produce a single texture for both eyes.
-                        if (i159 === 0) {
+                        if (i === 0) {
                             renderer.setRenderTargetTextures(newRenderTarget, glSubImage.colorTexture, glProjLayer.ignoreDepthValues ? undefined : glSubImage.depthStencilTexture);
                             renderer.setRenderTarget(newRenderTarget);
                         }
                     }
-                    let camera = cameras1[i159];
+                    let camera = cameras[i];
                     if (camera === undefined) {
                         camera = new $084574008ccedf86$export$74e4ae24825f68d7();
-                        camera.layers.enable(i159);
+                        camera.layers.enable(i);
                         camera.viewport = new $084574008ccedf86$export$fa7daccca11cdbe3();
-                        cameras1[i159] = camera;
+                        cameras[i] = camera;
                     }
                     camera.matrix.fromArray(view.transform.matrix);
                     camera.projectionMatrix.fromArray(view.projectionMatrix);
                     camera.viewport.set(viewport.x, viewport.y, viewport.width, viewport.height);
-                    if (i159 === 0) cameraVR.matrix.copy(camera.matrix);
+                    if (i === 0) cameraVR.matrix.copy(camera.matrix);
                     if (cameraVRNeedsUpdate === true) cameraVR.cameras.push(camera);
                 }
             }
             //
             const inputSources = session.inputSources;
-            for(let i160 = 0; i160 < controllers.length; i160++){
-                const inputSource = inputSources[i160];
+            for(let i = 0; i < controllers.length; i++){
+                const inputSource = inputSources[i];
                 const controller = inputSourcesMap.get(inputSource);
                 if (controller !== undefined) controller.update(inputSource, frame, customReferenceSpace || referenceSpace);
             }
@@ -16385,20 +16510,20 @@ function $084574008ccedf86$var$createCanvasElement() {
     canvas.style.display = "block";
     return canvas;
 }
-function $084574008ccedf86$export$f6cc00ef28d7cf97(parameters1 = {}) {
+function $084574008ccedf86$export$f6cc00ef28d7cf97(parameters = {}) {
     this.isWebGLRenderer = true;
-    const _canvas2 = parameters1.canvas !== undefined ? parameters1.canvas : $084574008ccedf86$var$createCanvasElement(), _context1 = parameters1.context !== undefined ? parameters1.context : null, _depth = parameters1.depth !== undefined ? parameters1.depth : true, _stencil = parameters1.stencil !== undefined ? parameters1.stencil : true, _antialias = parameters1.antialias !== undefined ? parameters1.antialias : false, _premultipliedAlpha = parameters1.premultipliedAlpha !== undefined ? parameters1.premultipliedAlpha : true, _preserveDrawingBuffer = parameters1.preserveDrawingBuffer !== undefined ? parameters1.preserveDrawingBuffer : false, _powerPreference = parameters1.powerPreference !== undefined ? parameters1.powerPreference : "default", _failIfMajorPerformanceCaveat = parameters1.failIfMajorPerformanceCaveat !== undefined ? parameters1.failIfMajorPerformanceCaveat : false;
+    const _canvas = parameters.canvas !== undefined ? parameters.canvas : $084574008ccedf86$var$createCanvasElement(), _context = parameters.context !== undefined ? parameters.context : null, _depth = parameters.depth !== undefined ? parameters.depth : true, _stencil = parameters.stencil !== undefined ? parameters.stencil : true, _antialias = parameters.antialias !== undefined ? parameters.antialias : false, _premultipliedAlpha = parameters.premultipliedAlpha !== undefined ? parameters.premultipliedAlpha : true, _preserveDrawingBuffer = parameters.preserveDrawingBuffer !== undefined ? parameters.preserveDrawingBuffer : false, _powerPreference = parameters.powerPreference !== undefined ? parameters.powerPreference : "default", _failIfMajorPerformanceCaveat = parameters.failIfMajorPerformanceCaveat !== undefined ? parameters.failIfMajorPerformanceCaveat : false;
     let _alpha;
-    if (_context1 !== null) _alpha = _context1.getContextAttributes().alpha;
-    else _alpha = parameters1.alpha !== undefined ? parameters1.alpha : false;
-    let currentRenderList1 = null;
+    if (_context !== null) _alpha = _context.getContextAttributes().alpha;
+    else _alpha = parameters.alpha !== undefined ? parameters.alpha : false;
+    let currentRenderList = null;
     let currentRenderState = null;
     // render() can be called from within a callback triggered by another render.
     // We track this so that the nested render call gets its list and state isolated from the parent render call.
     const renderListStack = [];
     const renderStateStack = [];
     // public properties
-    this.domElement = _canvas2;
+    this.domElement = _canvas;
     // Debug configuration container
     this.debug = {
         /**
@@ -16449,8 +16574,8 @@ function $084574008ccedf86$export$f6cc00ef28d7cf97(parameters1 = {}) {
     const _currentScissor = new $084574008ccedf86$export$fa7daccca11cdbe3();
     let _currentScissorTest = null;
     //
-    let _width = _canvas2.width;
-    let _height = _canvas2.height;
+    let _width = _canvas.width;
+    let _height = _canvas.height;
     let _pixelRatio = 1;
     let _opaqueSort = null;
     let _transparentSort = null;
@@ -16465,8 +16590,8 @@ function $084574008ccedf86$export$f6cc00ef28d7cf97(parameters1 = {}) {
     // transmission
     let _transmissionRenderTarget = null;
     // camera matrices cache
-    const _projScreenMatrix1 = new $084574008ccedf86$export$2ae72fc923e5eb5();
-    const _vector21 = new $084574008ccedf86$export$c977b3e384af9ae1();
+    const _projScreenMatrix = new $084574008ccedf86$export$2ae72fc923e5eb5();
+    const _vector2 = new $084574008ccedf86$export$c977b3e384af9ae1();
     const _vector3 = new $084574008ccedf86$export$64b5c384219d3699();
     const _emptyScene = {
         background: null,
@@ -16479,11 +16604,11 @@ function $084574008ccedf86$export$f6cc00ef28d7cf97(parameters1 = {}) {
         return _currentRenderTarget === null ? _pixelRatio : 1;
     }
     // initialize
-    let _gl = _context1;
+    let _gl = _context;
     function getContext(contextNames, contextAttributes) {
-        for(let i161 = 0; i161 < contextNames.length; i161++){
-            const contextName = contextNames[i161];
-            const context = _canvas2.getContext(contextName, contextAttributes);
+        for(let i = 0; i < contextNames.length; i++){
+            const contextName = contextNames[i];
+            const context = _canvas.getContext(contextName, contextAttributes);
             if (context !== null) return context;
         }
         return null;
@@ -16500,11 +16625,11 @@ function $084574008ccedf86$export$f6cc00ef28d7cf97(parameters1 = {}) {
             failIfMajorPerformanceCaveat: _failIfMajorPerformanceCaveat
         };
         // OffscreenCanvas does not have setAttribute, see #22811
-        if ("setAttribute" in _canvas2) _canvas2.setAttribute("data-engine", `three.js r${$084574008ccedf86$export$3545e07a80636437}`);
+        if ("setAttribute" in _canvas) _canvas.setAttribute("data-engine", `three.js r${$084574008ccedf86$export$3545e07a80636437}`);
         // event listeners must be registered before WebGL context is created, see #12753
-        _canvas2.addEventListener("webglcontextlost", onContextLost, false);
-        _canvas2.addEventListener("webglcontextrestored", onContextRestore, false);
-        _canvas2.addEventListener("webglcontextcreationerror", onContextCreationError, false);
+        _canvas.addEventListener("webglcontextlost", onContextLost, false);
+        _canvas.addEventListener("webglcontextrestored", onContextRestore, false);
+        _canvas.addEventListener("webglcontextcreationerror", onContextCreationError, false);
         if (_gl === null) {
             const contextNames = [
                 "webgl2",
@@ -16537,7 +16662,7 @@ function $084574008ccedf86$export$f6cc00ef28d7cf97(parameters1 = {}) {
     let utils, bindingStates;
     function initGLContext() {
         extensions = new $084574008ccedf86$var$WebGLExtensions(_gl);
-        capabilities = new $084574008ccedf86$var$WebGLCapabilities(_gl, extensions, parameters1);
+        capabilities = new $084574008ccedf86$var$WebGLCapabilities(_gl, extensions, parameters);
         extensions.init(capabilities);
         utils = new $084574008ccedf86$export$ddaebcad857649a8(_gl, extensions, capabilities);
         state = new $084574008ccedf86$var$WebGLState(_gl, extensions, capabilities);
@@ -16606,11 +16731,11 @@ function $084574008ccedf86$export$f6cc00ef28d7cf97(parameters1 = {}) {
         }
         _width = width;
         _height = height;
-        _canvas2.width = Math.floor(width * _pixelRatio);
-        _canvas2.height = Math.floor(height * _pixelRatio);
+        _canvas.width = Math.floor(width * _pixelRatio);
+        _canvas.height = Math.floor(height * _pixelRatio);
         if (updateStyle !== false) {
-            _canvas2.style.width = width + "px";
-            _canvas2.style.height = height + "px";
+            _canvas.style.width = width + "px";
+            _canvas.style.height = height + "px";
         }
         this.setViewport(0, 0, width, height);
     };
@@ -16621,8 +16746,8 @@ function $084574008ccedf86$export$f6cc00ef28d7cf97(parameters1 = {}) {
         _width = width;
         _height = height;
         _pixelRatio = pixelRatio;
-        _canvas2.width = Math.floor(width * pixelRatio);
-        _canvas2.height = Math.floor(height * pixelRatio);
+        _canvas.width = Math.floor(width * pixelRatio);
+        _canvas.height = Math.floor(height * pixelRatio);
         this.setViewport(0, 0, width, height);
     };
     this.getCurrentViewport = function(target) {
@@ -16687,9 +16812,9 @@ function $084574008ccedf86$export$f6cc00ef28d7cf97(parameters1 = {}) {
     };
     //
     this.dispose = function() {
-        _canvas2.removeEventListener("webglcontextlost", onContextLost, false);
-        _canvas2.removeEventListener("webglcontextrestored", onContextRestore, false);
-        _canvas2.removeEventListener("webglcontextcreationerror", onContextCreationError, false);
+        _canvas.removeEventListener("webglcontextlost", onContextLost, false);
+        _canvas.removeEventListener("webglcontextrestored", onContextRestore, false);
+        _canvas.removeEventListener("webglcontextcreationerror", onContextCreationError, false);
         renderLists.dispose();
         renderStates.dispose();
         properties.dispose();
@@ -16823,8 +16948,8 @@ function $084574008ccedf86$export$f6cc00ef28d7cf97(parameters1 = {}) {
         scene.traverse(function(object) {
             const material = object.material;
             if (material) {
-                if (Array.isArray(material)) for(let i162 = 0; i162 < material.length; i162++){
-                    const material2 = material[i162];
+                if (Array.isArray(material)) for(let i = 0; i < material.length; i++){
+                    const material2 = material[i];
                     getProgram(material2, scene, object);
                 }
                 else getProgram(material, scene, object);
@@ -16874,16 +16999,16 @@ function $084574008ccedf86$export$f6cc00ef28d7cf97(parameters1 = {}) {
         currentRenderState = renderStates.get(scene, renderStateStack.length);
         currentRenderState.init();
         renderStateStack.push(currentRenderState);
-        _projScreenMatrix1.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
-        _frustum.setFromProjectionMatrix(_projScreenMatrix1);
+        _projScreenMatrix.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
+        _frustum.setFromProjectionMatrix(_projScreenMatrix);
         _localClippingEnabled = this.localClippingEnabled;
         _clippingEnabled = clipping.init(this.clippingPlanes, _localClippingEnabled, camera);
-        currentRenderList1 = renderLists.get(scene, renderListStack.length);
-        currentRenderList1.init();
-        renderListStack.push(currentRenderList1);
+        currentRenderList = renderLists.get(scene, renderListStack.length);
+        currentRenderList.init();
+        renderListStack.push(currentRenderList);
         projectObject(scene, camera, 0, _this.sortObjects);
-        currentRenderList1.finish();
-        if (_this.sortObjects === true) currentRenderList1.sort(_opaqueSort, _transparentSort);
+        currentRenderList.finish();
+        if (_this.sortObjects === true) currentRenderList.sort(_opaqueSort, _transparentSort);
         //
         if (_clippingEnabled === true) clipping.beginShadows();
         const shadowsArray = currentRenderState.state.shadowsArray;
@@ -16892,16 +17017,16 @@ function $084574008ccedf86$export$f6cc00ef28d7cf97(parameters1 = {}) {
         //
         if (this.info.autoReset === true) this.info.reset();
         //
-        background.render(currentRenderList1, scene);
+        background.render(currentRenderList, scene);
         // render scene
         currentRenderState.setupLights(_this.physicallyCorrectLights);
         if (camera.isArrayCamera) {
             const cameras = camera.cameras;
-            for(let i163 = 0, l = cameras.length; i163 < l; i163++){
-                const camera2 = cameras[i163];
-                renderScene(currentRenderList1, scene, camera2, camera2.viewport);
+            for(let i = 0, l = cameras.length; i < l; i++){
+                const camera2 = cameras[i];
+                renderScene(currentRenderList, scene, camera2, camera2.viewport);
             }
-        } else renderScene(currentRenderList1, scene, camera);
+        } else renderScene(currentRenderList, scene, camera);
         //
         if (_currentRenderTarget !== null) {
             // resolve multisample renderbuffers to a single-sample texture if necessary
@@ -16919,8 +17044,8 @@ function $084574008ccedf86$export$f6cc00ef28d7cf97(parameters1 = {}) {
         if (renderStateStack.length > 0) currentRenderState = renderStateStack[renderStateStack.length - 1];
         else currentRenderState = null;
         renderListStack.pop();
-        if (renderListStack.length > 0) currentRenderList1 = renderListStack[renderListStack.length - 1];
-        else currentRenderList1 = null;
+        if (renderListStack.length > 0) currentRenderList = renderListStack[renderListStack.length - 1];
+        else currentRenderList = null;
     };
     function projectObject(object, camera, groupOrder, sortObjects) {
         if (object.visible === false) return;
@@ -16934,10 +17059,10 @@ function $084574008ccedf86$export$f6cc00ef28d7cf97(parameters1 = {}) {
                 if (object.castShadow) currentRenderState.pushShadow(object);
             } else if (object.isSprite) {
                 if (!object.frustumCulled || _frustum.intersectsSprite(object)) {
-                    if (sortObjects) _vector3.setFromMatrixPosition(object.matrixWorld).applyMatrix4(_projScreenMatrix1);
+                    if (sortObjects) _vector3.setFromMatrixPosition(object.matrixWorld).applyMatrix4(_projScreenMatrix);
                     const geometry = objects.update(object);
                     const material = object.material;
-                    if (material.visible) currentRenderList1.push(object, geometry, material, groupOrder, _vector3.z, null);
+                    if (material.visible) currentRenderList.push(object, geometry, material, groupOrder, _vector3.z, null);
                 }
             } else if (object.isMesh || object.isLine || object.isPoints) {
                 if (object.isSkinnedMesh) // update skeleton only once in a frame
@@ -16948,22 +17073,22 @@ function $084574008ccedf86$export$f6cc00ef28d7cf97(parameters1 = {}) {
                     }
                 }
                 if (!object.frustumCulled || _frustum.intersectsObject(object)) {
-                    if (sortObjects) _vector3.setFromMatrixPosition(object.matrixWorld).applyMatrix4(_projScreenMatrix1);
+                    if (sortObjects) _vector3.setFromMatrixPosition(object.matrixWorld).applyMatrix4(_projScreenMatrix);
                     const geometry = objects.update(object);
                     const material = object.material;
                     if (Array.isArray(material)) {
                         const groups = geometry.groups;
-                        for(let i164 = 0, l = groups.length; i164 < l; i164++){
-                            const group = groups[i164];
+                        for(let i = 0, l = groups.length; i < l; i++){
+                            const group = groups[i];
                             const groupMaterial = material[group.materialIndex];
-                            if (groupMaterial && groupMaterial.visible) currentRenderList1.push(object, geometry, groupMaterial, groupOrder, _vector3.z, group);
+                            if (groupMaterial && groupMaterial.visible) currentRenderList.push(object, geometry, groupMaterial, groupOrder, _vector3.z, group);
                         }
-                    } else if (material.visible) currentRenderList1.push(object, geometry, material, groupOrder, _vector3.z, null);
+                    } else if (material.visible) currentRenderList.push(object, geometry, material, groupOrder, _vector3.z, null);
                 }
             }
         }
         const children = object.children;
-        for(let i165 = 0, l = children.length; i165 < l; i165++)projectObject(children[i165], camera, groupOrder, sortObjects);
+        for(let i = 0, l = children.length; i < l; i++)projectObject(children[i], camera, groupOrder, sortObjects);
     }
     function renderScene(currentRenderList, scene, camera, viewport) {
         const opaqueObjects = currentRenderList.opaque;
@@ -16989,9 +17114,9 @@ function $084574008ccedf86$export$f6cc00ef28d7cf97(parameters1 = {}) {
             minFilter: $084574008ccedf86$export$5d8599b6a933fb1b,
             samples: isWebGL2 && _antialias === true ? 4 : 0
         });
-        _this.getDrawingBufferSize(_vector21);
-        if (isWebGL2) _transmissionRenderTarget.setSize(_vector21.x, _vector21.y);
-        else _transmissionRenderTarget.setSize($084574008ccedf86$var$floorPowerOfTwo(_vector21.x), $084574008ccedf86$var$floorPowerOfTwo(_vector21.y));
+        _this.getDrawingBufferSize(_vector2);
+        if (isWebGL2) _transmissionRenderTarget.setSize(_vector2.x, _vector2.y);
+        else _transmissionRenderTarget.setSize($084574008ccedf86$var$floorPowerOfTwo(_vector2.x), $084574008ccedf86$var$floorPowerOfTwo(_vector2.y));
         //
         const currentRenderTarget = _this.getRenderTarget();
         _this.setRenderTarget(_transmissionRenderTarget);
@@ -17008,8 +17133,8 @@ function $084574008ccedf86$export$f6cc00ef28d7cf97(parameters1 = {}) {
     }
     function renderObjects(renderList, scene, camera) {
         const overrideMaterial = scene.isScene === true ? scene.overrideMaterial : null;
-        for(let i166 = 0, l = renderList.length; i166 < l; i166++){
-            const renderItem = renderList[i166];
+        for(let i = 0, l = renderList.length; i < l; i++){
+            const renderItem = renderList[i];
             const object = renderItem.object;
             const geometry = renderItem.geometry;
             const material = overrideMaterial === null ? renderItem.material : overrideMaterial;
@@ -17363,7 +17488,9 @@ function $084574008ccedf86$export$f6cc00ef28d7cf97(parameters1 = {}) {
                     return;
                 }
                 const halfFloatSupportedByExt = textureType === $084574008ccedf86$export$2697304443f382bc && (extensions.has("EXT_color_buffer_half_float") || capabilities.isWebGL2 && extensions.has("EXT_color_buffer_float"));
-                if (textureType !== $084574008ccedf86$export$2e8ce08d3f6f5e10 && utils.convert(textureType) !== _gl.getParameter(35738) && !(textureType === $084574008ccedf86$export$f6d331659b644596 && (capabilities.isWebGL2 || extensions.has("OES_texture_float") || extensions.has("WEBGL_color_buffer_float"))) && !halfFloatSupportedByExt) {
+                if (textureType !== $084574008ccedf86$export$2e8ce08d3f6f5e10 && utils.convert(textureType) !== _gl.getParameter(35738) && // Edge and Chrome Mac < 52 (#9513)
+                !(textureType === $084574008ccedf86$export$f6d331659b644596 && (capabilities.isWebGL2 || extensions.has("OES_texture_float") || extensions.has("WEBGL_color_buffer_float"))) && // Chrome Mac >= 52 and Firefox
+                !halfFloatSupportedByExt) {
                     console.error("THREE.WebGLRenderer.readRenderTargetPixels: renderTarget is not in UnsignedByteType or implementation defined type.");
                     return;
                 }
@@ -17569,7 +17696,7 @@ class $084574008ccedf86$export$3d5cd879f108f53f {
     copyAt(index1, attribute, index2) {
         index1 *= this.stride;
         index2 *= attribute.stride;
-        for(let i167 = 0, l = this.stride; i167 < l; i167++)this.array[index1 + i167] = attribute.array[index2 + i167];
+        for(let i = 0, l = this.stride; i < l; i++)this.array[index1 + i] = attribute.array[index2 + i];
         return this;
     }
     set(value, offset = 0) {
@@ -17623,26 +17750,26 @@ class $084574008ccedf86$export$920b6d07334599c7 {
         this.data.needsUpdate = value;
     }
     applyMatrix4(m) {
-        for(let i168 = 0, l = this.data.count; i168 < l; i168++){
-            $084574008ccedf86$var$_vector$6.fromBufferAttribute(this, i168);
+        for(let i = 0, l = this.data.count; i < l; i++){
+            $084574008ccedf86$var$_vector$6.fromBufferAttribute(this, i);
             $084574008ccedf86$var$_vector$6.applyMatrix4(m);
-            this.setXYZ(i168, $084574008ccedf86$var$_vector$6.x, $084574008ccedf86$var$_vector$6.y, $084574008ccedf86$var$_vector$6.z);
+            this.setXYZ(i, $084574008ccedf86$var$_vector$6.x, $084574008ccedf86$var$_vector$6.y, $084574008ccedf86$var$_vector$6.z);
         }
         return this;
     }
     applyNormalMatrix(m) {
-        for(let i169 = 0, l = this.count; i169 < l; i169++){
-            $084574008ccedf86$var$_vector$6.fromBufferAttribute(this, i169);
+        for(let i = 0, l = this.count; i < l; i++){
+            $084574008ccedf86$var$_vector$6.fromBufferAttribute(this, i);
             $084574008ccedf86$var$_vector$6.applyNormalMatrix(m);
-            this.setXYZ(i169, $084574008ccedf86$var$_vector$6.x, $084574008ccedf86$var$_vector$6.y, $084574008ccedf86$var$_vector$6.z);
+            this.setXYZ(i, $084574008ccedf86$var$_vector$6.x, $084574008ccedf86$var$_vector$6.y, $084574008ccedf86$var$_vector$6.z);
         }
         return this;
     }
     transformDirection(m) {
-        for(let i170 = 0, l = this.count; i170 < l; i170++){
-            $084574008ccedf86$var$_vector$6.fromBufferAttribute(this, i170);
+        for(let i = 0, l = this.count; i < l; i++){
+            $084574008ccedf86$var$_vector$6.fromBufferAttribute(this, i);
             $084574008ccedf86$var$_vector$6.transformDirection(m);
-            this.setXYZ(i170, $084574008ccedf86$var$_vector$6.x, $084574008ccedf86$var$_vector$6.y, $084574008ccedf86$var$_vector$6.z);
+            this.setXYZ(i, $084574008ccedf86$var$_vector$6.x, $084574008ccedf86$var$_vector$6.y, $084574008ccedf86$var$_vector$6.z);
         }
         return this;
     }
@@ -17699,8 +17826,8 @@ class $084574008ccedf86$export$920b6d07334599c7 {
         if (data === undefined) {
             console.log("THREE.InterleavedBufferAttribute.clone(): Cloning an interlaved buffer attribute will deinterleave buffer data.");
             const array = [];
-            for(let i171 = 0; i171 < this.count; i171++){
-                const index = i171 * this.data.stride + this.offset;
+            for(let i = 0; i < this.count; i++){
+                const index = i * this.data.stride + this.offset;
                 for(let j = 0; j < this.itemSize; j++)array.push(this.data.array[index + j]);
             }
             return new $084574008ccedf86$export$8dea267bd6bde117(new this.array.constructor(array), this.itemSize, this.normalized);
@@ -17714,8 +17841,8 @@ class $084574008ccedf86$export$920b6d07334599c7 {
         if (data === undefined) {
             console.log("THREE.InterleavedBufferAttribute.toJSON(): Serializing an interlaved buffer attribute will deinterleave buffer data.");
             const array = [];
-            for(let i172 = 0; i172 < this.count; i172++){
-                const index = i172 * this.data.stride + this.offset;
+            for(let i = 0; i < this.count; i++){
+                const index = i * this.data.stride + this.offset;
                 for(let j = 0; j < this.itemSize; j++)array.push(this.data.array[index + j]);
             }
             // deinterleave data and save it as an ordinary buffer attribute for now
@@ -17822,7 +17949,7 @@ class $084574008ccedf86$export$3075603db8e6204c extends $084574008ccedf86$export
         this.material = material !== undefined ? material : new $084574008ccedf86$export$5ec7dd1c6994bf8e();
         this.center = new $084574008ccedf86$export$c977b3e384af9ae1(0.5, 0.5);
     }
-    raycast(raycaster, intersects2) {
+    raycast(raycaster, intersects) {
         if (raycaster.camera === null) console.error('THREE.Sprite: "Raycaster.camera" needs to be set in order to raycast against sprites.');
         $084574008ccedf86$var$_worldScale.setFromMatrixScale(this.matrixWorld);
         $084574008ccedf86$var$_viewWorldMatrix.copy(raycaster.camera.matrixWorld);
@@ -17853,7 +17980,7 @@ class $084574008ccedf86$export$3075603db8e6204c extends $084574008ccedf86$export
         }
         const distance = raycaster.ray.origin.distanceTo($084574008ccedf86$var$_intersectPoint);
         if (distance < raycaster.near || distance > raycaster.far) return;
-        intersects2.push({
+        intersects.push({
             distance: distance,
             point: $084574008ccedf86$var$_intersectPoint.clone(),
             uv: $084574008ccedf86$export$5a465592bfe74b48.getUV($084574008ccedf86$var$_intersectPoint, $084574008ccedf86$var$_vA, $084574008ccedf86$var$_vB, $084574008ccedf86$var$_vC, $084574008ccedf86$var$_uvA, $084574008ccedf86$var$_uvB, $084574008ccedf86$var$_uvC, new $084574008ccedf86$export$c977b3e384af9ae1()),
@@ -17903,8 +18030,8 @@ class $084574008ccedf86$export$112e7237be0c5f30 extends $084574008ccedf86$export
     copy(source) {
         super.copy(source, false);
         const levels = source.levels;
-        for(let i173 = 0, l = levels.length; i173 < l; i173++){
-            const level = levels[i173];
+        for(let i = 0, l = levels.length; i < l; i++){
+            const level = levels[i];
             this.addLevel(level.object.clone(), level.distance);
         }
         this.autoUpdate = source.autoUpdate;
@@ -17930,20 +18057,20 @@ class $084574008ccedf86$export$112e7237be0c5f30 extends $084574008ccedf86$export
     getObjectForDistance(distance) {
         const levels = this.levels;
         if (levels.length > 0) {
-            let i174, l;
-            for(i174 = 1, l = levels.length; i174 < l; i174++){
-                if (distance < levels[i174].distance) break;
+            let i, l;
+            for(i = 1, l = levels.length; i < l; i++){
+                if (distance < levels[i].distance) break;
             }
-            return levels[i174 - 1].object;
+            return levels[i - 1].object;
         }
         return null;
     }
-    raycast(raycaster, intersects3) {
+    raycast(raycaster, intersects) {
         const levels = this.levels;
         if (levels.length > 0) {
             $084574008ccedf86$var$_v1$2.setFromMatrixPosition(this.matrixWorld);
             const distance = raycaster.ray.origin.distanceTo($084574008ccedf86$var$_v1$2);
-            this.getObjectForDistance(distance).raycast(raycaster, intersects3);
+            this.getObjectForDistance(distance).raycast(raycaster, intersects);
         }
     }
     update(camera) {
@@ -17953,15 +18080,15 @@ class $084574008ccedf86$export$112e7237be0c5f30 extends $084574008ccedf86$export
             $084574008ccedf86$var$_v2$1.setFromMatrixPosition(this.matrixWorld);
             const distance = $084574008ccedf86$var$_v1$2.distanceTo($084574008ccedf86$var$_v2$1) / camera.zoom;
             levels[0].object.visible = true;
-            let i175, l;
-            for(i175 = 1, l = levels.length; i175 < l; i175++){
-                if (distance >= levels[i175].distance) {
-                    levels[i175 - 1].object.visible = false;
-                    levels[i175].object.visible = true;
+            let i, l;
+            for(i = 1, l = levels.length; i < l; i++){
+                if (distance >= levels[i].distance) {
+                    levels[i - 1].object.visible = false;
+                    levels[i].object.visible = true;
                 } else break;
             }
-            this._currentLevel = i175 - 1;
-            for(; i175 < l; i175++)levels[i175].object.visible = false;
+            this._currentLevel = i - 1;
+            for(; i < l; i++)levels[i].object.visible = false;
         }
     }
     toJSON(meta) {
@@ -17969,8 +18096,8 @@ class $084574008ccedf86$export$112e7237be0c5f30 extends $084574008ccedf86$export
         if (this.autoUpdate === false) data.object.autoUpdate = false;
         data.object.levels = [];
         const levels = this.levels;
-        for(let i176 = 0, l = levels.length; i176 < l; i176++){
-            const level = levels[i176];
+        for(let i = 0, l = levels.length; i < l; i++){
+            const level = levels[i];
             data.object.levels.push({
                 object: level.object.uuid,
                 distance: level.distance
@@ -18017,12 +18144,12 @@ class $084574008ccedf86$export$b303577035157ecf extends $084574008ccedf86$export
     normalizeSkinWeights() {
         const vector = new $084574008ccedf86$export$fa7daccca11cdbe3();
         const skinWeight = this.geometry.attributes.skinWeight;
-        for(let i177 = 0, l = skinWeight.count; i177 < l; i177++){
-            vector.fromBufferAttribute(skinWeight, i177);
+        for(let i = 0, l = skinWeight.count; i < l; i++){
+            vector.fromBufferAttribute(skinWeight, i);
             const scale = 1.0 / vector.manhattanLength();
             if (scale !== Infinity) vector.multiplyScalar(scale);
             else vector.set(1, 0, 0, 0); // do something reasonable
-            skinWeight.setXYZW(i177, vector.x, vector.y, vector.z, vector.w);
+            skinWeight.setXYZW(i, vector.x, vector.y, vector.z, vector.w);
         }
     }
     updateMatrixWorld(force) {
@@ -18038,10 +18165,10 @@ class $084574008ccedf86$export$b303577035157ecf extends $084574008ccedf86$export
         $084574008ccedf86$var$_skinWeight.fromBufferAttribute(geometry.attributes.skinWeight, index);
         $084574008ccedf86$var$_basePosition.copy(target).applyMatrix4(this.bindMatrix);
         target.set(0, 0, 0);
-        for(let i178 = 0; i178 < 4; i178++){
-            const weight = $084574008ccedf86$var$_skinWeight.getComponent(i178);
+        for(let i = 0; i < 4; i++){
+            const weight = $084574008ccedf86$var$_skinWeight.getComponent(i);
             if (weight !== 0) {
-                const boneIndex = $084574008ccedf86$var$_skinIndex.getComponent(i178);
+                const boneIndex = $084574008ccedf86$var$_skinIndex.getComponent(i);
                 $084574008ccedf86$var$_matrix.multiplyMatrices(skeleton.bones[boneIndex].matrixWorld, skeleton.boneInverses[boneIndex]);
                 target.addScaledVector($084574008ccedf86$var$_vector$5.copy($084574008ccedf86$var$_basePosition).applyMatrix4($084574008ccedf86$var$_matrix), weight);
             }
@@ -18093,26 +18220,26 @@ class $084574008ccedf86$export$8f31e4c4a37b8e9c {
         if (bones.length !== boneInverses.length) {
             console.warn("THREE.Skeleton: Number of inverse bone matrices does not match amount of bones.");
             this.boneInverses = [];
-            for(let i179 = 0, il = this.bones.length; i179 < il; i179++)this.boneInverses.push(new $084574008ccedf86$export$2ae72fc923e5eb5());
+            for(let i = 0, il = this.bones.length; i < il; i++)this.boneInverses.push(new $084574008ccedf86$export$2ae72fc923e5eb5());
         }
     }
     calculateInverses() {
         this.boneInverses.length = 0;
-        for(let i180 = 0, il = this.bones.length; i180 < il; i180++){
+        for(let i = 0, il = this.bones.length; i < il; i++){
             const inverse = new $084574008ccedf86$export$2ae72fc923e5eb5();
-            if (this.bones[i180]) inverse.copy(this.bones[i180].matrixWorld).invert();
+            if (this.bones[i]) inverse.copy(this.bones[i].matrixWorld).invert();
             this.boneInverses.push(inverse);
         }
     }
     pose() {
         // recover the bind-time world matrices
-        for(let i182 = 0, il = this.bones.length; i182 < il; i182++){
-            const bone = this.bones[i182];
-            if (bone) bone.matrixWorld.copy(this.boneInverses[i182]).invert();
+        for(let i = 0, il = this.bones.length; i < il; i++){
+            const bone = this.bones[i];
+            if (bone) bone.matrixWorld.copy(this.boneInverses[i]).invert();
         }
         // compute the local matrices, positions, rotations and scales
-        for(let i181 = 0, il6 = this.bones.length; i181 < il6; i181++){
-            const bone = this.bones[i181];
+        for(let i = 0, il = this.bones.length; i < il; i++){
+            const bone = this.bones[i];
             if (bone) {
                 if (bone.parent && bone.parent.isBone) {
                     bone.matrix.copy(bone.parent.matrixWorld).invert();
@@ -18128,11 +18255,11 @@ class $084574008ccedf86$export$8f31e4c4a37b8e9c {
         const boneMatrices = this.boneMatrices;
         const boneTexture = this.boneTexture;
         // flatten bone matrices to array
-        for(let i183 = 0, il = bones.length; i183 < il; i183++){
+        for(let i = 0, il = bones.length; i < il; i++){
             // compute the offset between the current and the original transform
-            const matrix = bones[i183] ? bones[i183].matrixWorld : $084574008ccedf86$var$_identityMatrix;
-            $084574008ccedf86$var$_offsetMatrix.multiplyMatrices(matrix, boneInverses[i183]);
-            $084574008ccedf86$var$_offsetMatrix.toArray(boneMatrices, i183 * 16);
+            const matrix = bones[i] ? bones[i].matrixWorld : $084574008ccedf86$var$_identityMatrix;
+            $084574008ccedf86$var$_offsetMatrix.multiplyMatrices(matrix, boneInverses[i]);
+            $084574008ccedf86$var$_offsetMatrix.toArray(boneMatrices, i * 16);
         }
         if (boneTexture !== null) boneTexture.needsUpdate = true;
     }
@@ -18159,8 +18286,8 @@ class $084574008ccedf86$export$8f31e4c4a37b8e9c {
         return this;
     }
     getBoneByName(name) {
-        for(let i184 = 0, il = this.bones.length; i184 < il; i184++){
-            const bone = this.bones[i184];
+        for(let i = 0, il = this.bones.length; i < il; i++){
+            const bone = this.bones[i];
             if (bone.name === name) return bone;
         }
         return undefined;
@@ -18173,15 +18300,15 @@ class $084574008ccedf86$export$8f31e4c4a37b8e9c {
     }
     fromJSON(json, bones) {
         this.uuid = json.uuid;
-        for(let i185 = 0, l = json.bones.length; i185 < l; i185++){
-            const uuid = json.bones[i185];
+        for(let i = 0, l = json.bones.length; i < l; i++){
+            const uuid = json.bones[i];
             let bone = bones[uuid];
             if (bone === undefined) {
                 console.warn("THREE.Skeleton: No bone found with UUID:", uuid);
                 bone = new $084574008ccedf86$export$b127726e56765aa4();
             }
             this.bones.push(bone);
-            this.boneInverses.push(new $084574008ccedf86$export$2ae72fc923e5eb5().fromArray(json.boneInverses[i185]));
+            this.boneInverses.push(new $084574008ccedf86$export$2ae72fc923e5eb5().fromArray(json.boneInverses[i]));
         }
         this.init();
         return this;
@@ -18199,10 +18326,10 @@ class $084574008ccedf86$export$8f31e4c4a37b8e9c {
         data.uuid = this.uuid;
         const bones = this.bones;
         const boneInverses = this.boneInverses;
-        for(let i186 = 0, l = bones.length; i186 < l; i186++){
-            const bone = bones[i186];
+        for(let i = 0, l = bones.length; i < l; i++){
+            const bone = bones[i];
             data.bones.push(bone.uuid);
-            const boneInverse = boneInverses[i186];
+            const boneInverse = boneInverses[i];
             data.boneInverses.push(boneInverse.toArray());
         }
         return data;
@@ -18257,7 +18384,7 @@ class $084574008ccedf86$export$f3c979c331175ad7 extends $084574008ccedf86$export
     getMatrixAt(index, matrix) {
         matrix.fromArray(this.instanceMatrix.array, index * 16);
     }
-    raycast(raycaster, intersects4) {
+    raycast(raycaster, intersects) {
         const matrixWorld = this.matrixWorld;
         const raycastTimes = this.count;
         $084574008ccedf86$var$_mesh.geometry = this.geometry;
@@ -18271,11 +18398,11 @@ class $084574008ccedf86$export$f3c979c331175ad7 extends $084574008ccedf86$export
             $084574008ccedf86$var$_mesh.matrixWorld = $084574008ccedf86$var$_instanceWorldMatrix;
             $084574008ccedf86$var$_mesh.raycast(raycaster, $084574008ccedf86$var$_instanceIntersects);
             // process the result of raycast
-            for(let i187 = 0, l = $084574008ccedf86$var$_instanceIntersects.length; i187 < l; i187++){
-                const intersect = $084574008ccedf86$var$_instanceIntersects[i187];
+            for(let i = 0, l = $084574008ccedf86$var$_instanceIntersects.length; i < l; i++){
+                const intersect = $084574008ccedf86$var$_instanceIntersects[i];
                 intersect.instanceId = instanceId;
                 intersect.object = this;
-                intersects4.push(intersect);
+                intersects.push(intersect);
             }
             $084574008ccedf86$var$_instanceIntersects.length = 0;
         }
@@ -18344,17 +18471,17 @@ class $084574008ccedf86$export$17d680238e50603e extends $084574008ccedf86$export
             const lineDistances = [
                 0
             ];
-            for(let i188 = 1, l = positionAttribute.count; i188 < l; i188++){
-                $084574008ccedf86$var$_start$1.fromBufferAttribute(positionAttribute, i188 - 1);
-                $084574008ccedf86$var$_end$1.fromBufferAttribute(positionAttribute, i188);
-                lineDistances[i188] = lineDistances[i188 - 1];
-                lineDistances[i188] += $084574008ccedf86$var$_start$1.distanceTo($084574008ccedf86$var$_end$1);
+            for(let i = 1, l = positionAttribute.count; i < l; i++){
+                $084574008ccedf86$var$_start$1.fromBufferAttribute(positionAttribute, i - 1);
+                $084574008ccedf86$var$_end$1.fromBufferAttribute(positionAttribute, i);
+                lineDistances[i] = lineDistances[i - 1];
+                lineDistances[i] += $084574008ccedf86$var$_start$1.distanceTo($084574008ccedf86$var$_end$1);
             }
             geometry.setAttribute("lineDistance", new $084574008ccedf86$export$cbe7a62641830ebd(lineDistances, 1));
         } else console.warn("THREE.Line.computeLineDistances(): Computation only possible with non-indexed BufferGeometry.");
         return this;
     }
-    raycast(raycaster, intersects5) {
+    raycast(raycaster, intersects) {
         const geometry = this.geometry;
         const matrixWorld = this.matrixWorld;
         const threshold = raycaster.params.Line.threshold;
@@ -18381,9 +18508,9 @@ class $084574008ccedf86$export$17d680238e50603e extends $084574008ccedf86$export
         if (index !== null) {
             const start = Math.max(0, drawRange.start);
             const end = Math.min(index.count, drawRange.start + drawRange.count);
-            for(let i189 = start, l = end - 1; i189 < l; i189 += step){
-                const a = index.getX(i189);
-                const b = index.getX(i189 + 1);
+            for(let i = start, l = end - 1; i < l; i += step){
+                const a = index.getX(i);
+                const b = index.getX(i + 1);
                 vStart.fromBufferAttribute(positionAttribute, a);
                 vEnd.fromBufferAttribute(positionAttribute, b);
                 const distSq = $084574008ccedf86$var$_ray$1.distanceSqToSegment(vStart, vEnd, interRay, interSegment);
@@ -18391,12 +18518,12 @@ class $084574008ccedf86$export$17d680238e50603e extends $084574008ccedf86$export
                 interRay.applyMatrix4(this.matrixWorld); //Move back to world space for distance calculation
                 const distance = raycaster.ray.origin.distanceTo(interRay);
                 if (distance < raycaster.near || distance > raycaster.far) continue;
-                intersects5.push({
+                intersects.push({
                     distance: distance,
                     // What do we want? intersection point on the ray or on the segment??
                     // point: raycaster.ray.at( distance ),
                     point: interSegment.clone().applyMatrix4(this.matrixWorld),
-                    index: i189,
+                    index: i,
                     face: null,
                     faceIndex: null,
                     object: this
@@ -18405,20 +18532,20 @@ class $084574008ccedf86$export$17d680238e50603e extends $084574008ccedf86$export
         } else {
             const start = Math.max(0, drawRange.start);
             const end = Math.min(positionAttribute.count, drawRange.start + drawRange.count);
-            for(let i190 = start, l = end - 1; i190 < l; i190 += step){
-                vStart.fromBufferAttribute(positionAttribute, i190);
-                vEnd.fromBufferAttribute(positionAttribute, i190 + 1);
+            for(let i = start, l = end - 1; i < l; i += step){
+                vStart.fromBufferAttribute(positionAttribute, i);
+                vEnd.fromBufferAttribute(positionAttribute, i + 1);
                 const distSq = $084574008ccedf86$var$_ray$1.distanceSqToSegment(vStart, vEnd, interRay, interSegment);
                 if (distSq > localThresholdSq) continue;
                 interRay.applyMatrix4(this.matrixWorld); //Move back to world space for distance calculation
                 const distance = raycaster.ray.origin.distanceTo(interRay);
                 if (distance < raycaster.near || distance > raycaster.far) continue;
-                intersects5.push({
+                intersects.push({
                     distance: distance,
                     // What do we want? intersection point on the ray or on the segment??
                     // point: raycaster.ray.at( distance ),
                     point: interSegment.clone().applyMatrix4(this.matrixWorld),
-                    index: i190,
+                    index: i,
                     face: null,
                     faceIndex: null,
                     object: this
@@ -18458,11 +18585,11 @@ class $084574008ccedf86$export$ff1ed10fedfdd604 extends $084574008ccedf86$export
         if (geometry.index === null) {
             const positionAttribute = geometry.attributes.position;
             const lineDistances = [];
-            for(let i191 = 0, l = positionAttribute.count; i191 < l; i191 += 2){
-                $084574008ccedf86$var$_start.fromBufferAttribute(positionAttribute, i191);
-                $084574008ccedf86$var$_end.fromBufferAttribute(positionAttribute, i191 + 1);
-                lineDistances[i191] = i191 === 0 ? 0 : lineDistances[i191 - 1];
-                lineDistances[i191 + 1] = lineDistances[i191] + $084574008ccedf86$var$_start.distanceTo($084574008ccedf86$var$_end);
+            for(let i = 0, l = positionAttribute.count; i < l; i += 2){
+                $084574008ccedf86$var$_start.fromBufferAttribute(positionAttribute, i);
+                $084574008ccedf86$var$_end.fromBufferAttribute(positionAttribute, i + 1);
+                lineDistances[i] = i === 0 ? 0 : lineDistances[i - 1];
+                lineDistances[i + 1] = lineDistances[i] + $084574008ccedf86$var$_start.distanceTo($084574008ccedf86$var$_end);
             }
             geometry.setAttribute("lineDistance", new $084574008ccedf86$export$cbe7a62641830ebd(lineDistances, 1));
         } else console.warn("THREE.LineSegments.computeLineDistances(): Computation only possible with non-indexed BufferGeometry.");
@@ -18519,7 +18646,7 @@ class $084574008ccedf86$export$1c787534cb11aa3e extends $084574008ccedf86$export
         this.geometry = source.geometry;
         return this;
     }
-    raycast(raycaster, intersects6) {
+    raycast(raycaster, intersects) {
         const geometry = this.geometry;
         const matrixWorld = this.matrixWorld;
         const threshold = raycaster.params.Points.threshold;
@@ -18541,17 +18668,17 @@ class $084574008ccedf86$export$1c787534cb11aa3e extends $084574008ccedf86$export
         if (index !== null) {
             const start = Math.max(0, drawRange.start);
             const end = Math.min(index.count, drawRange.start + drawRange.count);
-            for(let i192 = start, il = end; i192 < il; i192++){
-                const a = index.getX(i192);
+            for(let i = start, il = end; i < il; i++){
+                const a = index.getX(i);
                 $084574008ccedf86$var$_position$2.fromBufferAttribute(positionAttribute, a);
-                $084574008ccedf86$var$testPoint($084574008ccedf86$var$_position$2, a, localThresholdSq, matrixWorld, raycaster, intersects6, this);
+                $084574008ccedf86$var$testPoint($084574008ccedf86$var$_position$2, a, localThresholdSq, matrixWorld, raycaster, intersects, this);
             }
         } else {
             const start = Math.max(0, drawRange.start);
             const end = Math.min(positionAttribute.count, drawRange.start + drawRange.count);
-            for(let i193 = start, l = end; i193 < l; i193++){
-                $084574008ccedf86$var$_position$2.fromBufferAttribute(positionAttribute, i193);
-                $084574008ccedf86$var$testPoint($084574008ccedf86$var$_position$2, i193, localThresholdSq, matrixWorld, raycaster, intersects6, this);
+            for(let i = start, l = end; i < l; i++){
+                $084574008ccedf86$var$_position$2.fromBufferAttribute(positionAttribute, i);
+                $084574008ccedf86$var$testPoint($084574008ccedf86$var$_position$2, i, localThresholdSq, matrixWorld, raycaster, intersects, this);
             }
         }
     }
@@ -18573,7 +18700,7 @@ class $084574008ccedf86$export$1c787534cb11aa3e extends $084574008ccedf86$export
         }
     }
 }
-function $084574008ccedf86$var$testPoint(point, index, localThresholdSq, matrixWorld, raycaster, intersects7, object) {
+function $084574008ccedf86$var$testPoint(point, index, localThresholdSq, matrixWorld, raycaster, intersects, object) {
     const rayPointDistanceSq = $084574008ccedf86$var$_ray.distanceSqToPoint(point);
     if (rayPointDistanceSq < localThresholdSq) {
         const intersectPoint = new $084574008ccedf86$export$64b5c384219d3699();
@@ -18581,7 +18708,7 @@ function $084574008ccedf86$var$testPoint(point, index, localThresholdSq, matrixW
         intersectPoint.applyMatrix4(matrixWorld);
         const distance = raycaster.ray.origin.distanceTo(intersectPoint);
         if (distance < raycaster.near || distance > raycaster.far) return;
-        intersects7.push({
+        intersects.push({
             distance: distance,
             distanceToRay: Math.sqrt(rayPointDistanceSq),
             point: intersectPoint,
@@ -18738,7 +18865,7 @@ class $084574008ccedf86$export$f7189e49152d1c13 extends $084574008ccedf86$export
     // Given u ( 0 .. 1 ), get a t to find p. This gives you points which are equidistant
     getUtoTmapping(u, distance) {
         const arcLengths = this.getLengths();
-        let i194 = 0;
+        let i = 0;
         const il = arcLengths.length;
         let targetArcLength; // The targeted u distance value to get
         if (distance) targetArcLength = distance;
@@ -18746,26 +18873,26 @@ class $084574008ccedf86$export$f7189e49152d1c13 extends $084574008ccedf86$export
         // binary search for the index with largest value smaller than target u distance
         let low = 0, high = il - 1, comparison;
         while(low <= high){
-            i194 = Math.floor(low + (high - low) / 2); // less likely to overflow, though probably not issue here, JS doesn't really have integers, all numbers are floats
-            comparison = arcLengths[i194] - targetArcLength;
-            if (comparison < 0) low = i194 + 1;
-            else if (comparison > 0) high = i194 - 1;
+            i = Math.floor(low + (high - low) / 2); // less likely to overflow, though probably not issue here, JS doesn't really have integers, all numbers are floats
+            comparison = arcLengths[i] - targetArcLength;
+            if (comparison < 0) low = i + 1;
+            else if (comparison > 0) high = i - 1;
             else {
-                high = i194;
+                high = i;
                 break;
             // DONE
             }
         }
-        i194 = high;
-        if (arcLengths[i194] === targetArcLength) return i194 / (il - 1);
+        i = high;
+        if (arcLengths[i] === targetArcLength) return i / (il - 1);
         // we could get finer grain at lengths, or use simple interpolation between two points
-        const lengthBefore = arcLengths[i194];
-        const lengthAfter = arcLengths[i194 + 1];
+        const lengthBefore = arcLengths[i];
+        const lengthAfter = arcLengths[i + 1];
         const segmentLength = lengthAfter - lengthBefore;
         // determine where we are between the 'before' and 'after' points
         const segmentFraction = (targetArcLength - lengthBefore) / segmentLength;
         // add that fractional amount to t
-        const t = (i194 + segmentFraction) / (il - 1);
+        const t = (i + segmentFraction) / (il - 1);
         return t;
     }
     // Returns a unit vector tangent at t
@@ -18798,9 +18925,9 @@ class $084574008ccedf86$export$f7189e49152d1c13 extends $084574008ccedf86$export
         const vec = new $084574008ccedf86$export$64b5c384219d3699();
         const mat = new $084574008ccedf86$export$2ae72fc923e5eb5();
         // compute the tangent vectors for each segment on the curve
-        for(let i196 = 0; i196 <= segments; i196++){
-            const u = i196 / segments;
-            tangents[i196] = this.getTangentAt(u, new $084574008ccedf86$export$64b5c384219d3699());
+        for(let i = 0; i <= segments; i++){
+            const u = i / segments;
+            tangents[i] = this.getTangentAt(u, new $084574008ccedf86$export$64b5c384219d3699());
         }
         // select an initial normal vector perpendicular to the first tangent vector,
         // and in the direction of the minimum tangent xyz component
@@ -18823,26 +18950,26 @@ class $084574008ccedf86$export$f7189e49152d1c13 extends $084574008ccedf86$export
         normals[0].crossVectors(tangents[0], vec);
         binormals[0].crossVectors(tangents[0], normals[0]);
         // compute the slowly-varying normal and binormal vectors for each segment on the curve
-        for(let i195 = 1; i195 <= segments; i195++){
-            normals[i195] = normals[i195 - 1].clone();
-            binormals[i195] = binormals[i195 - 1].clone();
-            vec.crossVectors(tangents[i195 - 1], tangents[i195]);
+        for(let i = 1; i <= segments; i++){
+            normals[i] = normals[i - 1].clone();
+            binormals[i] = binormals[i - 1].clone();
+            vec.crossVectors(tangents[i - 1], tangents[i]);
             if (vec.length() > Number.EPSILON) {
                 vec.normalize();
-                const theta = Math.acos($084574008ccedf86$var$clamp(tangents[i195 - 1].dot(tangents[i195]), -1, 1)); // clamp for floating pt errors
-                normals[i195].applyMatrix4(mat.makeRotationAxis(vec, theta));
+                const theta = Math.acos($084574008ccedf86$var$clamp(tangents[i - 1].dot(tangents[i]), -1, 1)); // clamp for floating pt errors
+                normals[i].applyMatrix4(mat.makeRotationAxis(vec, theta));
             }
-            binormals[i195].crossVectors(tangents[i195], normals[i195]);
+            binormals[i].crossVectors(tangents[i], normals[i]);
         }
         // if the curve is closed, postprocess the vectors so the first and last normal vectors are the same
         if (closed === true) {
             let theta = Math.acos($084574008ccedf86$var$clamp(normals[0].dot(normals[segments]), -1, 1));
             theta /= segments;
             if (tangents[0].dot(vec.crossVectors(normals[0], normals[segments])) > 0) theta = -theta;
-            for(let i197 = 1; i197 <= segments; i197++){
+            for(let i = 1; i <= segments; i++){
                 // twist a little...
-                normals[i197].applyMatrix4(mat.makeRotationAxis(tangents[i197], theta * i197));
-                binormals[i197].crossVectors(tangents[i197], normals[i197]);
+                normals[i].applyMatrix4(mat.makeRotationAxis(tangents[i], theta * i));
+                binormals[i].crossVectors(tangents[i], normals[i]);
             }
         }
         return {
@@ -19077,8 +19204,8 @@ class $084574008ccedf86$export$b9146b27c24b744c extends $084574008ccedf86$export
     copy(source) {
         super.copy(source);
         this.points = [];
-        for(let i198 = 0, l = source.points.length; i198 < l; i198++){
-            const point = source.points[i198];
+        for(let i = 0, l = source.points.length; i < l; i++){
+            const point = source.points[i];
             this.points.push(point.clone());
         }
         this.closed = source.closed;
@@ -19089,8 +19216,8 @@ class $084574008ccedf86$export$b9146b27c24b744c extends $084574008ccedf86$export
     toJSON() {
         const data = super.toJSON();
         data.points = [];
-        for(let i199 = 0, l = this.points.length; i199 < l; i199++){
-            const point = this.points[i199];
+        for(let i = 0, l = this.points.length; i < l; i++){
+            const point = this.points[i];
             data.points.push(point.toArray());
         }
         data.closed = this.closed;
@@ -19101,8 +19228,8 @@ class $084574008ccedf86$export$b9146b27c24b744c extends $084574008ccedf86$export
     fromJSON(json) {
         super.fromJSON(json);
         this.points = [];
-        for(let i200 = 0, l = json.points.length; i200 < l; i200++){
-            const point = json.points[i200];
+        for(let i = 0, l = json.points.length; i < l; i++){
+            const point = json.points[i];
             this.points.push(new $084574008ccedf86$export$64b5c384219d3699().fromArray(point));
         }
         this.closed = json.closed;
@@ -19417,8 +19544,8 @@ class $084574008ccedf86$export$d3bdd77da77afc1b extends $084574008ccedf86$export
     copy(source) {
         super.copy(source);
         this.points = [];
-        for(let i201 = 0, l = source.points.length; i201 < l; i201++){
-            const point = source.points[i201];
+        for(let i = 0, l = source.points.length; i < l; i++){
+            const point = source.points[i];
             this.points.push(point.clone());
         }
         return this;
@@ -19426,8 +19553,8 @@ class $084574008ccedf86$export$d3bdd77da77afc1b extends $084574008ccedf86$export
     toJSON() {
         const data = super.toJSON();
         data.points = [];
-        for(let i202 = 0, l = this.points.length; i202 < l; i202++){
-            const point = this.points[i202];
+        for(let i = 0, l = this.points.length; i < l; i++){
+            const point = this.points[i];
             data.points.push(point.toArray());
         }
         return data;
@@ -19435,8 +19562,8 @@ class $084574008ccedf86$export$d3bdd77da77afc1b extends $084574008ccedf86$export
     fromJSON(json) {
         super.fromJSON(json);
         this.points = [];
-        for(let i203 = 0, l = json.points.length; i203 < l; i203++){
-            const point = json.points[i203];
+        for(let i = 0, l = json.points.length; i < l; i++){
+            const point = json.points[i];
             this.points.push(new $084574008ccedf86$export$c977b3e384af9ae1().fromArray(point));
         }
         return this;
@@ -19484,17 +19611,17 @@ var $084574008ccedf86$var$Curves = /*#__PURE__*/ Object.freeze({
     getPoint(t, optionalTarget) {
         const d = t * this.getLength();
         const curveLengths = this.getCurveLengths();
-        let i204 = 0;
+        let i = 0;
         // To think about boundaries points.
-        while(i204 < curveLengths.length){
-            if (curveLengths[i204] >= d) {
-                const diff = curveLengths[i204] - d;
-                const curve = this.curves[i204];
+        while(i < curveLengths.length){
+            if (curveLengths[i] >= d) {
+                const diff = curveLengths[i] - d;
+                const curve = this.curves[i];
                 const segmentLength = curve.getLength();
                 const u = segmentLength === 0 ? 0 : 1 - diff / segmentLength;
                 return curve.getPointAt(u, optionalTarget);
             }
-            i204++;
+            i++;
         }
         return null;
     // loop where sum != 0, sum > d , sum+1 <d
@@ -19521,8 +19648,8 @@ var $084574008ccedf86$var$Curves = /*#__PURE__*/ Object.freeze({
         // Push sums into cached array
         const lengths = [];
         let sums = 0;
-        for(let i205 = 0, l = this.curves.length; i205 < l; i205++){
-            sums += this.curves[i205].getLength();
+        for(let i = 0, l = this.curves.length; i < l; i++){
+            sums += this.curves[i].getLength();
             lengths.push(sums);
         }
         this.cacheLengths = lengths;
@@ -19530,15 +19657,15 @@ var $084574008ccedf86$var$Curves = /*#__PURE__*/ Object.freeze({
     }
     getSpacedPoints(divisions = 40) {
         const points = [];
-        for(let i206 = 0; i206 <= divisions; i206++)points.push(this.getPoint(i206 / divisions));
+        for(let i = 0; i <= divisions; i++)points.push(this.getPoint(i / divisions));
         if (this.autoClose) points.push(points[0]);
         return points;
     }
     getPoints(divisions = 12) {
         const points = [];
         let last;
-        for(let i207 = 0, curves = this.curves; i207 < curves.length; i207++){
-            const curve = curves[i207];
+        for(let i = 0, curves = this.curves; i < curves.length; i++){
+            const curve = curves[i];
             const resolution = curve.isEllipseCurve ? divisions * 2 : curve.isLineCurve || curve.isLineCurve3 ? 1 : curve.isSplineCurve ? divisions * curve.points.length : divisions;
             const pts = curve.getPoints(resolution);
             for(let j = 0; j < pts.length; j++){
@@ -19554,8 +19681,8 @@ var $084574008ccedf86$var$Curves = /*#__PURE__*/ Object.freeze({
     copy(source) {
         super.copy(source);
         this.curves = [];
-        for(let i208 = 0, l = source.curves.length; i208 < l; i208++){
-            const curve = source.curves[i208];
+        for(let i = 0, l = source.curves.length; i < l; i++){
+            const curve = source.curves[i];
             this.curves.push(curve.clone());
         }
         this.autoClose = source.autoClose;
@@ -19565,8 +19692,8 @@ var $084574008ccedf86$var$Curves = /*#__PURE__*/ Object.freeze({
         const data = super.toJSON();
         data.autoClose = this.autoClose;
         data.curves = [];
-        for(let i209 = 0, l = this.curves.length; i209 < l; i209++){
-            const curve = this.curves[i209];
+        for(let i = 0, l = this.curves.length; i < l; i++){
+            const curve = this.curves[i];
             data.curves.push(curve.toJSON());
         }
         return data;
@@ -19575,8 +19702,8 @@ var $084574008ccedf86$var$Curves = /*#__PURE__*/ Object.freeze({
         super.fromJSON(json);
         this.autoClose = json.autoClose;
         this.curves = [];
-        for(let i210 = 0, l = json.curves.length; i210 < l; i210++){
-            const curve = json.curves[i210];
+        for(let i = 0, l = json.curves.length; i < l; i++){
+            const curve = json.curves[i];
             this.curves.push(new $084574008ccedf86$var$Curves[curve.type]().fromJSON(curve));
         }
         return this;
@@ -19591,7 +19718,7 @@ class $084574008ccedf86$export$4b2950bdac9b6ee9 extends $084574008ccedf86$export
     }
     setFromPoints(points) {
         this.moveTo(points[0].x, points[0].y);
-        for(let i211 = 1, l = points.length; i211 < l; i211++)this.lineTo(points[i211].x, points[i211].y);
+        for(let i = 1, l = points.length; i < l; i++)this.lineTo(points[i].x, points[i].y);
         return this;
     }
     moveTo(x, y) {
@@ -19694,7 +19821,7 @@ class $084574008ccedf86$export$dc3e1273c1dd9240 extends $084574008ccedf86$export
         const normals = [];
         // helper variables
         const inverseSegments = 1.0 / segments;
-        const vertex1 = new $084574008ccedf86$export$64b5c384219d3699();
+        const vertex = new $084574008ccedf86$export$64b5c384219d3699();
         const uv = new $084574008ccedf86$export$c977b3e384af9ae1();
         const normal = new $084574008ccedf86$export$64b5c384219d3699();
         const curNormal = new $084574008ccedf86$export$64b5c384219d3699();
@@ -19731,18 +19858,18 @@ class $084574008ccedf86$export$dc3e1273c1dd9240 extends $084574008ccedf86$export
                 prevNormal.copy(curNormal);
         }
         // generate vertices, uvs and normals
-        for(let i213 = 0; i213 <= segments; i213++){
-            const phi = phiStart + i213 * inverseSegments * phiLength;
+        for(let i = 0; i <= segments; i++){
+            const phi = phiStart + i * inverseSegments * phiLength;
             const sin = Math.sin(phi);
             const cos = Math.cos(phi);
             for(let j = 0; j <= points.length - 1; j++){
                 // vertex
-                vertex1.x = points[j].x * sin;
-                vertex1.y = points[j].y;
-                vertex1.z = points[j].x * cos;
-                vertices.push(vertex1.x, vertex1.y, vertex1.z);
+                vertex.x = points[j].x * sin;
+                vertex.y = points[j].y;
+                vertex.z = points[j].x * cos;
+                vertices.push(vertex.x, vertex.y, vertex.z);
                 // uv
-                uv.x = i213 / segments;
+                uv.x = i / segments;
                 uv.y = j / (points.length - 1);
                 uvs.push(uv.x, uv.y);
                 // normal
@@ -19753,8 +19880,8 @@ class $084574008ccedf86$export$dc3e1273c1dd9240 extends $084574008ccedf86$export
             }
         }
         // indices
-        for(let i212 = 0; i212 < segments; i212++)for(let j1 = 0; j1 < points.length - 1; j1++){
-            const base = j1 + i212 * points.length;
+        for(let i = 0; i < segments; i++)for(let j = 0; j < points.length - 1; j++){
+            const base = j + i * points.length;
             const a = base;
             const b = base + points.length;
             const c = base + points.length + 1;
@@ -19808,27 +19935,27 @@ class $084574008ccedf86$export$3f74fe60decf7462 extends $084574008ccedf86$export
         const normals = [];
         const uvs = [];
         // helper variables
-        const vertex2 = new $084574008ccedf86$export$64b5c384219d3699();
+        const vertex = new $084574008ccedf86$export$64b5c384219d3699();
         const uv = new $084574008ccedf86$export$c977b3e384af9ae1();
         // center point
         vertices.push(0, 0, 0);
         normals.push(0, 0, 1);
         uvs.push(0.5, 0.5);
-        for(let s = 0, i215 = 3; s <= segments; s++, i215 += 3){
+        for(let s = 0, i = 3; s <= segments; s++, i += 3){
             const segment = thetaStart + s / segments * thetaLength;
             // vertex
-            vertex2.x = radius * Math.cos(segment);
-            vertex2.y = radius * Math.sin(segment);
-            vertices.push(vertex2.x, vertex2.y, vertex2.z);
+            vertex.x = radius * Math.cos(segment);
+            vertex.y = radius * Math.sin(segment);
+            vertices.push(vertex.x, vertex.y, vertex.z);
             // normal
             normals.push(0, 0, 1);
             // uvs
-            uv.x = (vertices[i215] / radius + 1) / 2;
-            uv.y = (vertices[i215 + 1] / radius + 1) / 2;
+            uv.x = (vertices[i] / radius + 1) / 2;
+            uv.y = (vertices[i + 1] / radius + 1) / 2;
             uvs.push(uv.x, uv.y);
         }
         // indices
-        for(let i214 = 1; i214 <= segments; i214++)indices.push(i214, i214 + 1, 0);
+        for(let i = 1; i <= segments; i++)indices.push(i, i + 1, 0);
         // build geometry
         this.setIndex(indices);
         this.setAttribute("position", new $084574008ccedf86$export$cbe7a62641830ebd(vertices, 3));
@@ -19879,7 +20006,7 @@ class $084574008ccedf86$export$d4345c83207d7c68 extends $084574008ccedf86$export
         this.setAttribute("uv", new $084574008ccedf86$export$cbe7a62641830ebd(uvs, 2));
         function generateTorso() {
             const normal = new $084574008ccedf86$export$64b5c384219d3699();
-            const vertex3 = new $084574008ccedf86$export$64b5c384219d3699();
+            const vertex = new $084574008ccedf86$export$64b5c384219d3699();
             let groupCount = 0;
             // this will be used to calculate the normal
             const slope = (radiusBottom - radiusTop) / height;
@@ -19895,10 +20022,10 @@ class $084574008ccedf86$export$d4345c83207d7c68 extends $084574008ccedf86$export
                     const sinTheta = Math.sin(theta);
                     const cosTheta = Math.cos(theta);
                     // vertex
-                    vertex3.x = radius * sinTheta;
-                    vertex3.y = -v * height + halfHeight;
-                    vertex3.z = radius * cosTheta;
-                    vertices.push(vertex3.x, vertex3.y, vertex3.z);
+                    vertex.x = radius * sinTheta;
+                    vertex.y = -v * height + halfHeight;
+                    vertex.z = radius * cosTheta;
+                    vertices.push(vertex.x, vertex.y, vertex.z);
                     // normal
                     normal.set(sinTheta, slope, cosTheta).normalize();
                     normals.push(normal.x, normal.y, normal.z);
@@ -19911,12 +20038,12 @@ class $084574008ccedf86$export$d4345c83207d7c68 extends $084574008ccedf86$export
                 indexArray.push(indexRow);
             }
             // generate indices
-            for(let x = 0; x < radialSegments; x++)for(let y3 = 0; y3 < heightSegments; y3++){
+            for(let x = 0; x < radialSegments; x++)for(let y = 0; y < heightSegments; y++){
                 // we use the index array to access the correct indices
-                const a = indexArray[y3][x];
-                const b = indexArray[y3 + 1][x];
-                const c = indexArray[y3 + 1][x + 1];
-                const d = indexArray[y3][x + 1];
+                const a = indexArray[y][x];
+                const b = indexArray[y + 1][x];
+                const c = indexArray[y + 1][x + 1];
+                const d = indexArray[y][x + 1];
                 // faces
                 indices.push(a, b, d);
                 indices.push(b, c, d);
@@ -19932,18 +20059,18 @@ class $084574008ccedf86$export$d4345c83207d7c68 extends $084574008ccedf86$export
             // save the index of the first center vertex
             const centerIndexStart = index;
             const uv = new $084574008ccedf86$export$c977b3e384af9ae1();
-            const vertex4 = new $084574008ccedf86$export$64b5c384219d3699();
+            const vertex = new $084574008ccedf86$export$64b5c384219d3699();
             let groupCount = 0;
             const radius = top === true ? radiusTop : radiusBottom;
-            const sign2 = top === true ? 1 : -1;
+            const sign = top === true ? 1 : -1;
             // first we generate the center vertex data of the cap.
             // because the geometry needs one set of uvs per face,
             // we must generate a center vertex per face/segment
             for(let x = 1; x <= radialSegments; x++){
                 // vertex
-                vertices.push(0, halfHeight * sign2, 0);
+                vertices.push(0, halfHeight * sign, 0);
                 // normal
-                normals.push(0, sign2, 0);
+                normals.push(0, sign, 0);
                 // uv
                 uvs.push(0.5, 0.5);
                 // increase index
@@ -19952,33 +20079,33 @@ class $084574008ccedf86$export$d4345c83207d7c68 extends $084574008ccedf86$export
             // save the index of the last center vertex
             const centerIndexEnd = index;
             // now we generate the surrounding vertices, normals and uvs
-            for(let x4 = 0; x4 <= radialSegments; x4++){
-                const u = x4 / radialSegments;
+            for(let x = 0; x <= radialSegments; x++){
+                const u = x / radialSegments;
                 const theta = u * thetaLength + thetaStart;
                 const cosTheta = Math.cos(theta);
                 const sinTheta = Math.sin(theta);
                 // vertex
-                vertex4.x = radius * sinTheta;
-                vertex4.y = halfHeight * sign2;
-                vertex4.z = radius * cosTheta;
-                vertices.push(vertex4.x, vertex4.y, vertex4.z);
+                vertex.x = radius * sinTheta;
+                vertex.y = halfHeight * sign;
+                vertex.z = radius * cosTheta;
+                vertices.push(vertex.x, vertex.y, vertex.z);
                 // normal
-                normals.push(0, sign2, 0);
+                normals.push(0, sign, 0);
                 // uv
                 uv.x = cosTheta * 0.5 + 0.5;
-                uv.y = sinTheta * 0.5 * sign2 + 0.5;
+                uv.y = sinTheta * 0.5 * sign + 0.5;
                 uvs.push(uv.x, uv.y);
                 // increase index
                 index++;
             }
             // generate indices
-            for(let x5 = 0; x5 < radialSegments; x5++){
-                const c = centerIndexStart + x5;
-                const i216 = centerIndexEnd + x5;
+            for(let x = 0; x < radialSegments; x++){
+                const c = centerIndexStart + x;
+                const i = centerIndexEnd + x;
                 if (top === true) // face top
-                indices.push(i216, i216 + 1, c);
+                indices.push(i, i + 1, c);
                 else // face bottom
-                indices.push(i216 + 1, i216, c);
+                indices.push(i + 1, i, c);
                 groupCount += 3;
             }
             // add a group to the geometry. this will ensure multi material support
@@ -20010,29 +20137,29 @@ class $084574008ccedf86$export$59d971120dc8b6e7 extends $084574008ccedf86$export
     }
 }
 class $084574008ccedf86$export$38789b531813345c extends $084574008ccedf86$export$b7be63a67df8959 {
-    constructor(vertices = [], indices = [], radius1 = 1, detail1 = 0){
+    constructor(vertices = [], indices = [], radius = 1, detail = 0){
         super();
         this.type = "PolyhedronGeometry";
         this.parameters = {
             vertices: vertices,
             indices: indices,
-            radius: radius1,
-            detail: detail1
+            radius: radius,
+            detail: detail
         };
         // default buffer data
         const vertexBuffer = [];
         const uvBuffer = [];
         // the subdivision creates the vertex buffer data
-        subdivide(detail1);
+        subdivide(detail);
         // all vertices should lie on a conceptual sphere with a given radius
-        applyRadius(radius1);
+        applyRadius(radius);
         // finally, create the uv data
         generateUVs();
         // build non-indexed geometry
         this.setAttribute("position", new $084574008ccedf86$export$cbe7a62641830ebd(vertexBuffer, 3));
         this.setAttribute("normal", new $084574008ccedf86$export$cbe7a62641830ebd(vertexBuffer.slice(), 3));
         this.setAttribute("uv", new $084574008ccedf86$export$cbe7a62641830ebd(uvBuffer, 2));
-        if (detail1 === 0) this.computeVertexNormals(); // flat normals
+        if (detail === 0) this.computeVertexNormals(); // flat normals
         else this.normalizeNormals(); // smooth normals
         // helper functions
         function subdivide(detail) {
@@ -20040,11 +20167,11 @@ class $084574008ccedf86$export$38789b531813345c extends $084574008ccedf86$export
             const b = new $084574008ccedf86$export$64b5c384219d3699();
             const c = new $084574008ccedf86$export$64b5c384219d3699();
             // iterate over all faces and apply a subdivison with the given detail value
-            for(let i217 = 0; i217 < indices.length; i217 += 3){
+            for(let i = 0; i < indices.length; i += 3){
                 // get the vertices of the face
-                getVertexByIndex(indices[i217 + 0], a);
-                getVertexByIndex(indices[i217 + 1], b);
-                getVertexByIndex(indices[i217 + 2], c);
+                getVertexByIndex(indices[i + 0], a);
+                getVertexByIndex(indices[i + 1], b);
+                getVertexByIndex(indices[i + 2], c);
                 // perform subdivision
                 subdivideFace(a, b, c, detail);
             }
@@ -20054,49 +20181,49 @@ class $084574008ccedf86$export$38789b531813345c extends $084574008ccedf86$export
             // we use this multidimensional array as a data structure for creating the subdivision
             const v = [];
             // construct all of the vertices for this subdivision
-            for(let i219 = 0; i219 <= cols; i219++){
-                v[i219] = [];
-                const aj = a.clone().lerp(c, i219 / cols);
-                const bj = b.clone().lerp(c, i219 / cols);
-                const rows = cols - i219;
-                for(let j = 0; j <= rows; j++)if (j === 0 && i219 === cols) v[i219][j] = aj;
-                else v[i219][j] = aj.clone().lerp(bj, j / rows);
+            for(let i = 0; i <= cols; i++){
+                v[i] = [];
+                const aj = a.clone().lerp(c, i / cols);
+                const bj = b.clone().lerp(c, i / cols);
+                const rows = cols - i;
+                for(let j = 0; j <= rows; j++)if (j === 0 && i === cols) v[i][j] = aj;
+                else v[i][j] = aj.clone().lerp(bj, j / rows);
             }
             // construct all of the faces
-            for(let i218 = 0; i218 < cols; i218++)for(let j = 0; j < 2 * (cols - i218) - 1; j++){
+            for(let i = 0; i < cols; i++)for(let j = 0; j < 2 * (cols - i) - 1; j++){
                 const k = Math.floor(j / 2);
                 if (j % 2 === 0) {
-                    pushVertex(v[i218][k + 1]);
-                    pushVertex(v[i218 + 1][k]);
-                    pushVertex(v[i218][k]);
+                    pushVertex(v[i][k + 1]);
+                    pushVertex(v[i + 1][k]);
+                    pushVertex(v[i][k]);
                 } else {
-                    pushVertex(v[i218][k + 1]);
-                    pushVertex(v[i218 + 1][k + 1]);
-                    pushVertex(v[i218 + 1][k]);
+                    pushVertex(v[i][k + 1]);
+                    pushVertex(v[i + 1][k + 1]);
+                    pushVertex(v[i + 1][k]);
                 }
             }
         }
         function applyRadius(radius) {
-            const vertex5 = new $084574008ccedf86$export$64b5c384219d3699();
+            const vertex = new $084574008ccedf86$export$64b5c384219d3699();
             // iterate over the entire buffer and apply the radius to each vertex
-            for(let i220 = 0; i220 < vertexBuffer.length; i220 += 3){
-                vertex5.x = vertexBuffer[i220 + 0];
-                vertex5.y = vertexBuffer[i220 + 1];
-                vertex5.z = vertexBuffer[i220 + 2];
-                vertex5.normalize().multiplyScalar(radius);
-                vertexBuffer[i220 + 0] = vertex5.x;
-                vertexBuffer[i220 + 1] = vertex5.y;
-                vertexBuffer[i220 + 2] = vertex5.z;
+            for(let i = 0; i < vertexBuffer.length; i += 3){
+                vertex.x = vertexBuffer[i + 0];
+                vertex.y = vertexBuffer[i + 1];
+                vertex.z = vertexBuffer[i + 2];
+                vertex.normalize().multiplyScalar(radius);
+                vertexBuffer[i + 0] = vertex.x;
+                vertexBuffer[i + 1] = vertex.y;
+                vertexBuffer[i + 2] = vertex.z;
             }
         }
         function generateUVs() {
-            const vertex6 = new $084574008ccedf86$export$64b5c384219d3699();
-            for(let i221 = 0; i221 < vertexBuffer.length; i221 += 3){
-                vertex6.x = vertexBuffer[i221 + 0];
-                vertex6.y = vertexBuffer[i221 + 1];
-                vertex6.z = vertexBuffer[i221 + 2];
-                const u = azimuth1(vertex6) / 2 / Math.PI + 0.5;
-                const v = inclination(vertex6) / Math.PI + 0.5;
+            const vertex = new $084574008ccedf86$export$64b5c384219d3699();
+            for(let i = 0; i < vertexBuffer.length; i += 3){
+                vertex.x = vertexBuffer[i + 0];
+                vertex.y = vertexBuffer[i + 1];
+                vertex.z = vertexBuffer[i + 2];
+                const u = azimuth(vertex) / 2 / Math.PI + 0.5;
+                const v = inclination(vertex) / Math.PI + 0.5;
                 uvBuffer.push(u, 1 - v);
             }
             correctUVs();
@@ -20104,29 +20231,29 @@ class $084574008ccedf86$export$38789b531813345c extends $084574008ccedf86$export
         }
         function correctSeam() {
             // handle case when face straddles the seam, see #3269
-            for(let i222 = 0; i222 < uvBuffer.length; i222 += 6){
+            for(let i = 0; i < uvBuffer.length; i += 6){
                 // uv data of a single face
-                const x0 = uvBuffer[i222 + 0];
-                const x1 = uvBuffer[i222 + 2];
-                const x2 = uvBuffer[i222 + 4];
+                const x0 = uvBuffer[i + 0];
+                const x1 = uvBuffer[i + 2];
+                const x2 = uvBuffer[i + 4];
                 const max = Math.max(x0, x1, x2);
                 const min = Math.min(x0, x1, x2);
                 // 0.9 is somewhat arbitrary
                 if (max > 0.9 && min < 0.1) {
-                    if (x0 < 0.2) uvBuffer[i222 + 0] += 1;
-                    if (x1 < 0.2) uvBuffer[i222 + 2] += 1;
-                    if (x2 < 0.2) uvBuffer[i222 + 4] += 1;
+                    if (x0 < 0.2) uvBuffer[i + 0] += 1;
+                    if (x1 < 0.2) uvBuffer[i + 2] += 1;
+                    if (x2 < 0.2) uvBuffer[i + 4] += 1;
                 }
             }
         }
-        function pushVertex(vertex7) {
-            vertexBuffer.push(vertex7.x, vertex7.y, vertex7.z);
+        function pushVertex(vertex) {
+            vertexBuffer.push(vertex.x, vertex.y, vertex.z);
         }
-        function getVertexByIndex(index, vertex8) {
+        function getVertexByIndex(index, vertex) {
             const stride = index * 3;
-            vertex8.x = vertices[stride + 0];
-            vertex8.y = vertices[stride + 1];
-            vertex8.z = vertices[stride + 2];
+            vertex.x = vertices[stride + 0];
+            vertex.y = vertices[stride + 1];
+            vertex.z = vertices[stride + 2];
         }
         function correctUVs() {
             const a = new $084574008ccedf86$export$64b5c384219d3699();
@@ -20136,15 +20263,15 @@ class $084574008ccedf86$export$38789b531813345c extends $084574008ccedf86$export
             const uvA = new $084574008ccedf86$export$c977b3e384af9ae1();
             const uvB = new $084574008ccedf86$export$c977b3e384af9ae1();
             const uvC = new $084574008ccedf86$export$c977b3e384af9ae1();
-            for(let i223 = 0, j = 0; i223 < vertexBuffer.length; i223 += 9, j += 6){
-                a.set(vertexBuffer[i223 + 0], vertexBuffer[i223 + 1], vertexBuffer[i223 + 2]);
-                b.set(vertexBuffer[i223 + 3], vertexBuffer[i223 + 4], vertexBuffer[i223 + 5]);
-                c.set(vertexBuffer[i223 + 6], vertexBuffer[i223 + 7], vertexBuffer[i223 + 8]);
+            for(let i = 0, j = 0; i < vertexBuffer.length; i += 9, j += 6){
+                a.set(vertexBuffer[i + 0], vertexBuffer[i + 1], vertexBuffer[i + 2]);
+                b.set(vertexBuffer[i + 3], vertexBuffer[i + 4], vertexBuffer[i + 5]);
+                c.set(vertexBuffer[i + 6], vertexBuffer[i + 7], vertexBuffer[i + 8]);
                 uvA.set(uvBuffer[j + 0], uvBuffer[j + 1]);
                 uvB.set(uvBuffer[j + 2], uvBuffer[j + 3]);
                 uvC.set(uvBuffer[j + 4], uvBuffer[j + 5]);
                 centroid.copy(a).add(b).add(c).divideScalar(3);
-                const azi = azimuth1(centroid);
+                const azi = azimuth(centroid);
                 correctUV(uvA, j + 0, a, azi);
                 correctUV(uvB, j + 2, b, azi);
                 correctUV(uvC, j + 4, c, azi);
@@ -20155,7 +20282,7 @@ class $084574008ccedf86$export$38789b531813345c extends $084574008ccedf86$export
             if (vector.x === 0 && vector.z === 0) uvBuffer[stride] = azimuth / 2 / Math.PI + 0.5;
         }
         // Angle around the Y axis, counter-clockwise when looking from above.
-        function azimuth1(vector) {
+        function azimuth(vector) {
             return Math.atan2(vector.z, -vector.x);
         }
         // Angle above the XZ plane.
@@ -20390,15 +20517,15 @@ class $084574008ccedf86$export$4730b1542707547f extends $084574008ccedf86$export
             const hashes = new Array(3);
             const edgeData = {};
             const vertices = [];
-            for(let i224 = 0; i224 < indexCount; i224 += 3){
+            for(let i = 0; i < indexCount; i += 3){
                 if (indexAttr) {
-                    indexArr[0] = indexAttr.getX(i224);
-                    indexArr[1] = indexAttr.getX(i224 + 1);
-                    indexArr[2] = indexAttr.getX(i224 + 2);
+                    indexArr[0] = indexAttr.getX(i);
+                    indexArr[1] = indexAttr.getX(i + 1);
+                    indexArr[2] = indexAttr.getX(i + 2);
                 } else {
-                    indexArr[0] = i224;
-                    indexArr[1] = i224 + 1;
-                    indexArr[2] = i224 + 2;
+                    indexArr[0] = i;
+                    indexArr[1] = i + 1;
+                    indexArr[2] = i + 2;
                 }
                 const { a: a , b: b , c: c  } = $084574008ccedf86$var$_triangle;
                 a.fromBufferAttribute(positionAttr, indexArr[0]);
@@ -20458,7 +20585,7 @@ class $084574008ccedf86$export$6428a7f2611ef1fa extends $084574008ccedf86$export
     }
     getPointsHoles(divisions) {
         const holesPts = [];
-        for(let i225 = 0, l = this.holes.length; i225 < l; i225++)holesPts[i225] = this.holes[i225].getPoints(divisions);
+        for(let i = 0, l = this.holes.length; i < l; i++)holesPts[i] = this.holes[i].getPoints(divisions);
         return holesPts;
     }
     // get points of shape and holes (keypoints based on segments parameter)
@@ -20471,8 +20598,8 @@ class $084574008ccedf86$export$6428a7f2611ef1fa extends $084574008ccedf86$export
     copy(source) {
         super.copy(source);
         this.holes = [];
-        for(let i226 = 0, l = source.holes.length; i226 < l; i226++){
-            const hole = source.holes[i226];
+        for(let i = 0, l = source.holes.length; i < l; i++){
+            const hole = source.holes[i];
             this.holes.push(hole.clone());
         }
         return this;
@@ -20481,8 +20608,8 @@ class $084574008ccedf86$export$6428a7f2611ef1fa extends $084574008ccedf86$export
         const data = super.toJSON();
         data.uuid = this.uuid;
         data.holes = [];
-        for(let i227 = 0, l = this.holes.length; i227 < l; i227++){
-            const hole = this.holes[i227];
+        for(let i = 0, l = this.holes.length; i < l; i++){
+            const hole = this.holes[i];
             data.holes.push(hole.toJSON());
         }
         return data;
@@ -20491,8 +20618,8 @@ class $084574008ccedf86$export$6428a7f2611ef1fa extends $084574008ccedf86$export
         super.fromJSON(json);
         this.uuid = json.uuid;
         this.holes = [];
-        for(let i228 = 0, l = json.holes.length; i228 < l; i228++){
-            const hole = json.holes[i228];
+        for(let i = 0, l = json.holes.length; i < l; i++){
+            const hole = json.holes[i];
             this.holes.push(new $084574008ccedf86$export$4b2950bdac9b6ee9().fromJSON(hole));
         }
         return this;
@@ -20513,9 +20640,9 @@ class $084574008ccedf86$export$6428a7f2611ef1fa extends $084574008ccedf86$export
         if (data.length > 80 * dim) {
             minX = maxX = data[0];
             minY = maxY = data[1];
-            for(let i229 = dim; i229 < outerLen; i229 += dim){
-                x = data[i229];
-                y = data[i229 + 1];
+            for(let i = dim; i < outerLen; i += dim){
+                x = data[i];
+                y = data[i + 1];
                 if (x < minX) minX = x;
                 if (y < minY) minY = y;
                 if (x > maxX) maxX = x;
@@ -20531,9 +20658,9 @@ class $084574008ccedf86$export$6428a7f2611ef1fa extends $084574008ccedf86$export
 };
 // create a circular doubly linked list from polygon points in the specified winding order
 function $084574008ccedf86$var$linkedList(data, start, end, dim, clockwise) {
-    let i230, last;
-    if (clockwise === $084574008ccedf86$var$signedArea(data, start, end, dim) > 0) for(i230 = start; i230 < end; i230 += dim)last = $084574008ccedf86$var$insertNode(i230, data[i230], data[i230 + 1], last);
-    else for(i230 = end - dim; i230 >= start; i230 -= dim)last = $084574008ccedf86$var$insertNode(i230, data[i230], data[i230 + 1], last);
+    let i, last;
+    if (clockwise === $084574008ccedf86$var$signedArea(data, start, end, dim) > 0) for(i = start; i < end; i += dim)last = $084574008ccedf86$var$insertNode(i, data[i], data[i + 1], last);
+    else for(i = end - dim; i >= start; i -= dim)last = $084574008ccedf86$var$insertNode(i, data[i], data[i + 1], last);
     if (last && $084574008ccedf86$var$equals(last, last.next)) {
         $084574008ccedf86$var$removeNode(last);
         last = last.next;
@@ -20674,18 +20801,18 @@ function $084574008ccedf86$var$splitEarcut(start, triangles, dim, minX, minY, in
 // link every hole into the outer loop, producing a single-ring polygon without holes
 function $084574008ccedf86$var$eliminateHoles(data, holeIndices, outerNode, dim) {
     const queue = [];
-    let i231, len, start, end, list;
-    for(i231 = 0, len = holeIndices.length; i231 < len; i231++){
-        start = holeIndices[i231] * dim;
-        end = i231 < len - 1 ? holeIndices[i231 + 1] * dim : data.length;
+    let i, len, start, end, list;
+    for(i = 0, len = holeIndices.length; i < len; i++){
+        start = holeIndices[i] * dim;
+        end = i < len - 1 ? holeIndices[i + 1] * dim : data.length;
         list = $084574008ccedf86$var$linkedList(data, start, end, dim, false);
         if (list === list.next) list.steiner = true;
         queue.push($084574008ccedf86$var$getLeftmost(list));
     }
     queue.sort($084574008ccedf86$var$compareX);
     // process holes from left to right
-    for(i231 = 0; i231 < queue.length; i231++){
-        $084574008ccedf86$var$eliminateHole(queue[i231], outerNode);
+    for(i = 0; i < queue.length; i++){
+        $084574008ccedf86$var$eliminateHole(queue[i], outerNode);
         outerNode = $084574008ccedf86$var$filterPoints(outerNode, outerNode.next);
     }
     return outerNode;
@@ -20765,7 +20892,7 @@ function $084574008ccedf86$var$indexCurve(start, minX, minY, invSize) {
 // Simon Tatham's linked list merge sort algorithm
 // http://www.chiark.greenend.org.uk/~sgtatham/algorithms/listsort.html
 function $084574008ccedf86$var$sortLinked(list) {
-    let i232, p, q, e, tail, numMerges, pSize, qSize, inSize = 1;
+    let i, p, q, e, tail, numMerges, pSize, qSize, inSize = 1;
     do {
         p = list;
         list = null;
@@ -20775,7 +20902,7 @@ function $084574008ccedf86$var$sortLinked(list) {
             numMerges++;
             q = p;
             pSize = 0;
-            for(i232 = 0; i232 < inSize; i232++){
+            for(i = 0; i < inSize; i++){
                 pSize++;
                 q = q.nextZ;
                 if (!q) break;
@@ -20828,12 +20955,15 @@ function $084574008ccedf86$var$getLeftmost(start) {
     return leftmost;
 }
 // check if a point lies within a convex triangle
-function $084574008ccedf86$var$pointInTriangle(ax, ay, bx, by, cx, cy, px1, py1) {
-    return (cx - px1) * (ay - py1) - (ax - px1) * (cy - py1) >= 0 && (ax - px1) * (by - py1) - (bx - px1) * (ay - py1) >= 0 && (bx - px1) * (cy - py1) - (cx - px1) * (by - py1) >= 0;
+function $084574008ccedf86$var$pointInTriangle(ax, ay, bx, by, cx, cy, px, py) {
+    return (cx - px) * (ay - py) - (ax - px) * (cy - py) >= 0 && (ax - px) * (by - py) - (bx - px) * (ay - py) >= 0 && (bx - px) * (cy - py) - (cx - px) * (by - py) >= 0;
 }
 // check if a diagonal between two polygon nodes is valid (lies in polygon interior)
 function $084574008ccedf86$var$isValidDiagonal(a, b) {
-    return a.next.i !== b.i && a.prev.i !== b.i && !$084574008ccedf86$var$intersectsPolygon(a, b) && ($084574008ccedf86$var$locallyInside(a, b) && $084574008ccedf86$var$locallyInside(b, a) && $084574008ccedf86$var$middleInside(a, b) && ($084574008ccedf86$var$area(a.prev, a, b.prev) || $084574008ccedf86$var$area(a, b.prev, b)) || $084574008ccedf86$var$equals(a, b) && $084574008ccedf86$var$area(a.prev, a, a.next) > 0 && $084574008ccedf86$var$area(b.prev, b, b.next) > 0); // special zero-length case
+    return a.next.i !== b.i && a.prev.i !== b.i && !$084574008ccedf86$var$intersectsPolygon(a, b) && // doesn't intersect other edges
+    ($084574008ccedf86$var$locallyInside(a, b) && $084574008ccedf86$var$locallyInside(b, a) && $084574008ccedf86$var$middleInside(a, b) && // locally visible
+    ($084574008ccedf86$var$area(a.prev, a, b.prev) || $084574008ccedf86$var$area(a, b.prev, b)) || // does not create opposite-facing sectors
+    $084574008ccedf86$var$equals(a, b) && $084574008ccedf86$var$area(a.prev, a, a.next) > 0 && $084574008ccedf86$var$area(b.prev, b, b.next) > 0); // special zero-length case
 }
 // signed area of a triangle
 function $084574008ccedf86$var$area(p, q, r) {
@@ -20879,9 +21009,9 @@ function $084574008ccedf86$var$locallyInside(a, b) {
 // check if the middle point of a polygon diagonal is inside the polygon
 function $084574008ccedf86$var$middleInside(a, b) {
     let p = a, inside = false;
-    const px2 = (a.x + b.x) / 2, py2 = (a.y + b.y) / 2;
+    const px = (a.x + b.x) / 2, py = (a.y + b.y) / 2;
     do {
-        if (p.y > py2 !== p.next.y > py2 && p.next.y !== p.y && px2 < (p.next.x - p.x) * (py2 - p.y) / (p.next.y - p.y) + p.x) inside = !inside;
+        if (p.y > py !== p.next.y > py && p.next.y !== p.y && px < (p.next.x - p.x) * (py - p.y) / (p.next.y - p.y) + p.x) inside = !inside;
         p = p.next;
     }while (p !== a);
     return inside;
@@ -20901,8 +21031,8 @@ function $084574008ccedf86$var$splitPolygon(a, b) {
     return b2;
 }
 // create a node and optionally link it with previous one (in a circular doubly linked list)
-function $084574008ccedf86$var$insertNode(i233, x, y, last) {
-    const p = new $084574008ccedf86$var$Node(i233, x, y);
+function $084574008ccedf86$var$insertNode(i, x, y, last) {
+    const p = new $084574008ccedf86$var$Node(i, x, y);
     if (!last) {
         p.prev = p;
         p.next = p;
@@ -20920,9 +21050,9 @@ function $084574008ccedf86$var$removeNode(p) {
     if (p.prevZ) p.prevZ.nextZ = p.nextZ;
     if (p.nextZ) p.nextZ.prevZ = p.prevZ;
 }
-function $084574008ccedf86$var$Node(i234, x, y) {
+function $084574008ccedf86$var$Node(i, x, y) {
     // vertex index in coordinates array
-    this.i = i234;
+    this.i = i;
     // vertex coordinates
     this.x = x;
     this.y = y;
@@ -20939,9 +21069,9 @@ function $084574008ccedf86$var$Node(i234, x, y) {
 }
 function $084574008ccedf86$var$signedArea(data, start, end, dim) {
     let sum = 0;
-    for(let i235 = start, j = end - dim; i235 < end; i235 += dim){
-        sum += (data[j] - data[i235]) * (data[i235 + 1] + data[j + 1]);
-        j = i235;
+    for(let i = start, j = end - dim; i < end; i += dim){
+        sum += (data[j] - data[i]) * (data[i + 1] + data[j + 1]);
+        j = i;
     }
     return sum;
 }
@@ -20965,15 +21095,15 @@ class $084574008ccedf86$export$96bdf6d9c66d7ba8 {
         //
         let holeIndex = contour.length;
         holes.forEach($084574008ccedf86$var$removeDupEndPts);
-        for(let i237 = 0; i237 < holes.length; i237++){
+        for(let i = 0; i < holes.length; i++){
             holeIndices.push(holeIndex);
-            holeIndex += holes[i237].length;
-            $084574008ccedf86$var$addContour(vertices, holes[i237]);
+            holeIndex += holes[i].length;
+            $084574008ccedf86$var$addContour(vertices, holes[i]);
         }
         //
         const triangles = $084574008ccedf86$var$Earcut.triangulate(vertices, holeIndices);
         //
-        for(let i236 = 0; i236 < triangles.length; i236 += 3)faces.push(triangles.slice(i236, i236 + 3));
+        for(let i = 0; i < triangles.length; i += 3)faces.push(triangles.slice(i, i + 3));
         return faces;
     }
 }
@@ -20982,9 +21112,9 @@ function $084574008ccedf86$var$removeDupEndPts(points) {
     if (l > 2 && points[l - 1].equals(points[0])) points.pop();
 }
 function $084574008ccedf86$var$addContour(vertices, contour) {
-    for(let i238 = 0; i238 < contour.length; i238++){
-        vertices.push(contour[i238].x);
-        vertices.push(contour[i238].y);
+    for(let i = 0; i < contour.length; i++){
+        vertices.push(contour[i].x);
+        vertices.push(contour[i].y);
     }
 }
 /**
@@ -21026,8 +21156,8 @@ function $084574008ccedf86$var$addContour(vertices, contour) {
         const scope = this;
         const verticesArray = [];
         const uvArray = [];
-        for(let i239 = 0, l = shapes.length; i239 < l; i239++){
-            const shape = shapes[i239];
+        for(let i = 0, l = shapes.length; i < l; i++){
+            const shape = shapes[i];
             addShape(shape);
         }
         // build geometry
@@ -21089,9 +21219,9 @@ function $084574008ccedf86$var$addContour(vertices, contour) {
                 }
             }
             const faces = $084574008ccedf86$export$96bdf6d9c66d7ba8.triangulateShape(vertices, holes);
-            /* Vertices */ const contour1 = vertices; // vertices has all points but contour has only points of circumference
-            for(let h2 = 0, hl2 = holes.length; h2 < hl2; h2++){
-                const ahole = holes[h2];
+            /* Vertices */ const contour = vertices; // vertices has all points but contour has only points of circumference
+            for(let h = 0, hl = holes.length; h < hl; h++){
+                const ahole = holes[h];
                 vertices = vertices.concat(ahole);
             }
             function scalePt2(pt, vec, size) {
@@ -21160,52 +21290,52 @@ function $084574008ccedf86$var$addContour(vertices, contour) {
                 return new $084574008ccedf86$export$c977b3e384af9ae1(v_trans_x / shrink_by, v_trans_y / shrink_by);
             }
             const contourMovements = [];
-            for(let i242 = 0, il = contour1.length, j2 = il - 1, k1 = i242 + 1; i242 < il; i242++, j2++, k1++){
-                if (j2 === il) j2 = 0;
-                if (k1 === il) k1 = 0;
+            for(let i = 0, il = contour.length, j = il - 1, k = i + 1; i < il; i++, j++, k++){
+                if (j === il) j = 0;
+                if (k === il) k = 0;
                 //  (j)---(i)---(k)
                 // console.log('i,j,k', i, j , k)
-                contourMovements[i242] = getBevelVec(contour1[i242], contour1[j2], contour1[k1]);
+                contourMovements[i] = getBevelVec(contour[i], contour[j], contour[k]);
             }
             const holesMovements = [];
             let oneHoleMovements, verticesMovements = contourMovements.concat();
-            for(let h1 = 0, hl1 = holes.length; h1 < hl1; h1++){
-                const ahole = holes[h1];
+            for(let h = 0, hl = holes.length; h < hl; h++){
+                const ahole = holes[h];
                 oneHoleMovements = [];
-                for(let i243 = 0, il = ahole.length, j = il - 1, k = i243 + 1; i243 < il; i243++, j++, k++){
+                for(let i = 0, il = ahole.length, j = il - 1, k = i + 1; i < il; i++, j++, k++){
                     if (j === il) j = 0;
                     if (k === il) k = 0;
                     //  (j)---(i)---(k)
-                    oneHoleMovements[i243] = getBevelVec(ahole[i243], ahole[j], ahole[k]);
+                    oneHoleMovements[i] = getBevelVec(ahole[i], ahole[j], ahole[k]);
                 }
                 holesMovements.push(oneHoleMovements);
                 verticesMovements = verticesMovements.concat(oneHoleMovements);
             }
             // Loop bevelSegments, 1 for the front, 1 for the back
-            for(let b4 = 0; b4 < bevelSegments; b4++){
+            for(let b = 0; b < bevelSegments; b++){
                 //for ( b = bevelSegments; b > 0; b -- ) {
-                const t = b4 / bevelSegments;
+                const t = b / bevelSegments;
                 const z = bevelThickness * Math.cos(t * Math.PI / 2);
                 const bs = bevelSize * Math.sin(t * Math.PI / 2) + bevelOffset;
                 // contract shape
-                for(let i244 = 0, il = contour1.length; i244 < il; i244++){
-                    const vert = scalePt2(contour1[i244], contourMovements[i244], bs);
+                for(let i = 0, il = contour.length; i < il; i++){
+                    const vert = scalePt2(contour[i], contourMovements[i], bs);
                     v(vert.x, vert.y, -z);
                 }
                 // expand holes
                 for(let h = 0, hl = holes.length; h < hl; h++){
                     const ahole = holes[h];
                     oneHoleMovements = holesMovements[h];
-                    for(let i245 = 0, il = ahole.length; i245 < il; i245++){
-                        const vert = scalePt2(ahole[i245], oneHoleMovements[i245], bs);
+                    for(let i = 0, il = ahole.length; i < il; i++){
+                        const vert = scalePt2(ahole[i], oneHoleMovements[i], bs);
                         v(vert.x, vert.y, -z);
                     }
                 }
             }
             const bs = bevelSize + bevelOffset;
             // Back facing vertices
-            for(let i240 = 0; i240 < vlen; i240++){
-                const vert = bevelEnabled ? scalePt2(vertices[i240], verticesMovements[i240], bs) : vertices[i240];
+            for(let i = 0; i < vlen; i++){
+                const vert = bevelEnabled ? scalePt2(vertices[i], verticesMovements[i], bs) : vertices[i];
                 if (!extrudeByPath) v(vert.x, vert.y, 0);
                 else {
                     // v( vert.x, vert.y + extrudePts[ 0 ].y, extrudePts[ 0 ].x );
@@ -21217,34 +21347,34 @@ function $084574008ccedf86$var$addContour(vertices, contour) {
             }
             // Add stepped vertices...
             // Including front facing vertices
-            for(let s4 = 1; s4 <= steps; s4++)for(let i241 = 0; i241 < vlen; i241++){
-                const vert = bevelEnabled ? scalePt2(vertices[i241], verticesMovements[i241], bs) : vertices[i241];
-                if (!extrudeByPath) v(vert.x, vert.y, depth / steps * s4);
+            for(let s = 1; s <= steps; s++)for(let i = 0; i < vlen; i++){
+                const vert = bevelEnabled ? scalePt2(vertices[i], verticesMovements[i], bs) : vertices[i];
+                if (!extrudeByPath) v(vert.x, vert.y, depth / steps * s);
                 else {
                     // v( vert.x, vert.y + extrudePts[ s - 1 ].y, extrudePts[ s - 1 ].x );
-                    normal.copy(splineTube.normals[s4]).multiplyScalar(vert.x);
-                    binormal.copy(splineTube.binormals[s4]).multiplyScalar(vert.y);
-                    position2.copy(extrudePts[s4]).add(normal).add(binormal);
+                    normal.copy(splineTube.normals[s]).multiplyScalar(vert.x);
+                    binormal.copy(splineTube.binormals[s]).multiplyScalar(vert.y);
+                    position2.copy(extrudePts[s]).add(normal).add(binormal);
                     v(position2.x, position2.y, position2.z);
                 }
             }
             // Add bevel segments planes
             //for ( b = 1; b <= bevelSegments; b ++ ) {
-            for(let b3 = bevelSegments - 1; b3 >= 0; b3--){
-                const t = b3 / bevelSegments;
+            for(let b = bevelSegments - 1; b >= 0; b--){
+                const t = b / bevelSegments;
                 const z = bevelThickness * Math.cos(t * Math.PI / 2);
                 const bs = bevelSize * Math.sin(t * Math.PI / 2) + bevelOffset;
                 // contract shape
-                for(let i246 = 0, il = contour1.length; i246 < il; i246++){
-                    const vert = scalePt2(contour1[i246], contourMovements[i246], bs);
+                for(let i = 0, il = contour.length; i < il; i++){
+                    const vert = scalePt2(contour[i], contourMovements[i], bs);
                     v(vert.x, vert.y, depth + z);
                 }
                 // expand holes
                 for(let h = 0, hl = holes.length; h < hl; h++){
                     const ahole = holes[h];
                     oneHoleMovements = holesMovements[h];
-                    for(let i247 = 0, il = ahole.length; i247 < il; i247++){
-                        const vert = scalePt2(ahole[i247], oneHoleMovements[i247], bs);
+                    for(let i = 0, il = ahole.length; i < il; i++){
+                        const vert = scalePt2(ahole[i], oneHoleMovements[i], bs);
                         if (!extrudeByPath) v(vert.x, vert.y, depth + z);
                         else v(vert.x, vert.y + extrudePts[steps - 1].y, extrudePts[steps - 1].x + z);
                     }
@@ -21261,26 +21391,26 @@ function $084574008ccedf86$var$addContour(vertices, contour) {
                     let layer = 0; // steps + 1
                     let offset = vlen * layer;
                     // Bottom faces
-                    for(let i249 = 0; i249 < flen; i249++){
-                        const face = faces[i249];
+                    for(let i = 0; i < flen; i++){
+                        const face = faces[i];
                         f3(face[2] + offset, face[1] + offset, face[0] + offset);
                     }
                     layer = steps + bevelSegments * 2;
                     offset = vlen * layer;
                     // Top faces
-                    for(let i248 = 0; i248 < flen; i248++){
-                        const face = faces[i248];
+                    for(let i = 0; i < flen; i++){
+                        const face = faces[i];
                         f3(face[0] + offset, face[1] + offset, face[2] + offset);
                     }
                 } else {
                     // Bottom faces
-                    for(let i251 = 0; i251 < flen; i251++){
-                        const face = faces[i251];
+                    for(let i = 0; i < flen; i++){
+                        const face = faces[i];
                         f3(face[2], face[1], face[0]);
                     }
                     // Top faces
-                    for(let i250 = 0; i250 < flen; i250++){
-                        const face = faces[i250];
+                    for(let i = 0; i < flen; i++){
+                        const face = faces[i];
                         f3(face[0] + vlen * steps, face[1] + vlen * steps, face[2] + vlen * steps);
                     }
                 }
@@ -21290,8 +21420,8 @@ function $084574008ccedf86$var$addContour(vertices, contour) {
             function buildSideFaces() {
                 const start = verticesArray.length / 3;
                 let layeroffset = 0;
-                sidewalls(contour1, layeroffset);
-                layeroffset += contour1.length;
+                sidewalls(contour, layeroffset);
+                layeroffset += contour.length;
                 for(let h = 0, hl = holes.length; h < hl; h++){
                     const ahole = holes[h];
                     sidewalls(ahole, layeroffset);
@@ -21301,10 +21431,10 @@ function $084574008ccedf86$var$addContour(vertices, contour) {
                 scope.addGroup(start, verticesArray.length / 3 - start, 1);
             }
             function sidewalls(contour, layeroffset) {
-                let i252 = contour.length;
-                while(--i252 >= 0){
-                    const j = i252;
-                    let k = i252 - 1;
+                let i = contour.length;
+                while(--i >= 0){
+                    const j = i;
+                    let k = i - 1;
                     if (k < 0) k = contour.length - 1;
                     //console.log('b', i,j, i-1, k,vertices.length);
                     for(let s = 0, sl = steps + bevelSegments * 2; s < sl; s++){
@@ -21417,8 +21547,8 @@ const $084574008ccedf86$var$WorldUVGenerator = {
 };
 function $084574008ccedf86$var$toJSON$1(shapes, options, data) {
     data.shapes = [];
-    if (Array.isArray(shapes)) for(let i253 = 0, l = shapes.length; i253 < l; i253++){
-        const shape = shapes[i253];
+    if (Array.isArray(shapes)) for(let i = 0, l = shapes.length; i < l; i++){
+        const shape = shapes[i];
         data.shapes.push(shape.uuid);
     }
     else data.shapes.push(shapes.uuid);
@@ -21621,32 +21751,32 @@ class $084574008ccedf86$export$ee8b85b34b7d9cad extends $084574008ccedf86$export
         // some helper variables
         let radius = innerRadius;
         const radiusStep = (outerRadius - innerRadius) / phiSegments;
-        const vertex9 = new $084574008ccedf86$export$64b5c384219d3699();
+        const vertex = new $084574008ccedf86$export$64b5c384219d3699();
         const uv = new $084574008ccedf86$export$c977b3e384af9ae1();
         // generate vertices, normals and uvs
         for(let j = 0; j <= phiSegments; j++){
-            for(let i254 = 0; i254 <= thetaSegments; i254++){
+            for(let i = 0; i <= thetaSegments; i++){
                 // values are generate from the inside of the ring to the outside
-                const segment = thetaStart + i254 / thetaSegments * thetaLength;
+                const segment = thetaStart + i / thetaSegments * thetaLength;
                 // vertex
-                vertex9.x = radius * Math.cos(segment);
-                vertex9.y = radius * Math.sin(segment);
-                vertices.push(vertex9.x, vertex9.y, vertex9.z);
+                vertex.x = radius * Math.cos(segment);
+                vertex.y = radius * Math.sin(segment);
+                vertices.push(vertex.x, vertex.y, vertex.z);
                 // normal
                 normals.push(0, 0, 1);
                 // uv
-                uv.x = (vertex9.x / outerRadius + 1) / 2;
-                uv.y = (vertex9.y / outerRadius + 1) / 2;
+                uv.x = (vertex.x / outerRadius + 1) / 2;
+                uv.y = (vertex.y / outerRadius + 1) / 2;
                 uvs.push(uv.x, uv.y);
             }
             // increase the radius for next row of vertices
             radius += radiusStep;
         }
         // indices
-        for(let j3 = 0; j3 < phiSegments; j3++){
-            const thetaSegmentLevel = j3 * (thetaSegments + 1);
-            for(let i255 = 0; i255 < thetaSegments; i255++){
-                const segment = i255 + thetaSegmentLevel;
+        for(let j = 0; j < phiSegments; j++){
+            const thetaSegmentLevel = j * (thetaSegments + 1);
+            for(let i = 0; i < thetaSegments; i++){
+                const segment = i + thetaSegmentLevel;
                 const a = segment;
                 const b = segment + thetaSegments + 1;
                 const c = segment + thetaSegments + 2;
@@ -21688,9 +21818,9 @@ class $084574008ccedf86$export$233afc324766bed8 extends $084574008ccedf86$export
         let groupCount = 0;
         // allow single and array values for "shapes" parameter
         if (Array.isArray(shapes) === false) addShape(shapes);
-        else for(let i256 = 0; i256 < shapes.length; i256++){
-            addShape(shapes[i256]);
-            this.addGroup(groupStart, groupCount, i256); // enables MultiMaterial support
+        else for(let i = 0; i < shapes.length; i++){
+            addShape(shapes[i]);
+            this.addGroup(groupStart, groupCount, i); // enables MultiMaterial support
             groupStart += groupCount;
             groupCount = 0;
         }
@@ -21707,26 +21837,26 @@ class $084574008ccedf86$export$233afc324766bed8 extends $084574008ccedf86$export
             const shapeHoles = points.holes;
             // check direction of vertices
             if ($084574008ccedf86$export$96bdf6d9c66d7ba8.isClockWise(shapeVertices) === false) shapeVertices = shapeVertices.reverse();
-            for(let i260 = 0, l = shapeHoles.length; i260 < l; i260++){
-                const shapeHole = shapeHoles[i260];
-                if ($084574008ccedf86$export$96bdf6d9c66d7ba8.isClockWise(shapeHole) === true) shapeHoles[i260] = shapeHole.reverse();
+            for(let i = 0, l = shapeHoles.length; i < l; i++){
+                const shapeHole = shapeHoles[i];
+                if ($084574008ccedf86$export$96bdf6d9c66d7ba8.isClockWise(shapeHole) === true) shapeHoles[i] = shapeHole.reverse();
             }
             const faces = $084574008ccedf86$export$96bdf6d9c66d7ba8.triangulateShape(shapeVertices, shapeHoles);
             // join vertices of inner and outer paths to a single array
-            for(let i257 = 0, l3 = shapeHoles.length; i257 < l3; i257++){
-                const shapeHole = shapeHoles[i257];
+            for(let i = 0, l = shapeHoles.length; i < l; i++){
+                const shapeHole = shapeHoles[i];
                 shapeVertices = shapeVertices.concat(shapeHole);
             }
             // vertices, normals, uvs
-            for(let i258 = 0, l4 = shapeVertices.length; i258 < l4; i258++){
-                const vertex10 = shapeVertices[i258];
-                vertices.push(vertex10.x, vertex10.y, 0);
+            for(let i = 0, l = shapeVertices.length; i < l; i++){
+                const vertex = shapeVertices[i];
+                vertices.push(vertex.x, vertex.y, 0);
                 normals.push(0, 0, 1);
-                uvs.push(vertex10.x, vertex10.y); // world uvs
+                uvs.push(vertex.x, vertex.y); // world uvs
             }
             // incides
-            for(let i259 = 0, l5 = faces.length; i259 < l5; i259++){
-                const face = faces[i259];
+            for(let i = 0, l = faces.length; i < l; i++){
+                const face = faces[i];
                 const a = face[0] + indexOffset;
                 const b = face[1] + indexOffset;
                 const c = face[2] + indexOffset;
@@ -21751,8 +21881,8 @@ class $084574008ccedf86$export$233afc324766bed8 extends $084574008ccedf86$export
 }
 function $084574008ccedf86$var$toJSON(shapes, data) {
     data.shapes = [];
-    if (Array.isArray(shapes)) for(let i261 = 0, l = shapes.length; i261 < l; i261++){
-        const shape = shapes[i261];
+    if (Array.isArray(shapes)) for(let i = 0, l = shapes.length; i < l; i++){
+        const shape = shapes[i];
         data.shapes.push(shape.uuid);
     }
     else data.shapes.push(shapes.uuid);
@@ -21776,7 +21906,7 @@ class $084574008ccedf86$export$d5d06a966fec4192 extends $084574008ccedf86$export
         const thetaEnd = Math.min(thetaStart + thetaLength, Math.PI);
         let index = 0;
         const grid = [];
-        const vertex11 = new $084574008ccedf86$export$64b5c384219d3699();
+        const vertex = new $084574008ccedf86$export$64b5c384219d3699();
         const normal = new $084574008ccedf86$export$64b5c384219d3699();
         // buffers
         const indices = [];
@@ -21794,12 +21924,12 @@ class $084574008ccedf86$export$d5d06a966fec4192 extends $084574008ccedf86$export
             for(let ix = 0; ix <= widthSegments; ix++){
                 const u = ix / widthSegments;
                 // vertex
-                vertex11.x = -radius * Math.cos(phiStart + u * phiLength) * Math.sin(thetaStart + v * thetaLength);
-                vertex11.y = radius * Math.cos(thetaStart + v * thetaLength);
-                vertex11.z = radius * Math.sin(phiStart + u * phiLength) * Math.sin(thetaStart + v * thetaLength);
-                vertices.push(vertex11.x, vertex11.y, vertex11.z);
+                vertex.x = -radius * Math.cos(phiStart + u * phiLength) * Math.sin(thetaStart + v * thetaLength);
+                vertex.y = radius * Math.cos(thetaStart + v * thetaLength);
+                vertex.z = radius * Math.sin(phiStart + u * phiLength) * Math.sin(thetaStart + v * thetaLength);
+                vertices.push(vertex.x, vertex.y, vertex.z);
                 // normal
-                normal.copy(vertex11).normalize();
+                normal.copy(vertex).normalize();
                 normals.push(normal.x, normal.y, normal.z);
                 // uv
                 uvs.push(u + uOffset, 1 - v);
@@ -21808,13 +21938,13 @@ class $084574008ccedf86$export$d5d06a966fec4192 extends $084574008ccedf86$export
             grid.push(verticesRow);
         }
         // indices
-        for(let iy3 = 0; iy3 < heightSegments; iy3++)for(let ix = 0; ix < widthSegments; ix++){
-            const a = grid[iy3][ix + 1];
-            const b = grid[iy3][ix];
-            const c = grid[iy3 + 1][ix];
-            const d = grid[iy3 + 1][ix + 1];
-            if (iy3 !== 0 || thetaStart > 0) indices.push(a, b, d);
-            if (iy3 !== heightSegments - 1 || thetaEnd < Math.PI) indices.push(b, c, d);
+        for(let iy = 0; iy < heightSegments; iy++)for(let ix = 0; ix < widthSegments; ix++){
+            const a = grid[iy][ix + 1];
+            const b = grid[iy][ix];
+            const c = grid[iy + 1][ix];
+            const d = grid[iy + 1][ix + 1];
+            if (iy !== 0 || thetaStart > 0) indices.push(a, b, d);
+            if (iy !== heightSegments - 1 || thetaEnd < Math.PI) indices.push(b, c, d);
         }
         // build geometry
         this.setIndex(indices);
@@ -21887,33 +22017,33 @@ class $084574008ccedf86$export$19d55f905fa4f2cb extends $084574008ccedf86$export
         const uvs = [];
         // helper variables
         const center = new $084574008ccedf86$export$64b5c384219d3699();
-        const vertex12 = new $084574008ccedf86$export$64b5c384219d3699();
+        const vertex = new $084574008ccedf86$export$64b5c384219d3699();
         const normal = new $084574008ccedf86$export$64b5c384219d3699();
         // generate vertices, normals and uvs
-        for(let j = 0; j <= radialSegments; j++)for(let i263 = 0; i263 <= tubularSegments; i263++){
-            const u = i263 / tubularSegments * arc;
+        for(let j = 0; j <= radialSegments; j++)for(let i = 0; i <= tubularSegments; i++){
+            const u = i / tubularSegments * arc;
             const v = j / radialSegments * Math.PI * 2;
             // vertex
-            vertex12.x = (radius + tube * Math.cos(v)) * Math.cos(u);
-            vertex12.y = (radius + tube * Math.cos(v)) * Math.sin(u);
-            vertex12.z = tube * Math.sin(v);
-            vertices.push(vertex12.x, vertex12.y, vertex12.z);
+            vertex.x = (radius + tube * Math.cos(v)) * Math.cos(u);
+            vertex.y = (radius + tube * Math.cos(v)) * Math.sin(u);
+            vertex.z = tube * Math.sin(v);
+            vertices.push(vertex.x, vertex.y, vertex.z);
             // normal
             center.x = radius * Math.cos(u);
             center.y = radius * Math.sin(u);
-            normal.subVectors(vertex12, center).normalize();
+            normal.subVectors(vertex, center).normalize();
             normals.push(normal.x, normal.y, normal.z);
             // uv
-            uvs.push(i263 / tubularSegments);
+            uvs.push(i / tubularSegments);
             uvs.push(j / radialSegments);
         }
         // generate indices
-        for(let j4 = 1; j4 <= radialSegments; j4++)for(let i262 = 1; i262 <= tubularSegments; i262++){
+        for(let j = 1; j <= radialSegments; j++)for(let i = 1; i <= tubularSegments; i++){
             // indices
-            const a = (tubularSegments + 1) * j4 + i262 - 1;
-            const b = (tubularSegments + 1) * (j4 - 1) + i262 - 1;
-            const c = (tubularSegments + 1) * (j4 - 1) + i262;
-            const d = (tubularSegments + 1) * j4 + i262;
+            const a = (tubularSegments + 1) * j + i - 1;
+            const b = (tubularSegments + 1) * (j - 1) + i - 1;
+            const c = (tubularSegments + 1) * (j - 1) + i;
+            const d = (tubularSegments + 1) * j + i;
             // faces
             indices.push(a, b, d);
             indices.push(b, c, d);
@@ -21929,16 +22059,16 @@ class $084574008ccedf86$export$19d55f905fa4f2cb extends $084574008ccedf86$export
     }
 }
 class $084574008ccedf86$export$2b32466f4274fe5c extends $084574008ccedf86$export$b7be63a67df8959 {
-    constructor(radius3 = 1, tube = 0.4, tubularSegments = 64, radialSegments = 8, p6 = 2, q3 = 3){
+    constructor(radius = 1, tube = 0.4, tubularSegments = 64, radialSegments = 8, p = 2, q = 3){
         super();
         this.type = "TorusKnotGeometry";
         this.parameters = {
-            radius: radius3,
+            radius: radius,
             tube: tube,
             tubularSegments: tubularSegments,
             radialSegments: radialSegments,
-            p: p6,
-            q: q3
+            p: p,
+            q: q
         };
         tubularSegments = Math.floor(tubularSegments);
         radialSegments = Math.floor(radialSegments);
@@ -21948,7 +22078,7 @@ class $084574008ccedf86$export$2b32466f4274fe5c extends $084574008ccedf86$export
         const normals = [];
         const uvs = [];
         // helper variables
-        const vertex13 = new $084574008ccedf86$export$64b5c384219d3699();
+        const vertex = new $084574008ccedf86$export$64b5c384219d3699();
         const normal = new $084574008ccedf86$export$64b5c384219d3699();
         const P1 = new $084574008ccedf86$export$64b5c384219d3699();
         const P2 = new $084574008ccedf86$export$64b5c384219d3699();
@@ -21956,13 +22086,13 @@ class $084574008ccedf86$export$2b32466f4274fe5c extends $084574008ccedf86$export
         const T = new $084574008ccedf86$export$64b5c384219d3699();
         const N = new $084574008ccedf86$export$64b5c384219d3699();
         // generate vertices, normals and uvs
-        for(let i265 = 0; i265 <= tubularSegments; ++i265){
+        for(let i = 0; i <= tubularSegments; ++i){
             // the radian "u" is used to calculate the position on the torus curve of the current tubular segment
-            const u = i265 / tubularSegments * p6 * Math.PI * 2;
+            const u = i / tubularSegments * p * Math.PI * 2;
             // now we calculate two points. P1 is our current position on the curve, P2 is a little farther ahead.
             // these points are used to create a special "coordinate space", which is necessary to calculate the correct vertex positions
-            calculatePositionOnCurve(u, p6, q3, radius3, P1);
-            calculatePositionOnCurve(u + 0.01, p6, q3, radius3, P2);
+            calculatePositionOnCurve(u, p, q, radius, P1);
+            calculatePositionOnCurve(u + 0.01, p, q, radius, P2);
             // calculate orthonormal basis
             T.subVectors(P2, P1);
             N.addVectors(P2, P1);
@@ -21979,25 +22109,25 @@ class $084574008ccedf86$export$2b32466f4274fe5c extends $084574008ccedf86$export
                 const cy = tube * Math.sin(v);
                 // now calculate the final vertex position.
                 // first we orient the extrusion with our basis vectors, then we add it to the current position on the curve
-                vertex13.x = P1.x + (cx * N.x + cy * B.x);
-                vertex13.y = P1.y + (cx * N.y + cy * B.y);
-                vertex13.z = P1.z + (cx * N.z + cy * B.z);
-                vertices.push(vertex13.x, vertex13.y, vertex13.z);
+                vertex.x = P1.x + (cx * N.x + cy * B.x);
+                vertex.y = P1.y + (cx * N.y + cy * B.y);
+                vertex.z = P1.z + (cx * N.z + cy * B.z);
+                vertices.push(vertex.x, vertex.y, vertex.z);
                 // normal (P1 is always the center/origin of the extrusion, thus we can use it to calculate the normal)
-                normal.subVectors(vertex13, P1).normalize();
+                normal.subVectors(vertex, P1).normalize();
                 normals.push(normal.x, normal.y, normal.z);
                 // uv
-                uvs.push(i265 / tubularSegments);
+                uvs.push(i / tubularSegments);
                 uvs.push(j / radialSegments);
             }
         }
         // generate indices
-        for(let j = 1; j <= tubularSegments; j++)for(let i264 = 1; i264 <= radialSegments; i264++){
+        for(let j = 1; j <= tubularSegments; j++)for(let i = 1; i <= radialSegments; i++){
             // indices
-            const a = (radialSegments + 1) * (j - 1) + (i264 - 1);
-            const b = (radialSegments + 1) * j + (i264 - 1);
-            const c = (radialSegments + 1) * j + i264;
-            const d = (radialSegments + 1) * (j - 1) + i264;
+            const a = (radialSegments + 1) * (j - 1) + (i - 1);
+            const b = (radialSegments + 1) * j + (i - 1);
+            const c = (radialSegments + 1) * j + i;
+            const d = (radialSegments + 1) * (j - 1) + i;
             // faces
             indices.push(a, b, d);
             indices.push(b, c, d);
@@ -22039,7 +22169,7 @@ class $084574008ccedf86$export$d97a193ce44e691b extends $084574008ccedf86$export
         this.normals = frames.normals;
         this.binormals = frames.binormals;
         // helper variables
-        const vertex14 = new $084574008ccedf86$export$64b5c384219d3699();
+        const vertex = new $084574008ccedf86$export$64b5c384219d3699();
         const normal = new $084574008ccedf86$export$64b5c384219d3699();
         const uv = new $084574008ccedf86$export$c977b3e384af9ae1();
         let P = new $084574008ccedf86$export$64b5c384219d3699();
@@ -22057,7 +22187,7 @@ class $084574008ccedf86$export$d97a193ce44e691b extends $084574008ccedf86$export
         this.setAttribute("uv", new $084574008ccedf86$export$cbe7a62641830ebd(uvs, 2));
         // functions
         function generateBufferData() {
-            for(let i266 = 0; i266 < tubularSegments; i266++)generateSegment(i266);
+            for(let i = 0; i < tubularSegments; i++)generateSegment(i);
             // if the geometry is not closed, generate the last row of vertices and normals
             // at the regular position on the given path
             //
@@ -22069,12 +22199,12 @@ class $084574008ccedf86$export$d97a193ce44e691b extends $084574008ccedf86$export
             // finally create faces
             generateIndices();
         }
-        function generateSegment(i267) {
+        function generateSegment(i) {
             // we use getPointAt to sample evenly distributed points from the given path
-            P = path.getPointAt(i267 / tubularSegments, P);
+            P = path.getPointAt(i / tubularSegments, P);
             // retrieve corresponding normal and binormal
-            const N = frames.normals[i267];
-            const B = frames.binormals[i267];
+            const N = frames.normals[i];
+            const B = frames.binormals[i];
             // generate normals and vertices for the current segment
             for(let j = 0; j <= radialSegments; j++){
                 const v = j / radialSegments * Math.PI * 2;
@@ -22087,26 +22217,26 @@ class $084574008ccedf86$export$d97a193ce44e691b extends $084574008ccedf86$export
                 normal.normalize();
                 normals.push(normal.x, normal.y, normal.z);
                 // vertex
-                vertex14.x = P.x + radius * normal.x;
-                vertex14.y = P.y + radius * normal.y;
-                vertex14.z = P.z + radius * normal.z;
-                vertices.push(vertex14.x, vertex14.y, vertex14.z);
+                vertex.x = P.x + radius * normal.x;
+                vertex.y = P.y + radius * normal.y;
+                vertex.z = P.z + radius * normal.z;
+                vertices.push(vertex.x, vertex.y, vertex.z);
             }
         }
         function generateIndices() {
-            for(let j = 1; j <= tubularSegments; j++)for(let i268 = 1; i268 <= radialSegments; i268++){
-                const a = (radialSegments + 1) * (j - 1) + (i268 - 1);
-                const b = (radialSegments + 1) * j + (i268 - 1);
-                const c = (radialSegments + 1) * j + i268;
-                const d = (radialSegments + 1) * (j - 1) + i268;
+            for(let j = 1; j <= tubularSegments; j++)for(let i = 1; i <= radialSegments; i++){
+                const a = (radialSegments + 1) * (j - 1) + (i - 1);
+                const b = (radialSegments + 1) * j + (i - 1);
+                const c = (radialSegments + 1) * j + i;
+                const d = (radialSegments + 1) * (j - 1) + i;
                 // faces
                 indices.push(a, b, d);
                 indices.push(b, c, d);
             }
         }
         function generateUVs() {
-            for(let i269 = 0; i269 <= tubularSegments; i269++)for(let j = 0; j <= radialSegments; j++){
-                uv.x = i269 / tubularSegments;
+            for(let i = 0; i <= tubularSegments; i++)for(let j = 0; j <= radialSegments; j++){
+                uv.x = i / tubularSegments;
                 uv.y = j / radialSegments;
                 uvs.push(uv.x, uv.y);
             }
@@ -22154,9 +22284,9 @@ class $084574008ccedf86$export$4b739da06d24892b extends $084574008ccedf86$export
                     const group = groups[o];
                     const groupStart = group.start;
                     const groupCount = group.count;
-                    for(let i270 = groupStart, l = groupStart + groupCount; i270 < l; i270 += 3)for(let j = 0; j < 3; j++){
-                        const index1 = indices.getX(i270 + j);
-                        const index2 = indices.getX(i270 + (j + 1) % 3);
+                    for(let i = groupStart, l = groupStart + groupCount; i < l; i += 3)for(let j = 0; j < 3; j++){
+                        const index1 = indices.getX(i + j);
+                        const index2 = indices.getX(i + (j + 1) % 3);
                         start.fromBufferAttribute(position, index1);
                         end.fromBufferAttribute(position, index2);
                         if ($084574008ccedf86$var$isUniqueEdge(start, end, edges) === true) {
@@ -22168,11 +22298,11 @@ class $084574008ccedf86$export$4b739da06d24892b extends $084574008ccedf86$export
             } else {
                 // non-indexed BufferGeometry
                 const position = geometry.attributes.position;
-                for(let i271 = 0, l = position.count / 3; i271 < l; i271++)for(let j = 0; j < 3; j++){
+                for(let i = 0, l = position.count / 3; i < l; i++)for(let j = 0; j < 3; j++){
                     // three edges per triangle, an edge is represented as (index1, index2)
                     // e.g. the first triangle has the following edges: (0,1),(1,2),(2,0)
-                    const index1 = 3 * i271 + j;
-                    const index2 = 3 * i271 + (j + 1) % 3;
+                    const index1 = 3 * i + j;
+                    const index2 = 3 * i + (j + 1) % 3;
                     start.fromBufferAttribute(position, index1);
                     end.fromBufferAttribute(position, index2);
                     if ($084574008ccedf86$var$isUniqueEdge(start, end, edges) === true) {
@@ -22776,7 +22906,8 @@ const $084574008ccedf86$export$7ee8caa573e71ad1 = {
     },
     // converts an array to a specific type
     convertArray: function(array, type, forceClone) {
-        if (!array || !forceClone && array.constructor === type) return array;
+        if (!array || // let 'undefined' and 'null' pass
+        !forceClone && array.constructor === type) return array;
         if (typeof type.BYTES_PER_ELEMENT === "number") return new type(array); // create typed array
         return Array.prototype.slice.call(array); // create Array
     },
@@ -22785,12 +22916,12 @@ const $084574008ccedf86$export$7ee8caa573e71ad1 = {
     },
     // returns an array by which times and values can be sorted
     getKeyframeOrder: function(times) {
-        function compareTime(i273, j) {
-            return times[i273] - times[j];
+        function compareTime(i, j) {
+            return times[i] - times[j];
         }
         const n = times.length;
         const result = new Array(n);
-        for(let i272 = 0; i272 !== n; ++i272)result[i272] = i272;
+        for(let i = 0; i !== n; ++i)result[i] = i;
         result.sort(compareTime);
         return result;
     },
@@ -22798,16 +22929,16 @@ const $084574008ccedf86$export$7ee8caa573e71ad1 = {
     sortedArray: function(values, stride, order) {
         const nValues = values.length;
         const result = new values.constructor(nValues);
-        for(let i274 = 0, dstOffset = 0; dstOffset !== nValues; ++i274){
-            const srcOffset = order[i274] * stride;
+        for(let i = 0, dstOffset = 0; dstOffset !== nValues; ++i){
+            const srcOffset = order[i] * stride;
             for(let j = 0; j !== stride; ++j)result[dstOffset++] = values[srcOffset + j];
         }
         return result;
     },
     // function for parsing AOS keyframe formats
     flattenJSON: function(jsonKeys, times, values, valuePropertyName) {
-        let i275 = 1, key = jsonKeys[0];
-        while(key !== undefined && key[valuePropertyName] === undefined)key = jsonKeys[i275++];
+        let i = 1, key = jsonKeys[0];
+        while(key !== undefined && key[valuePropertyName] === undefined)key = jsonKeys[i++];
         if (key === undefined) return; // no data
         let value = key[valuePropertyName];
         if (value === undefined) return; // no data
@@ -22817,7 +22948,7 @@ const $084574008ccedf86$export$7ee8caa573e71ad1 = {
                 times.push(key.time);
                 values.push.apply(values, value); // push all elements
             }
-            key = jsonKeys[i275++];
+            key = jsonKeys[i++];
         }while (key !== undefined);
         else if (value.toArray !== undefined) // ...assume THREE.Math-ish
         do {
@@ -22826,7 +22957,7 @@ const $084574008ccedf86$export$7ee8caa573e71ad1 = {
                 times.push(key.time);
                 value.toArray(values, values.length);
             }
-            key = jsonKeys[i275++];
+            key = jsonKeys[i++];
         }while (key !== undefined);
         else // otherwise push as-is
         do {
@@ -22835,15 +22966,15 @@ const $084574008ccedf86$export$7ee8caa573e71ad1 = {
                 times.push(key.time);
                 values.push(value);
             }
-            key = jsonKeys[i275++];
+            key = jsonKeys[i++];
         }while (key !== undefined);
     },
     subclip: function(sourceClip, name, startFrame, endFrame, fps = 30) {
         const clip = sourceClip.clone();
         clip.name = name;
         const tracks = [];
-        for(let i278 = 0; i278 < clip.tracks.length; ++i278){
-            const track = clip.tracks[i278];
+        for(let i = 0; i < clip.tracks.length; ++i){
+            const track = clip.tracks[i];
             const valueSize = track.getValueSize();
             const times = [];
             const values = [];
@@ -22861,9 +22992,9 @@ const $084574008ccedf86$export$7ee8caa573e71ad1 = {
         clip.tracks = tracks;
         // find minimum .times value across all tracks in the trimmed clip
         let minStartTime = Infinity;
-        for(let i276 = 0; i276 < clip.tracks.length; ++i276)if (minStartTime > clip.tracks[i276].times[0]) minStartTime = clip.tracks[i276].times[0];
+        for(let i = 0; i < clip.tracks.length; ++i)if (minStartTime > clip.tracks[i].times[0]) minStartTime = clip.tracks[i].times[0];
         // shift all tracks such that clip begins at t=0
-        for(let i277 = 0; i277 < clip.tracks.length; ++i277)clip.tracks[i277].shift(-1 * minStartTime);
+        for(let i = 0; i < clip.tracks.length; ++i)clip.tracks[i].shift(-1 * minStartTime);
         clip.resetDuration();
         return clip;
     },
@@ -22872,8 +23003,8 @@ const $084574008ccedf86$export$7ee8caa573e71ad1 = {
         const numTracks = referenceClip.tracks.length;
         const referenceTime = referenceFrame / fps;
         // Make each track's values relative to the values at the reference frame
-        for(let i279 = 0; i279 < numTracks; ++i279){
-            const referenceTrack = referenceClip.tracks[i279];
+        for(let i = 0; i < numTracks; ++i){
+            const referenceTrack = referenceClip.tracks[i];
             const referenceTrackType = referenceTrack.ValueTypeName;
             // Skip this track if it's non-numeric
             if (referenceTrackType === "bool" || referenceTrackType === "string") continue;
@@ -22962,7 +23093,7 @@ const $084574008ccedf86$export$7ee8caa573e71ad1 = {
     }
     evaluate(t) {
         const pp = this.parameterPositions;
-        let i1100 = this._cachedIndex, t1 = pp[i1100], t0 = pp[i1100 - 1];
+        let i1 = this._cachedIndex, t1 = pp[i1], t0 = pp[i1 - 1];
         validate_interval: {
             seek: {
                 let right;
@@ -22972,17 +23103,17 @@ const $084574008ccedf86$export$7ee8caa573e71ad1 = {
                     //-
                     //- 				if ( t >= t1 || t1 === undefined ) {
                     forward_scan: if (!(t < t1)) {
-                        for(let giveUpAt = i1100 + 2;;){
+                        for(let giveUpAt = i1 + 2;;){
                             if (t1 === undefined) {
                                 if (t < t0) break forward_scan;
                                 // after end
-                                i1100 = pp.length;
-                                this._cachedIndex = i1100;
-                                return this.copySampleValue_(i1100 - 1);
+                                i1 = pp.length;
+                                this._cachedIndex = i1;
+                                return this.copySampleValue_(i1 - 1);
                             }
-                            if (i1100 === giveUpAt) break; // this loop
+                            if (i1 === giveUpAt) break; // this loop
                             t0 = t1;
-                            t1 = pp[++i1100];
+                            t1 = pp[++i1];
                             if (t < t1) break seek;
                         }
                         // prepare binary search on the right side of the index
@@ -22995,51 +23126,51 @@ const $084574008ccedf86$export$7ee8caa573e71ad1 = {
                         // looping?
                         const t1global = pp[1];
                         if (t < t1global) {
-                            i1100 = 2; // + 1, using the scan for the details
+                            i1 = 2; // + 1, using the scan for the details
                             t0 = t1global;
                         }
                         // linear reverse scan
-                        for(let giveUpAt = i1100 - 2;;){
+                        for(let giveUpAt = i1 - 2;;){
                             if (t0 === undefined) {
                                 // before start
                                 this._cachedIndex = 0;
                                 return this.copySampleValue_(0);
                             }
-                            if (i1100 === giveUpAt) break; // this loop
+                            if (i1 === giveUpAt) break; // this loop
                             t1 = t0;
-                            t0 = pp[--i1100 - 1];
+                            t0 = pp[--i1 - 1];
                             if (t >= t0) break seek;
                         }
                         // prepare binary search on the left side of the index
-                        right = i1100;
-                        i1100 = 0;
+                        right = i1;
+                        i1 = 0;
                         break linear_scan;
                     }
                     break validate_interval;
                 } // linear scan
                 // binary search
-                while(i1100 < right){
-                    const mid = i1100 + right >>> 1;
+                while(i1 < right){
+                    const mid = i1 + right >>> 1;
                     if (t < pp[mid]) right = mid;
-                    else i1100 = mid + 1;
+                    else i1 = mid + 1;
                 }
-                t1 = pp[i1100];
-                t0 = pp[i1100 - 1];
+                t1 = pp[i1];
+                t0 = pp[i1 - 1];
                 // check boundary cases, again
                 if (t0 === undefined) {
                     this._cachedIndex = 0;
                     return this.copySampleValue_(0);
                 }
                 if (t1 === undefined) {
-                    i1100 = pp.length;
-                    this._cachedIndex = i1100;
-                    return this.copySampleValue_(i1100 - 1);
+                    i1 = pp.length;
+                    this._cachedIndex = i1;
+                    return this.copySampleValue_(i1 - 1);
                 }
             } // seek
-            this._cachedIndex = i1100;
-            this.intervalChanged_(i1100, t0, t1);
+            this._cachedIndex = i1;
+            this.intervalChanged_(i1, t0, t1);
         } // validate_interval
-        return this.interpolate_(i1100, t0, t, t1);
+        return this.interpolate_(i1, t0, t, t1);
     }
     getSettings_() {
         return this.settings || this.DefaultSettings_;
@@ -23047,7 +23178,7 @@ const $084574008ccedf86$export$7ee8caa573e71ad1 = {
     copySampleValue_(index) {
         // copies a sample value to the result buffer
         const result = this.resultBuffer, values = this.sampleValues, stride = this.valueSize, offset = index * stride;
-        for(let i280 = 0; i280 !== stride; ++i280)result[i280] = values[offset + i280];
+        for(let i = 0; i !== stride; ++i)result[i] = values[offset + i];
         return result;
     }
     // Template methods for derived classes:
@@ -23077,13 +23208,13 @@ const $084574008ccedf86$export$7ee8caa573e71ad1 = {
             endingEnd: $084574008ccedf86$export$7f795934b84ab523
         };
     }
-    intervalChanged_(i1101, t0, t1) {
+    intervalChanged_(i1, t0, t1) {
         const pp = this.parameterPositions;
-        let iPrev = i1101 - 2, iNext = i1101 + 1, tPrev = pp[iPrev], tNext = pp[iNext];
+        let iPrev = i1 - 2, iNext = i1 + 1, tPrev = pp[iPrev], tNext = pp[iNext];
         if (tPrev === undefined) switch(this.getSettings_().endingStart){
             case $084574008ccedf86$export$24a4ccb5099273b5:
                 // f'(t0) = 0
-                iPrev = i1101;
+                iPrev = i1;
                 tPrev = 2 * t0 - t1;
                 break;
             case $084574008ccedf86$export$8e8c3ecdcd8e1fee:
@@ -23093,13 +23224,13 @@ const $084574008ccedf86$export$7ee8caa573e71ad1 = {
                 break;
             default:
                 // f''(t0) = 0 a.k.a. Natural Spline
-                iPrev = i1101;
+                iPrev = i1;
                 tPrev = t1;
         }
         if (tNext === undefined) switch(this.getSettings_().endingEnd){
             case $084574008ccedf86$export$24a4ccb5099273b5:
                 // f'(tN) = 0
-                iNext = i1101;
+                iNext = i1;
                 tNext = 2 * t1 - t0;
                 break;
             case $084574008ccedf86$export$8e8c3ecdcd8e1fee:
@@ -23109,7 +23240,7 @@ const $084574008ccedf86$export$7ee8caa573e71ad1 = {
                 break;
             default:
                 // f''(tN) = 0, a.k.a. Natural Spline
-                iNext = i1101 - 1;
+                iNext = i1 - 1;
                 tNext = t0;
         }
         const halfDt = (t1 - t0) * 0.5, stride = this.valueSize;
@@ -23118,15 +23249,15 @@ const $084574008ccedf86$export$7ee8caa573e71ad1 = {
         this._offsetPrev = iPrev * stride;
         this._offsetNext = iNext * stride;
     }
-    interpolate_(i1102, t0, t, t1) {
-        const result = this.resultBuffer, values = this.sampleValues, stride = this.valueSize, o1 = i1102 * stride, o0 = o1 - stride, oP = this._offsetPrev, oN = this._offsetNext, wP = this._weightPrev, wN = this._weightNext, p = (t - t0) / (t1 - t0), pp = p * p, ppp = pp * p;
+    interpolate_(i1, t0, t, t1) {
+        const result = this.resultBuffer, values = this.sampleValues, stride = this.valueSize, o1 = i1 * stride, o0 = o1 - stride, oP = this._offsetPrev, oN = this._offsetNext, wP = this._weightPrev, wN = this._weightNext, p = (t - t0) / (t1 - t0), pp = p * p, ppp = pp * p;
         // evaluate polynomials
         const sP = -wP * ppp + 2 * wP * pp - wP * p;
         const s0 = (1 + wP) * ppp + (-1.5 - 2 * wP) * pp + (-0.5 + wP) * p + 1;
         const s1 = (-1 - wN) * ppp + (1.5 + wN) * pp + 0.5 * p;
         const sN = wN * ppp - wN * pp;
         // combine data linearly
-        for(let i281 = 0; i281 !== stride; ++i281)result[i281] = sP * values[oP + i281] + s0 * values[o0 + i281] + s1 * values[o1 + i281] + sN * values[oN + i281];
+        for(let i = 0; i !== stride; ++i)result[i] = sP * values[oP + i] + s0 * values[o0 + i] + s1 * values[o1 + i] + sN * values[oN + i];
         return result;
     }
 }
@@ -23134,9 +23265,9 @@ class $084574008ccedf86$export$a8e6009059f51e1a extends $084574008ccedf86$export
     constructor(parameterPositions, sampleValues, sampleSize, resultBuffer){
         super(parameterPositions, sampleValues, sampleSize, resultBuffer);
     }
-    interpolate_(i1103, t0, t, t1) {
-        const result = this.resultBuffer, values = this.sampleValues, stride = this.valueSize, offset1 = i1103 * stride, offset0 = offset1 - stride, weight1 = (t - t0) / (t1 - t0), weight0 = 1 - weight1;
-        for(let i282 = 0; i282 !== stride; ++i282)result[i282] = values[offset0 + i282] * weight0 + values[offset1 + i282] * weight1;
+    interpolate_(i1, t0, t, t1) {
+        const result = this.resultBuffer, values = this.sampleValues, stride = this.valueSize, offset1 = i1 * stride, offset0 = offset1 - stride, weight1 = (t - t0) / (t1 - t0), weight0 = 1 - weight1;
+        for(let i = 0; i !== stride; ++i)result[i] = values[offset0 + i] * weight0 + values[offset1 + i] * weight1;
         return result;
     }
 }
@@ -23148,8 +23279,8 @@ class $084574008ccedf86$export$a8e6009059f51e1a extends $084574008ccedf86$export
     constructor(parameterPositions, sampleValues, sampleSize, resultBuffer){
         super(parameterPositions, sampleValues, sampleSize, resultBuffer);
     }
-    interpolate_(i1104 /*, t0, t, t1 */ ) {
-        return this.copySampleValue_(i1104 - 1);
+    interpolate_(i1 /*, t0, t, t1 */ ) {
+        return this.copySampleValue_(i1 - 1);
     }
 }
 class $084574008ccedf86$export$b0e479f45b7006d6 {
@@ -23233,7 +23364,7 @@ class $084574008ccedf86$export$b0e479f45b7006d6 {
     shift(timeOffset) {
         if (timeOffset !== 0.0) {
             const times = this.times;
-            for(let i283 = 0, n = times.length; i283 !== n; ++i283)times[i283] += timeOffset;
+            for(let i = 0, n = times.length; i !== n; ++i)times[i] += timeOffset;
         }
         return this;
     }
@@ -23241,7 +23372,7 @@ class $084574008ccedf86$export$b0e479f45b7006d6 {
     scale(timeScale) {
         if (timeScale !== 1.0) {
             const times = this.times;
-            for(let i284 = 0, n = times.length; i284 !== n; ++i284)times[i284] *= timeScale;
+            for(let i = 0, n = times.length; i !== n; ++i)times[i] *= timeScale;
         }
         return this;
     }
@@ -23279,25 +23410,25 @@ class $084574008ccedf86$export$b0e479f45b7006d6 {
             valid = false;
         }
         let prevTime = null;
-        for(let i285 = 0; i285 !== nKeys; i285++){
-            const currTime = times[i285];
+        for(let i = 0; i !== nKeys; i++){
+            const currTime = times[i];
             if (typeof currTime === "number" && isNaN(currTime)) {
-                console.error("THREE.KeyframeTrack: Time is not a valid number.", this, i285, currTime);
+                console.error("THREE.KeyframeTrack: Time is not a valid number.", this, i, currTime);
                 valid = false;
                 break;
             }
             if (prevTime !== null && prevTime > currTime) {
-                console.error("THREE.KeyframeTrack: Out of order keys.", this, i285, currTime, prevTime);
+                console.error("THREE.KeyframeTrack: Out of order keys.", this, i, currTime, prevTime);
                 valid = false;
                 break;
             }
             prevTime = currTime;
         }
         if (values !== undefined) {
-            if ($084574008ccedf86$export$7ee8caa573e71ad1.isTypedArray(values)) for(let i286 = 0, n = values.length; i286 !== n; ++i286){
-                const value = values[i286];
+            if ($084574008ccedf86$export$7ee8caa573e71ad1.isTypedArray(values)) for(let i = 0, n = values.length; i !== n; ++i){
+                const value = values[i];
                 if (isNaN(value)) {
-                    console.error("THREE.KeyframeTrack: Value is not a valid number.", this, i286, value);
+                    console.error("THREE.KeyframeTrack: Value is not a valid number.", this, i, value);
                     valid = false;
                     break;
                 }
@@ -23311,15 +23442,15 @@ class $084574008ccedf86$export$b0e479f45b7006d6 {
         // times or values may be shared with other tracks, so overwriting is unsafe
         const times = $084574008ccedf86$export$7ee8caa573e71ad1.arraySlice(this.times), values = $084574008ccedf86$export$7ee8caa573e71ad1.arraySlice(this.values), stride = this.getValueSize(), smoothInterpolation = this.getInterpolation() === $084574008ccedf86$export$198b11ff4c72bb30, lastIndex = times.length - 1;
         let writeIndex = 1;
-        for(let i287 = 1; i287 < lastIndex; ++i287){
+        for(let i = 1; i < lastIndex; ++i){
             let keep = false;
-            const time = times[i287];
-            const timeNext = times[i287 + 1];
+            const time = times[i];
+            const timeNext = times[i + 1];
             // remove adjacent keyframes scheduled at the same time
-            if (time !== timeNext && (i287 !== 1 || time !== times[0])) {
+            if (time !== timeNext && (i !== 1 || time !== times[0])) {
                 if (!smoothInterpolation) {
                     // remove unnecessary keyframes same as their neighbors
-                    const offset = i287 * stride, offsetP = offset - stride, offsetN = offset + stride;
+                    const offset = i * stride, offsetP = offset - stride, offsetN = offset + stride;
                     for(let j = 0; j !== stride; ++j){
                         const value = values[offset + j];
                         if (value !== values[offsetP + j] || value !== values[offsetN + j]) {
@@ -23331,9 +23462,9 @@ class $084574008ccedf86$export$b0e479f45b7006d6 {
             }
             // in-place compaction
             if (keep) {
-                if (i287 !== writeIndex) {
-                    times[writeIndex] = times[i287];
-                    const readOffset = i287 * stride, writeOffset = writeIndex * stride;
+                if (i !== writeIndex) {
+                    times[writeIndex] = times[i];
+                    const readOffset = i * stride, writeOffset = writeIndex * stride;
                     for(let j = 0; j !== stride; ++j)values[writeOffset + j] = values[readOffset + j];
                 }
                 ++writeIndex;
@@ -23392,9 +23523,9 @@ $084574008ccedf86$export$d45f0d1a4d9a9314.prototype.ValueTypeName = "number";
     constructor(parameterPositions, sampleValues, sampleSize, resultBuffer){
         super(parameterPositions, sampleValues, sampleSize, resultBuffer);
     }
-    interpolate_(i1105, t0, t, t1) {
+    interpolate_(i1, t0, t, t1) {
         const result = this.resultBuffer, values = this.sampleValues, stride = this.valueSize, alpha = (t - t0) / (t1 - t0);
-        let offset = i1105 * stride;
+        let offset = i1 * stride;
         for(let end = offset + stride; offset !== end; offset += 4)$084574008ccedf86$export$23d6a54f0bbc85a3.slerpFlat(result, 0, values, offset - stride, values, offset, alpha);
         return result;
     }
@@ -23436,7 +23567,7 @@ class $084574008ccedf86$export$d942c706bf23829c {
     }
     static parse(json) {
         const tracks = [], jsonTracks = json.tracks, frameTime = 1.0 / (json.fps || 1.0);
-        for(let i288 = 0, n = jsonTracks.length; i288 !== n; ++i288)tracks.push($084574008ccedf86$var$parseKeyframeTrack(jsonTracks[i288]).scale(frameTime));
+        for(let i = 0, n = jsonTracks.length; i !== n; ++i)tracks.push($084574008ccedf86$var$parseKeyframeTrack(jsonTracks[i]).scale(frameTime));
         const clip = new this(json.name, json.duration, tracks, json.blendMode);
         clip.uuid = json.uuid;
         return clip;
@@ -23450,16 +23581,16 @@ class $084574008ccedf86$export$d942c706bf23829c {
             "uuid": clip.uuid,
             "blendMode": clip.blendMode
         };
-        for(let i289 = 0, n = clipTracks.length; i289 !== n; ++i289)tracks.push($084574008ccedf86$export$b0e479f45b7006d6.toJSON(clipTracks[i289]));
+        for(let i = 0, n = clipTracks.length; i !== n; ++i)tracks.push($084574008ccedf86$export$b0e479f45b7006d6.toJSON(clipTracks[i]));
         return json;
     }
     static CreateFromMorphTargetSequence(name, morphTargetSequence, fps, noLoop) {
         const numMorphTargets = morphTargetSequence.length;
         const tracks = [];
-        for(let i290 = 0; i290 < numMorphTargets; i290++){
+        for(let i = 0; i < numMorphTargets; i++){
             let times = [];
             let values = [];
-            times.push((i290 + numMorphTargets - 1) % numMorphTargets, i290, (i290 + 1) % numMorphTargets);
+            times.push((i + numMorphTargets - 1) % numMorphTargets, i, (i + 1) % numMorphTargets);
             values.push(0, 1, 0);
             const order = $084574008ccedf86$export$7ee8caa573e71ad1.getKeyframeOrder(times);
             times = $084574008ccedf86$export$7ee8caa573e71ad1.sortedArray(times, 1, order);
@@ -23470,7 +23601,7 @@ class $084574008ccedf86$export$d942c706bf23829c {
                 times.push(numMorphTargets);
                 values.push(values[0]);
             }
-            tracks.push(new $084574008ccedf86$export$d45f0d1a4d9a9314(".morphTargetInfluences[" + morphTargetSequence[i290].name + "]", times, values).scale(1.0 / fps));
+            tracks.push(new $084574008ccedf86$export$d45f0d1a4d9a9314(".morphTargetInfluences[" + morphTargetSequence[i].name + "]", times, values).scale(1.0 / fps));
         }
         return new this(name, -1, tracks);
     }
@@ -23480,8 +23611,8 @@ class $084574008ccedf86$export$d942c706bf23829c {
             const o = objectOrClipArray;
             clipArray = o.geometry && o.geometry.animations || o.animations;
         }
-        for(let i291 = 0; i291 < clipArray.length; i291++){
-            if (clipArray[i291].name === name) return clipArray[i291];
+        for(let i = 0; i < clipArray.length; i++){
+            if (clipArray[i].name === name) return clipArray[i];
         }
         return null;
     }
@@ -23492,8 +23623,8 @@ class $084574008ccedf86$export$d942c706bf23829c {
         const pattern = /^([\w-]*?)([\d]+)$/;
         // sort morph target names into animation groups based
         // patterns like Walk_001, Walk_002, Run_001, Run_002
-        for(let i292 = 0, il = morphTargets.length; i292 < il; i292++){
-            const morphTarget = morphTargets[i292];
+        for(let i = 0, il = morphTargets.length; i < il; i++){
+            const morphTarget = morphTargets[i];
             const parts = morphTarget.name.match(pattern);
             if (parts && parts.length > 1) {
                 const name = parts[1];
@@ -23570,29 +23701,29 @@ class $084574008ccedf86$export$d942c706bf23829c {
     resetDuration() {
         const tracks = this.tracks;
         let duration = 0;
-        for(let i293 = 0, n = tracks.length; i293 !== n; ++i293){
-            const track = this.tracks[i293];
+        for(let i = 0, n = tracks.length; i !== n; ++i){
+            const track = this.tracks[i];
             duration = Math.max(duration, track.times[track.times.length - 1]);
         }
         this.duration = duration;
         return this;
     }
     trim() {
-        for(let i294 = 0; i294 < this.tracks.length; i294++)this.tracks[i294].trim(0, this.duration);
+        for(let i = 0; i < this.tracks.length; i++)this.tracks[i].trim(0, this.duration);
         return this;
     }
     validate() {
         let valid = true;
-        for(let i295 = 0; i295 < this.tracks.length; i295++)valid = valid && this.tracks[i295].validate();
+        for(let i = 0; i < this.tracks.length; i++)valid = valid && this.tracks[i].validate();
         return valid;
     }
     optimize() {
-        for(let i296 = 0; i296 < this.tracks.length; i296++)this.tracks[i296].optimize();
+        for(let i = 0; i < this.tracks.length; i++)this.tracks[i].optimize();
         return this;
     }
     clone() {
         const tracks = [];
-        for(let i297 = 0; i297 < this.tracks.length; i297++)tracks.push(this.tracks[i297].clone());
+        for(let i = 0; i < this.tracks.length; i++)tracks.push(this.tracks[i].clone());
         return new this.constructor(this.name, this.duration, tracks, this.blendMode);
     }
     toJSON() {
@@ -23708,9 +23839,9 @@ class $084574008ccedf86$export$99cc795e99919eed {
             return this;
         };
         this.getHandler = function(file) {
-            for(let i298 = 0, l = handlers.length; i298 < l; i298 += 2){
-                const regex = handlers[i298];
-                const loader = handlers[i298 + 1];
+            for(let i = 0, l = handlers.length; i < l; i += 2){
+                const regex = handlers[i];
+                const loader = handlers[i + 1];
                 if (regex.global) regex.lastIndex = 0; // see #17920
                 if (regex.test(file)) return loader;
             }
@@ -23827,8 +23958,8 @@ class $084574008ccedf86$export$98435a25b5cf7b2b extends $084574008ccedf86$export
                                         loaded: loaded,
                                         total: total
                                     });
-                                    for(let i299 = 0, il = callbacks.length; i299 < il; i299++){
-                                        const callback = callbacks[i299];
+                                    for(let i = 0, il = callbacks.length; i < il; i++){
+                                        const callback = callbacks[i];
                                         if (callback.onProgress) callback.onProgress(event);
                                     }
                                     controller.enqueue(value);
@@ -23870,8 +24001,8 @@ class $084574008ccedf86$export$98435a25b5cf7b2b extends $084574008ccedf86$export
             $084574008ccedf86$export$94affb487e701bf2.add(url, data);
             const callbacks = $084574008ccedf86$var$loading[url];
             delete $084574008ccedf86$var$loading[url];
-            for(let i300 = 0, il = callbacks.length; i300 < il; i300++){
-                const callback = callbacks[i300];
+            for(let i = 0, il = callbacks.length; i < il; i++){
+                const callback = callbacks[i];
                 if (callback.onLoad) callback.onLoad(data);
             }
         }).catch((err)=>{
@@ -23883,8 +24014,8 @@ class $084574008ccedf86$export$98435a25b5cf7b2b extends $084574008ccedf86$export
                 throw err;
             }
             delete $084574008ccedf86$var$loading[url];
-            for(let i301 = 0, il = callbacks.length; i301 < il; i301++){
-                const callback = callbacks[i301];
+            for(let i = 0, il = callbacks.length; i < il; i++){
+                const callback = callbacks[i];
                 if (callback.onError) callback.onError(err);
             }
             this.manager.itemError(url);
@@ -23924,8 +24055,8 @@ class $084574008ccedf86$export$29711c7e14f61db extends $084574008ccedf86$export$
     }
     parse(json) {
         const animations = [];
-        for(let i302 = 0; i302 < json.length; i302++){
-            const clip = $084574008ccedf86$export$d942c706bf23829c.parse(json[i302]);
+        for(let i = 0; i < json.length; i++){
+            const clip = $084574008ccedf86$export$d942c706bf23829c.parse(json[i]);
             animations.push(clip);
         }
         return animations;
@@ -23949,10 +24080,10 @@ class $084574008ccedf86$export$29711c7e14f61db extends $084574008ccedf86$export$
         loader.setRequestHeader(this.requestHeader);
         loader.setWithCredentials(scope.withCredentials);
         let loaded = 0;
-        function loadTexture(i304) {
-            loader.load(url[i304], function(buffer) {
+        function loadTexture(i) {
+            loader.load(url[i], function(buffer) {
                 const texDatas = scope.parse(buffer, true);
-                images[i304] = {
+                images[i] = {
                     width: texDatas.width,
                     height: texDatas.height,
                     format: texDatas.format,
@@ -23968,7 +24099,7 @@ class $084574008ccedf86$export$29711c7e14f61db extends $084574008ccedf86$export$
                 }
             }, onProgress, onError);
         }
-        if (Array.isArray(url)) for(let i303 = 0, il = url.length; i303 < il; ++i303)loadTexture(i303);
+        if (Array.isArray(url)) for(let i = 0, il = url.length; i < il; ++i)loadTexture(i);
         else // compressed cubemap texture stored in a single DDS file
         loader.load(url, function(buffer) {
             const texDatas = scope.parse(buffer, true);
@@ -23978,8 +24109,8 @@ class $084574008ccedf86$export$29711c7e14f61db extends $084574008ccedf86$export$
                     images[f] = {
                         mipmaps: []
                     };
-                    for(let i305 = 0; i305 < texDatas.mipmapCount; i305++){
-                        images[f].mipmaps.push(texDatas.mipmaps[f * texDatas.mipmapCount + i305]);
+                    for(let i = 0; i < texDatas.mipmapCount; i++){
+                        images[f].mipmaps.push(texDatas.mipmaps[f * texDatas.mipmapCount + i]);
                         images[f].format = texDatas.format;
                         images[f].width = texDatas.width;
                         images[f].height = texDatas.height;
@@ -24053,9 +24184,9 @@ class $084574008ccedf86$export$2ec114afc2cf6308 extends $084574008ccedf86$export
         loader.setCrossOrigin(this.crossOrigin);
         loader.setPath(this.path);
         let loaded = 0;
-        function loadTexture(i307) {
-            loader.load(urls[i307], function(image) {
-                texture.images[i307] = image;
+        function loadTexture(i) {
+            loader.load(urls[i], function(image) {
+                texture.images[i] = image;
                 loaded++;
                 if (loaded === 6) {
                     texture.needsUpdate = true;
@@ -24063,7 +24194,7 @@ class $084574008ccedf86$export$2ec114afc2cf6308 extends $084574008ccedf86$export
                 }
             }, undefined, onError);
         }
-        for(let i306 = 0; i306 < urls.length; ++i306)loadTexture(i306);
+        for(let i = 0; i < urls.length; ++i)loadTexture(i);
         return texture;
     }
 }
@@ -24257,12 +24388,12 @@ class $084574008ccedf86$var$SpotLightShadow extends $084574008ccedf86$var$LightS
     }
     updateMatrices(light) {
         const camera = this.camera;
-        const fov3 = $084574008ccedf86$var$RAD2DEG * 2 * light.angle * this.focus;
-        const aspect3 = this.mapSize.width / this.mapSize.height;
+        const fov = $084574008ccedf86$var$RAD2DEG * 2 * light.angle * this.focus;
+        const aspect = this.mapSize.width / this.mapSize.height;
         const far = light.distance || camera.far;
-        if (fov3 !== camera.fov || aspect3 !== camera.aspect || far !== camera.far) {
-            camera.fov = fov3;
-            camera.aspect = aspect3;
+        if (fov !== camera.fov || aspect !== camera.aspect || far !== camera.far) {
+            camera.fov = fov;
+            camera.aspect = aspect;
             camera.far = far;
             camera.updateProjectionMatrix();
         }
@@ -24485,14 +24616,14 @@ class $084574008ccedf86$export$ba61ce607e1f405a {
     constructor(){
         this.isSphericalHarmonics3 = true;
         this.coefficients = [];
-        for(let i308 = 0; i308 < 9; i308++)this.coefficients.push(new $084574008ccedf86$export$64b5c384219d3699());
+        for(let i = 0; i < 9; i++)this.coefficients.push(new $084574008ccedf86$export$64b5c384219d3699());
     }
     set(coefficients) {
-        for(let i309 = 0; i309 < 9; i309++)this.coefficients[i309].copy(coefficients[i309]);
+        for(let i = 0; i < 9; i++)this.coefficients[i].copy(coefficients[i]);
         return this;
     }
     zero() {
-        for(let i310 = 0; i310 < 9; i310++)this.coefficients[i310].set(0, 0, 0);
+        for(let i = 0; i < 9; i++)this.coefficients[i].set(0, 0, 0);
         return this;
     }
     // get the radiance in the direction of the normal
@@ -24537,24 +24668,24 @@ class $084574008ccedf86$export$ba61ce607e1f405a {
         return target;
     }
     add(sh) {
-        for(let i311 = 0; i311 < 9; i311++)this.coefficients[i311].add(sh.coefficients[i311]);
+        for(let i = 0; i < 9; i++)this.coefficients[i].add(sh.coefficients[i]);
         return this;
     }
     addScaledSH(sh, s) {
-        for(let i312 = 0; i312 < 9; i312++)this.coefficients[i312].addScaledVector(sh.coefficients[i312], s);
+        for(let i = 0; i < 9; i++)this.coefficients[i].addScaledVector(sh.coefficients[i], s);
         return this;
     }
     scale(s) {
-        for(let i313 = 0; i313 < 9; i313++)this.coefficients[i313].multiplyScalar(s);
+        for(let i = 0; i < 9; i++)this.coefficients[i].multiplyScalar(s);
         return this;
     }
     lerp(sh, alpha) {
-        for(let i314 = 0; i314 < 9; i314++)this.coefficients[i314].lerp(sh.coefficients[i314], alpha);
+        for(let i = 0; i < 9; i++)this.coefficients[i].lerp(sh.coefficients[i], alpha);
         return this;
     }
     equals(sh) {
-        for(let i315 = 0; i315 < 9; i315++){
-            if (!this.coefficients[i315].equals(sh.coefficients[i315])) return false;
+        for(let i = 0; i < 9; i++){
+            if (!this.coefficients[i].equals(sh.coefficients[i])) return false;
         }
         return true;
     }
@@ -24566,12 +24697,12 @@ class $084574008ccedf86$export$ba61ce607e1f405a {
     }
     fromArray(array, offset = 0) {
         const coefficients = this.coefficients;
-        for(let i316 = 0; i316 < 9; i316++)coefficients[i316].fromArray(array, offset + i316 * 3);
+        for(let i = 0; i < 9; i++)coefficients[i].fromArray(array, offset + i * 3);
         return this;
     }
     toArray(array = [], offset = 0) {
         const coefficients = this.coefficients;
-        for(let i317 = 0; i317 < 9; i317++)coefficients[i317].toArray(array, offset + i317 * 3);
+        for(let i = 0; i < 9; i++)coefficients[i].toArray(array, offset + i * 3);
         return array;
     }
     // evaluate the basis functions
@@ -24708,33 +24839,33 @@ class $084574008ccedf86$export$3bd6d323353dcf96 extends $084574008ccedf86$export
             else material.vertexColors = json.vertexColors;
         }
         // Shader Material
-        if (json.uniforms !== undefined) for(const name4 in json.uniforms){
-            const uniform = json.uniforms[name4];
-            material.uniforms[name4] = {};
+        if (json.uniforms !== undefined) for(const name in json.uniforms){
+            const uniform = json.uniforms[name];
+            material.uniforms[name] = {};
             switch(uniform.type){
                 case "t":
-                    material.uniforms[name4].value = getTexture(uniform.value);
+                    material.uniforms[name].value = getTexture(uniform.value);
                     break;
                 case "c":
-                    material.uniforms[name4].value = new $084574008ccedf86$export$892596cec99bc70e().setHex(uniform.value);
+                    material.uniforms[name].value = new $084574008ccedf86$export$892596cec99bc70e().setHex(uniform.value);
                     break;
                 case "v2":
-                    material.uniforms[name4].value = new $084574008ccedf86$export$c977b3e384af9ae1().fromArray(uniform.value);
+                    material.uniforms[name].value = new $084574008ccedf86$export$c977b3e384af9ae1().fromArray(uniform.value);
                     break;
                 case "v3":
-                    material.uniforms[name4].value = new $084574008ccedf86$export$64b5c384219d3699().fromArray(uniform.value);
+                    material.uniforms[name].value = new $084574008ccedf86$export$64b5c384219d3699().fromArray(uniform.value);
                     break;
                 case "v4":
-                    material.uniforms[name4].value = new $084574008ccedf86$export$fa7daccca11cdbe3().fromArray(uniform.value);
+                    material.uniforms[name].value = new $084574008ccedf86$export$fa7daccca11cdbe3().fromArray(uniform.value);
                     break;
                 case "m3":
-                    material.uniforms[name4].value = new $084574008ccedf86$export$8ff26dafa08918().fromArray(uniform.value);
+                    material.uniforms[name].value = new $084574008ccedf86$export$8ff26dafa08918().fromArray(uniform.value);
                     break;
                 case "m4":
-                    material.uniforms[name4].value = new $084574008ccedf86$export$2ae72fc923e5eb5().fromArray(uniform.value);
+                    material.uniforms[name].value = new $084574008ccedf86$export$2ae72fc923e5eb5().fromArray(uniform.value);
                     break;
                 default:
-                    material.uniforms[name4].value = uniform.value;
+                    material.uniforms[name].value = uniform.value;
             }
         }
         if (json.defines !== undefined) material.defines = json.defines;
@@ -24805,8 +24936,8 @@ class $084574008ccedf86$export$b5d2dc08d867e41a {
         // Avoid the String.fromCharCode.apply(null, array) shortcut, which
         // throws a "maximum call stack size exceeded" error for large arrays.
         let s = "";
-        for(let i318 = 0, il = array.length; i318 < il; i318++)// Implicitly assumes little-endian.
-        s += String.fromCharCode(array[i318]);
+        for(let i = 0, il = array.length; i < il; i++)// Implicitly assumes little-endian.
+        s += String.fromCharCode(array[i]);
         try {
             // merges multi-byte utf-8 characters.
             return decodeURIComponent(escape(s));
@@ -24876,7 +25007,7 @@ class $084574008ccedf86$export$dc275bb96327833a extends $084574008ccedf86$export
             }
         }, onProgress, onError);
     }
-    parse(json1) {
+    parse(json) {
         const interleavedBufferMap = {};
         const arrayBufferMap = {};
         function getInterleavedBuffer(json, uuid) {
@@ -24898,18 +25029,18 @@ class $084574008ccedf86$export$dc275bb96327833a extends $084574008ccedf86$export
             arrayBufferMap[uuid] = ab;
             return ab;
         }
-        const geometry = json1.isInstancedBufferGeometry ? new $084574008ccedf86$export$231f009cbe414146() : new $084574008ccedf86$export$b7be63a67df8959();
-        const index = json1.data.index;
+        const geometry = json.isInstancedBufferGeometry ? new $084574008ccedf86$export$231f009cbe414146() : new $084574008ccedf86$export$b7be63a67df8959();
+        const index = json.data.index;
         if (index !== undefined) {
             const typedArray = $084574008ccedf86$var$getTypedArray(index.type, index.array);
             geometry.setIndex(new $084574008ccedf86$export$8dea267bd6bde117(typedArray, 1));
         }
-        const attributes = json1.data.attributes;
+        const attributes = json.data.attributes;
         for(const key in attributes){
             const attribute = attributes[key];
             let bufferAttribute;
             if (attribute.isInterleavedBufferAttribute) {
-                const interleavedBuffer = getInterleavedBuffer(json1.data, attribute.data);
+                const interleavedBuffer = getInterleavedBuffer(json.data, attribute.data);
                 bufferAttribute = new $084574008ccedf86$export$920b6d07334599c7(interleavedBuffer, attribute.itemSize, attribute.offset, attribute.normalized);
             } else {
                 const typedArray = $084574008ccedf86$var$getTypedArray(attribute.type, attribute.array);
@@ -24924,15 +25055,15 @@ class $084574008ccedf86$export$dc275bb96327833a extends $084574008ccedf86$export
             }
             geometry.setAttribute(key, bufferAttribute);
         }
-        const morphAttributes = json1.data.morphAttributes;
-        if (morphAttributes) for(const key2 in morphAttributes){
-            const attributeArray = morphAttributes[key2];
+        const morphAttributes = json.data.morphAttributes;
+        if (morphAttributes) for(const key in morphAttributes){
+            const attributeArray = morphAttributes[key];
             const array = [];
-            for(let i319 = 0, il = attributeArray.length; i319 < il; i319++){
-                const attribute = attributeArray[i319];
+            for(let i = 0, il = attributeArray.length; i < il; i++){
+                const attribute = attributeArray[i];
                 let bufferAttribute;
                 if (attribute.isInterleavedBufferAttribute) {
-                    const interleavedBuffer = getInterleavedBuffer(json1.data, attribute.data);
+                    const interleavedBuffer = getInterleavedBuffer(json.data, attribute.data);
                     bufferAttribute = new $084574008ccedf86$export$920b6d07334599c7(interleavedBuffer, attribute.itemSize, attribute.offset, attribute.normalized);
                 } else {
                     const typedArray = $084574008ccedf86$var$getTypedArray(attribute.type, attribute.array);
@@ -24941,23 +25072,23 @@ class $084574008ccedf86$export$dc275bb96327833a extends $084574008ccedf86$export
                 if (attribute.name !== undefined) bufferAttribute.name = attribute.name;
                 array.push(bufferAttribute);
             }
-            geometry.morphAttributes[key2] = array;
+            geometry.morphAttributes[key] = array;
         }
-        const morphTargetsRelative = json1.data.morphTargetsRelative;
+        const morphTargetsRelative = json.data.morphTargetsRelative;
         if (morphTargetsRelative) geometry.morphTargetsRelative = true;
-        const groups = json1.data.groups || json1.data.drawcalls || json1.data.offsets;
-        if (groups !== undefined) for(let i320 = 0, n = groups.length; i320 !== n; ++i320){
-            const group = groups[i320];
+        const groups = json.data.groups || json.data.drawcalls || json.data.offsets;
+        if (groups !== undefined) for(let i = 0, n = groups.length; i !== n; ++i){
+            const group = groups[i];
             geometry.addGroup(group.start, group.count, group.materialIndex);
         }
-        const boundingSphere = json1.data.boundingSphere;
+        const boundingSphere = json.data.boundingSphere;
         if (boundingSphere !== undefined) {
             const center = new $084574008ccedf86$export$64b5c384219d3699();
             if (boundingSphere.center !== undefined) center.fromArray(boundingSphere.center);
             geometry.boundingSphere = new $084574008ccedf86$export$805e8b72413ccaba(center, boundingSphere.radius);
         }
-        if (json1.name) geometry.name = json1.name;
-        if (json1.userData) geometry.userData = json1.userData;
+        if (json.name) geometry.name = json.name;
+        if (json.userData) geometry.userData = json.userData;
         return geometry;
     }
 }
@@ -25041,8 +25172,8 @@ class $084574008ccedf86$export$40110c8505c5ad19 extends $084574008ccedf86$export
     }
     parseShapes(json) {
         const shapes = {};
-        if (json !== undefined) for(let i321 = 0, l = json.length; i321 < l; i321++){
-            const shape = new $084574008ccedf86$export$6428a7f2611ef1fa().fromJSON(json[i321]);
+        if (json !== undefined) for(let i = 0, l = json.length; i < l; i++){
+            const shape = new $084574008ccedf86$export$6428a7f2611ef1fa().fromJSON(json[i]);
             shapes[shape.uuid] = shape;
         }
         return shapes;
@@ -25055,8 +25186,8 @@ class $084574008ccedf86$export$40110c8505c5ad19 extends $084574008ccedf86$export
             if (child.isBone) bones[child.uuid] = child;
         });
         // create skeletons
-        if (json !== undefined) for(let i322 = 0, l = json.length; i322 < l; i322++){
-            const skeleton = new $084574008ccedf86$export$8f31e4c4a37b8e9c().fromJSON(json[i322], bones);
+        if (json !== undefined) for(let i = 0, l = json.length; i < l; i++){
+            const skeleton = new $084574008ccedf86$export$8f31e4c4a37b8e9c().fromJSON(json[i], bones);
             skeletons[skeleton.uuid] = skeleton;
         }
         return skeletons;
@@ -25065,9 +25196,9 @@ class $084574008ccedf86$export$40110c8505c5ad19 extends $084574008ccedf86$export
         const geometries = {};
         if (json !== undefined) {
             const bufferGeometryLoader = new $084574008ccedf86$export$dc275bb96327833a();
-            for(let i323 = 0, l = json.length; i323 < l; i323++){
+            for(let i = 0, l = json.length; i < l; i++){
                 let geometry;
-                const data = json[i323];
+                const data = json[i];
                 switch(data.type){
                     case "BufferGeometry":
                     case "InstancedBufferGeometry":
@@ -25094,8 +25225,8 @@ class $084574008ccedf86$export$40110c8505c5ad19 extends $084574008ccedf86$export
         if (json !== undefined) {
             const loader = new $084574008ccedf86$export$3bd6d323353dcf96();
             loader.setTextures(textures);
-            for(let i324 = 0, l = json.length; i324 < l; i324++){
-                const data = json[i324];
+            for(let i = 0, l = json.length; i < l; i++){
+                const data = json[i];
                 if (data.type === "MultiMaterial") {
                     // Deprecated
                     const array = [];
@@ -25115,8 +25246,8 @@ class $084574008ccedf86$export$40110c8505c5ad19 extends $084574008ccedf86$export
     }
     parseAnimations(json) {
         const animations = {};
-        if (json !== undefined) for(let i325 = 0; i325 < json.length; i325++){
-            const data = json[i325];
+        if (json !== undefined) for(let i = 0; i < json.length; i++){
+            const data = json[i];
             const clip = $084574008ccedf86$export$d942c706bf23829c.parse(data);
             animations[clip.uuid] = clip;
         }
@@ -25153,8 +25284,8 @@ class $084574008ccedf86$export$40110c8505c5ad19 extends $084574008ccedf86$export
             const manager = new $084574008ccedf86$export$99cc795e99919eed(onLoad);
             loader = new $084574008ccedf86$export$8905ce1c7a2464a1(manager);
             loader.setCrossOrigin(this.crossOrigin);
-            for(let i326 = 0, il = json.length; i326 < il; i326++){
-                const image = json[i326];
+            for(let i = 0, il = json.length; i < il; i++){
+                const image = json[i];
                 const url = image.url;
                 if (Array.isArray(url)) {
                     // load array of images e.g CubeTexture
@@ -25199,8 +25330,8 @@ class $084574008ccedf86$export$40110c8505c5ad19 extends $084574008ccedf86$export
         if (json !== undefined && json.length > 0) {
             loader = new $084574008ccedf86$export$8905ce1c7a2464a1(this.manager);
             loader.setCrossOrigin(this.crossOrigin);
-            for(let i327 = 0, il = json.length; i327 < il; i327++){
-                const image = json[i327];
+            for(let i = 0, il = json.length; i < il; i++){
+                const image = json[i];
                 const url = image.url;
                 if (Array.isArray(url)) {
                     // load array of images e.g CubeTexture
@@ -25231,8 +25362,8 @@ class $084574008ccedf86$export$40110c8505c5ad19 extends $084574008ccedf86$export
             return type[value];
         }
         const textures = {};
-        if (json !== undefined) for(let i328 = 0, l = json.length; i328 < l; i328++){
-            const data = json[i328];
+        if (json !== undefined) for(let i = 0, l = json.length; i < l; i++){
+            const data = json[i];
             if (data.image === undefined) console.warn('THREE.ObjectLoader: No "image" specified for', data.uuid);
             if (images[data.image] === undefined) console.warn("THREE.ObjectLoader: Undefined image", data.image);
             const source = images[data.image];
@@ -25282,8 +25413,8 @@ class $084574008ccedf86$export$40110c8505c5ad19 extends $084574008ccedf86$export
             if (name === undefined) return undefined;
             if (Array.isArray(name)) {
                 const array = [];
-                for(let i329 = 0, l = name.length; i329 < l; i329++){
-                    const uuid = name[i329];
+                for(let i = 0, l = name.length; i < l; i++){
+                    const uuid = name[i];
                     if (materials[uuid] === undefined) console.warn("THREE.ObjectLoader: Undefined material", uuid);
                     array.push(materials[uuid]);
                 }
@@ -25423,12 +25554,12 @@ class $084574008ccedf86$export$40110c8505c5ad19 extends $084574008ccedf86$export
         if (data.layers !== undefined) object.layers.mask = data.layers;
         if (data.children !== undefined) {
             const children = data.children;
-            for(let i330 = 0; i330 < children.length; i330++)object.add(this.parseObject(children[i330], geometries, materials, textures, animations));
+            for(let i = 0; i < children.length; i++)object.add(this.parseObject(children[i], geometries, materials, textures, animations));
         }
         if (data.animations !== undefined) {
             const objectAnimations = data.animations;
-            for(let i331 = 0; i331 < objectAnimations.length; i331++){
-                const uuid = objectAnimations[i331];
+            for(let i = 0; i < objectAnimations.length; i++){
+                const uuid = objectAnimations[i];
                 object.animations.push(animations[uuid]);
             }
         }
@@ -25875,7 +26006,7 @@ class $084574008ccedf86$export$153755f98d9861de extends $084574008ccedf86$export
     connect() {
         if (this.filters.length > 0) {
             this.source.connect(this.filters[0]);
-            for(let i332 = 1, l = this.filters.length; i332 < l; i332++)this.filters[i332 - 1].connect(this.filters[i332]);
+            for(let i = 1, l = this.filters.length; i < l; i++)this.filters[i - 1].connect(this.filters[i]);
             this.filters[this.filters.length - 1].connect(this.getOutput());
         } else this.source.connect(this.getOutput());
         this._connected = true;
@@ -25884,7 +26015,7 @@ class $084574008ccedf86$export$153755f98d9861de extends $084574008ccedf86$export
     disconnect() {
         if (this.filters.length > 0) {
             this.source.disconnect(this.filters[0]);
-            for(let i333 = 1, l = this.filters.length; i333 < l; i333++)this.filters[i333 - 1].disconnect(this.filters[i333]);
+            for(let i = 1, l = this.filters.length; i < l; i++)this.filters[i - 1].disconnect(this.filters[i]);
             this.filters[this.filters.length - 1].disconnect(this.getOutput());
         } else this.source.disconnect(this.getOutput());
         this._connected = false;
@@ -26053,7 +26184,7 @@ class $084574008ccedf86$export$d47da1ef3d382827 {
     getAverageFrequency() {
         let value = 0;
         const data = this.getFrequencyData();
-        for(let i334 = 0; i334 < data.length; i334++)value += data[i334];
+        for(let i = 0; i < data.length; i++)value += data[i];
         return value / data.length;
     }
 }
@@ -26118,7 +26249,7 @@ class $084574008ccedf86$export$dfe0af1ca1acb78a {
         let currentWeight = this.cumulativeWeight;
         if (currentWeight === 0) {
             // accuN := incoming * weight
-            for(let i335 = 0; i335 !== stride; ++i335)buffer[offset + i335] = buffer[i335];
+            for(let i = 0; i !== stride; ++i)buffer[offset + i] = buffer[i];
             currentWeight = weight;
         } else {
             // accuN := accuN + incoming * weight
@@ -26149,7 +26280,7 @@ class $084574008ccedf86$export$dfe0af1ca1acb78a {
         }
         if (weightAdditive > 0) // accuN := accuN + additive accuN
         this._mixBufferRegionAdditive(buffer, offset, this._addIndex * stride, 1, stride);
-        for(let i336 = stride, e = stride + stride; i336 !== e; ++i336)if (buffer[i336] !== buffer[i336 + stride]) {
+        for(let i = stride, e = stride + stride; i !== e; ++i)if (buffer[i] !== buffer[i + stride]) {
             // value has changed -> update scene graph
             binding.setValue(buffer, offset);
             break;
@@ -26161,7 +26292,7 @@ class $084574008ccedf86$export$dfe0af1ca1acb78a {
         const buffer = this.buffer, stride = this.valueSize, originalValueOffset = stride * this._origIndex;
         binding.getValue(buffer, originalValueOffset);
         // accu[0..1] := orig -- initially detect changes against the original
-        for(let i337 = stride, e = originalValueOffset; i337 !== e; ++i337)buffer[i337] = buffer[originalValueOffset + i337 % stride];
+        for(let i = stride, e = originalValueOffset; i !== e; ++i)buffer[i] = buffer[originalValueOffset + i % stride];
         // Add to identity for additive
         this._setIdentity();
         this.cumulativeWeight = 0;
@@ -26175,7 +26306,7 @@ class $084574008ccedf86$export$dfe0af1ca1acb78a {
     _setAdditiveIdentityNumeric() {
         const startIndex = this._addIndex * this.valueSize;
         const endIndex = startIndex + this.valueSize;
-        for(let i338 = startIndex; i338 < endIndex; i338++)this.buffer[i338] = 0;
+        for(let i = startIndex; i < endIndex; i++)this.buffer[i] = 0;
     }
     _setAdditiveIdentityQuaternion() {
         this._setAdditiveIdentityNumeric();
@@ -26184,11 +26315,11 @@ class $084574008ccedf86$export$dfe0af1ca1acb78a {
     _setAdditiveIdentityOther() {
         const startIndex = this._origIndex * this.valueSize;
         const targetIndex = this._addIndex * this.valueSize;
-        for(let i339 = 0; i339 < this.valueSize; i339++)this.buffer[targetIndex + i339] = this.buffer[startIndex + i339];
+        for(let i = 0; i < this.valueSize; i++)this.buffer[targetIndex + i] = this.buffer[startIndex + i];
     }
     // mix functions
     _select(buffer, dstOffset, srcOffset, t, stride) {
-        if (t >= 0.5) for(let i340 = 0; i340 !== stride; ++i340)buffer[dstOffset + i340] = buffer[srcOffset + i340];
+        if (t >= 0.5) for(let i = 0; i !== stride; ++i)buffer[dstOffset + i] = buffer[srcOffset + i];
     }
     _slerp(buffer, dstOffset, srcOffset, t) {
         $084574008ccedf86$export$23d6a54f0bbc85a3.slerpFlat(buffer, dstOffset, buffer, dstOffset, buffer, srcOffset, t);
@@ -26202,15 +26333,15 @@ class $084574008ccedf86$export$dfe0af1ca1acb78a {
     }
     _lerp(buffer, dstOffset, srcOffset, t, stride) {
         const s = 1 - t;
-        for(let i341 = 0; i341 !== stride; ++i341){
-            const j = dstOffset + i341;
-            buffer[j] = buffer[j] * s + buffer[srcOffset + i341] * t;
+        for(let i = 0; i !== stride; ++i){
+            const j = dstOffset + i;
+            buffer[j] = buffer[j] * s + buffer[srcOffset + i] * t;
         }
     }
     _lerpAdditive(buffer, dstOffset, srcOffset, t, stride) {
-        for(let i342 = 0; i342 !== stride; ++i342){
-            const j = dstOffset + i342;
-            buffer[j] = buffer[j] + buffer[srcOffset + i342] * t;
+        for(let i = 0; i !== stride; ++i){
+            const j = dstOffset + i;
+            buffer[j] = buffer[j] + buffer[srcOffset + i] * t;
         }
     }
 }
@@ -26253,15 +26384,15 @@ class $084574008ccedf86$var$Composite {
     }
     setValue(array, offset) {
         const bindings = this._bindings;
-        for(let i343 = this._targetGroup.nCachedObjects_, n = bindings.length; i343 !== n; ++i343)bindings[i343].setValue(array, offset);
+        for(let i = this._targetGroup.nCachedObjects_, n = bindings.length; i !== n; ++i)bindings[i].setValue(array, offset);
     }
     bind() {
         const bindings = this._bindings;
-        for(let i344 = this._targetGroup.nCachedObjects_, n = bindings.length; i344 !== n; ++i344)bindings[i344].bind();
+        for(let i = this._targetGroup.nCachedObjects_, n = bindings.length; i !== n; ++i)bindings[i].bind();
     }
     unbind() {
         const bindings = this._bindings;
-        for(let i345 = this._targetGroup.nCachedObjects_, n = bindings.length; i345 !== n; ++i345)bindings[i345].unbind();
+        for(let i = this._targetGroup.nCachedObjects_, n = bindings.length; i !== n; ++i)bindings[i].unbind();
     }
 }
 // Note: This class uses a State pattern on a per-method basis:
@@ -26328,8 +26459,8 @@ class $084574008ccedf86$export$7bf70fcf9f891893 {
         // search into node subtree.
         if (root.children) {
             const searchNodeSubtree = function(children) {
-                for(let i346 = 0; i346 < children.length; i346++){
-                    const childNode = children[i346];
+                for(let i = 0; i < children.length; i++){
+                    const childNode = children[i];
                     if (childNode.name === nodeName || childNode.uuid === nodeName) return childNode;
                     const result = searchNodeSubtree(childNode.children);
                     if (result) return result;
@@ -26350,7 +26481,7 @@ class $084574008ccedf86$export$7bf70fcf9f891893 {
     }
     _getValue_array(buffer, offset) {
         const source = this.resolvedProperty;
-        for(let i347 = 0, n = source.length; i347 !== n; ++i347)buffer[offset++] = source[i347];
+        for(let i = 0, n = source.length; i !== n; ++i)buffer[offset++] = source[i];
     }
     _getValue_arrayElement(buffer, offset) {
         buffer[offset] = this.resolvedProperty[this.propertyIndex];
@@ -26373,16 +26504,16 @@ class $084574008ccedf86$export$7bf70fcf9f891893 {
     // EntireArray
     _setValue_array(buffer, offset) {
         const dest = this.resolvedProperty;
-        for(let i348 = 0, n = dest.length; i348 !== n; ++i348)dest[i348] = buffer[offset++];
+        for(let i = 0, n = dest.length; i !== n; ++i)dest[i] = buffer[offset++];
     }
     _setValue_array_setNeedsUpdate(buffer, offset) {
         const dest = this.resolvedProperty;
-        for(let i349 = 0, n = dest.length; i349 !== n; ++i349)dest[i349] = buffer[offset++];
+        for(let i = 0, n = dest.length; i !== n; ++i)dest[i] = buffer[offset++];
         this.targetObject.needsUpdate = true;
     }
     _setValue_array_setMatrixWorldNeedsUpdate(buffer, offset) {
         const dest = this.resolvedProperty;
-        for(let i350 = 0, n = dest.length; i350 !== n; ++i350)dest[i350] = buffer[offset++];
+        for(let i = 0, n = dest.length; i !== n; ++i)dest[i] = buffer[offset++];
         this.targetObject.matrixWorldNeedsUpdate = true;
     }
     // ArrayElement
@@ -26460,8 +26591,8 @@ class $084574008ccedf86$export$7bf70fcf9f891893 {
                     // and convert the integer string to a true integer.
                     targetObject = targetObject.skeleton.bones;
                     // support resolving morphTarget names into indices.
-                    for(let i351 = 0; i351 < targetObject.length; i351++)if (targetObject[i351].name === objectIndex) {
-                        objectIndex = i351;
+                    for(let i = 0; i < targetObject.length; i++)if (targetObject[i].name === objectIndex) {
+                        objectIndex = i;
                         break;
                     }
                     break;
@@ -26548,32 +26679,32 @@ $084574008ccedf86$export$7bf70fcf9f891893.prototype.GetterByBindingType = [
     $084574008ccedf86$export$7bf70fcf9f891893.prototype._getValue_direct,
     $084574008ccedf86$export$7bf70fcf9f891893.prototype._getValue_array,
     $084574008ccedf86$export$7bf70fcf9f891893.prototype._getValue_arrayElement,
-    $084574008ccedf86$export$7bf70fcf9f891893.prototype._getValue_toArray, 
+    $084574008ccedf86$export$7bf70fcf9f891893.prototype._getValue_toArray
 ];
 $084574008ccedf86$export$7bf70fcf9f891893.prototype.SetterByBindingTypeAndVersioning = [
     [
         // Direct
         $084574008ccedf86$export$7bf70fcf9f891893.prototype._setValue_direct,
         $084574008ccedf86$export$7bf70fcf9f891893.prototype._setValue_direct_setNeedsUpdate,
-        $084574008ccedf86$export$7bf70fcf9f891893.prototype._setValue_direct_setMatrixWorldNeedsUpdate, 
+        $084574008ccedf86$export$7bf70fcf9f891893.prototype._setValue_direct_setMatrixWorldNeedsUpdate
     ],
     [
         // EntireArray
         $084574008ccedf86$export$7bf70fcf9f891893.prototype._setValue_array,
         $084574008ccedf86$export$7bf70fcf9f891893.prototype._setValue_array_setNeedsUpdate,
-        $084574008ccedf86$export$7bf70fcf9f891893.prototype._setValue_array_setMatrixWorldNeedsUpdate, 
+        $084574008ccedf86$export$7bf70fcf9f891893.prototype._setValue_array_setMatrixWorldNeedsUpdate
     ],
     [
         // ArrayElement
         $084574008ccedf86$export$7bf70fcf9f891893.prototype._setValue_arrayElement,
         $084574008ccedf86$export$7bf70fcf9f891893.prototype._setValue_arrayElement_setNeedsUpdate,
-        $084574008ccedf86$export$7bf70fcf9f891893.prototype._setValue_arrayElement_setMatrixWorldNeedsUpdate, 
+        $084574008ccedf86$export$7bf70fcf9f891893.prototype._setValue_arrayElement_setMatrixWorldNeedsUpdate
     ],
     [
         // HasToFromArray
         $084574008ccedf86$export$7bf70fcf9f891893.prototype._setValue_fromArray,
         $084574008ccedf86$export$7bf70fcf9f891893.prototype._setValue_fromArray_setNeedsUpdate,
-        $084574008ccedf86$export$7bf70fcf9f891893.prototype._setValue_fromArray_setMatrixWorldNeedsUpdate, 
+        $084574008ccedf86$export$7bf70fcf9f891893.prototype._setValue_fromArray_setMatrixWorldNeedsUpdate
     ]
 ];
 /**
@@ -26613,7 +26744,7 @@ $084574008ccedf86$export$7bf70fcf9f891893.prototype.SetterByBindingTypeAndVersio
         // note: read by PropertyBinding.Composite
         const indices = {};
         this._indicesByUUID = indices; // for bookkeeping
-        for(let i352 = 0, n = arguments.length; i352 !== n; ++i352)indices[arguments[i352].uuid] = i352;
+        for(let i = 0, n = arguments.length; i !== n; ++i)indices[arguments[i].uuid] = i;
         this._paths = []; // inside: string
         this._parsedPaths = []; // inside: { we don't care, here }
         this._bindings = []; // inside: Array< PropertyBinding >
@@ -26636,8 +26767,8 @@ $084574008ccedf86$export$7bf70fcf9f891893.prototype.SetterByBindingTypeAndVersio
     add() {
         const objects = this._objects, indicesByUUID = this._indicesByUUID, paths = this._paths, parsedPaths = this._parsedPaths, bindings = this._bindings, nBindings = bindings.length;
         let knownObject = undefined, nObjects = objects.length, nCachedObjects = this.nCachedObjects_;
-        for(let i353 = 0, n = arguments.length; i353 !== n; ++i353){
-            const object = arguments[i353], uuid = object.uuid;
+        for(let i = 0, n = arguments.length; i !== n; ++i){
+            const object = arguments[i], uuid = object.uuid;
             let index = indicesByUUID[uuid];
             if (index === undefined) {
                 // unknown object -> add it to the ACTIVE region
@@ -26673,8 +26804,8 @@ $084574008ccedf86$export$7bf70fcf9f891893.prototype.SetterByBindingTypeAndVersio
     remove() {
         const objects = this._objects, indicesByUUID = this._indicesByUUID, bindings = this._bindings, nBindings = bindings.length;
         let nCachedObjects = this.nCachedObjects_;
-        for(let i354 = 0, n = arguments.length; i354 !== n; ++i354){
-            const object = arguments[i354], uuid = object.uuid, index = indicesByUUID[uuid];
+        for(let i = 0, n = arguments.length; i !== n; ++i){
+            const object = arguments[i], uuid = object.uuid, index = indicesByUUID[uuid];
             if (index !== undefined && index >= nCachedObjects) {
                 // move existing object into the CACHED region
                 const lastCachedIndex = nCachedObjects++, firstActiveObject = objects[lastCachedIndex];
@@ -26696,8 +26827,8 @@ $084574008ccedf86$export$7bf70fcf9f891893.prototype.SetterByBindingTypeAndVersio
     uncache() {
         const objects = this._objects, indicesByUUID = this._indicesByUUID, bindings = this._bindings, nBindings = bindings.length;
         let nCachedObjects = this.nCachedObjects_, nObjects = objects.length;
-        for(let i355 = 0, n = arguments.length; i355 !== n; ++i355){
-            const object = arguments[i355], uuid = object.uuid, index = indicesByUUID[uuid];
+        for(let i = 0, n = arguments.length; i !== n; ++i){
+            const object = arguments[i], uuid = object.uuid, index = indicesByUUID[uuid];
             if (index !== undefined) {
                 delete indicesByUUID[uuid];
                 if (index < nCachedObjects) {
@@ -26748,9 +26879,9 @@ $084574008ccedf86$export$7bf70fcf9f891893.prototype.SetterByBindingTypeAndVersio
         paths.push(path);
         parsedPaths.push(parsedPath);
         bindings.push(bindingsForPath);
-        for(let i356 = nCachedObjects, n = objects.length; i356 !== n; ++i356){
-            const object = objects[i356];
-            bindingsForPath[i356] = new $084574008ccedf86$export$7bf70fcf9f891893(object, path, parsedPath);
+        for(let i = nCachedObjects, n = objects.length; i !== n; ++i){
+            const object = objects[i];
+            bindingsForPath[i] = new $084574008ccedf86$export$7bf70fcf9f891893(object, path, parsedPath);
         }
         return bindingsForPath;
     }
@@ -26781,9 +26912,9 @@ class $084574008ccedf86$var$AnimationAction {
             endingStart: $084574008ccedf86$export$7f795934b84ab523,
             endingEnd: $084574008ccedf86$export$7f795934b84ab523
         };
-        for(let i357 = 0; i357 !== nTracks; ++i357){
-            const interpolant = tracks[i357].createInterpolant(null);
-            interpolants[i357] = interpolant;
+        for(let i = 0; i !== nTracks; ++i){
+            const interpolant = tracks[i].createInterpolant(null);
+            interpolants[i] = interpolant;
             interpolant.settings = interpolantSettings;
         }
         this._interpolantSettings = interpolantSettings;
@@ -26913,15 +27044,15 @@ class $084574008ccedf86$var$AnimationAction {
         return this.warp(this._effectiveTimeScale, 0, duration);
     }
     warp(startTimeScale, endTimeScale, duration) {
-        const mixer = this._mixer, now1 = mixer.time, timeScale = this.timeScale;
+        const mixer = this._mixer, now = mixer.time, timeScale = this.timeScale;
         let interpolant = this._timeScaleInterpolant;
         if (interpolant === null) {
             interpolant = mixer._lendControlInterpolant();
             this._timeScaleInterpolant = interpolant;
         }
         const times = interpolant.parameterPositions, values = interpolant.sampleValues;
-        times[0] = now1;
-        times[1] = now1 + duration;
+        times[0] = now;
+        times[1] = now + duration;
         values[0] = startTimeScale / timeScale;
         values[1] = endTimeScale / timeScale;
         return this;
@@ -26979,9 +27110,9 @@ class $084574008ccedf86$var$AnimationAction {
                     break;
                 case $084574008ccedf86$export$bcfbbdcf8de7f8cd:
                 default:
-                    for(let j5 = 0, m1 = interpolants.length; j5 !== m1; ++j5){
-                        interpolants[j5].evaluate(clipTime);
-                        propertyMixers[j5].accumulate(accuIndex, weight);
+                    for(let j = 0, m = interpolants.length; j !== m; ++j){
+                        interpolants[j].evaluate(clipTime);
+                        propertyMixers[j].accumulate(accuIndex, weight);
                     }
             }
         }
@@ -27119,16 +27250,16 @@ class $084574008ccedf86$var$AnimationAction {
         }
     }
     _scheduleFading(duration, weightNow, weightThen) {
-        const mixer = this._mixer, now2 = mixer.time;
+        const mixer = this._mixer, now = mixer.time;
         let interpolant = this._weightInterpolant;
         if (interpolant === null) {
             interpolant = mixer._lendControlInterpolant();
             this._weightInterpolant = interpolant;
         }
         const times = interpolant.parameterPositions, values = interpolant.sampleValues;
-        times[0] = now2;
+        times[0] = now;
         values[0] = weightNow;
-        times[1] = now2 + duration;
+        times[1] = now + duration;
         values[1] = weightThen;
         return this;
     }
@@ -27150,14 +27281,14 @@ class $084574008ccedf86$export$fbd77e5aefaa0102 extends $084574008ccedf86$export
             bindingsByName = {};
             bindingsByRoot[rootUuid] = bindingsByName;
         }
-        for(let i358 = 0; i358 !== nTracks; ++i358){
-            const track = tracks[i358], trackName = track.name;
+        for(let i = 0; i !== nTracks; ++i){
+            const track = tracks[i], trackName = track.name;
             let binding = bindingsByName[trackName];
             if (binding !== undefined) {
                 ++binding.referenceCount;
-                bindings[i358] = binding;
+                bindings[i] = binding;
             } else {
-                binding = bindings[i358];
+                binding = bindings[i];
                 if (binding !== undefined) {
                     // existing binding, make sure the cache knows
                     if (binding._cacheIndex === null) {
@@ -27166,13 +27297,13 @@ class $084574008ccedf86$export$fbd77e5aefaa0102 extends $084574008ccedf86$export
                     }
                     continue;
                 }
-                const path = prototypeAction && prototypeAction._propertyBindings[i358].binding.parsedPath;
+                const path = prototypeAction && prototypeAction._propertyBindings[i].binding.parsedPath;
                 binding = new $084574008ccedf86$export$dfe0af1ca1acb78a($084574008ccedf86$export$7bf70fcf9f891893.create(root, trackName, path), track.ValueTypeName, track.getValueSize());
                 ++binding.referenceCount;
                 this._addInactiveBinding(binding, rootUuid, trackName);
-                bindings[i358] = binding;
+                bindings[i] = binding;
             }
-            interpolants[i358].resultBuffer = binding.buffer;
+            interpolants[i].resultBuffer = binding.buffer;
         }
     }
     _activateAction(action) {
@@ -27186,9 +27317,9 @@ class $084574008ccedf86$export$fbd77e5aefaa0102 extends $084574008ccedf86$export
             }
             const bindings = action._propertyBindings;
             // increment reference counts / sort out state
-            for(let i359 = 0, n = bindings.length; i359 !== n; ++i359){
-                const binding = bindings[i359];
-                if ((binding.useCount++) === 0) {
+            for(let i = 0, n = bindings.length; i !== n; ++i){
+                const binding = bindings[i];
+                if (binding.useCount++ === 0) {
                     this._lendBinding(binding);
                     binding.saveOriginalState();
                 }
@@ -27200,8 +27331,8 @@ class $084574008ccedf86$export$fbd77e5aefaa0102 extends $084574008ccedf86$export
         if (this._isActiveAction(action)) {
             const bindings = action._propertyBindings;
             // decrement reference counts / sort out state
-            for(let i360 = 0, n = bindings.length; i360 !== n; ++i360){
-                const binding = bindings[i360];
+            for(let i = 0, n = bindings.length; i !== n; ++i){
+                const binding = bindings[i];
                 if (--binding.useCount === 0) {
                     binding.restoreOriginalState();
                     this._takeBackBinding(binding);
@@ -27297,8 +27428,8 @@ class $084574008ccedf86$export$fbd77e5aefaa0102 extends $084574008ccedf86$export
     }
     _removeInactiveBindingsForAction(action) {
         const bindings = action._propertyBindings;
-        for(let i361 = 0, n = bindings.length; i361 !== n; ++i361){
-            const binding = bindings[i361];
+        for(let i = 0, n = bindings.length; i !== n; ++i){
+            const binding = bindings[i];
             if (--binding.referenceCount === 0) this._removeInactiveBinding(binding);
         }
     }
@@ -27418,7 +27549,7 @@ class $084574008ccedf86$export$fbd77e5aefaa0102 extends $084574008ccedf86$export
     // deactivates all previously scheduled actions
     stopAllAction() {
         const actions = this._actions, nActions = this._nActiveActions;
-        for(let i362 = nActions - 1; i362 >= 0; --i362)actions[i362].stop();
+        for(let i = nActions - 1; i >= 0; --i)actions[i].stop();
         return this;
     }
     // advance the time and update apply the animation
@@ -27426,19 +27557,19 @@ class $084574008ccedf86$export$fbd77e5aefaa0102 extends $084574008ccedf86$export
         deltaTime *= this.timeScale;
         const actions = this._actions, nActions = this._nActiveActions, time = this.time += deltaTime, timeDirection = Math.sign(deltaTime), accuIndex = this._accuIndex ^= 1;
         // run active actions
-        for(let i364 = 0; i364 !== nActions; ++i364){
-            const action = actions[i364];
+        for(let i = 0; i !== nActions; ++i){
+            const action = actions[i];
             action._update(time, deltaTime, timeDirection, accuIndex);
         }
         // update scene graph
         const bindings = this._bindings, nBindings = this._nActiveBindings;
-        for(let i363 = 0; i363 !== nBindings; ++i363)bindings[i363].apply(accuIndex);
+        for(let i = 0; i !== nBindings; ++i)bindings[i].apply(accuIndex);
         return this;
     }
     // Allows you to seek to a specific time in an animation.
     setTime(timeInSeconds) {
         this.time = 0; // Zero out time attribute for AnimationMixer object;
-        for(let i365 = 0; i365 < this._actions.length; i365++)this._actions[i365].time = 0; // Zero out time attribute for all associated AnimationAction objects.
+        for(let i = 0; i < this._actions.length; i++)this._actions[i].time = 0; // Zero out time attribute for all associated AnimationAction objects.
         return this.update(timeInSeconds); // Update used to set exact time. Returns "this" AnimationMixer object.
     }
     // return this mixer's root target object
@@ -27453,8 +27584,8 @@ class $084574008ccedf86$export$fbd77e5aefaa0102 extends $084574008ccedf86$export
             // iteration state and also require updating the state we can
             // just throw away
             const actionsToRemove = actionsForClip.knownActions;
-            for(let i366 = 0, n = actionsToRemove.length; i366 !== n; ++i366){
-                const action = actionsToRemove[i366];
+            for(let i = 0, n = actionsToRemove.length; i !== n; ++i){
+                const action = actionsToRemove[i];
                 this._deactivateAction(action);
                 const cacheIndex = action._cacheIndex, lastInactiveAction = actions[actions.length - 1];
                 action._cacheIndex = null;
@@ -27594,25 +27725,25 @@ class $084574008ccedf86$export$8b7aaceff00bd2f {
             this.camera = camera;
         } else console.error("THREE.Raycaster: Unsupported camera type: " + camera.type);
     }
-    intersectObject(object, recursive = true, intersects8 = []) {
-        $084574008ccedf86$var$intersectObject(object, this, intersects8, recursive);
-        intersects8.sort($084574008ccedf86$var$ascSort);
-        return intersects8;
+    intersectObject(object, recursive = true, intersects = []) {
+        $084574008ccedf86$var$intersectObject(object, this, intersects, recursive);
+        intersects.sort($084574008ccedf86$var$ascSort);
+        return intersects;
     }
-    intersectObjects(objects, recursive = true, intersects9 = []) {
-        for(let i367 = 0, l = objects.length; i367 < l; i367++)$084574008ccedf86$var$intersectObject(objects[i367], this, intersects9, recursive);
-        intersects9.sort($084574008ccedf86$var$ascSort);
-        return intersects9;
+    intersectObjects(objects, recursive = true, intersects = []) {
+        for(let i = 0, l = objects.length; i < l; i++)$084574008ccedf86$var$intersectObject(objects[i], this, intersects, recursive);
+        intersects.sort($084574008ccedf86$var$ascSort);
+        return intersects;
     }
 }
 function $084574008ccedf86$var$ascSort(a, b) {
     return a.distance - b.distance;
 }
-function $084574008ccedf86$var$intersectObject(object, raycaster, intersects10, recursive) {
-    if (object.layers.test(raycaster.layers)) object.raycast(raycaster, intersects10);
+function $084574008ccedf86$var$intersectObject(object, raycaster, intersects, recursive) {
+    if (object.layers.test(raycaster.layers)) object.raycast(raycaster, intersects);
     if (recursive === true) {
         const children = object.children;
-        for(let i368 = 0, l = children.length; i368 < l; i368++)$084574008ccedf86$var$intersectObject(children[i368], raycaster, intersects10, true);
+        for(let i = 0, l = children.length; i < l; i++)$084574008ccedf86$var$intersectObject(children[i], raycaster, intersects, true);
     }
 }
 /**
@@ -27711,7 +27842,7 @@ class $084574008ccedf86$export$60f553fa130f08b0 {
     }
     setFromPoints(points) {
         this.makeEmpty();
-        for(let i369 = 0, il = points.length; i369 < il; i369++)this.expandByPoint(points[i369]);
+        for(let i = 0, il = points.length; i < il; i++)this.expandByPoint(points[i]);
         return this;
     }
     setFromCenterAndSize(center, size) {
@@ -27898,8 +28029,8 @@ class $084574008ccedf86$export$4b14638ffdd81e68 extends $084574008ccedf86$export
             -1,
             1
         ];
-        for(let i370 = 0, j = 1, l = 32; i370 < l; i370++, j++){
-            const p1 = i370 / l * Math.PI * 2;
+        for(let i = 0, j = 1, l = 32; i < l; i++, j++){
+            const p1 = i / l * Math.PI * 2;
             const p2 = j / l * Math.PI * 2;
             positions.push(Math.cos(p1), Math.sin(p1), 1, Math.cos(p2), Math.sin(p2), 1);
         }
@@ -27938,8 +28069,8 @@ class $084574008ccedf86$export$5277df3c9e732259 extends $084574008ccedf86$export
         const colors = [];
         const color1 = new $084574008ccedf86$export$892596cec99bc70e(0, 0, 1);
         const color2 = new $084574008ccedf86$export$892596cec99bc70e(0, 1, 0);
-        for(let i371 = 0; i371 < bones.length; i371++){
-            const bone = bones[i371];
+        for(let i = 0; i < bones.length; i++){
+            const bone = bones[i];
             if (bone.parent && bone.parent.isBone) {
                 vertices.push(0, 0, 0);
                 vertices.push(0, 0, 0);
@@ -27969,8 +28100,8 @@ class $084574008ccedf86$export$5277df3c9e732259 extends $084574008ccedf86$export
         const geometry = this.geometry;
         const position = geometry.getAttribute("position");
         $084574008ccedf86$var$_matrixWorldInv.copy(this.root.matrixWorld).invert();
-        for(let i372 = 0, j = 0; i372 < bones.length; i372++){
-            const bone = bones[i372];
+        for(let i = 0, j = 0; i < bones.length; i++){
+            const bone = bones[i];
             if (bone.parent && bone.parent.isBone) {
                 $084574008ccedf86$var$_boneMatrix.multiplyMatrices($084574008ccedf86$var$_matrixWorldInv, bone.matrixWorld);
                 $084574008ccedf86$var$_vector$2.setFromMatrixPosition($084574008ccedf86$var$_boneMatrix);
@@ -27988,7 +28119,7 @@ class $084574008ccedf86$export$5277df3c9e732259 extends $084574008ccedf86$export
 function $084574008ccedf86$var$getBoneList(object) {
     const boneList = [];
     if (object.isBone === true) boneList.push(object);
-    for(let i373 = 0; i373 < object.children.length; i373++)boneList.push.apply(boneList, $084574008ccedf86$var$getBoneList(object.children[i373]));
+    for(let i = 0; i < object.children.length; i++)boneList.push.apply(boneList, $084574008ccedf86$var$getBoneList(object.children[i]));
     return boneList;
 }
 class $084574008ccedf86$export$9a9291685b9e4023 extends $084574008ccedf86$export$e176487c05830cc5 {
@@ -28087,9 +28218,9 @@ class $084574008ccedf86$export$8dca15f13f4f8172 extends $084574008ccedf86$export
             const colors = mesh.geometry.getAttribute("color");
             $084574008ccedf86$var$_color1.copy(this.light.color);
             $084574008ccedf86$var$_color2.copy(this.light.groundColor);
-            for(let i374 = 0, l = colors.count; i374 < l; i374++){
-                const color = i374 < l / 2 ? $084574008ccedf86$var$_color1 : $084574008ccedf86$var$_color2;
-                colors.setXYZ(i374, color.r, color.g, color.b);
+            for(let i = 0, l = colors.count; i < l; i++){
+                const color = i < l / 2 ? $084574008ccedf86$var$_color1 : $084574008ccedf86$var$_color2;
+                colors.setXYZ(i, color.r, color.g, color.b);
             }
             colors.needsUpdate = true;
         }
@@ -28104,10 +28235,10 @@ class $084574008ccedf86$export$3875d39926561055 extends $084574008ccedf86$export
         const step = size / divisions;
         const halfSize = size / 2;
         const vertices = [], colors = [];
-        for(let i375 = 0, j = 0, k = -halfSize; i375 <= divisions; i375++, k += step){
+        for(let i = 0, j = 0, k = -halfSize; i <= divisions; i++, k += step){
             vertices.push(-halfSize, 0, k, halfSize, 0, k);
             vertices.push(k, 0, -halfSize, k, 0, halfSize);
-            const color = i375 === center ? color1 : color2;
+            const color = i === center ? color1 : color2;
             color.toArray(colors, j);
             j += 3;
             color.toArray(colors, j);
@@ -28135,20 +28266,20 @@ class $084574008ccedf86$export$361430a10f533cd3 extends $084574008ccedf86$export
         const vertices = [];
         const colors = [];
         // create the radials
-        for(let i377 = 0; i377 <= radials; i377++){
-            const v = i377 / radials * (Math.PI * 2);
+        for(let i = 0; i <= radials; i++){
+            const v = i / radials * (Math.PI * 2);
             const x = Math.sin(v) * radius;
             const z = Math.cos(v) * radius;
             vertices.push(0, 0, 0);
             vertices.push(x, 0, z);
-            const color = i377 & 1 ? color1 : color2;
+            const color = i & 1 ? color1 : color2;
             colors.push(color.r, color.g, color.b);
             colors.push(color.r, color.g, color.b);
         }
         // create the circles
-        for(let i376 = 0; i376 <= circles; i376++){
-            const color = i376 & 1 ? color1 : color2;
-            const r = radius - radius / circles * i376;
+        for(let i = 0; i <= circles; i++){
+            const color = i & 1 ? color1 : color2;
+            const r = radius - radius / circles * i;
             for(let j = 0; j < divisions; j++){
                 // first vertex
                 let v = j / divisions * (Math.PI * 2);
@@ -28368,7 +28499,7 @@ function $084574008ccedf86$var$setPoint(point, pointMap, geometry, camera, x, y,
     const points = pointMap[point];
     if (points !== undefined) {
         const position = geometry.getAttribute("position");
-        for(let i378 = 0, l = points.length; i378 < l; i378++)position.setXYZ(points[i378], $084574008ccedf86$var$_vector.x, $084574008ccedf86$var$_vector.y, $084574008ccedf86$var$_vector.z);
+        for(let i = 0, l = points.length; i < l; i++)position.setXYZ(points[i], $084574008ccedf86$var$_vector.x, $084574008ccedf86$var$_vector.y, $084574008ccedf86$var$_vector.z);
     }
 }
 const $084574008ccedf86$var$_box = /*@__PURE__*/ new $084574008ccedf86$export$6f7d5a9418ab2aa3();
@@ -28800,8 +28931,8 @@ class $084574008ccedf86$export$148534a3c727230b {
     toShapes(isCCW, noHoles) {
         function toShapesNoHoles(inSubpaths) {
             const shapes = [];
-            for(let i381 = 0, l = inSubpaths.length; i381 < l; i381++){
-                const tmpPath = inSubpaths[i381];
+            for(let i = 0, l = inSubpaths.length; i < l; i++){
+                const tmpPath = inSubpaths[i];
                 const tmpShape = new $084574008ccedf86$export$6428a7f2611ef1fa();
                 tmpShape.curves = tmpPath.curves;
                 shapes.push(tmpShape);
@@ -28852,14 +28983,14 @@ class $084574008ccedf86$export$148534a3c727230b {
         const subPaths = this.subPaths;
         if (subPaths.length === 0) return [];
         if (noHoles === true) return toShapesNoHoles(subPaths);
-        let solid, tmpPath1, tmpShape1;
-        const shapes1 = [];
+        let solid, tmpPath, tmpShape;
+        const shapes = [];
         if (subPaths.length === 1) {
-            tmpPath1 = subPaths[0];
-            tmpShape1 = new $084574008ccedf86$export$6428a7f2611ef1fa();
-            tmpShape1.curves = tmpPath1.curves;
-            shapes1.push(tmpShape1);
-            return shapes1;
+            tmpPath = subPaths[0];
+            tmpShape = new $084574008ccedf86$export$6428a7f2611ef1fa();
+            tmpShape.curves = tmpPath.curves;
+            shapes.push(tmpShape);
+            return shapes;
         }
         let holesFirst = !isClockWise(subPaths[0].getPoints());
         holesFirst = isCCW ? !holesFirst : holesFirst;
@@ -28871,9 +29002,9 @@ class $084574008ccedf86$export$148534a3c727230b {
         let tmpPoints;
         newShapes[mainIdx] = undefined;
         newShapeHoles[mainIdx] = [];
-        for(let i380 = 0, l6 = subPaths.length; i380 < l6; i380++){
-            tmpPath1 = subPaths[i380];
-            tmpPoints = tmpPath1.getPoints();
+        for(let i = 0, l = subPaths.length; i < l; i++){
+            tmpPath = subPaths[i];
+            tmpPoints = tmpPath.getPoints();
             solid = isClockWise(tmpPoints);
             solid = isCCW ? !solid : solid;
             if (solid) {
@@ -28882,12 +29013,12 @@ class $084574008ccedf86$export$148534a3c727230b {
                     s: new $084574008ccedf86$export$6428a7f2611ef1fa(),
                     p: tmpPoints
                 };
-                newShapes[mainIdx].s.curves = tmpPath1.curves;
+                newShapes[mainIdx].s.curves = tmpPath.curves;
                 if (holesFirst) mainIdx++;
                 newShapeHoles[mainIdx] = [];
             //console.log('cw', i);
             } else newShapeHoles[mainIdx].push({
-                h: tmpPath1,
+                h: tmpPath,
                 p: tmpPoints[0]
             });
         }
@@ -28897,32 +29028,32 @@ class $084574008ccedf86$export$148534a3c727230b {
             let ambiguous = false;
             let toChange = 0;
             for(let sIdx = 0, sLen = newShapes.length; sIdx < sLen; sIdx++)betterShapeHoles[sIdx] = [];
-            for(let sIdx1 = 0, sLen1 = newShapes.length; sIdx1 < sLen1; sIdx1++){
-                const sho = newShapeHoles[sIdx1];
+            for(let sIdx = 0, sLen = newShapes.length; sIdx < sLen; sIdx++){
+                const sho = newShapeHoles[sIdx];
                 for(let hIdx = 0; hIdx < sho.length; hIdx++){
                     const ho = sho[hIdx];
                     let hole_unassigned = true;
                     for(let s2Idx = 0; s2Idx < newShapes.length; s2Idx++)if (isPointInsidePolygon(ho.p, newShapes[s2Idx].p)) {
-                        if (sIdx1 !== s2Idx) toChange++;
+                        if (sIdx !== s2Idx) toChange++;
                         if (hole_unassigned) {
                             hole_unassigned = false;
                             betterShapeHoles[s2Idx].push(ho);
                         } else ambiguous = true;
                     }
-                    if (hole_unassigned) betterShapeHoles[sIdx1].push(ho);
+                    if (hole_unassigned) betterShapeHoles[sIdx].push(ho);
                 }
             }
             if (toChange > 0 && ambiguous === false) newShapeHoles = betterShapeHoles;
         }
         let tmpHoles;
-        for(let i379 = 0, il = newShapes.length; i379 < il; i379++){
-            tmpShape1 = newShapes[i379].s;
-            shapes1.push(tmpShape1);
-            tmpHoles = newShapeHoles[i379];
-            for(let j = 0, jl = tmpHoles.length; j < jl; j++)tmpShape1.holes.push(tmpHoles[j].h);
+        for(let i = 0, il = newShapes.length; i < il; i++){
+            tmpShape = newShapes[i].s;
+            shapes.push(tmpShape);
+            tmpHoles = newShapeHoles[i];
+            for(let j = 0, jl = tmpHoles.length; j < jl; j++)tmpShape.holes.push(tmpHoles[j].h);
         }
         //console.log("shape", shapes);
-        return shapes1;
+        return shapes;
     }
 }
 // Fast Half Float Conversions, http://www.fox-toolkit.org/ftp/fasthalffloatconversion.pdf
@@ -28949,46 +29080,46 @@ const $084574008ccedf86$var$_floatView = new Float32Array($084574008ccedf86$var$
 const $084574008ccedf86$var$_uint32View = new Uint32Array($084574008ccedf86$var$_buffer);
 const $084574008ccedf86$var$_baseTable = new Uint32Array(512);
 const $084574008ccedf86$var$_shiftTable = new Uint32Array(512);
-for(let i1 = 0; i1 < 256; ++i1){
-    const e = i1 - 127;
+for(let i = 0; i < 256; ++i){
+    const e = i - 127;
     // very small number (0, -0)
     if (e < -27) {
-        $084574008ccedf86$var$_baseTable[i1] = 0x0000;
-        $084574008ccedf86$var$_baseTable[i1 | 0x100] = 0x8000;
-        $084574008ccedf86$var$_shiftTable[i1] = 24;
-        $084574008ccedf86$var$_shiftTable[i1 | 0x100] = 24;
+        $084574008ccedf86$var$_baseTable[i] = 0x0000;
+        $084574008ccedf86$var$_baseTable[i | 0x100] = 0x8000;
+        $084574008ccedf86$var$_shiftTable[i] = 24;
+        $084574008ccedf86$var$_shiftTable[i | 0x100] = 24;
     // small number (denorm)
     } else if (e < -14) {
-        $084574008ccedf86$var$_baseTable[i1] = 0x0400 >> -e - 14;
-        $084574008ccedf86$var$_baseTable[i1 | 0x100] = 0x0400 >> -e - 14 | 0x8000;
-        $084574008ccedf86$var$_shiftTable[i1] = -e - 1;
-        $084574008ccedf86$var$_shiftTable[i1 | 0x100] = -e - 1;
+        $084574008ccedf86$var$_baseTable[i] = 0x0400 >> -e - 14;
+        $084574008ccedf86$var$_baseTable[i | 0x100] = 0x0400 >> -e - 14 | 0x8000;
+        $084574008ccedf86$var$_shiftTable[i] = -e - 1;
+        $084574008ccedf86$var$_shiftTable[i | 0x100] = -e - 1;
     // normal number
     } else if (e <= 15) {
-        $084574008ccedf86$var$_baseTable[i1] = e + 15 << 10;
-        $084574008ccedf86$var$_baseTable[i1 | 0x100] = e + 15 << 10 | 0x8000;
-        $084574008ccedf86$var$_shiftTable[i1] = 13;
-        $084574008ccedf86$var$_shiftTable[i1 | 0x100] = 13;
+        $084574008ccedf86$var$_baseTable[i] = e + 15 << 10;
+        $084574008ccedf86$var$_baseTable[i | 0x100] = e + 15 << 10 | 0x8000;
+        $084574008ccedf86$var$_shiftTable[i] = 13;
+        $084574008ccedf86$var$_shiftTable[i | 0x100] = 13;
     // large number (Infinity, -Infinity)
     } else if (e < 128) {
-        $084574008ccedf86$var$_baseTable[i1] = 0x7c00;
-        $084574008ccedf86$var$_baseTable[i1 | 0x100] = 0xfc00;
-        $084574008ccedf86$var$_shiftTable[i1] = 24;
-        $084574008ccedf86$var$_shiftTable[i1 | 0x100] = 24;
+        $084574008ccedf86$var$_baseTable[i] = 0x7c00;
+        $084574008ccedf86$var$_baseTable[i | 0x100] = 0xfc00;
+        $084574008ccedf86$var$_shiftTable[i] = 24;
+        $084574008ccedf86$var$_shiftTable[i | 0x100] = 24;
     // stay (NaN, Infinity, -Infinity)
     } else {
-        $084574008ccedf86$var$_baseTable[i1] = 0x7c00;
-        $084574008ccedf86$var$_baseTable[i1 | 0x100] = 0xfc00;
-        $084574008ccedf86$var$_shiftTable[i1] = 13;
-        $084574008ccedf86$var$_shiftTable[i1 | 0x100] = 13;
+        $084574008ccedf86$var$_baseTable[i] = 0x7c00;
+        $084574008ccedf86$var$_baseTable[i | 0x100] = 0xfc00;
+        $084574008ccedf86$var$_shiftTable[i] = 13;
+        $084574008ccedf86$var$_shiftTable[i | 0x100] = 13;
     }
 }
 // float16 to float32 helpers
 const $084574008ccedf86$var$_mantissaTable = new Uint32Array(2048);
 const $084574008ccedf86$var$_exponentTable = new Uint32Array(64);
 const $084574008ccedf86$var$_offsetTable = new Uint32Array(64);
-for(let i2 = 1; i2 < 1024; ++i2){
-    let m = i2 << 13; // zero pad mantissa bits
+for(let i = 1; i < 1024; ++i){
+    let m = i << 13; // zero pad mantissa bits
     let e = 0; // zero exponent
     // normalized
     while((m & 0x00800000) === 0){
@@ -28997,15 +29128,15 @@ for(let i2 = 1; i2 < 1024; ++i2){
     }
     m &= -8388609; // clear leading 1 bit
     e += 0x38800000; // adjust bias
-    $084574008ccedf86$var$_mantissaTable[i2] = m | e;
+    $084574008ccedf86$var$_mantissaTable[i] = m | e;
 }
-for(let i3 = 1024; i3 < 2048; ++i3)$084574008ccedf86$var$_mantissaTable[i3] = 0x38000000 + (i3 - 1024 << 13);
-for(let i4 = 1; i4 < 31; ++i4)$084574008ccedf86$var$_exponentTable[i4] = i4 << 23;
+for(let i = 1024; i < 2048; ++i)$084574008ccedf86$var$_mantissaTable[i] = 0x38000000 + (i - 1024 << 13);
+for(let i = 1; i < 31; ++i)$084574008ccedf86$var$_exponentTable[i] = i << 23;
 $084574008ccedf86$var$_exponentTable[31] = 0x47800000;
 $084574008ccedf86$var$_exponentTable[32] = 0x80000000;
-for(let i5 = 33; i5 < 63; ++i5)$084574008ccedf86$var$_exponentTable[i5] = 0x80000000 + (i5 - 32 << 23);
+for(let i = 33; i < 63; ++i)$084574008ccedf86$var$_exponentTable[i] = 0x80000000 + (i - 32 << 23);
 $084574008ccedf86$var$_exponentTable[63] = 0xc7800000;
-for(let i6 = 1; i6 < 64; ++i6)if (i6 !== 32) $084574008ccedf86$var$_offsetTable[i6] = 1024;
+for(let i = 1; i < 64; ++i)if (i !== 32) $084574008ccedf86$var$_offsetTable[i] = 1024;
 // r133, c5bb5434555a3c3ddd784944a0a124f996fc721b
 class $084574008ccedf86$export$8f6f2b4b16d33f extends $084574008ccedf86$export$b7be63a67df8959 {
     constructor(){
@@ -29068,18 +29199,18 @@ if (typeof window !== "undefined") {
 
 parcelRequire.register("56MZj", function(module, exports) {
 
-$parcel$export(module.exports, "hexToRgb", () => $ece360908c938b3b$export$5a544e13ad4e1fa5);
+$parcel$export(module.exports, "hexToRgb", () => $3b83833f96f5a404$export$5a544e13ad4e1fa5);
 ///////////////
 // color convert by Tim Down
 // https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
-function $ece360908c938b3b$var$componentToHex(c) {
+function $3b83833f96f5a404$var$componentToHex(c) {
     var hex = c.toString(16);
     return hex.length == 1 ? "0" + hex : hex;
 }
-function $ece360908c938b3b$export$34d09c4a771c46ef(r, g, b) {
-    return "#" + $ece360908c938b3b$var$componentToHex(r) + $ece360908c938b3b$var$componentToHex(g) + $ece360908c938b3b$var$componentToHex(b);
+function $3b83833f96f5a404$export$34d09c4a771c46ef(r, g, b) {
+    return "#" + $3b83833f96f5a404$var$componentToHex(r) + $3b83833f96f5a404$var$componentToHex(g) + $3b83833f96f5a404$var$componentToHex(b);
 }
-function $ece360908c938b3b$export$5a544e13ad4e1fa5(hex) {
+function $3b83833f96f5a404$export$5a544e13ad4e1fa5(hex) {
     // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
     var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
     hex = hex.toString().replace(shorthandRegex, function(m, r, g, b) {
@@ -29503,7 +29634,18 @@ class $fd127f46fc1ba387$export$5b1256aa5274bf8 extends (0, $I1Jpx.InstancedBuffe
 parcelRequire.register("3si0u", function(module, exports) {
 
 $parcel$export(module.exports, "LineMaterial", () => $2841f46819dbdf7d$export$d19cd1378966f3d3);
-
+/**
+ * parameters = {
+ *  color: <hex>,
+ *  linewidth: <float>,
+ *  dashed: <boolean>,
+ *  dashScale: <float>,
+ *  dashSize: <float>,
+ *  dashOffset: <float>,
+ *  gapSize: <float>,
+ *  resolution: <Vector2>, // to be set by renderer
+ * }
+ */ 
 var $I1Jpx = parcelRequire("I1Jpx");
 (0, $I1Jpx.UniformsLib).line = {
     worldUnits: {
@@ -30106,8 +30248,8 @@ class $b5593040d67e37e6$export$dcc17b59d0a74bb5 extends (0, $lJ63s.LineSegmentsG
 
 parcelRequire.register("84wto", function(module, exports) {
 
-$parcel$export(module.exports, "vertexShader", () => $3c48f20c59a60fdd$export$84657c60382b0f83);
-const $3c48f20c59a60fdd$export$84657c60382b0f83 = `
+$parcel$export(module.exports, "vertexShader", () => $5e07e2ee7c2b5cee$export$84657c60382b0f83);
+const $5e07e2ee7c2b5cee$export$84657c60382b0f83 = `
 attribute float size;
 attribute vec3 customColor;
 
@@ -30125,8 +30267,8 @@ void main() {
 
 parcelRequire.register("jVEXT", function(module, exports) {
 
-$parcel$export(module.exports, "fragmentShader", () => $f586ccf0a01c13de$export$4391ef72fa03c19);
-const $f586ccf0a01c13de$export$4391ef72fa03c19 = `
+$parcel$export(module.exports, "fragmentShader", () => $e8231dfc629af207$export$4391ef72fa03c19);
+const $e8231dfc629af207$export$4391ef72fa03c19 = `
 uniform vec3 color;
 uniform sampler2D pointTexture;
 uniform float alphaTest;
@@ -30147,7 +30289,10 @@ void main() {
 var $fbPyv = parcelRequire("fbPyv");
 
 var $SnOSE = parcelRequire("SnOSE");
-const $1cef9d4a81afe18f$export$b6cdfb6bd6195507 = {
+var $2377b4c049ee42bc$exports = {};
+
+$parcel$export($2377b4c049ee42bc$exports, "default", () => $2377b4c049ee42bc$export$2e2bcd8739ae039);
+const $98dd72c2a6129d37$export$b6cdfb6bd6195507 = {
     nodes: [
         0,
         1,
@@ -30182,7 +30327,7 @@ const $1cef9d4a81afe18f$export$b6cdfb6bd6195507 = {
         30,
         31,
         32,
-        33, 
+        33
     ],
     edges: [
         [
@@ -30496,12 +30641,12 @@ const $1cef9d4a81afe18f$export$b6cdfb6bd6195507 = {
         [
             32,
             33
-        ], 
+        ]
     ]
 };
 
 
-const $6b10e2db685266ac$export$aa88f89bcd11f8a9 = {
+const $9b4e6abe024dd3fa$export$aa88f89bcd11f8a9 = {
     nodes: [
         {
             id: 0,
@@ -30706,7 +30851,7 @@ const $6b10e2db685266ac$export$aa88f89bcd11f8a9 = {
             px: -0.3533395323856202,
             py: -1.1887389845640028,
             member: 1
-        }, 
+        }
     ],
     edges: [
         [
@@ -31020,19 +31165,20 @@ const $6b10e2db685266ac$export$aa88f89bcd11f8a9 = {
         [
             32,
             33
-        ], 
+        ]
     ]
 };
 
 
+var $af2a72c293262fe8$exports = {};
+
+$parcel$export($af2a72c293262fe8$exports, "default", () => $af2a72c293262fe8$export$2e2bcd8739ae039);
 
 var $fbPyv = parcelRequire("fbPyv");
-class $de59a266ed3cd22c$export$1e3a09c15b213958 {
+class $41e19a0198de7ca9$export$1e3a09c15b213958 {
     constructor(data){
         // this data is an arbitrary thing with which I can create any object
-        this.data = {
-            ...data
-        };
+        this.data = Object.assign({}, data);
         // the neighbours bit is explicity set from the code outside
         this.neighbours = [];
     }
@@ -31041,26 +31187,55 @@ class $de59a266ed3cd22c$export$1e3a09c15b213958 {
 
 
 var $5v7Uc = parcelRequire("5v7Uc");
+var $af2a72c293262fe8$var$__awaiter = undefined && undefined.__awaiter || function(thisArg, _arguments, P, generator) {
+    function adopt(value) {
+        return value instanceof P ? value : new P(function(resolve) {
+            resolve(value);
+        });
+    }
+    return new (P || (P = Promise))(function(resolve, reject) {
+        function fulfilled(value) {
+            try {
+                step(generator.next(value));
+            } catch (e) {
+                reject(e);
+            }
+        }
+        function rejected(value) {
+            try {
+                step(generator["throw"](value));
+            } catch (e) {
+                reject(e);
+            }
+        }
+        function step(result) {
+            result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+        }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 // construct a graph based on an edge list etc
-async function $3a56f3da02694263$var$ConstructGraphNodeEdgesList(nodes, edges) {
-    // make a node OBJ
-    const nodeOBJ = new Map();
-    for(let i = 0; i < nodes.length; i++){
-        const n = new (0, $de59a266ed3cd22c$export$1e3a09c15b213958)(nodes[i].data);
-        nodeOBJ.set(nodes[i], n);
-    }
-    // make an edge object
-    const edgeOBJ = new Map();
-    for(let i1 = 0; i1 < edges.length; i1++){
-        const e = new (0, $5v7Uc.Edge)(edges[i1][0], edges[i1][1], edges[i1].data);
-        edgeOBJ.set(i1, e);
-    }
-    // make a graph object
-    const G = await (0, $fbPyv.Graph).create(nodeOBJ, edgeOBJ);
-    return G;
+function $af2a72c293262fe8$var$ConstructGraphNodeEdgesList(nodes, edges) {
+    return $af2a72c293262fe8$var$__awaiter(this, void 0, void 0, function*() {
+        // make a node OBJ
+        const nodeOBJ = new Map();
+        for(let i = 0; i < nodes.length; i++){
+            const n = new (0, $41e19a0198de7ca9$export$1e3a09c15b213958)(nodes[i].data);
+            nodeOBJ.set(nodes[i], n);
+        }
+        // make an edge object
+        const edgeOBJ = new Map();
+        for(let i = 0; i < edges.length; i++){
+            const e = new (0, $5v7Uc.Edge)(edges[i][0], edges[i][1], edges[i].data);
+            edgeOBJ.set(i, e);
+        }
+        // make a graph object
+        const G = yield (0, $fbPyv.Graph).create(nodeOBJ, edgeOBJ);
+        return G;
+    });
 }
-var $3a56f3da02694263$export$2e2bcd8739ae039 = {
-    ConstructGraphNodeEdgesList: $3a56f3da02694263$var$ConstructGraphNodeEdgesList
+var $af2a72c293262fe8$export$2e2bcd8739ae039 = {
+    ConstructGraphNodeEdgesList: $af2a72c293262fe8$var$ConstructGraphNodeEdgesList
 };
 
 
@@ -31073,48 +31248,79 @@ var $5lBYP = parcelRequire("5lBYP");
 var $5v7Uc = parcelRequire("5v7Uc");
 
 var $fbaIX = parcelRequire("fbaIX");
-async function $17baf3a571c94d9d$var$LoadZKC() {
-    // load up the dataset representation
-    const data = (0, $1cef9d4a81afe18f$export$b6cdfb6bd6195507);
-    const G = await (0, $3a56f3da02694263$export$2e2bcd8739ae039).ConstructGraphNodeEdgesList(data.nodes, data.edges);
-    return G;
-}
-async function $17baf3a571c94d9d$var$LoadZKCSimulated() {
-    // make a map
-    const data = (0, $6b10e2db685266ac$export$aa88f89bcd11f8a9);
-    const nodes = new Map();
-    const edges = new Map();
-    // set the node map
-    data.nodes.forEach((node)=>{
-        const id = node.id;
-        const pos = new (0, $5lBYP.Point)(node.px * 50, 0, node.py * 50);
-        const modularity = node.member;
-        const n = new (0, $de59a266ed3cd22c$export$1e3a09c15b213958)({
-            pos: pos,
-            size: 10,
-            info: "Node Info",
-            modularity: modularity
+var $2377b4c049ee42bc$var$__awaiter = undefined && undefined.__awaiter || function(thisArg, _arguments, P, generator) {
+    function adopt(value) {
+        return value instanceof P ? value : new P(function(resolve) {
+            resolve(value);
         });
-        nodes.set(id, n);
-    });
-    // set the edge map
-    for(let i = 0; i < data.edges.length; i++){
-        const edge = data.edges[i];
-        const start = edge[0];
-        const end = edge[1];
-        const e = new (0, $5v7Uc.Edge)(start, end, {});
-        edges.set(i, e);
     }
-    // make a graph object
-    const G = await (0, $fbPyv.Graph).create(nodes, edges);
-    const lmap = (0, $fbaIX.default).DrawEdgeLines(G, 10);
-    G.apply_edge_pos_maps(lmap);
-    return G;
+    return new (P || (P = Promise))(function(resolve, reject) {
+        function fulfilled(value) {
+            try {
+                step(generator.next(value));
+            } catch (e) {
+                reject(e);
+            }
+        }
+        function rejected(value) {
+            try {
+                step(generator["throw"](value));
+            } catch (e) {
+                reject(e);
+            }
+        }
+        function step(result) {
+            result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+        }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+function $2377b4c049ee42bc$var$LoadZKC() {
+    return $2377b4c049ee42bc$var$__awaiter(this, void 0, void 0, function*() {
+        // load up the dataset representation
+        const data = (0, $98dd72c2a6129d37$export$b6cdfb6bd6195507);
+        const G = yield (0, $af2a72c293262fe8$exports.default).ConstructGraphNodeEdgesList(data.nodes, data.edges);
+        return G;
+    });
+}
+function $2377b4c049ee42bc$var$LoadZKCSimulated() {
+    return $2377b4c049ee42bc$var$__awaiter(this, void 0, void 0, function*() {
+        // make a map
+        const data = (0, $9b4e6abe024dd3fa$export$aa88f89bcd11f8a9);
+        const nodes = new Map();
+        const edges = new Map();
+        // set the node map
+        data.nodes.forEach((node)=>{
+            const id = node.id;
+            const pos = new (0, $5lBYP.Point)(node.px * 50, 0, node.py * 50);
+            const modularity = node.member;
+            const n = new (0, $41e19a0198de7ca9$export$1e3a09c15b213958)({
+                pos: pos,
+                size: 10,
+                info: "Node Info",
+                modularity: modularity
+            });
+            nodes.set(id, n);
+        });
+        // set the edge map
+        for(let i = 0; i < data.edges.length; i++){
+            const edge = data.edges[i];
+            const start = edge[0];
+            const end = edge[1];
+            const e = new (0, $5v7Uc.Edge)(start, end, {});
+            edges.set(i, e);
+        }
+        // make a graph object
+        const G = yield (0, $fbPyv.Graph).create(nodes, edges);
+        const lmap = (0, $fbaIX.default).DrawEdgeLines(G, 10);
+        G.apply_edge_pos_maps(lmap);
+        return G;
+    });
 }
 var // exports
-$17baf3a571c94d9d$export$2e2bcd8739ae039 = {
-    LoadZKC: $17baf3a571c94d9d$var$LoadZKC,
-    LoadZKCSimulated: $17baf3a571c94d9d$var$LoadZKCSimulated
+$2377b4c049ee42bc$export$2e2bcd8739ae039 = {
+    LoadZKC: $2377b4c049ee42bc$var$LoadZKC,
+    LoadZKCSimulated: $2377b4c049ee42bc$var$LoadZKCSimulated
 };
 
 
@@ -31127,6 +31333,9 @@ var $bRGTV = parcelRequire("bRGTV");
 var $Bx62R = parcelRequire("Bx62R");
 
 var $gTJou = parcelRequire("gTJou");
+var $24f7a44726864b22$exports = {};
+
+$parcel$export($24f7a44726864b22$exports, "default", () => $24f7a44726864b22$export$2e2bcd8739ae039);
 
 var $I1Jpx = parcelRequire("I1Jpx");
 
@@ -31147,12 +31356,12 @@ const $bbcfa2e1a5161948$var$_endEvent = {
     type: "end"
 };
 class $bbcfa2e1a5161948$export$8ff7788029dfdf52 extends (0, $I1Jpx.EventDispatcher) {
-    constructor(object, domElement1){
+    constructor(object, domElement){
         super();
-        if (domElement1 === undefined) console.warn('THREE.OrbitControls: The second parameter "domElement" is now mandatory.');
-        if (domElement1 === document) console.error('THREE.OrbitControls: "document" should not be used as the target "domElement". Please use "renderer.domElement" instead.');
+        if (domElement === undefined) console.warn('THREE.OrbitControls: The second parameter "domElement" is now mandatory.');
+        if (domElement === document) console.error('THREE.OrbitControls: "document" should not be used as the target "domElement". Please use "renderer.domElement" instead.');
         this.object = object;
-        this.domElement = domElement1;
+        this.domElement = domElement;
         this.domElement.style.touchAction = "none"; // disable touch scroll
         // Set to false to disable this control
         this.enabled = true;
@@ -31815,8 +32024,35 @@ class $bbcfa2e1a5161948$export$7628ccdac312035f extends $bbcfa2e1a5161948$export
 
 
 var $gTJou = parcelRequire("gTJou");
+var $24f7a44726864b22$var$__awaiter = undefined && undefined.__awaiter || function(thisArg, _arguments, P, generator) {
+    function adopt(value) {
+        return value instanceof P ? value : new P(function(resolve) {
+            resolve(value);
+        });
+    }
+    return new (P || (P = Promise))(function(resolve, reject) {
+        function fulfilled(value) {
+            try {
+                step(generator.next(value));
+            } catch (e) {
+                reject(e);
+            }
+        }
+        function rejected(value) {
+            try {
+                step(generator["throw"](value));
+            } catch (e) {
+                reject(e);
+            }
+        }
+        function step(result) {
+            result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+        }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 // this is the 3d graph drawing class with three js
-class $a26cd1df9c9d5dc0$var$GraphDrawer3d {
+class $24f7a44726864b22$var$GraphDrawer3d {
     constructor(GraphDrawerOptions3d, graphs){
         this.canvas = GraphDrawerOptions3d.canvas;
         this.width = GraphDrawerOptions3d.width;
@@ -31842,44 +32078,46 @@ class $a26cd1df9c9d5dc0$var$GraphDrawer3d {
             this.graphs.set(i, g);
         }
     }
-    async init() {
-        const t1 = performance.now();
-        this.camera = new $I1Jpx.PerspectiveCamera();
-        // start up a new scene
-        this.scene = new $I1Jpx.Scene();
-        // set up a renderer
-        this.renderer = new $I1Jpx.WebGLRenderer({
-            canvas: this.canvas,
-            antialias: true
+    init() {
+        return $24f7a44726864b22$var$__awaiter(this, void 0, void 0, function*() {
+            const t1 = performance.now();
+            this.camera = new $I1Jpx.PerspectiveCamera();
+            // start up a new scene
+            this.scene = new $I1Jpx.Scene();
+            // set up a renderer
+            this.renderer = new $I1Jpx.WebGLRenderer({
+                canvas: this.canvas,
+                antialias: true
+            });
+            this.renderer.setSize(this.width, this.height);
+            this.renderer.setClearColor(0xff00ff, 0);
+            // add in a light
+            this.scene.add(new $I1Jpx.AmbientLight(0xffffff));
+            // add a spotlight
+            const DirectionalLight = new $I1Jpx.DirectionalLight(0xffffff, 1);
+            DirectionalLight.position.set(0, 10, 0);
+            this.scene.add(DirectionalLight);
+            // set up the control system
+            this.controls = new (0, $bbcfa2e1a5161948$export$8ff7788029dfdf52)(this.camera, this.renderer.domElement);
+            this.camera.position.set(0, 100, 100);
+            this.controls.autoRotate = true;
+            this.controls.maxPolarAngle = Math.PI * 0.5;
+            this.controls.maxDistance = 1000;
+            this.controls.minDistance = 10;
+            this.controls.update();
+            // add in the graph that we wanted this.graphs.get('ProvidedGraph')
+            for (const graph of this.graphs.keys()){
+                const GeoGraph = (0, $gTJou.default).DrawTHREEBoxBasedVertices(this.graphs.get(graph), this.bounds);
+                this.scene.add(GeoGraph);
+                const ThickEdges = (0, $gTJou.default).DrawTHREEGraphEdgesThick(this.graphs.get(graph), this.bounds);
+                this.scene.add(ThickEdges);
+            }
+            // edges
+            // finally print out that the initialization has finished
+            const t2 = performance.now();
+            console.log("initialization has finished");
+            console.log(`Time to initialize ${t2 - t1} milliseconds`);
         });
-        this.renderer.setSize(this.width, this.height);
-        this.renderer.setClearColor(0xff00ff, 0);
-        // add in a light
-        this.scene.add(new $I1Jpx.AmbientLight(0xffffff));
-        // add a spotlight
-        const DirectionalLight = new $I1Jpx.DirectionalLight(0xffffff, 1);
-        DirectionalLight.position.set(0, 10, 0);
-        this.scene.add(DirectionalLight);
-        // set up the control system
-        this.controls = new (0, $bbcfa2e1a5161948$export$8ff7788029dfdf52)(this.camera, this.renderer.domElement);
-        this.camera.position.set(0, 100, 100);
-        this.controls.autoRotate = true;
-        this.controls.maxPolarAngle = Math.PI * 0.5;
-        this.controls.maxDistance = 1000;
-        this.controls.minDistance = 10;
-        this.controls.update();
-        // add in the graph that we wanted this.graphs.get('ProvidedGraph')
-        for (const graph of this.graphs.keys()){
-            const GeoGraph = (0, $gTJou.default).DrawTHREEBoxBasedVertices(this.graphs.get(graph), this.bounds);
-            this.scene.add(GeoGraph);
-            const ThickEdges = (0, $gTJou.default).DrawTHREEGraphEdgesThick(this.graphs.get(graph), this.bounds);
-            this.scene.add(ThickEdges);
-        }
-        // edges
-        // finally print out that the initialization has finished
-        const t2 = performance.now();
-        console.log("initialization has finished");
-        console.log(`Time to initialize ${t2 - t1} milliseconds`);
     }
     // this stuff renders out one specific instances
     rendercall() {
@@ -31888,18 +32126,18 @@ class $a26cd1df9c9d5dc0$var$GraphDrawer3d {
         this.controls.update();
     }
 }
-var $a26cd1df9c9d5dc0$export$2e2bcd8739ae039 = {
-    GraphDrawer3d: $a26cd1df9c9d5dc0$var$GraphDrawer3d
+var $24f7a44726864b22$export$2e2bcd8739ae039 = {
+    GraphDrawer3d: $24f7a44726864b22$var$GraphDrawer3d
 };
 
 
 
 
-var $a171e2a516854606$export$614db49f3febe941 = parcelRequire("fbPyv").Graph;
-var $1323a7f17a5ee0da$export$2e2bcd8739ae039 = parcelRequire("SnOSE").default;
-var $d99d34ebdb8221e2$export$2e2bcd8739ae039 = parcelRequire("fbaIX").default;
-var $e396ed1669119142$export$2e2bcd8739ae039 = parcelRequire("bRGTV").default;
-var $908bc14fa6261467$export$2e2bcd8739ae039 = parcelRequire("Bx62R").default;
-var $35377160f7cc1912$export$2e2bcd8739ae039 = parcelRequire("gTJou").default;
-export {$a171e2a516854606$export$614db49f3febe941 as Graph, $1323a7f17a5ee0da$export$2e2bcd8739ae039 as GraphMethods, $17baf3a571c94d9d$export$2e2bcd8739ae039 as SampleData, $3a56f3da02694263$export$2e2bcd8739ae039 as Constructors, $d99d34ebdb8221e2$export$2e2bcd8739ae039 as Drawing, $e396ed1669119142$export$2e2bcd8739ae039 as Geometry, $908bc14fa6261467$export$2e2bcd8739ae039 as Utilities, $35377160f7cc1912$export$2e2bcd8739ae039 as threeDWrapper, $a26cd1df9c9d5dc0$export$2e2bcd8739ae039 as GraphDrawer};
+var $b0efdff792a30fe0$export$614db49f3febe941 = parcelRequire("fbPyv").Graph;
+var $0a378558e9c2f574$export$2e2bcd8739ae039 = parcelRequire("SnOSE").default;
+var $b0d033a86e1f8c84$export$2e2bcd8739ae039 = parcelRequire("fbaIX").default;
+var $8a35ec2cb604faae$export$2e2bcd8739ae039 = parcelRequire("bRGTV").default;
+var $070d21177a8c6418$export$2e2bcd8739ae039 = parcelRequire("Bx62R").default;
+var $c4d4feb6deac3a62$export$2e2bcd8739ae039 = parcelRequire("gTJou").default;
+export {$b0efdff792a30fe0$export$614db49f3febe941 as Graph, $0a378558e9c2f574$export$2e2bcd8739ae039 as GraphMethods, $2377b4c049ee42bc$export$2e2bcd8739ae039 as SampleData, $af2a72c293262fe8$export$2e2bcd8739ae039 as Constructors, $b0d033a86e1f8c84$export$2e2bcd8739ae039 as Drawing, $8a35ec2cb604faae$export$2e2bcd8739ae039 as Geometry, $070d21177a8c6418$export$2e2bcd8739ae039 as Utilities, $c4d4feb6deac3a62$export$2e2bcd8739ae039 as threeDWrapper, $24f7a44726864b22$export$2e2bcd8739ae039 as GraphDrawer};
 //# sourceMappingURL=pgl_module.js.map
