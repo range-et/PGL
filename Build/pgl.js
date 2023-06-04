@@ -1035,13 +1035,13 @@ function DrawTHREEGraphVertices(Graph11, bounds11, size11 = 1, color11 = 0xfffff
     return vertices11;
 }
 // then make a thing which draws out all the edges (THICK)
-function DrawTHREEGraphEdgesThick(G11, bounds11, thickness11 = 0.2, color11 = 0xffffff) {
+function DrawTHREEGraphEdgesThick(G11, bounds11, color11 = 0xffffff, thickness11 = 0.2) {
     // add the interpolation function
     const lineMap11 = G11.get_edge_map();
-    return DrawThickEdgesFromEdgeMap(lineMap11, bounds11, thickness11, color11);
+    return DrawThickEdgesFromEdgeMap(lineMap11, bounds11, color11, thickness11);
 }
 // draw a thing to draw out all the edges from the edge map stuff
-function DrawThickEdgesFromEdgeMap(emap11, bounds11, thickness11 = 0.2, color11 = 0xffffff) {
+function DrawThickEdgesFromEdgeMap(emap11, bounds11, color11 = 0xffffff, thickness11 = 0.2) {
     // this is the line thing
     const mat11 = new (0, $h9nKb$threeexamplesjsmlinesLineMaterial.LineMaterial)({
         color: color11,
@@ -1115,7 +1115,7 @@ function AddBoxBasedImaging(nodeMap11, bounds11, color11 = 0xffffff, size11 = 10
     let nodeMesh11;
     for(let i11 = 0; i11 < nodeMap11.size; i11++){
         nodeData11 = nodeMap11.get(i11);
-        geometry11 = new $h9nKb$three.BoxGeometry(sizes11[i11]);
+        geometry11 = new $h9nKb$three.BoxGeometry(sizes11[i11], sizes11[i11], sizes11[i11]);
         geometry11.name = i11.toString();
         nodeMesh11 = new $h9nKb$three.Mesh(geometry11, material11);
         nodeMesh11.position.set(nodeData11.x * bounds11, nodeData11.y * bounds11, nodeData11.z * bounds11);
@@ -1331,7 +1331,7 @@ $parcel$export(module.exports, "Constructors", () => $942e91a547b4130c$exports.d
 $parcel$export(module.exports, "Drawing", () => (parcelRequire("jYcHE")).default);
 $parcel$export(module.exports, "Geometry", () => (parcelRequire("fd3jp")).default);
 $parcel$export(module.exports, "Utilities", () => (parcelRequire("6Xdhg")).default);
-$parcel$export(module.exports, "threeDWrapper", () => (parcelRequire("eqUI8")).default);
+$parcel$export(module.exports, "ThreeWrapper", () => (parcelRequire("eqUI8")).default);
 $parcel$export(module.exports, "GraphDrawer", () => $6abda68f7f78a6fb$exports.default);
 
 var $9TL8g = parcelRequire("9TL8g");
@@ -2386,8 +2386,6 @@ var $6abda68f7f78a6fb$exports = {};
 $parcel$export($6abda68f7f78a6fb$exports, "default", () => $6abda68f7f78a6fb$export$2e2bcd8739ae039);
 
 
-
-var $eqUI8 = parcelRequire("eqUI8");
 var $6abda68f7f78a6fb$var$__awaiter = undefined && undefined.__awaiter || function(thisArg, _arguments, P, generator) {
     function adopt(value) {
         return value instanceof P ? value : new P(function(resolve) {
@@ -2417,7 +2415,7 @@ var $6abda68f7f78a6fb$var$__awaiter = undefined && undefined.__awaiter || functi
 };
 // this is the 3d graph drawing class with three js
 class $6abda68f7f78a6fb$var$GraphDrawer3d {
-    constructor(GraphDrawerOptions3d, graphs){
+    constructor(GraphDrawerOptions3d){
         this.canvas = GraphDrawerOptions3d.canvas;
         this.width = GraphDrawerOptions3d.width;
         this.height = GraphDrawerOptions3d.height;
@@ -2431,16 +2429,9 @@ class $6abda68f7f78a6fb$var$GraphDrawer3d {
         this.renderer;
         this.camera;
         this.scene;
-        // bounds is a global parameter that we change (think about this as scale)
-        this.bounds = GraphDrawerOptions3d.bounds;
         // graph map is the hash map that holds all the
         // graphs that we are working with together
         this.graphs = new Map();
-        // add the default graph to the graph map
-        for(let i = 0; i < graphs.length; i++){
-            const g = graphs[i];
-            this.graphs.set(i, g);
-        }
     }
     init() {
         return $6abda68f7f78a6fb$var$__awaiter(this, void 0, void 0, function*() {
@@ -2469,19 +2460,16 @@ class $6abda68f7f78a6fb$var$GraphDrawer3d {
             this.controls.maxDistance = 1000;
             this.controls.minDistance = 10;
             this.controls.update();
-            // add in the graph that we wanted this.graphs.get('ProvidedGraph')
-            for (const graph of this.graphs.keys()){
-                const GeoGraph = (0, $eqUI8.default).DrawTHREEBoxBasedVertices(this.graphs.get(graph), this.bounds);
-                this.scene.add(GeoGraph);
-                const ThickEdges = (0, $eqUI8.default).DrawTHREEGraphEdgesThick(this.graphs.get(graph), this.bounds);
-                this.scene.add(ThickEdges);
-            }
-            // edges
             // finally print out that the initialization has finished
             const t2 = performance.now();
             console.log("initialization has finished");
             console.log(`Time to initialize ${t2 - t1} milliseconds`);
         });
+    }
+    //add graph
+    // this adds a graph to the current visualizer
+    addVisElement(element) {
+        this.scene.add(element);
     }
     // this stuff renders out one specific instances
     rendercall() {

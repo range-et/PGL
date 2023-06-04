@@ -1,7 +1,7 @@
 {
   "name": "pgl",
   "version": "1.0.0",
-  "description": "A NetworkX like package for graphs in javascript ",
+  "description": "A NetworkX like package for graphs in javascript",
   "source": "./Src/index.ts",
   "main": "./Build/pgl.js",
   "types": "./Build/pgl.d.ts",

@@ -90,20 +90,20 @@ function DrawTHREEGraphVertices(
 function DrawTHREEGraphEdgesThick(
   G: Graph,
   bounds: number,
+  color = 0xffffff,
   thickness: number = 0.2,
-  color = 0xffffff
 ) {
   // add the interpolation function
   const lineMap = G.get_edge_map();
-  return DrawThickEdgesFromEdgeMap(lineMap, bounds, thickness, color);
+  return DrawThickEdgesFromEdgeMap(lineMap, bounds, color, thickness);
 }
 
 // draw a thing to draw out all the edges from the edge map stuff
 function DrawThickEdgesFromEdgeMap(
   emap: Map<number, Line>,
   bounds: number,
-  thickness: number = 0.2,
-  color: number = 0xffffff
+  color: number = 0xffffff,
+  thickness: number = 0.2
 ) {
   // this is the line thing
   const mat = new LineMaterial({
@@ -209,7 +209,7 @@ function AddBoxBasedImaging(
   let nodeMesh: THREE.Mesh;
   for (let i = 0; i < nodeMap.size; i++) {
     nodeData = nodeMap.get(i)!;
-    geometry = new THREE.BoxGeometry(sizes[i]);
+    geometry = new THREE.BoxGeometry(sizes[i],sizes[i],sizes[i]);
     geometry.name = i.toString();
     nodeMesh = new THREE.Mesh(geometry, material);
     nodeMesh.position.set(

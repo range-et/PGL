@@ -127,8 +127,8 @@ export const SampleData: {
     LoadZKCSimulated: typeof LoadZKCSimulated;
 };
 declare function DrawTHREEGraphVertices(Graph: Graph, bounds: number, size?: number | number[], color?: number, alpha?: number): THREE.Group;
-declare function DrawTHREEGraphEdgesThick(G: Graph, bounds: number, thickness?: number, color?: number): THREE.Group;
-declare function DrawThickEdgesFromEdgeMap(emap: Map<number, Line>, bounds: number, thickness?: number, color?: number): THREE.Group;
+declare function DrawTHREEGraphEdgesThick(G: Graph, bounds: number, color?: number, thickness?: number): THREE.Group;
+declare function DrawThickEdgesFromEdgeMap(emap: Map<number, Line>, bounds: number, color?: number, thickness?: number): THREE.Group;
 declare function DrawTHREEGraphEdgesThin(G: Graph, bounds: number, color?: number): THREE.Group;
 declare function DrawThinEdgesFromEdgeMap(emap: Map<number, Line>, bounds: number, color?: number): THREE.Group;
 declare function AddBoxBasedImaging(nodeMap: Map<number, Point>, bounds: number, color?: number, size?: number | number[]): THREE.Group;
@@ -141,7 +141,7 @@ declare function AddInModularityBasedPointGroups(Graph: Graph, propertyName: str
 declare function DrawSimplifiedEdges(G: Graph, amount: number, color?: number): THREE.Group;
 declare function ChangeTheVertexColours(vertices: THREE.Points, indexArray: number[], color: number): void;
 declare function ResetVertexColors(vertices: THREE.Points): void;
-export const threeDWrapper: {
+export const ThreeWrapper: {
     DrawTHREEGraphVertices: typeof DrawTHREEGraphVertices;
     DrawTHREEGraphEdgesThick: typeof DrawTHREEGraphEdgesThick;
     DrawTHREEGraphEdgesThin: typeof DrawTHREEGraphEdgesThin;
@@ -166,7 +166,6 @@ interface GraphDrawer3d {
     renderer: THREE.WebGLRenderer;
     camera: THREE.PerspectiveCamera;
     scene: THREE.Scene;
-    bounds: number;
     graphs: Map<number, Graph>;
 }
 declare class GraphDrawer3d {
@@ -181,9 +180,9 @@ declare class GraphDrawer3d {
         renderer: THREE.WebGLRenderer;
         camera: THREE.PerspectiveCamera;
         scene: THREE.Scene;
-        bounds: number;
-    }, graphs: Graph[]);
+    });
     init(): Promise<void>;
+    addVisElement(element: THREE.Group | THREE.Line | THREE.Points): void;
     rendercall(): void;
 }
 export const GraphDrawer: {

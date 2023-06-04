@@ -1033,13 +1033,13 @@ function DrawTHREEGraphVertices(Graph11, bounds11, size11 = 1, color11 = 0xfffff
     return vertices11;
 }
 // then make a thing which draws out all the edges (THICK)
-function DrawTHREEGraphEdgesThick(G11, bounds11, thickness11 = 0.2, color11 = 0xffffff) {
+function DrawTHREEGraphEdgesThick(G11, bounds11, color11 = 0xffffff, thickness11 = 0.2) {
     // add the interpolation function
     const lineMap11 = G11.get_edge_map();
-    return DrawThickEdgesFromEdgeMap(lineMap11, bounds11, thickness11, color11);
+    return DrawThickEdgesFromEdgeMap(lineMap11, bounds11, color11, thickness11);
 }
 // draw a thing to draw out all the edges from the edge map stuff
-function DrawThickEdgesFromEdgeMap(emap11, bounds11, thickness11 = 0.2, color11 = 0xffffff) {
+function DrawThickEdgesFromEdgeMap(emap11, bounds11, color11 = 0xffffff, thickness11 = 0.2) {
     // this is the line thing
     const mat11 = new (0, $3si0u.LineMaterial)({
         color: color11,
@@ -1113,7 +1113,7 @@ function AddBoxBasedImaging(nodeMap11, bounds11, color11 = 0xffffff, size11 = 10
     let nodeMesh11;
     for(let i11 = 0; i11 < nodeMap11.size; i11++){
         nodeData11 = nodeMap11.get(i11);
-        geometry11 = new $I1Jpx.BoxGeometry(sizes11[i11]);
+        geometry11 = new $I1Jpx.BoxGeometry(sizes11[i11], sizes11[i11], sizes11[i11]);
         geometry11.name = i11.toString();
         nodeMesh11 = new $I1Jpx.Mesh(geometry11, material11);
         nodeMesh11.position.set(nodeData11.x * bounds11, nodeData11.y * bounds11, nodeData11.z * bounds11);
@@ -32022,8 +32022,6 @@ class $bbcfa2e1a5161948$export$7628ccdac312035f extends $bbcfa2e1a5161948$export
 }
 
 
-
-var $gTJou = parcelRequire("gTJou");
 var $24f7a44726864b22$var$__awaiter = undefined && undefined.__awaiter || function(thisArg, _arguments, P, generator) {
     function adopt(value) {
         return value instanceof P ? value : new P(function(resolve) {
@@ -32053,7 +32051,7 @@ var $24f7a44726864b22$var$__awaiter = undefined && undefined.__awaiter || functi
 };
 // this is the 3d graph drawing class with three js
 class $24f7a44726864b22$var$GraphDrawer3d {
-    constructor(GraphDrawerOptions3d, graphs){
+    constructor(GraphDrawerOptions3d){
         this.canvas = GraphDrawerOptions3d.canvas;
         this.width = GraphDrawerOptions3d.width;
         this.height = GraphDrawerOptions3d.height;
@@ -32067,16 +32065,9 @@ class $24f7a44726864b22$var$GraphDrawer3d {
         this.renderer;
         this.camera;
         this.scene;
-        // bounds is a global parameter that we change (think about this as scale)
-        this.bounds = GraphDrawerOptions3d.bounds;
         // graph map is the hash map that holds all the
         // graphs that we are working with together
         this.graphs = new Map();
-        // add the default graph to the graph map
-        for(let i = 0; i < graphs.length; i++){
-            const g = graphs[i];
-            this.graphs.set(i, g);
-        }
     }
     init() {
         return $24f7a44726864b22$var$__awaiter(this, void 0, void 0, function*() {
@@ -32105,19 +32096,16 @@ class $24f7a44726864b22$var$GraphDrawer3d {
             this.controls.maxDistance = 1000;
             this.controls.minDistance = 10;
             this.controls.update();
-            // add in the graph that we wanted this.graphs.get('ProvidedGraph')
-            for (const graph of this.graphs.keys()){
-                const GeoGraph = (0, $gTJou.default).DrawTHREEBoxBasedVertices(this.graphs.get(graph), this.bounds);
-                this.scene.add(GeoGraph);
-                const ThickEdges = (0, $gTJou.default).DrawTHREEGraphEdgesThick(this.graphs.get(graph), this.bounds);
-                this.scene.add(ThickEdges);
-            }
-            // edges
             // finally print out that the initialization has finished
             const t2 = performance.now();
             console.log("initialization has finished");
             console.log(`Time to initialize ${t2 - t1} milliseconds`);
         });
+    }
+    //add graph
+    // this adds a graph to the current visualizer
+    addVisElement(element) {
+        this.scene.add(element);
     }
     // this stuff renders out one specific instances
     rendercall() {
@@ -32139,5 +32127,5 @@ var $b0d033a86e1f8c84$export$2e2bcd8739ae039 = parcelRequire("fbaIX").default;
 var $8a35ec2cb604faae$export$2e2bcd8739ae039 = parcelRequire("bRGTV").default;
 var $070d21177a8c6418$export$2e2bcd8739ae039 = parcelRequire("Bx62R").default;
 var $c4d4feb6deac3a62$export$2e2bcd8739ae039 = parcelRequire("gTJou").default;
-export {$b0efdff792a30fe0$export$614db49f3febe941 as Graph, $0a378558e9c2f574$export$2e2bcd8739ae039 as GraphMethods, $2377b4c049ee42bc$export$2e2bcd8739ae039 as SampleData, $af2a72c293262fe8$export$2e2bcd8739ae039 as Constructors, $b0d033a86e1f8c84$export$2e2bcd8739ae039 as Drawing, $8a35ec2cb604faae$export$2e2bcd8739ae039 as Geometry, $070d21177a8c6418$export$2e2bcd8739ae039 as Utilities, $c4d4feb6deac3a62$export$2e2bcd8739ae039 as threeDWrapper, $24f7a44726864b22$export$2e2bcd8739ae039 as GraphDrawer};
+export {$b0efdff792a30fe0$export$614db49f3febe941 as Graph, $0a378558e9c2f574$export$2e2bcd8739ae039 as GraphMethods, $2377b4c049ee42bc$export$2e2bcd8739ae039 as SampleData, $af2a72c293262fe8$export$2e2bcd8739ae039 as Constructors, $b0d033a86e1f8c84$export$2e2bcd8739ae039 as Drawing, $8a35ec2cb604faae$export$2e2bcd8739ae039 as Geometry, $070d21177a8c6418$export$2e2bcd8739ae039 as Utilities, $c4d4feb6deac3a62$export$2e2bcd8739ae039 as ThreeWrapper, $24f7a44726864b22$export$2e2bcd8739ae039 as GraphDrawer};
 //# sourceMappingURL=pgl_module.js.map
