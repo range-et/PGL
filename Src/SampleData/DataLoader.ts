@@ -8,6 +8,10 @@ import { _Node } from "../Core/_Node";
 import { Edge } from "../Core/Edge";
 import Drawing from "../Drawing/Drawing";
 
+/**
+ * 
+ * @returns the raw ZKC dataset
+ */
 async function LoadZKC() {
   // load up the dataset representation
   const data = zkc;
@@ -15,6 +19,10 @@ async function LoadZKC() {
   return G;
 }
 
+/**
+ * 
+ * @returns the ZKC dataset with the positons simulated before hand
+ */
 async function LoadZKCSimulated() {
   // make a map
   const data = zkc_simulated;
