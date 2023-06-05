@@ -1,6 +1,14 @@
-# PGL
+## Introduction
 
-The Plebian Graph Library (PGL) is a library designed to facilitate the visualization of large-scale network data (Network X line plotting in Javascript). Leveraging the power of WebGL, PGL offers an efficient and interactive solution for visualizing network data in web browsers. Whether dealing with local datasets or data retrieved from APIs, PGL provides a versatile platform for conducting extensive network simulations, physical modeling, and immersive visualizations. With a rich set of features including graph condensation based on selected criteria, randomized edge pruning in highly connected graphs, and support for diverse visualization techniques like network diffusions and Kamada Kawai layouts, and edge bundling, PGL empowers users to gain valuable insights from complex network structures.
+The Plebian Graph Library (PGL) is a library designed to facilitate the visualization of large-scale network data (Network X line plotting in Javascript/Typescript). Leveraging the power of WebGL, PGL offers an efficient and interactive solution for visualizing network data in web browsers. Whether dealing with local datasets or data retrieved from APIs, PGL provides a versatile platform for conducting extensive network simulations, physical modeling, and immersive visualizations. With a rich set of features including graph condensation based on selected criteria, randomized edge pruning in highly connected graphs, and support for diverse visualization techniques like network diffusions and Kamada Kawai layouts, and edge bundling, PGL empowers users to gain valuable insights from complex network structures.
+
+## Notes on terminology
+It can be a bit cunfusing especially when working with Nodes/Edges/Vetices/Lines in this library (Also in general in working with graphs). Hence the terminology that I've followed here is as following:
+- Nodes (The libray and the class is called _Node so as to not confuse with NodeJS ) and Edges make up a graph.
+- Vertices and Lines make up the 3d visualisation side of a graph. 
+- Nodes are the abstract idea, vertices are what's visualized 
+- Edges are the abstract idea , lines are what's visualized
+Lastly there are a few helper classes like points and lines. Points are essentially vectors and are used for displacement and also for describing a place in relation to the global coordinate system. Line are an array of points that get translated into lines using one of the visualization methods. Points can have different visualisations like boxes, billboarded planes and cylinders etc.
 
 ## Semantics of the Package
 

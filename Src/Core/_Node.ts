@@ -8,6 +8,10 @@ interface _Node {
 }
 
 class _Node {
+  /**
+   * 
+   * @param data Data associated with the node, be sure to be careful to pass in any "pos" data as they correspond to position of the nodes in the visuals of the graph
+   */
   constructor(data:any) {
     // this data is an arbitrary thing with which I can create any object
     this.data = { ...data };

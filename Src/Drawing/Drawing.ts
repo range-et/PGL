@@ -7,14 +7,24 @@ import GraphMethods from "../GraphAlgorithms/GraphMethods";
 import { Graph } from "../Core/Graph";
 import { _Node } from "../Core/_Node";
 
-// draw kamada kawai
+/**
+ * Simulates Kamada kawai for a network in 2d. 3d is not supported yet
+ * Note: This is an async function as it take time for some of the large graphs
+ *
+ * @param Graph - The first input number
+ * @param iterations - The second input number
+ *  @param simulationBound - The bounds of simulation (Mostly a global number to scale the graph up or down)
+ *  @param cohesionValue - How sticky the nodes are i.r. how much they cluster together
+ * @returns And node map of all the nodes and their simulated positions - Please note: position maps have to to be applied to the graph!
+ *
+ */
 async function SimulateKamadaKawai(
-  G: Graph,
+  Graph: Graph,
   iterations: number,
   simulationBound: number = 200,
   cohesionValue: number = 1
 ) {
-  const adjList = G.get_adjacency();
+  const adjList = Graph.get_adjacency();
   // pos map
   const PosMapX: Map<number, number> = new Map();
   const PosMapY: Map<number, number> = new Map();
@@ -73,7 +83,7 @@ async function SimulateKamadaKawai(
       let othernodeY: number;
 
       // then find the element
-      for (const otherNode of G.nodes.keys()) {
+      for (const otherNode of Graph.nodes.keys()) {
         // get the position of all the other nodes
         if (otherNode != node) {
           // calculate inverse distance
@@ -145,36 +155,51 @@ async function SimulateKamadaKawai(
   return PosMap;
 }
 
-// instanciate a random set of positions
-function InstanciateRandomPositions(G: Graph) {
-  const adjList = G.get_adjacency();
-  const PosMapX = new Map();
-  const PosMapY = new Map();
+/**
+ *
+ * Randomly sets all the positions for a graph
+ * Not really very useful but I've used it in some cases and have kept it around
+ *
+ *  @param Graph - The graph who's nodes you would want to reposition
+ *
+ * @return A position map of all the nodes and its corresponding positions
+ */
+function InstanciateRandomPositions(Graph: Graph) {
+  const adjList = Graph.get_adjacency();
+  const PosMapX: Map<number, number> = new Map();
+  const PosMapY: Map<number, number> = new Map();
   for (const node of adjList.keys()) {
     PosMapX.set(node, Math.random() * 200);
     PosMapY.set(node, Math.random() * 200);
   }
-  let PosMap = new Map();
+  const PosMap: Map<number, Point> = new Map();
   for (const p of PosMapX.keys()) {
-    PosMap.set(p, new Point(PosMapX.get(p), 0, PosMapY.get(p)));
+    PosMap.set(p, new Point(PosMapX.get(p)!, 0, PosMapY.get(p)!));
   }
-  G.apply_position_map(PosMap);
-  const lmap = DrawEdgeLines(G, 1);
-  return { pmap: PosMap, emap: lmap };
+  return PosMap;
 }
 
-// draw the edge representations and then store them in the edge classes
-function DrawEdgeLines(G: Graph, divDistance: number) {
+/**
+ *
+ * Constructs the edges as lines, Note: these are just a representation of the lines
+ * they then have to be visulized using one of the Three JS Drawer functions like
+ * draw a thick line or a thin line
+ *
+ * @param Graph - The graph whos edges are getting drawn
+ * @param divDistance - How many divisions to make along the edge
+ * @returns A line map - which holds a map of all the edge indices and the corresponding line representations
+ */
+function DrawEdgeLines(Graph: Graph, divDistance: number) {
   // this is the return map
   const lineMap: Map<number, Line> = new Map();
   let edge: Edge;
   let start: Point;
   let end: Point;
-  for (const key of G.edges.keys()) {
-    edge = G.edges.get(key)!;
+  for (const key of Graph.edges.keys()) {
+    edge = Graph.edges.get(key)!;
     // get the start pos
-    start = G.nodes.get(edge.start)!.data.pos;
-    end = G.nodes.get(edge.end)!.data.pos;
+    start = Graph.nodes.get(edge.start)!.data.pos;
+    end = Graph.nodes.get(edge.end)!.data.pos;
     const Line = GeometryHelpers.line_from_start_end_distance(
       start,
       end,
@@ -185,7 +210,16 @@ function DrawEdgeLines(G: Graph, divDistance: number) {
   return lineMap;
 }
 
-// now draw out the edge bundling thing
+/**
+ *
+ * Edge bundling - this isnt as fast as the current KDE based methods - but it provides a basic  method of
+ * Visualizing large edge flows. Note: This is an aysnc function as it takes a while for the edge bundling to happen
+ *
+ * @param LineMap - The map of edges as a line map
+ * @param iterations - The number of iterations to run edge bundling
+ * @param distance - A shorthand for how close together the vertices need to be before they get influnced by each other
+ * @returns A line map with all the updated positions of the line (Where they are bundled together) Again - this needs to be applied to the graph!
+ */
 async function DrawEdgeBundling(
   LineMap: Map<number, Line>,
   iterations: number,
@@ -252,8 +286,15 @@ async function DrawEdgeBundling(
   return returnArray;
 }
 
-// displace the th edges
-// sorta like and arc in the middle of the thing
+/**
+ *
+ * Displace the edges vertically, almost akin to the Deck.gl arcs
+ * The displacement is done in a sin curve with the ends still touching the nodes
+ * Note: This is an inplace modification of the edges
+ *
+ * @param LineMap - The map of edges as a line map
+ * @param displacement - the amount of vertical displacement
+ */
 function DisplaceEdgeInY(LineMap: Map<number, Line>, displacement: number) {
   for (const key of LineMap.keys()) {
     const line = LineMap.get(key)!;
@@ -268,23 +309,30 @@ function DisplaceEdgeInY(LineMap: Map<number, Line>, displacement: number) {
   }
 }
 
-// displace the graph by some measure
+/**
+ *
+ * Displace the vertices vertically based on some prameter (For example degree or modularity)
+ *
+ * @param Graph - the graph whos nodes have to be displaced
+ * @param parameter - the prameter based on which you want to modify the
+ * @param displacement - the maximum amunt of displacement, all the other values are rescaled linerly
+ */
 function DisplaceVertices(
-  nodeMap: Map<number, _Node>,
+  Graph: Graph,
   parameter: string,
   displacement: number
 ) {
   let max: number = 0;
   let value: number, ydisplacement: number;
   // go through the thing and set the min max values
-  for (let node of nodeMap.values()) {
+  for (let node of Graph.nodes.values()) {
     value = eval("node.data." + parameter);
     if (value >= max) {
       max = value;
     }
   }
   // go through the nodes again and set the values
-  for (const node of nodeMap.values()) {
+  for (const node of Graph.nodes.values()) {
     value = eval("node.data." + parameter);
     ydisplacement = (value / max) * displacement;
     // now filter the values so that we know that the values are between a max and a min
@@ -294,15 +342,24 @@ function DisplaceVertices(
   }
 }
 
-// draw the circular vertical packing crypto like drawing
+/**
+ *
+ * Generates a hive plot for a graph, this includes the option to displace the graph vertically based on degrees and how far away each node is
+ *
+ * @param Graph - The graph
+ * @param selectedNode - the node around which the hive plot is generated
+ * @param step - If the hive should step up or down if yes then by what increments
+ * @param startPosition - Starting position
+ * @returns
+ */
 async function HivePlot(
-  G: Graph,
+  Graph: Graph,
   selectedNode: number,
   step: number,
-  startP: Point
+  startPosition: Point
 ) {
-  const adj = G.get_adjacency();
-  const DijkstraDepth = await GraphMethods.Dijkstra(G, selectedNode);
+  const adj = Graph.get_adjacency();
+  const DijkstraDepth = await GraphMethods.Dijkstra(Graph, selectedNode);
   // calculate the number of steps that I am searching through
   const steps = Math.max(...[...DijkstraDepth.values()]);
   // step map
@@ -321,9 +378,9 @@ async function HivePlot(
   const Pmap = new Map();
   // now find the relevant node Positions
   // get the start positions
-  const xoff = startP.x || 0;
-  const yoff = startP.y || 0;
-  const zoff = startP.z || 0;
+  const xoff = startPosition.x || 0;
+  const yoff = startPosition.y || 0;
+  const zoff = startPosition.z || 0;
   // set the positions
   for (const node of adj.keys()) {
     const yval = DijkstraDepth.get(node)! * step;
@@ -336,43 +393,63 @@ async function HivePlot(
     Pmap.set(node, pnt);
   }
   // simulate the lines
-  G.apply_position_map(Pmap);
-  const lmap = DrawEdgeLines(G, 1);
+  Graph.apply_position_map(Pmap);
+  const lmap = DrawEdgeLines(Graph, 1);
   const newLmap = await DrawEdgeBundling(lmap, 12, 5);
   return { pmap: Pmap, emap: newLmap };
 }
 
-// move graph
-function MoveGraph(G: Graph, dispacement: Point) {
-  const Gmap = G.get_map();
+/**
+ * Move a graph somewhere (like the physical location) - This is an inplace movement and overwrites existing values
+ *
+ * @param Graph - The graph that has to be moved
+ * @param dispacement - This is a point and I end up using Point and Vector interchangably. So here the xyz values from the point are used to displace the nodes
+ */
+function MoveGraph(Graph: Graph, dispacement: Point) {
+  const Gmap = Graph.get_map();
   const NewPmap = MovePmap(Gmap.pmap, dispacement);
   const NewEmap = MoveEmap(Gmap.emap, dispacement);
-  G.apply_drawing_maps({ pmap: NewPmap, emap: NewEmap });
+  Graph.apply_drawing_maps({ pmap: NewPmap, emap: NewEmap });
 }
 
-// move pmap
-function MovePmap(Pmap: Map<number, Point>, displacement: Point) {
+/**
+ *
+ * Move the nodes somewhere (Or the nodemap corresponding to the graph) - This is not an overwrite rather returns a new position map for the nodes to moved
+ *
+ * @param NodeM
+ * ap - The Current position map of the graph
+ * @param displacement - The Displacement vector
+ * @returns - A new position map
+ */
+function MovePmap(NodeMap: Map<number, Point>, displacement: Point) {
   const newPmap: Map<number, Point> = new Map();
-  for (let node of Pmap.keys()) {
-    const p = Pmap.get(node)!;
+  for (let node of NodeMap.keys()) {
+    const p = NodeMap.get(node)!;
     p.translate(displacement);
     newPmap.set(node, p);
   }
   return newPmap;
 }
 
-// move the edges
-function MoveEmap(Emap: Map<number, Line>, dispacement: Point) {
+/**
+ *
+ * Move the edges somewhere (the edgemap corresponding to the graph) - This is not an overwrite and returns a new edge map for the edges to be moved too
+ *
+ * @param LineMap - The current line map, this is made up of lines
+ * @param dispacement - The displacement vector
+ * @returns - The new line map
+ */
+function MoveEmap(LineMap: Map<number, Line>, dispacement: Point) {
   const newEmap: Map<number, Line> = new Map();
   // variables - instead of redeclaring
   let interimPoints: Point[];
   let interimLine: Line;
   let newLine: Line;
-  for (let lineNumber of Emap.keys()) {
+  for (let lineNumber of LineMap.keys()) {
     // reset the interim points
     interimPoints = [];
     // get the line
-    interimLine = Emap.get(lineNumber)!;
+    interimLine = LineMap.get(lineNumber)!;
     // move all the points
     for (let pnt of interimLine.points) {
       pnt.translate(dispacement);
@@ -396,16 +473,23 @@ So for example - the position data under a point in the graph is under
 // commenting out because appears to be redundant
 // update edge lines after moving points or something
 // this redraws the lines based on distance
-function UpdateEdgeLinesDist(G: Graph, divDistance: number) {
+/**
+ *
+ *  Draw new lines from edges, and draw them based on the distance of divisions (i.e. divide the line up every 10 units) Note: This is an in place update that takes place on the graph - it overwrites the existing data.
+ *
+ * @param Graph - The grapht who's edges have to be updated
+ * @param divDistance - The distance by which the divisions are made
+ */
+function UpdateEdgeLinesDist(Graph: Graph, divDistance: number) {
   let edge: Edge;
   let start: Point;
   let end: Point;
   let line: Line;
-  for (const key of G.edges.keys()) {
-    edge = G.edges.get(key)!;
+  for (const key of Graph.edges.keys()) {
+    edge = Graph.edges.get(key)!;
     // get the start pos
-    start = G.nodes.get(edge.start)!.data.pos;
-    end = G.nodes.get(edge.end)!.data.pos;
+    start = Graph.nodes.get(edge.start)!.data.pos;
+    end = Graph.nodes.get(edge.end)!.data.pos;
     line = GeometryHelpers.line_from_start_end_distance(
       start,
       end,
@@ -415,18 +499,23 @@ function UpdateEdgeLinesDist(G: Graph, divDistance: number) {
   }
 }
 
-// function Update EdgeLines based on the number of divisions
-// redraw the line based on divisions
-function UpdateEdgeLinesDivs(G: Graph, Divs: number) {
+/**
+ * 
+ * Draw new lines from edges, and draw them based on divisions (i.e. divide the line into 10 units) Note: This is an in place update that takes place on the graph - it overwrites the existing data.
+
+ * @param Graph - The grapht who's edges have to be updated
+ * @param Divs - The number of divisions to be made
+ */
+function UpdateEdgeLinesDivs(Graph: Graph, Divs: number) {
   let edge: Edge;
   let start: Point;
   let end: Point;
   let line: Line;
-  for (const key of G.edges.keys()) {
-    edge = G.edges.get(key)!;
+  for (const key of Graph.edges.keys()) {
+    edge = Graph.edges.get(key)!;
     // get the start pos
-    start = G.nodes.get(edge.start)!.data.pos;
-    end = G.nodes.get(edge.end)!.data.pos;
+    start = Graph.nodes.get(edge.start)!.data.pos;
+    end = Graph.nodes.get(edge.end)!.data.pos;
     line = GeometryHelpers.line_from_start_end_divisions(start, end, Divs);
     edge.data.ldata = line;
   }

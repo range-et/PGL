@@ -18,8 +18,25 @@ interface GraphDrawer3d {
   graphs: Map<number, Graph>;
 }
 
-// this is the 3d graph drawing class with three js
+/**
+ * This is the main graph drawer class
+ */
 class GraphDrawer3d {
+  /**
+   * To initialize the graph drawer there are a set of graph drawing settings that have to be set.
+   * Here are the details to do the same:
+   * canvas - the html canvas element that you would like to render 
+   * height - the the height of the initialized canvas
+   * width - the width of the initialized canvas
+   * geometry map - a map that keeps track of all the geometry in the scene (Optional)
+   * material map - a mapt that keeps track of all the materials in the scene (Optional)
+   * controls - Controls that define how one can navigate this 3d space (Self initialized)
+   * renderer - Renderer element form the three JS library
+   * camera -  A perspective camera from the threeJS library 
+   * scene - The three JS scene that gets define automatically
+   * 
+   * @param GraphDrawerOptions3d - These above options are construdeted into a single object and passed into the Options elem
+   */
   constructor(GraphDrawerOptions3d: {
     canvas: HTMLCanvasElement;
     width: number;
@@ -50,6 +67,10 @@ class GraphDrawer3d {
     this.graphs = new Map();
   }
 
+  /**
+   * This essentially initializes the drawing element based on the settings
+   * Remember to do this since if if its not done the scene will not render
+   */
   async init() {
     const t1 = performance.now();
 
@@ -90,11 +111,21 @@ class GraphDrawer3d {
 
   //add graph
   // this adds a graph to the current visualizer
+  /**
+   * 
+   * This is the main way to add elements to the viewer window that gets initialized
+   * 
+   * @param element A geomerty element + material element to add to the scene as a group line or point cloud
+   */
   addVisElement(element: THREE.Group | THREE.Line | THREE.Points) {
     this.scene.add(element);
   }
 
   // this stuff renders out one specific instances
+  /**
+   * This is the render call that is called every frame to update the rendering of the canvas
+   * Remember to do this since this is a common are for bugs to occur
+   */
   rendercall() {
     // this is the render draw call
     this.renderer.render(this.scene, this.camera);

@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { Point } from "../HelperClasses/Point";
 import { Line } from "../HelperClasses/Line";
-import {hexToRgb} from "../HelperClasses/ColorHelper"
+import { hexToRgb } from "../HelperClasses/ColorHelper";
 import { Line2 } from "three/examples/jsm/lines/Line2.js";
 import { LineMaterial } from "three/examples/jsm/lines/LineMaterial";
 import { LineGeometry } from "three/examples/jsm/lines/LineGeometry";
@@ -13,9 +13,20 @@ import { _Node } from "../Core/_Node";
 
 // Draw the graph out as a bunch of vertices
 // As like tiny squares
+/**
+ *
+ * Draw the veritces of the graph out as a point cloud
+ *
+ * @param Graph - the graph that has to be drawn out
+ * @param bounds - A global scaling parameter defaults to 1 but change to scale up a garph
+ * @param size - The size of all the nodes - either input an array the same length of the number of nodes decribing how big each node is, or a global node value as a number or defaults to 1
+ * @param color - the color of the node defaults to white
+ * @param alpha - the alpha value of the node defaults to 1 (opaque)
+ * @returns a three JS group that contains all the vertices as a point cloud or a three js points object that can be added to the scene
+ */
 function DrawTHREEGraphVertices(
   Graph: Graph,
-  bounds: number,
+  bounds: number = 1,
   size: number | number[] = 1,
   color: number = 0xffffff,
   alpha: number = 1
@@ -87,20 +98,40 @@ function DrawTHREEGraphVertices(
 }
 
 // then make a thing which draws out all the edges (THICK)
+/**
+ *
+ * Draws out all the edges (Thick edges of a graph)
+ *
+ * @param Graph - The graph whose edges have to be drawn
+ * @param bounds - the global scale for all the edges to be drawn defaults to 1
+ * @param color - color of the edges defaults to white
+ * @param thickness - thickness of the edges (defaults to 0.2)
+ * @returns a Three Js group of edges that can be added to the scene
+ */
 function DrawTHREEGraphEdgesThick(
-  G: Graph,
-  bounds: number,
+  Graph: Graph,
+  bounds: number = 1,
   color = 0xffffff,
-  thickness: number = 0.2,
+  thickness: number = 0.2
 ) {
   // add the interpolation function
-  const lineMap = G.get_edge_map();
+  const lineMap = Graph.get_edge_map();
   return DrawThickEdgesFromEdgeMap(lineMap, bounds, color, thickness);
 }
 
 // draw a thing to draw out all the edges from the edge map stuff
+/**
+ *
+ * Draw thick edges from an edge map
+ *
+ * @param EdgeMap - The edge map associated with the graph
+ * @param bounds - The global scale of the graph - defaults to 1
+ * @param color - The color of the edges - defaults to white
+ * @param thickness - thickness of the edges - defaults to 0.2
+ * @returns
+ */
 function DrawThickEdgesFromEdgeMap(
-  emap: Map<number, Line>,
+  EdgeMap: Map<number, Line>,
   bounds: number,
   color: number = 0xffffff,
   thickness: number = 0.2
@@ -117,7 +148,7 @@ function DrawThickEdgesFromEdgeMap(
   });
 
   const meshes = new THREE.Group();
-  for (let lval of emap.values()) {
+  for (let lval of EdgeMap.values()) {
     const mcolor = new THREE.Color();
     // convert the color that we shall be using
     mcolor.setHex(color);
@@ -145,20 +176,38 @@ function DrawThickEdgesFromEdgeMap(
 }
 
 // make a thing that draws out all the lines (Thin)
+/**
+ *
+ * Draw thin lines for all the edges given a graph
+ *
+ * @param Graph - The graph that has to be drawn
+ * @param bounds - The global scale factor for the the edges - defaults to 1
+ * @param color - color of the lines - defaults to white
+ * @returns
+ */
 function DrawTHREEGraphEdgesThin(
-  G: Graph,
-  bounds: number,
+  Graph: Graph,
+  bounds: number = 1,
   color: number = 0xffffff
 ) {
   // first get the edge map positions
-  const emap = G.get_edge_map();
+  const emap = Graph.get_edge_map();
   return DrawThinEdgesFromEdgeMap(emap, bounds, color);
 }
 
 // function to draw edges from edge map
+/**
+ *
+ * Draw Line map as lines given the edge map assocaited with the graph
+ *
+ * @param LineMap - The edge map that has to be drawn out
+ * @param bounds - Global scale for the edges to be drawn defaults to 1
+ * @param color - Color of the edges defaults to 1
+ * @returns
+ */
 function DrawThinEdgesFromEdgeMap(
-  emap: Map<number, Line>,
-  bounds: number,
+  LineMap: Map<number, Line>,
+  bounds: number = 1,
   color: number = 0xffffff
 ) {
   const material = new THREE.LineBasicMaterial({
@@ -166,7 +215,7 @@ function DrawThinEdgesFromEdgeMap(
   });
   const lines = new THREE.Group();
   let points: THREE.Vector3[];
-  for (const edge of emap.values()) {
+  for (const edge of LineMap.values()) {
     points = [];
     // get the edge data
     const ldata = edge.points;
@@ -188,9 +237,19 @@ function DrawThinEdgesFromEdgeMap(
 }
 
 // draw the cube box graph here
+/**
+ *
+ * Adde boxes where all the boxes are
+ *
+ * @param nodeMap - a map of all the nodes
+ * @param bounds - global scale of the edges to be drawn, defaults to 1
+ * @param color - default color of the edges, defaults to white
+ * @param size - size of the nodes defaults to 10
+ * @returns a group of vertices that contains all of the boxes associated with each one of the vertices
+ */
 function AddBoxBasedImaging(
   nodeMap: Map<number, Point>,
-  bounds: number,
+  bounds: number = 1,
   color: number = 0xffffff,
   size: number | number[] = 10
 ) {
@@ -209,7 +268,7 @@ function AddBoxBasedImaging(
   let nodeMesh: THREE.Mesh;
   for (let i = 0; i < nodeMap.size; i++) {
     nodeData = nodeMap.get(i)!;
-    geometry = new THREE.BoxGeometry(sizes[i],sizes[i],sizes[i]);
+    geometry = new THREE.BoxGeometry(sizes[i], sizes[i], sizes[i]);
     geometry.name = i.toString();
     nodeMesh = new THREE.Mesh(geometry, material);
     nodeMesh.position.set(
@@ -223,21 +282,41 @@ function AddBoxBasedImaging(
 }
 
 // Draw BoxBased imaging from a graph
+/**
+ *
+ * Draw box based verices given a graph
+ *
+ * @param Graph - The graph that needs its vertices drawn
+ * @param bounds - A global scale for the graph, defaults to one
+ * @param color - Default color of the boxes defaults to white
+ * @param size - Default size of the nodes defaults to 10
+ * @returns
+ */
 function DrawTHREEBoxBasedVertices(
-  graph: Graph,
-  bounds: number,
+  Graph: Graph,
+  bounds: number = 1,
   color: number = 0xffffff,
   size: number | number[] = 10
 ) {
-  const pmap = graph.get_position_map();
+  const pmap = Graph.get_position_map();
   const Bgroup = AddBoxBasedImaging(pmap, bounds, color, size);
   return Bgroup;
 }
 
 // draw cylinders where required
+/**
+ *
+ * Draw cylinders where all the vertices are based on a node map
+ *
+ * @param nodeMap - the node map assiciate with the graph that has to be drawn out
+ * @param divisonLength - the length of the divisions that are there in each one of the cylinder (this is a circumfurence amount), defaults to 16
+ * @param color - the default color of the cylinder, defaults to white
+ * @param size - the default size of the cylinder, defaults to 10
+ * @returns
+ */
 function AddCylinderBasedImaging(
   nodeMap: Map<number, Point>,
-  divisonLength: number,
+  divisonLength: number = 16,
   color: number = 0xffffff,
   size: number | number[] = 10
 ) {
@@ -269,6 +348,14 @@ function AddCylinderBasedImaging(
 
 // draw the sparse graph as groups
 // this seperates all the points based on some or the other group
+/**
+ *
+ * Split up a graph and return an boject containing a bunch of node groups and edge groups based on some parameterS
+ *
+ * @param Graph - the graph that you want to split up
+ * @param propertyName - the property that you want to split them on
+ * @returns - an object that hasa set of node vertices and a set of edge lines based on the splitting factor
+ */
 async function AddInModularityBasedPointGroups(
   Graph: Graph,
   propertyName: string
@@ -311,8 +398,17 @@ async function AddInModularityBasedPointGroups(
   return ROBJ;
 }
 
+/**
+ *
+ * Draw simplified line edges (thin based) based on some number. This number is a fraction of the total number of edges (so if you specify 0.1 it would draw 10% of the edges)
+ *
+ * @param Graph - The graph that has to be drawn out
+ * @param amount - The fraction of edges to be drawn
+ * @param color - color of these edges - defaults to 0.1
+ * @returns - a group of simple lines based on all the edges supplied to it
+ */
 function DrawSimplifiedEdges(
-  G: Graph,
+  Graph: Graph,
   amount: number,
   color: number = 0xffffff
 ) {
@@ -321,10 +417,10 @@ function DrawSimplifiedEdges(
   let start: Point;
   let end: Point;
   let points: THREE.Vector3[];
-  for (let edge of G.edges.values()) {
+  for (let edge of Graph.edges.values()) {
     if (Math.random() <= amount) {
-      start = G.nodes.get(edge.start)!.data.pos;
-      end = G.nodes.get(edge.end)!.data.pos;
+      start = Graph.nodes.get(edge.start)!.data.pos;
+      end = Graph.nodes.get(edge.end)!.data.pos;
       points = [];
       points.push(new THREE.Vector3(start.x, start.y, start.z));
       points.push(new THREE.Vector3(end.x, end.y, end.z));
@@ -336,7 +432,19 @@ function DrawSimplifiedEdges(
   return lineGroup;
 }
 
-function ChangeTheVertexColours(vertices:THREE.Points, indexArray:number[], color:number) {
+/**
+ *
+ * Change all the vertex colors based on some array of properties
+ *
+ * @param vertices - ThreeJS Points object, be sure to pass in the points object and not the group that the points belong too
+ * @param indexArray - The array of the indices of all the nodes whose values that have to be changed
+ * @param color - The color that they have to be changed too
+ */
+function ChangeTheVertexColours(
+  vertices: THREE.Points,
+  indexArray: number[],
+  color: number
+) {
   let Attrib = vertices.geometry.attributes;
   let k = 0;
   const newCol = hexToRgb(color)!;
@@ -349,7 +457,13 @@ function ChangeTheVertexColours(vertices:THREE.Points, indexArray:number[], colo
   Attrib.customColor.needsUpdate = true;
 }
 
-function ResetVertexColors(vertices:THREE.Points) {
+/**
+ *
+ * This resets all the colors to white
+ *
+ * @param vertices - ThreeJS Points object, be sure to pass in the points object and not the group that the points belong too
+ */
+function ResetVertexColors(vertices: THREE.Points) {
   let Attrib = vertices.geometry.attributes;
   let k = 0;
   for (let i = 0; i < Attrib.customColor.count; i++) {

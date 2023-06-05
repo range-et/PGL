@@ -8,7 +8,8 @@
   "module": "./Build/pgl_module.js",
   "scripts": {
     "watch": "parcel watch",
-    "build": "parcel build"
+    "build": "parcel build",
+    "document": "npx typedoc Src/index.ts"
   },
   "repository": {
     "type": "git",
@@ -43,6 +44,7 @@
     "@parcel/transformer-typescript-types": "^2.9.1",
     "@types/three": "^0.136.1",
     "parcel": "^2.9.1",
+    "typedoc": "^0.24.8",
     "typescript": "^5.1.3"
   }
 }
