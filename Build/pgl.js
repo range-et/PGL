@@ -85,10 +85,19 @@ var __awaiter = undefined && undefined.__awaiter || function(thisArg11, _argumen
         step11((generator11 = generator11.apply(thisArg11, _arguments11 || [])).next());
     });
 };
-// draw kamada kawai
-function SimulateKamadaKawai(G11, iterations11, simulationBound11 = 200, cohesionValue11 = 1) {
+/**
+ * Simulates Kamada kawai for a network in 2d. 3d is not supported yet
+ * Note: This is an async function as it take time for some of the large graphs
+ *
+ * @param Graph - The first input number
+ * @param iterations - The second input number
+ *  @param simulationBound - The bounds of simulation (Mostly a global number to scale the graph up or down)
+ *  @param cohesionValue - How sticky the nodes are i.r. how much they cluster together
+ * @returns And node map of all the nodes and their simulated positions - Please note: position maps have to to be applied to the graph!
+ *
+ */ function SimulateKamadaKawai(Graph11, iterations11, simulationBound11 = 200, cohesionValue11 = 1) {
     return __awaiter(this, void 0, void 0, function*() {
-        const adjList11 = G11.get_adjacency();
+        const adjList11 = Graph11.get_adjacency();
         // pos map
         const PosMapX11 = new Map();
         const PosMapY11 = new Map();
@@ -144,7 +153,7 @@ function SimulateKamadaKawai(G11, iterations11, simulationBound11 = 200, cohesio
                 let othernodeX11;
                 let othernodeY11;
                 // then find the element
-                for (const otherNode11 of G11.nodes.keys())// get the position of all the other nodes
+                for (const otherNode11 of Graph11.nodes.keys())// get the position of all the other nodes
                 if (otherNode11 != node11) {
                     // calculate inverse distance
                     othernodeX11 = PosMapX11.get(otherNode11);
@@ -199,43 +208,61 @@ function SimulateKamadaKawai(G11, iterations11, simulationBound11 = 200, cohesio
         return PosMap11;
     });
 }
-// instanciate a random set of positions
-function InstanciateRandomPositions(G11) {
-    const adjList11 = G11.get_adjacency();
+/**
+ *
+ * Randomly sets all the positions for a graph
+ * Not really very useful but I've used it in some cases and have kept it around
+ *
+ *  @param Graph - The graph who's nodes you would want to reposition
+ *
+ * @return A position map of all the nodes and its corresponding positions
+ */ function InstanciateRandomPositions(Graph11) {
+    const adjList11 = Graph11.get_adjacency();
     const PosMapX11 = new Map();
     const PosMapY11 = new Map();
     for (const node11 of adjList11.keys()){
         PosMapX11.set(node11, Math.random() * 200);
         PosMapY11.set(node11, Math.random() * 200);
     }
-    let PosMap11 = new Map();
+    const PosMap11 = new Map();
     for (const p11 of PosMapX11.keys())PosMap11.set(p11, new (0, $fw40F.Point)(PosMapX11.get(p11), 0, PosMapY11.get(p11)));
-    G11.apply_position_map(PosMap11);
-    const lmap11 = DrawEdgeLines(G11, 1);
-    return {
-        pmap: PosMap11,
-        emap: lmap11
-    };
+    return PosMap11;
 }
-// draw the edge representations and then store them in the edge classes
-function DrawEdgeLines(G11, divDistance11) {
+/**
+ *
+ * Constructs the edges as lines, Note: these are just a representation of the lines
+ * they then have to be visulized using one of the Three JS Drawer functions like
+ * draw a thick line or a thin line
+ *
+ * @param Graph - The graph whos edges are getting drawn
+ * @param divDistance - How many divisions to make along the edge
+ * @returns A line map - which holds a map of all the edge indices and the corresponding line representations
+ */ function DrawEdgeLines(Graph11, divDistance11) {
     // this is the return map
     const lineMap11 = new Map();
     let edge11;
     let start11;
     let end11;
-    for (const key11 of G11.edges.keys()){
-        edge11 = G11.edges.get(key11);
+    for (const key11 of Graph11.edges.keys()){
+        edge11 = Graph11.edges.get(key11);
         // get the start pos
-        start11 = G11.nodes.get(edge11.start).data.pos;
-        end11 = G11.nodes.get(edge11.end).data.pos;
+        start11 = Graph11.nodes.get(edge11.start).data.pos;
+        end11 = Graph11.nodes.get(edge11.end).data.pos;
         const Line11 = (0, $fd3jp.default).line_from_start_end_distance(start11, end11, divDistance11);
         lineMap11.set(key11, Line11);
     }
     return lineMap11;
 }
-// now draw out the edge bundling thing
-function DrawEdgeBundling(LineMap11, iterations11, distance11) {
+/**
+ *
+ * Edge bundling - this isnt as fast as the current KDE based methods - but it provides a basic  method of
+ * Visualizing large edge flows. Note: This is an aysnc function as it takes a while for the edge bundling to happen
+ *
+ * @param LineMap - The map of edges as a line map
+ * @param iterations - The number of iterations to run edge bundling
+ * @param distance - A shorthand for how close together the vertices need to be before they get influnced by each other
+ * @returns A line map with all the updated positions of the line (Where they are bundled together) Again - this needs to be applied to the graph!
+ */ function DrawEdgeBundling(LineMap11, iterations11, distance11) {
     return __awaiter(this, void 0, void 0, function*() {
         const returnArray11 = LineMap11;
         // variables that are getting reused
@@ -294,9 +321,15 @@ function DrawEdgeBundling(LineMap11, iterations11, distance11) {
         return returnArray11;
     });
 }
-// displace the th edges
-// sorta like and arc in the middle of the thing
-function DisplaceEdgeInY(LineMap11, displacement11) {
+/**
+ *
+ * Displace the edges vertically, almost akin to the Deck.gl arcs
+ * The displacement is done in a sin curve with the ends still touching the nodes
+ * Note: This is an inplace modification of the edges
+ *
+ * @param LineMap - The map of edges as a line map
+ * @param displacement - the amount of vertical displacement
+ */ function DisplaceEdgeInY(LineMap11, displacement11) {
     for (const key11 of LineMap11.keys()){
         const line11 = LineMap11.get(key11);
         // now for all the points in this
@@ -308,17 +341,23 @@ function DisplaceEdgeInY(LineMap11, displacement11) {
         }
     }
 }
-// displace the graph by some measure
-function DisplaceVertices(nodeMap, parameter, displacement) {
+/**
+ *
+ * Displace the vertices vertically based on some prameter (For example degree or modularity)
+ *
+ * @param Graph - the graph whos nodes have to be displaced
+ * @param parameter - the prameter based on which you want to modify the
+ * @param displacement - the maximum amunt of displacement, all the other values are rescaled linerly
+ */ function DisplaceVertices(Graph, parameter, displacement) {
     let max = 0;
     let value, ydisplacement;
     // go through the thing and set the min max values
-    for (let node of nodeMap.values()){
+    for (let node of Graph.nodes.values()){
         value = eval("node.data." + parameter);
         if (value >= max) max = value;
     }
     // go through the nodes again and set the values
-    for (const node of nodeMap.values()){
+    for (const node of Graph.nodes.values()){
         value = eval("node.data." + parameter);
         ydisplacement = value / max * displacement;
         // now filter the values so that we know that the values are between a max and a min
@@ -327,11 +366,19 @@ function DisplaceVertices(nodeMap, parameter, displacement) {
         node.data.pos.y = ydisplacement;
     }
 }
-// draw the circular vertical packing crypto like drawing
-function HivePlot(G11, selectedNode11, step11, startP11) {
+/**
+ *
+ * Generates a hive plot for a graph, this includes the option to displace the graph vertically based on degrees and how far away each node is
+ *
+ * @param Graph - The graph
+ * @param selectedNode - the node around which the hive plot is generated
+ * @param step - If the hive should step up or down if yes then by what increments
+ * @param startPosition - Starting position
+ * @returns
+ */ function HivePlot(Graph11, selectedNode11, step11, startPosition11) {
     return __awaiter(this, void 0, void 0, function*() {
-        const adj11 = G11.get_adjacency();
-        const DijkstraDepth11 = yield (0, $cWcXJ.default).Dijkstra(G11, selectedNode11);
+        const adj11 = Graph11.get_adjacency();
+        const DijkstraDepth11 = yield (0, $cWcXJ.default).Dijkstra(Graph11, selectedNode11);
         // calculate the number of steps that I am searching through
         const steps11 = Math.max(...[
             ...DijkstraDepth11.values()
@@ -348,9 +395,9 @@ function HivePlot(G11, selectedNode11, step11, startP11) {
         const Pmap11 = new Map();
         // now find the relevant node Positions
         // get the start positions
-        const xoff11 = startP11.x || 0;
-        const yoff11 = startP11.y || 0;
-        const zoff11 = startP11.z || 0;
+        const xoff11 = startPosition11.x || 0;
+        const yoff11 = startPosition11.y || 0;
+        const zoff11 = startPosition11.z || 0;
         // set the positions
         for (const node11 of adj11.keys()){
             const yval11 = DijkstraDepth11.get(node11) * step11;
@@ -363,8 +410,8 @@ function HivePlot(G11, selectedNode11, step11, startP11) {
             Pmap11.set(node11, pnt11);
         }
         // simulate the lines
-        G11.apply_position_map(Pmap11);
-        const lmap11 = DrawEdgeLines(G11, 1);
+        Graph11.apply_position_map(Pmap11);
+        const lmap11 = DrawEdgeLines(Graph11, 1);
         const newLmap11 = yield DrawEdgeBundling(lmap11, 12, 5);
         return {
             pmap: Pmap11,
@@ -372,38 +419,55 @@ function HivePlot(G11, selectedNode11, step11, startP11) {
         };
     });
 }
-// move graph
-function MoveGraph(G11, dispacement11) {
-    const Gmap11 = G11.get_map();
+/**
+ * Move a graph somewhere (like the physical location) - This is an inplace movement and overwrites existing values
+ *
+ * @param Graph - The graph that has to be moved
+ * @param dispacement - This is a point and I end up using Point and Vector interchangably. So here the xyz values from the point are used to displace the nodes
+ */ function MoveGraph(Graph11, dispacement11) {
+    const Gmap11 = Graph11.get_map();
     const NewPmap11 = MovePmap(Gmap11.pmap, dispacement11);
     const NewEmap11 = MoveEmap(Gmap11.emap, dispacement11);
-    G11.apply_drawing_maps({
+    Graph11.apply_drawing_maps({
         pmap: NewPmap11,
         emap: NewEmap11
     });
 }
-// move pmap
-function MovePmap(Pmap11, displacement11) {
+/**
+ *
+ * Move the nodes somewhere (Or the nodemap corresponding to the graph) - This is not an overwrite rather returns a new position map for the nodes to moved
+ *
+ * @param NodeM
+ * ap - The Current position map of the graph
+ * @param displacement - The Displacement vector
+ * @returns - A new position map
+ */ function MovePmap(NodeMap11, displacement11) {
     const newPmap11 = new Map();
-    for (let node11 of Pmap11.keys()){
-        const p11 = Pmap11.get(node11);
+    for (let node11 of NodeMap11.keys()){
+        const p11 = NodeMap11.get(node11);
         p11.translate(displacement11);
         newPmap11.set(node11, p11);
     }
     return newPmap11;
 }
-// move the edges
-function MoveEmap(Emap11, dispacement11) {
+/**
+ *
+ * Move the edges somewhere (the edgemap corresponding to the graph) - This is not an overwrite and returns a new edge map for the edges to be moved too
+ *
+ * @param LineMap - The current line map, this is made up of lines
+ * @param dispacement - The displacement vector
+ * @returns - The new line map
+ */ function MoveEmap(LineMap11, dispacement11) {
     const newEmap11 = new Map();
     // variables - instead of redeclaring
     let interimPoints11;
     let interimLine11;
     let newLine11;
-    for (let lineNumber11 of Emap11.keys()){
+    for (let lineNumber11 of LineMap11.keys()){
         // reset the interim points
         interimPoints11 = [];
         // get the line
-        interimLine11 = Emap11.get(lineNumber11);
+        interimLine11 = LineMap11.get(lineNumber11);
         // move all the points
         for (let pnt11 of interimLine11.points){
             pnt11.translate(dispacement11);
@@ -425,32 +489,42 @@ So for example - the position data under a point in the graph is under
 */ // commenting out because appears to be redundant
 // update edge lines after moving points or something
 // this redraws the lines based on distance
-function UpdateEdgeLinesDist(G11, divDistance11) {
+/**
+ *
+ *  Draw new lines from edges, and draw them based on the distance of divisions (i.e. divide the line up every 10 units) Note: This is an in place update that takes place on the graph - it overwrites the existing data.
+ *
+ * @param Graph - The grapht who's edges have to be updated
+ * @param divDistance - The distance by which the divisions are made
+ */ function UpdateEdgeLinesDist(Graph11, divDistance11) {
     let edge11;
     let start11;
     let end11;
     let line11;
-    for (const key11 of G11.edges.keys()){
-        edge11 = G11.edges.get(key11);
+    for (const key11 of Graph11.edges.keys()){
+        edge11 = Graph11.edges.get(key11);
         // get the start pos
-        start11 = G11.nodes.get(edge11.start).data.pos;
-        end11 = G11.nodes.get(edge11.end).data.pos;
+        start11 = Graph11.nodes.get(edge11.start).data.pos;
+        end11 = Graph11.nodes.get(edge11.end).data.pos;
         line11 = (0, $fd3jp.default).line_from_start_end_distance(start11, end11, divDistance11);
         edge11.data.ldata = line11;
     }
 }
-// function Update EdgeLines based on the number of divisions
-// redraw the line based on divisions
-function UpdateEdgeLinesDivs(G11, Divs11) {
+/**
+ *
+ * Draw new lines from edges, and draw them based on divisions (i.e. divide the line into 10 units) Note: This is an in place update that takes place on the graph - it overwrites the existing data.
+
+ * @param Graph - The grapht who's edges have to be updated
+ * @param Divs - The number of divisions to be made
+ */ function UpdateEdgeLinesDivs(Graph11, Divs11) {
     let edge11;
     let start11;
     let end11;
     let line11;
-    for (const key11 of G11.edges.keys()){
-        edge11 = G11.edges.get(key11);
+    for (const key11 of Graph11.edges.keys()){
+        edge11 = Graph11.edges.get(key11);
         // get the start pos
-        start11 = G11.nodes.get(edge11.start).data.pos;
-        end11 = G11.nodes.get(edge11.end).data.pos;
+        start11 = Graph11.nodes.get(edge11.start).data.pos;
+        end11 = Graph11.nodes.get(edge11.end).data.pos;
         line11 = (0, $fd3jp.default).line_from_start_end_divisions(start11, end11, Divs11);
         edge11.data.ldata = line11;
     }
@@ -474,26 +548,45 @@ parcelRequire.register("6Xdhg", function(module, exports) {
 
 $parcel$export(module.exports, "default", () => $51028d69415a7fb7$export$2e2bcd8739ae039);
 // Calculate average
-function $51028d69415a7fb7$var$calculateAverage(arr) {
+/**
+ * calculate the average of an array of numberss
+ * @param arr an array of number whose average has to be calculated
+ * @returns the average
+ */ function $51028d69415a7fb7$var$calculateAverage(arr) {
     let runningSum = 0;
     for(let i = 0; i < arr.length; i++)runningSum = runningSum + arr[i];
     const avg = runningSum / arr.length;
     return avg;
 }
 // calculate distance between two points
-function $51028d69415a7fb7$var$calculateDistance(p1, p2) {
+/**
+ * Calculate the distance betweeen two points
+ * @param p1 the first point
+ * @param p2 the second point
+ * @returns the distance between the points
+ */ function $51028d69415a7fb7$var$calculateDistance(p1, p2) {
     const d = Math.pow(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2) + Math.pow(p1.z - p2.z, 2), 0.5);
     return d;
 }
 // calculate squared distance sometimes we dont really need
 // the actual root but just a rough idea
-function $51028d69415a7fb7$var$calculateSquaredDistance(p1, p2) {
+/**
+ * Calculate the squared distance between two points
+ * @param p1 the first point
+ * @param p2 the second point
+ * @returns the squared distance between the two points
+ */ function $51028d69415a7fb7$var$calculateSquaredDistance(p1, p2) {
     const d = Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2) + Math.pow(p1.z - p2.z, 2);
     return d;
 }
 // get a random subset of something from a array of things
 // must provide the number of things we want from that array
-function $51028d69415a7fb7$var$getRandomSubset(arr, n) {
+/**
+ * get a random subset of something from a array of things must provide the number of things we want from that array
+ * @param arr the array from which the subset has to be made
+ * @param n number of items to select
+ * @returns a new array made up of a random sample from the original array
+ */ function $51028d69415a7fb7$var$getRandomSubset(arr, n) {
     var result = new Array(n), len = arr.length, taken = new Array(len);
     if (n > len) throw new RangeError("getRandom: more elements taken than available");
     while(n--){
@@ -521,7 +614,14 @@ var $fw40F = parcelRequire("fw40F");
 var $3WMe9 = parcelRequire("3WMe9");
 
 var $6Xdhg = parcelRequire("6Xdhg");
-function $b12aa3a1ba88a23a$var$line_from_start_end_divisions(start, end, divisions) {
+/**
+ * Creates a line based on the number of divisons
+ *
+ * @param start the start point
+ * @param end the end point
+ * @param divisions the number of divisions
+ * @returns the line object
+ */ function $b12aa3a1ba88a23a$var$line_from_start_end_divisions(start, end, divisions) {
     // create a start and end time
     const Start = new (0, $fw40F.Point)(start.x, start.y, start.z);
     const End = new (0, $fw40F.Point)(end.x, end.y, end.z);
@@ -540,13 +640,23 @@ function $b12aa3a1ba88a23a$var$line_from_start_end_divisions(start, end, divisio
     const SubdividedLine = new (0, $3WMe9.Line)(points);
     return SubdividedLine;
 }
-function $b12aa3a1ba88a23a$var$line_from_start_end_distance(start, end, distance) {
+/**
+ * Divides the line into a number of divisions based on distance
+ * @param start - the start point
+ * @param end - the end point
+ * @param distance - the distance at which this line must be divided
+ * @returns A line object with the right number of points
+ */ function $b12aa3a1ba88a23a$var$line_from_start_end_distance(start, end, distance) {
     const dist = (0, $6Xdhg.default).calculateDistance(start, end);
     const divs = Math.round(dist / distance) + 2;
     const subdivline = $b12aa3a1ba88a23a$var$line_from_start_end_divisions(start, end, divs);
     return subdivline;
 }
-function $b12aa3a1ba88a23a$var$centroid(points) {
+/**
+ * Calculates the centroid of an array of points
+ * @param points An array of points
+ * @returns the central point of the array of points
+ */ function $b12aa3a1ba88a23a$var$centroid(points) {
     let rx = 0;
     let ry = 0;
     let rz = 0;
@@ -572,7 +682,12 @@ parcelRequire.register("fw40F", function(module, exports) {
 
 $parcel$export(module.exports, "Point", () => $b4bcf46d914a9151$export$baf26146a414f24a);
 class $b4bcf46d914a9151$export$baf26146a414f24a {
-    constructor(x, y, z){
+    /**
+     * Constructs a point based on the x y z values
+     * @param x x value
+     * @param y y value
+     * @param z z value
+     */ constructor(x, y, z){
         this.x = x;
         this.y = y;
         this.z = z;
@@ -580,7 +695,10 @@ class $b4bcf46d914a9151$export$baf26146a414f24a {
     // Points are somewhat the same thing as a vector 
     // So im using the same type instead of redeclaring the 
     // Type
-    translate(Point) {
+    /**
+     * Displaces a point - note this method moves the existing point
+     * @param Point This is the displacement vactor, used as a point but the same idea holds
+     */ translate(Point) {
         this.x = this.x + Point.x;
         this.y = this.y + Point.y;
         this.z = this.z + Point.z;
@@ -595,7 +713,10 @@ $parcel$export(module.exports, "Line", () => $2dfc32cf7d94658f$export$17d680238e
 
 var $fw40F = parcelRequire("fw40F");
 class $2dfc32cf7d94658f$export$17d680238e50603e {
-    constructor(points){
+    /**
+     * Constructs a line from an array of points
+     * @param points an array of points
+     */ constructor(points){
         this.points = [];
         points.forEach((p)=>{
             const point = new (0, $fw40F.Point)(p.x, p.y, p.z);
@@ -643,9 +764,16 @@ var $96b4f4dcd8ff333f$var$__awaiter = undefined && undefined.__awaiter || functi
 // searches the whole graph and returns a map of which node
 // was searched from where
 // to speed this up all the nodes are actually numbers
-function $96b4f4dcd8ff333f$var$BFSSearch(G, node) {
+/**
+ *
+ * Performs a BFS search on a graph - Async because it takes a while on large graphs
+ *
+ * @param Graph - The graph which has to be searched using the BFS algorithm
+ * @param node - The node form which to start
+ * @returns - A map of which node was explored from which other node
+ */ function $96b4f4dcd8ff333f$var$BFSSearch(Graph, node) {
     return $96b4f4dcd8ff333f$var$__awaiter(this, void 0, void 0, function*() {
-        const adj = G.get_adjacency();
+        const adj = Graph.get_adjacency();
         const exploredFromMap = new Map();
         const explored = [];
         const stack = [];
@@ -671,12 +799,19 @@ function $96b4f4dcd8ff333f$var$BFSSearch(G, node) {
     });
 }
 // do a dijkstra Search Distance map
-function $96b4f4dcd8ff333f$var$Dijkstra(G, Node) {
+/**
+ *
+ * Performs a dijkstra search on a graph
+ *
+ * @param Graph - The graph on which to perform the Dijkstra search
+ * @param Node - The node from which to start
+ * @returns - Map from which each one of the nodes was searched from
+ */ function $96b4f4dcd8ff333f$var$Dijkstra(Graph, Node) {
     return $96b4f4dcd8ff333f$var$__awaiter(this, void 0, void 0, function*() {
-        const adj = G.get_adjacency();
+        const adj = Graph.get_adjacency();
         const Dmap = new Map();
         // get the explored from map
-        const exploredFromMap = yield $96b4f4dcd8ff333f$var$BFSSearch(G, Node);
+        const exploredFromMap = yield $96b4f4dcd8ff333f$var$BFSSearch(Graph, Node);
         // then for each element in the map go through
         // contact trace where that element came from
         for (const n of adj.keys()){
@@ -696,12 +831,18 @@ function $96b4f4dcd8ff333f$var$Dijkstra(G, Node) {
 // Graph searches and stuff
 // this only returns one of the diameters that is the longest 
 // not all of them
-function $96b4f4dcd8ff333f$var$GraphDiameter(graph) {
+/**
+ *
+ * Finds the diameter of the graph
+ *
+ * @param Graph
+ * @returns returns an object with a start, end - the two points of a graph and the diameter of the graph
+ */ function $96b4f4dcd8ff333f$var$GraphDiameter(Graph) {
     return $96b4f4dcd8ff333f$var$__awaiter(this, void 0, void 0, function*() {
         // find the diameter of the graph
         // start Dijkstra from some random node
-        let seed = Math.floor(Math.random() * graph.nodes.size);
-        let Dstart = yield $96b4f4dcd8ff333f$var$Dijkstra(graph, seed);
+        let seed = Math.floor(Math.random() * Graph.nodes.size);
+        let Dstart = yield $96b4f4dcd8ff333f$var$Dijkstra(Graph, seed);
         // iterate through all the values and then get
         // the value that is the highest amongst the others
         let currentDistance = -1;
@@ -714,7 +855,7 @@ function $96b4f4dcd8ff333f$var$GraphDiameter(graph) {
         }
         // then search from there to the furthest point again
         const newStart = seed;
-        Dstart = yield $96b4f4dcd8ff333f$var$Dijkstra(graph, seed);
+        Dstart = yield $96b4f4dcd8ff333f$var$Dijkstra(Graph, seed);
         // repeat the thing
         currentDistance = -1;
         for (const n of Dstart.keys()){
@@ -734,7 +875,14 @@ function $96b4f4dcd8ff333f$var$GraphDiameter(graph) {
 }
 // Select a subrgaph
 // you must specify a list of nodes that you passed in
-function $96b4f4dcd8ff333f$var$SelectSubgraph(graph, nodeList) {
+/**
+ *
+ * Select a subgraph
+ *
+ * @param graph - The main graph to select from
+ * @param nodeList - The selection of nodes that we want to select from this graph
+ * @returns A graph object that contains this subgraph
+ */ function $96b4f4dcd8ff333f$var$SelectSubgraph(graph, nodeList) {
     return $96b4f4dcd8ff333f$var$__awaiter(this, void 0, void 0, function*() {
         const prunedNodes = new Map();
         const prunedEdges = new Map();
@@ -801,25 +949,43 @@ var $734dcf9f6d72d709$var$__awaiter = undefined && undefined.__awaiter || functi
     });
 };
 class $734dcf9f6d72d709$export$614db49f3febe941 {
-    constructor(nodes, edges){
+    /**
+     *
+     * Construct a graph object (no initializing)
+     *
+     * @param nodes - Map of all the nodes associated with the graph
+     * @param edges - Map of all the edges assocaiated with the graph
+     */ constructor(nodes, edges){
         this.nodes = nodes;
         this.edges = edges;
     // execute Internal methods
     // this.printData();
     }
     // test function
-    printData() {
+    /**
+     * Prints out a snapshot of data associated with this graph like how many nodes and how many edges
+     */ printData() {
         const message = "This is a graph with " + this.nodes.size + " nodes and " + this.edges.size + " edges";
         console.log(message);
     }
     // initialize
-    initialize() {
+    /**
+     *  Initializes the graph and constructs a node adajaceny list list
+     */ initialize() {
         return $734dcf9f6d72d709$var$__awaiter(this, void 0, void 0, function*() {
             yield this.constructAdjacencyList();
         });
     }
     // new create method
-    static create(nodes, edges) {
+    /**
+     *
+     * This is the official create method to make a graph based on a set of nodes and edges
+     * It also auto initializes the graph and sets all the adjaceny lists in the memory
+     *
+     * @param nodes - map of nodes
+     * @param edges - map of edges
+     * @returns
+     */ static create(nodes, edges) {
         return $734dcf9f6d72d709$var$__awaiter(this, void 0, void 0, function*() {
             const g = new $734dcf9f6d72d709$export$614db49f3febe941(nodes, edges);
             yield g.initialize();
@@ -827,7 +993,9 @@ class $734dcf9f6d72d709$export$614db49f3febe941 {
         });
     }
     // construct the adjacency list represntation
-    constructAdjacencyList() {
+    /**
+     * Constructs the adjacency associated with the graph
+     */ constructAdjacencyList() {
         return $734dcf9f6d72d709$var$__awaiter(this, void 0, void 0, function*() {
             // I'm constructing a Graph here so some of the stuff doesnt matter
             this.edges.forEach((edge)=>{
@@ -856,11 +1024,20 @@ class $734dcf9f6d72d709$export$614db49f3febe941 {
         });
     }
     // add a node
-    add_node(nodeID, data) {
+    /**
+     * Add a noce to the graph
+     * @param nodeID - the node ID
+     * @param data - data associated with the node
+     */ add_node(nodeID, data) {
         this.nodes.set(nodeID, data);
     }
     // add an edge
-    add_edge(start, end, data) {
+    /**
+     * Add an edge to the graph
+     * @param start - Starting index of the edge
+     * @param end - The end index of the edge
+     * @param data - data associated with the edge
+     */ add_edge(start, end, data) {
         const newEdge = new (0, $i8obY.Edge)(start, end, data);
         // this is a new edge that we add to the edges
         this.edges.set(this.edges.size, newEdge);
@@ -871,7 +1048,10 @@ class $734dcf9f6d72d709$export$614db49f3febe941 {
     // get an adjacency list reprentation of the graph
     // this onlu has the indices and not the actual data
     // associated with the node to speed things up
-    get_adjacency() {
+    /**
+     *
+     * @returns Get the adjaceny (adjacency lists) associated with the graph
+     */ get_adjacency() {
         const SparseMap = new Map();
         // iterate through the node list
         for (const key of this.nodes.keys())SparseMap.set(key, this.nodes.get(key).neighbours);
@@ -879,21 +1059,30 @@ class $734dcf9f6d72d709$export$614db49f3febe941 {
     }
     // set position based on an array of positions
     // this could be anything (we use kamada kawai )
-    apply_position_map(data) {
+    /**
+     * Apply a position map based on some data
+     * @param data - the position map that has to be applied to the graph
+     */ apply_position_map(data) {
         for (let n of data.keys())this.nodes.get(n).data = Object.assign(Object.assign({}, this.nodes.get(n).data), {
             pos: data.get(n)
         });
     }
     // create new edge pos representation
     // same approach for applying the key data
-    apply_edge_pos_maps(data) {
+    /**
+     * Apply an line map to a graph
+     * @param data Line data that has to be applied to the graph
+     */ apply_edge_pos_maps(data) {
         for (let key of data.keys())this.edges.get(key).data = Object.assign(Object.assign({}, this.edges.get(key).data), {
             ldata: data.get(key)
         });
     }
     // get the edge reps
     // this returns all the edge map readings
-    get_edge_map() {
+    /**
+     * get the current edge map
+     * @returns The current set of edges associated with the graph
+     */ get_edge_map() {
         const lines = new Map();
         for (const key of this.edges.keys()){
             const edge = this.edges.get(key).data.ldata;
@@ -902,18 +1091,27 @@ class $734dcf9f6d72d709$export$614db49f3febe941 {
         return lines;
     }
     // graph apply pos and edge map
-    apply_drawing_maps(layout) {
+    /**
+     * Applies all the maps to the graph
+     * @param layout - Applies an object of maps associated with with a graph is made up of {pmap:(the position map), emap:{the edge map}}
+     */ apply_drawing_maps(layout) {
         if (layout.pmap) this.apply_position_map(layout.pmap);
         if (layout.emap) this.apply_edge_pos_maps(layout.emap);
     }
     // get the positon map of the graph
-    get_map() {
+    /**
+     * Gets the position map and the edge map respectively
+     * @returns the positon map and the edge map as pmap and emap
+     */ get_map() {
         return {
             pmap: this.get_position_map(),
             emap: this.get_edge_map()
         };
     }
-    get_position_map() {
+    /**
+     * get the postion of the nodes in the graph
+     * @returns the position map
+     */ get_position_map() {
         const pmap = new Map();
         for (const node of this.nodes.keys())pmap.set(node, this.nodes.get(node).data.pos);
         return pmap;
@@ -925,7 +1123,14 @@ parcelRequire.register("i8obY", function(module, exports) {
 
 $parcel$export(module.exports, "Edge", () => $d33bbd65b64ffa49$export$b9d9805c9b77a56d);
 class $d33bbd65b64ffa49$export$b9d9805c9b77a56d {
-    constructor(start, end, data){
+    /**
+     *
+     * Construct an edge
+     *
+     * @param start Start index of the edge based on the array of nodes
+     * @param end End index of the edge based on the array of nodes
+     * @param data Data associated, note that ldata is reserved for how to draw the lines associated with the edge
+     */ constructor(start, end, data){
         this.start = start;
         this.end = end;
         this.data = Object.assign({}, data);
@@ -981,7 +1186,17 @@ var __awaiter = undefined && undefined.__awaiter || function(thisArg11, _argumen
 };
 // Draw the graph out as a bunch of vertices
 // As like tiny squares
-function DrawTHREEGraphVertices(Graph11, bounds11, size11 = 1, color11 = 0xffffff, alpha11 = 1) {
+/**
+ *
+ * Draw the veritces of the graph out as a point cloud
+ *
+ * @param Graph - the graph that has to be drawn out
+ * @param bounds - A global scaling parameter defaults to 1 but change to scale up a garph
+ * @param size - The size of all the nodes - either input an array the same length of the number of nodes decribing how big each node is, or a global node value as a number or defaults to 1
+ * @param color - the color of the node defaults to white
+ * @param alpha - the alpha value of the node defaults to 1 (opaque)
+ * @returns a three JS group that contains all the vertices as a point cloud or a three js points object that can be added to the scene
+ */ function DrawTHREEGraphVertices(Graph11, bounds11 = 1, size11 = 1, color11 = 0xffffff, alpha11 = 1) {
     const positionAttribute11 = [];
     // get the corresponding points list
     const pmap11 = Graph11.get_position_map();
@@ -1035,13 +1250,31 @@ function DrawTHREEGraphVertices(Graph11, bounds11, size11 = 1, color11 = 0xfffff
     return vertices11;
 }
 // then make a thing which draws out all the edges (THICK)
-function DrawTHREEGraphEdgesThick(G11, bounds11, color11 = 0xffffff, thickness11 = 0.2) {
+/**
+ *
+ * Draws out all the edges (Thick edges of a graph)
+ *
+ * @param Graph - The graph whose edges have to be drawn
+ * @param bounds - the global scale for all the edges to be drawn defaults to 1
+ * @param color - color of the edges defaults to white
+ * @param thickness - thickness of the edges (defaults to 0.2)
+ * @returns a Three Js group of edges that can be added to the scene
+ */ function DrawTHREEGraphEdgesThick(Graph11, bounds11 = 1, color11 = 0xffffff, thickness11 = 0.2) {
     // add the interpolation function
-    const lineMap11 = G11.get_edge_map();
+    const lineMap11 = Graph11.get_edge_map();
     return DrawThickEdgesFromEdgeMap(lineMap11, bounds11, color11, thickness11);
 }
 // draw a thing to draw out all the edges from the edge map stuff
-function DrawThickEdgesFromEdgeMap(emap11, bounds11, color11 = 0xffffff, thickness11 = 0.2) {
+/**
+ *
+ * Draw thick edges from an edge map
+ *
+ * @param EdgeMap - The edge map associated with the graph
+ * @param bounds - The global scale of the graph - defaults to 1
+ * @param color - The color of the edges - defaults to white
+ * @param thickness - thickness of the edges - defaults to 0.2
+ * @returns
+ */ function DrawThickEdgesFromEdgeMap(EdgeMap11, bounds11, color11 = 0xffffff, thickness11 = 0.2) {
     // this is the line thing
     const mat11 = new (0, $h9nKb$threeexamplesjsmlinesLineMaterial.LineMaterial)({
         color: color11,
@@ -1052,7 +1285,7 @@ function DrawThickEdgesFromEdgeMap(emap11, bounds11, color11 = 0xffffff, thickne
         alphaToCoverage: true
     });
     const meshes11 = new $h9nKb$three.Group();
-    for (let lval11 of emap11.values()){
+    for (let lval11 of EdgeMap11.values()){
         const mcolor11 = new $h9nKb$three.Color();
         // convert the color that we shall be using
         mcolor11.setHex(color11);
@@ -1073,19 +1306,35 @@ function DrawThickEdgesFromEdgeMap(emap11, bounds11, color11 = 0xffffff, thickne
     return meshes11;
 }
 // make a thing that draws out all the lines (Thin)
-function DrawTHREEGraphEdgesThin(G11, bounds11, color11 = 0xffffff) {
+/**
+ *
+ * Draw thin lines for all the edges given a graph
+ *
+ * @param Graph - The graph that has to be drawn
+ * @param bounds - The global scale factor for the the edges - defaults to 1
+ * @param color - color of the lines - defaults to white
+ * @returns
+ */ function DrawTHREEGraphEdgesThin(Graph11, bounds11 = 1, color11 = 0xffffff) {
     // first get the edge map positions
-    const emap11 = G11.get_edge_map();
+    const emap11 = Graph11.get_edge_map();
     return DrawThinEdgesFromEdgeMap(emap11, bounds11, color11);
 }
 // function to draw edges from edge map
-function DrawThinEdgesFromEdgeMap(emap11, bounds11, color11 = 0xffffff) {
+/**
+ *
+ * Draw Line map as lines given the edge map assocaited with the graph
+ *
+ * @param LineMap - The edge map that has to be drawn out
+ * @param bounds - Global scale for the edges to be drawn defaults to 1
+ * @param color - Color of the edges defaults to 1
+ * @returns
+ */ function DrawThinEdgesFromEdgeMap(LineMap11, bounds11 = 1, color11 = 0xffffff) {
     const material11 = new $h9nKb$three.LineBasicMaterial({
         color: color11
     });
     const lines11 = new $h9nKb$three.Group();
     let points11;
-    for (const edge11 of emap11.values()){
+    for (const edge11 of LineMap11.values()){
         points11 = [];
         // get the edge data
         const ldata11 = edge11.points;
@@ -1100,7 +1349,16 @@ function DrawThinEdgesFromEdgeMap(emap11, bounds11, color11 = 0xffffff) {
     return lines11;
 }
 // draw the cube box graph here
-function AddBoxBasedImaging(nodeMap11, bounds11, color11 = 0xffffff, size11 = 10) {
+/**
+ *
+ * Adde boxes where all the boxes are
+ *
+ * @param nodeMap - a map of all the nodes
+ * @param bounds - global scale of the edges to be drawn, defaults to 1
+ * @param color - default color of the edges, defaults to white
+ * @param size - size of the nodes defaults to 10
+ * @returns a group of vertices that contains all of the boxes associated with each one of the vertices
+ */ function AddBoxBasedImaging(nodeMap11, bounds11 = 1, color11 = 0xffffff, size11 = 10) {
     // precompute all the sizes
     let sizes11;
     if (typeof size11 == "number") sizes11 = Array(nodeMap11.size).fill(size11);
@@ -1124,13 +1382,31 @@ function AddBoxBasedImaging(nodeMap11, bounds11, color11 = 0xffffff, size11 = 10
     return group11;
 }
 // Draw BoxBased imaging from a graph
-function DrawTHREEBoxBasedVertices(graph11, bounds11, color11 = 0xffffff, size11 = 10) {
-    const pmap11 = graph11.get_position_map();
+/**
+ *
+ * Draw box based verices given a graph
+ *
+ * @param Graph - The graph that needs its vertices drawn
+ * @param bounds - A global scale for the graph, defaults to one
+ * @param color - Default color of the boxes defaults to white
+ * @param size - Default size of the nodes defaults to 10
+ * @returns
+ */ function DrawTHREEBoxBasedVertices(Graph11, bounds11 = 1, color11 = 0xffffff, size11 = 10) {
+    const pmap11 = Graph11.get_position_map();
     const Bgroup11 = AddBoxBasedImaging(pmap11, bounds11, color11, size11);
     return Bgroup11;
 }
 // draw cylinders where required
-function AddCylinderBasedImaging(nodeMap11, divisonLength11, color11 = 0xffffff, size11 = 10) {
+/**
+ *
+ * Draw cylinders where all the vertices are based on a node map
+ *
+ * @param nodeMap - the node map assiciate with the graph that has to be drawn out
+ * @param divisonLength - the length of the divisions that are there in each one of the cylinder (this is a circumfurence amount), defaults to 16
+ * @param color - the default color of the cylinder, defaults to white
+ * @param size - the default size of the cylinder, defaults to 10
+ * @returns
+ */ function AddCylinderBasedImaging(nodeMap11, divisonLength11 = 16, color11 = 0xffffff, size11 = 10) {
     // precompute all the sizes
     let sizes11;
     if (typeof size11 == "number") sizes11.Array(nodeMap11.size).fill(size11);
@@ -1157,7 +1433,14 @@ function AddCylinderBasedImaging(nodeMap11, divisonLength11, color11 = 0xffffff,
 }
 // draw the sparse graph as groups
 // this seperates all the points based on some or the other group
-function AddInModularityBasedPointGroups(Graph, propertyName) {
+/**
+ *
+ * Split up a graph and return an boject containing a bunch of node groups and edge groups based on some parameterS
+ *
+ * @param Graph - the graph that you want to split up
+ * @param propertyName - the property that you want to split them on
+ * @returns - an object that hasa set of node vertices and a set of edge lines based on the splitting factor
+ */ function AddInModularityBasedPointGroups(Graph, propertyName) {
     return __awaiter(this, void 0, void 0, function*() {
         // returns an array of groups
         const groups = new Map();
@@ -1196,7 +1479,15 @@ function AddInModularityBasedPointGroups(Graph, propertyName) {
         return ROBJ;
     });
 }
-function DrawSimplifiedEdges(G11, amount11, color11 = 0xffffff) {
+/**
+ *
+ * Draw simplified line edges (thin based) based on some number. This number is a fraction of the total number of edges (so if you specify 0.1 it would draw 10% of the edges)
+ *
+ * @param Graph - The graph that has to be drawn out
+ * @param amount - The fraction of edges to be drawn
+ * @param color - color of these edges - defaults to 0.1
+ * @returns - a group of simple lines based on all the edges supplied to it
+ */ function DrawSimplifiedEdges(Graph11, amount11, color11 = 0xffffff) {
     const lineGroup11 = new $h9nKb$three.Group();
     const material11 = new $h9nKb$three.LineBasicMaterial({
         color: color11
@@ -1204,9 +1495,9 @@ function DrawSimplifiedEdges(G11, amount11, color11 = 0xffffff) {
     let start11;
     let end11;
     let points11;
-    for (let edge11 of G11.edges.values())if (Math.random() <= amount11) {
-        start11 = G11.nodes.get(edge11.start).data.pos;
-        end11 = G11.nodes.get(edge11.end).data.pos;
+    for (let edge11 of Graph11.edges.values())if (Math.random() <= amount11) {
+        start11 = Graph11.nodes.get(edge11.start).data.pos;
+        end11 = Graph11.nodes.get(edge11.end).data.pos;
         points11 = [];
         points11.push(new $h9nKb$three.Vector3(start11.x, start11.y, start11.z));
         points11.push(new $h9nKb$three.Vector3(end11.x, end11.y, end11.z));
@@ -1216,7 +1507,14 @@ function DrawSimplifiedEdges(G11, amount11, color11 = 0xffffff) {
     }
     return lineGroup11;
 }
-function ChangeTheVertexColours(vertices11, indexArray11, color11) {
+/**
+ *
+ * Change all the vertex colors based on some array of properties
+ *
+ * @param vertices - ThreeJS Points object, be sure to pass in the points object and not the group that the points belong too
+ * @param indexArray - The array of the indices of all the nodes whose values that have to be changed
+ * @param color - The color that they have to be changed too
+ */ function ChangeTheVertexColours(vertices11, indexArray11, color11) {
     let Attrib11 = vertices11.geometry.attributes;
     let k11 = 0;
     const newCol11 = (0, $1jyjM.hexToRgb)(color11);
@@ -1228,7 +1526,12 @@ function ChangeTheVertexColours(vertices11, indexArray11, color11) {
     });
     Attrib11.customColor.needsUpdate = true;
 }
-function ResetVertexColors(vertices11) {
+/**
+ *
+ * This resets all the colors to white
+ *
+ * @param vertices - ThreeJS Points object, be sure to pass in the points object and not the group that the points belong too
+ */ function ResetVertexColors(vertices11) {
     let Attrib11 = vertices11.geometry.attributes;
     let k11 = 0;
     for(let i11 = 0; i11 < Attrib11.customColor.count; i11++){
@@ -1261,14 +1564,32 @@ $parcel$export(module.exports, "hexToRgb", () => $0f522fa43e7ceed2$export$5a544e
 ///////////////
 // color convert by Tim Down
 // https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
-function $0f522fa43e7ceed2$var$componentToHex(c) {
+/**
+ *
+ * converts hex to RGB
+ *
+ * @param c Hex ccomponent
+ * @returns returns an object with r g b component values
+ */ function $0f522fa43e7ceed2$var$componentToHex(c) {
     var hex = c.toString(16);
     return hex.length == 1 ? "0" + hex : hex;
 }
-function $0f522fa43e7ceed2$export$34d09c4a771c46ef(r, g, b) {
+/**
+ *
+ * Converts Rgb to hex
+ *
+ * @param r red value
+ * @param g green value
+ * @param b blue value
+ * @returns the hex value
+ */ function $0f522fa43e7ceed2$export$34d09c4a771c46ef(r, g, b) {
     return "#" + $0f522fa43e7ceed2$var$componentToHex(r) + $0f522fa43e7ceed2$var$componentToHex(g) + $0f522fa43e7ceed2$var$componentToHex(b);
 }
-function $0f522fa43e7ceed2$export$5a544e13ad4e1fa5(hex) {
+/**
+ *
+ * @param hex the hex color code
+ * @returns RGB values as r, g, b values
+ */ function $0f522fa43e7ceed2$export$5a544e13ad4e1fa5(hex) {
     // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
     var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
     hex = hex.toString().replace(shorthandRegex, function(m, r, g, b) {
@@ -2224,7 +2545,10 @@ $parcel$export($942e91a547b4130c$exports, "default", () => $942e91a547b4130c$exp
 
 var $9TL8g = parcelRequire("9TL8g");
 class $d0af3be0040778ae$export$1e3a09c15b213958 {
-    constructor(data){
+    /**
+     *
+     * @param data Data associated with the node, be sure to be careful to pass in any "pos" data as they correspond to position of the nodes in the visuals of the graph
+     */ constructor(data){
         // this data is an arbitrary thing with which I can create any object
         this.data = Object.assign({}, data);
         // the neighbours bit is explicity set from the code outside
@@ -2263,7 +2587,12 @@ var $942e91a547b4130c$var$__awaiter = undefined && undefined.__awaiter || functi
     });
 };
 // construct a graph based on an edge list etc
-function $942e91a547b4130c$var$ConstructGraphNodeEdgesList(nodes, edges) {
+/**
+ * construct a graph based on an edge list and node list
+ * @param nodes nodes as a list
+ * @param edges edges as a list
+ * @returns A graph that was construct from the list of nodes and edges
+ */ function $942e91a547b4130c$var$ConstructGraphNodeEdgesList(nodes, edges) {
     return $942e91a547b4130c$var$__awaiter(this, void 0, void 0, function*() {
         // make a node OBJ
         const nodeOBJ = new Map();
@@ -2323,7 +2652,10 @@ var $c57cf0c4853fb804$var$__awaiter = undefined && undefined.__awaiter || functi
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-function $c57cf0c4853fb804$var$LoadZKC() {
+/**
+ *
+ * @returns the raw ZKC dataset
+ */ function $c57cf0c4853fb804$var$LoadZKC() {
     return $c57cf0c4853fb804$var$__awaiter(this, void 0, void 0, function*() {
         // load up the dataset representation
         const data = (0, $a79fcfb00e2fad28$export$b6cdfb6bd6195507);
@@ -2331,7 +2663,10 @@ function $c57cf0c4853fb804$var$LoadZKC() {
         return G;
     });
 }
-function $c57cf0c4853fb804$var$LoadZKCSimulated() {
+/**
+ *
+ * @returns the ZKC dataset with the positons simulated before hand
+ */ function $c57cf0c4853fb804$var$LoadZKCSimulated() {
     return $c57cf0c4853fb804$var$__awaiter(this, void 0, void 0, function*() {
         // make a map
         const data = (0, $16cc01d9c2706f25$export$aa88f89bcd11f8a9);
@@ -2413,9 +2748,24 @@ var $6abda68f7f78a6fb$var$__awaiter = undefined && undefined.__awaiter || functi
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-// this is the 3d graph drawing class with three js
-class $6abda68f7f78a6fb$var$GraphDrawer3d {
-    constructor(GraphDrawerOptions3d){
+/**
+ * This is the main graph drawer class
+ */ class $6abda68f7f78a6fb$var$GraphDrawer3d {
+    /**
+     * To initialize the graph drawer there are a set of graph drawing settings that have to be set.
+     * Here are the details to do the same:
+     * canvas - the html canvas element that you would like to render
+     * height - the the height of the initialized canvas
+     * width - the width of the initialized canvas
+     * geometry map - a map that keeps track of all the geometry in the scene (Optional)
+     * material map - a mapt that keeps track of all the materials in the scene (Optional)
+     * controls - Controls that define how one can navigate this 3d space (Self initialized)
+     * renderer - Renderer element form the three JS library
+     * camera -  A perspective camera from the threeJS library
+     * scene - The three JS scene that gets define automatically
+     *
+     * @param GraphDrawerOptions3d - These above options are construdeted into a single object and passed into the Options elem
+     */ constructor(GraphDrawerOptions3d){
         this.canvas = GraphDrawerOptions3d.canvas;
         this.width = GraphDrawerOptions3d.width;
         this.height = GraphDrawerOptions3d.height;
@@ -2433,7 +2783,10 @@ class $6abda68f7f78a6fb$var$GraphDrawer3d {
         // graphs that we are working with together
         this.graphs = new Map();
     }
-    init() {
+    /**
+     * This essentially initializes the drawing element based on the settings
+     * Remember to do this since if if its not done the scene will not render
+     */ init() {
         return $6abda68f7f78a6fb$var$__awaiter(this, void 0, void 0, function*() {
             const t1 = performance.now();
             this.camera = new $h9nKb$three.PerspectiveCamera();
@@ -2468,11 +2821,19 @@ class $6abda68f7f78a6fb$var$GraphDrawer3d {
     }
     //add graph
     // this adds a graph to the current visualizer
-    addVisElement(element) {
+    /**
+     *
+     * This is the main way to add elements to the viewer window that gets initialized
+     *
+     * @param element A geomerty element + material element to add to the scene as a group line or point cloud
+     */ addVisElement(element) {
         this.scene.add(element);
     }
     // this stuff renders out one specific instances
-    rendercall() {
+    /**
+     * This is the render call that is called every frame to update the rendering of the canvas
+     * Remember to do this since this is a common are for bugs to occur
+     */ rendercall() {
         // this is the render draw call
         this.renderer.render(this.scene, this.camera);
         this.controls.update();

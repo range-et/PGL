@@ -103,4 +103,5 @@ The Plebian Graph Library (PGL) is intricately woven into the fabric of the Thre
 
 ## Larger example
 
-## Other notes
+## Acknowledgements
+This libray was sponsored by the Geometry Lab under the Laborotory for Design Technologies at the Graduate School of Design, Harvard University. Many thanks to Andrew Witt for guiding this project.
