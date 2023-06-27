@@ -33,6 +33,11 @@ interface _Node {
     data: any;
     neighbours: number[];
 }
+/**
+ * This is the node class - they have an ID which is
+ * essentially an index and some data associated with it
+ * The data also contains the position of the
+ */
 declare class _Node {
     /**
      *
@@ -45,6 +50,9 @@ interface Edge {
     end: number;
     data: any;
 }
+/**
+ * The edge class, edges have a start and end but they can also have data associated with that edge
+ */
 declare class Edge {
     /**
      *
@@ -60,6 +68,10 @@ export interface Graph {
     nodes: Map<number, _Node>;
     edges: Map<number, Edge>;
 }
+/**
+ * The main graph object - this contrains nodes and edges that get modified with different
+ * Operations etc.
+ */
 export class Graph {
     /**
      *
@@ -591,6 +603,17 @@ declare class GraphDrawer3d {
 }
 export const GraphDrawer: {
     GraphDrawer3d: typeof GraphDrawer3d;
+};
+/**
+ * The G ( n , p ) G(n,p) model, a graph is constructed by connecting labeled nodes randomly. Each edge is included in the graph with probability p p, independently from every other edge.
+ * https://en.wikipedia.org/wiki/Erd%C5%91s%E2%80%93R%C3%A9nyi_model
+ * @param n Number of nodes
+ * @param p Probability of two edges to eb connected
+ * @returns A Erdos Reyni graph
+ */
+export function GenerateErdosReyni_n_p(n: number, p: number): Graph;
+export const GenerateErdosReyni_n_p: {
+    GenerateErdosReyni_n_p: typeof GenerateErdosReyni_n_p;
 };
 
 //# sourceMappingURL=pgl.d.ts.map

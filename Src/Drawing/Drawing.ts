@@ -1,11 +1,11 @@
 import Utilities from "../HelperClasses/Utilities";
 import GeometryHelpers from "../HelperClasses/GeometryHelpers";
-import { Point } from "../HelperClasses/Point";
-import { Line } from "../HelperClasses/Line";
-import { Edge } from "../Core/Edge";
+import Point from "../HelperClasses/Point";
+import Line from "../HelperClasses/Line";
+import Edge from "../Core/Edge";
 import GraphMethods from "../GraphAlgorithms/GraphMethods";
-import { Graph } from "../Core/Graph";
-import { _Node } from "../Core/_Node";
+import Graph from "../Core/Graph";
+import _Node from "../Core/_Node";
 
 /**
  * Simulates Kamada kawai for a network in 2d. 3d is not supported yet

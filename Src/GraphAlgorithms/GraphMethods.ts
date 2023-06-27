@@ -1,6 +1,6 @@
-import { Edge } from "../Core/Edge";
-import { Graph } from "../Core/Graph";
-import { _Node } from "../Core/_Node";
+import Edge from "../Core/Edge";
+import Graph from "../Core/Graph";
+import _Node from "../Core/_Node";
 
 // do a BFS Search Starting from some point
 // searches the whole graph and returns a map of which node

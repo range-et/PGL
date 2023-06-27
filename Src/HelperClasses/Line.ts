@@ -1,4 +1,4 @@
-import { Point } from "./Point";
+import Point from "./Point";
 
 interface Line {
   points: Point[];
@@ -18,4 +18,4 @@ class Line {
   }
 }
 
-export { Line };
+export default Line;

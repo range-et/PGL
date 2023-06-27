@@ -1,6 +1,6 @@
-import { Graph } from "../Core/Graph";
-import { _Node } from "../Core/_Node";
-import { Edge } from "../Core/Edge";
+import Graph from "../Core/Graph";
+import _Node from "../Core/_Node";
+import Edge from "../Core/Edge";
 
 // construct a graph based on an edge list etc
 /**

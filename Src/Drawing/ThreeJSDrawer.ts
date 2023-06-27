@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import { Point } from "../HelperClasses/Point";
-import { Line } from "../HelperClasses/Line";
+import Point from "../HelperClasses/Point";
+import Line from "../HelperClasses/Line";
 import { hexToRgb } from "../HelperClasses/ColorHelper";
 import { Line2 } from "three/examples/jsm/lines/Line2.js";
 import { LineMaterial } from "three/examples/jsm/lines/LineMaterial";
@@ -8,8 +8,8 @@ import { LineGeometry } from "three/examples/jsm/lines/LineGeometry";
 import { vertexShader } from "../Shaders/vertexShader.glsl";
 import { fragmentShader } from "../Shaders/fragmentShader.glsl";
 import GraphMethods from "../GraphAlgorithms/GraphMethods";
-import { Graph } from "../Core/Graph";
-import { _Node } from "../Core/_Node";
+import Graph from "../Core/Graph";
+import _Node from "../Core/_Node";
 
 // Draw the graph out as a bunch of vertices
 // As like tiny squares

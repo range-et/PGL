@@ -7,6 +7,11 @@ interface _Node {
   neighbours: number[];
 }
 
+/**
+ * This is the node class - they have an ID which is 
+ * essentially an index and some data associated with it 
+ * The data also contains the position of the 
+ */
 class _Node {
   /**
    * 
@@ -20,4 +25,4 @@ class _Node {
   }
 }
 
-export { _Node };
+export default _Node;

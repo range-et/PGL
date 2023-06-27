@@ -4,6 +4,9 @@ interface Edge {
   data: any;
 }
 
+/**
+ * The edge class, edges have a start and end but they can also have data associated with that edge
+ */
 class Edge {
   /**
    * 
@@ -20,4 +23,4 @@ class Edge {
   }
 }
 
-export { Edge };
+export default Edge;

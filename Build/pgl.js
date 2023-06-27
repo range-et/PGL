@@ -185,7 +185,7 @@ var __awaiter = undefined && undefined.__awaiter || function(thisArg11, _argumen
         // keep in mind three JS works with Y upwards and not Z
         // in my head I work the other way round so Im swapping the Z and Y values here
         let PosMap11 = new Map();
-        for (const p11 of PosMapX11.keys())PosMap11.set(p11, new (0, $fw40F.Point)(PosMapX11.get(p11), 0, PosMapY11.get(p11)));
+        for (const p11 of PosMapX11.keys())PosMap11.set(p11, new (0, $fw40F.default)(PosMapX11.get(p11), 0, PosMapY11.get(p11)));
         // get / set positions
         // move the points
         // Since this simulation might have moved the whole graph off screen
@@ -203,7 +203,7 @@ var __awaiter = undefined && undefined.__awaiter || function(thisArg11, _argumen
         const x_displacement11 = (0, $6Xdhg.default).calculateAverage(sim_x11);
         const y_displacement11 = (0, $6Xdhg.default).calculateAverage(sim_y11);
         const z_displacement11 = (0, $6Xdhg.default).calculateAverage(sim_z11);
-        const dispacementVector11 = new (0, $fw40F.Point)(-x_displacement11, -y_displacement11, -z_displacement11);
+        const dispacementVector11 = new (0, $fw40F.default)(-x_displacement11, -y_displacement11, -z_displacement11);
         PosMap11 = MovePmap(PosMap11, dispacementVector11);
         return PosMap11;
     });
@@ -225,7 +225,7 @@ var __awaiter = undefined && undefined.__awaiter || function(thisArg11, _argumen
         PosMapY11.set(node11, Math.random() * 200);
     }
     const PosMap11 = new Map();
-    for (const p11 of PosMapX11.keys())PosMap11.set(p11, new (0, $fw40F.Point)(PosMapX11.get(p11), 0, PosMapY11.get(p11)));
+    for (const p11 of PosMapX11.keys())PosMap11.set(p11, new (0, $fw40F.default)(PosMapX11.get(p11), 0, PosMapY11.get(p11)));
     return PosMap11;
 }
 /**
@@ -313,7 +313,7 @@ var __awaiter = undefined && undefined.__awaiter || function(thisArg11, _argumen
                 avgx11 = pnt11.x + 0.8 * ((0, $6Xdhg.default).calculateAverage(x_s11) || 0);
                 avgy11 = pnt11.y + 0.8 * ((0, $6Xdhg.default).calculateAverage(y_s11) || 0);
                 avgz11 = pnt11.z + 0.8 * ((0, $6Xdhg.default).calculateAverage(z_s11) || 0);
-                const newPoint11 = new (0, $fw40F.Point)(avgx11, avgy11, avgz11);
+                const newPoint11 = new (0, $fw40F.default)(avgx11, avgy11, avgz11);
                 line11.points[ii11] = newPoint11;
             }
         }
@@ -406,7 +406,7 @@ var __awaiter = undefined && undefined.__awaiter || function(thisArg11, _argumen
             const xval11 = Math.sin(angle11) * yval11;
             const zval11 = Math.cos(angle11) * yval11;
             // construct a new point
-            const pnt11 = new (0, $fw40F.Point)(xval11 + xoff11, -yval11 + yoff11, zval11 + zoff11);
+            const pnt11 = new (0, $fw40F.default)(xval11 + xoff11, -yval11 + yoff11, zval11 + zoff11);
             Pmap11.set(node11, pnt11);
         }
         // simulate the lines
@@ -475,7 +475,7 @@ var __awaiter = undefined && undefined.__awaiter || function(thisArg11, _argumen
             interimPoints11.push(pnt11);
         }
         // create a new line
-        newLine11 = new (0, $3WMe9.Line)(interimPoints11);
+        newLine11 = new (0, $3WMe9.default)(interimPoints11);
         // add this to the new map
         newEmap11.set(lineNumber11, newLine11);
     }
@@ -623,8 +623,8 @@ var $6Xdhg = parcelRequire("6Xdhg");
  * @returns the line object
  */ function $b12aa3a1ba88a23a$var$line_from_start_end_divisions(start, end, divisions) {
     // create a start and end time
-    const Start = new (0, $fw40F.Point)(start.x, start.y, start.z);
-    const End = new (0, $fw40F.Point)(end.x, end.y, end.z);
+    const Start = new (0, $fw40F.default)(start.x, start.y, start.z);
+    const End = new (0, $fw40F.default)(end.x, end.y, end.z);
     // interpolated points
     const points = [];
     // divisions
@@ -633,11 +633,11 @@ var $6Xdhg = parcelRequire("6Xdhg");
         const newx = interVar * Start.x + (1 - interVar) * End.x;
         const newy = interVar * Start.y + (1 - interVar) * End.y;
         const newz = interVar * Start.z + (1 - interVar) * End.z;
-        const newPoint = new (0, $fw40F.Point)(newx, newy, newz);
+        const newPoint = new (0, $fw40F.default)(newx, newy, newz);
         points.push(newPoint);
     }
     // create a new line
-    const SubdividedLine = new (0, $3WMe9.Line)(points);
+    const SubdividedLine = new (0, $3WMe9.default)(points);
     return SubdividedLine;
 }
 /**
@@ -668,7 +668,7 @@ var $6Xdhg = parcelRequire("6Xdhg");
     rx = rx / points.length;
     ry = ry / points.length;
     rz = rz / points.length;
-    const centroid = new (0, $fw40F.Point)(rx, ry, rz);
+    const centroid = new (0, $fw40F.default)(rx, ry, rz);
     return centroid;
 }
 var $b12aa3a1ba88a23a$export$2e2bcd8739ae039 = {
@@ -680,8 +680,8 @@ var $b12aa3a1ba88a23a$export$2e2bcd8739ae039 = {
 });
 parcelRequire.register("fw40F", function(module, exports) {
 
-$parcel$export(module.exports, "Point", () => $b4bcf46d914a9151$export$baf26146a414f24a);
-class $b4bcf46d914a9151$export$baf26146a414f24a {
+$parcel$export(module.exports, "default", () => $b4bcf46d914a9151$export$2e2bcd8739ae039);
+class $b4bcf46d914a9151$var$Point {
     /**
      * Constructs a point based on the x y z values
      * @param x x value
@@ -704,26 +704,28 @@ class $b4bcf46d914a9151$export$baf26146a414f24a {
         this.z = this.z + Point.z;
     }
 }
+var $b4bcf46d914a9151$export$2e2bcd8739ae039 = $b4bcf46d914a9151$var$Point;
 
 });
 
 parcelRequire.register("3WMe9", function(module, exports) {
 
-$parcel$export(module.exports, "Line", () => $2dfc32cf7d94658f$export$17d680238e50603e);
+$parcel$export(module.exports, "default", () => $2dfc32cf7d94658f$export$2e2bcd8739ae039);
 
 var $fw40F = parcelRequire("fw40F");
-class $2dfc32cf7d94658f$export$17d680238e50603e {
+class $2dfc32cf7d94658f$var$Line {
     /**
      * Constructs a line from an array of points
      * @param points an array of points
      */ constructor(points){
         this.points = [];
         points.forEach((p)=>{
-            const point = new (0, $fw40F.Point)(p.x, p.y, p.z);
+            const point = new (0, $fw40F.default)(p.x, p.y, p.z);
             this.points.push(point);
         });
     }
 }
+var $2dfc32cf7d94658f$export$2e2bcd8739ae039 = $2dfc32cf7d94658f$var$Line;
 
 });
 
@@ -903,7 +905,7 @@ var $96b4f4dcd8ff333f$var$__awaiter = undefined && undefined.__awaiter || functi
             }
         }
         // construct a new graph that represents the new graph
-        const newGraph = yield (0, $9TL8g.Graph).create(prunedNodes, prunedEdges);
+        const newGraph = yield (0, $9TL8g.default).create(prunedNodes, prunedEdges);
         return newGraph;
     });
 }
@@ -918,7 +920,7 @@ $96b4f4dcd8ff333f$export$2e2bcd8739ae039 = {
 });
 parcelRequire.register("9TL8g", function(module, exports) {
 
-$parcel$export(module.exports, "Graph", () => $734dcf9f6d72d709$export$614db49f3febe941);
+$parcel$export(module.exports, "default", () => $734dcf9f6d72d709$export$2e2bcd8739ae039);
 
 var $i8obY = parcelRequire("i8obY");
 var $734dcf9f6d72d709$var$__awaiter = undefined && undefined.__awaiter || function(thisArg, _arguments, P, generator) {
@@ -948,7 +950,10 @@ var $734dcf9f6d72d709$var$__awaiter = undefined && undefined.__awaiter || functi
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-class $734dcf9f6d72d709$export$614db49f3febe941 {
+/**
+ * The main graph object - this contrains nodes and edges that get modified with different
+ * Operations etc.
+ */ class $734dcf9f6d72d709$var$Graph {
     /**
      *
      * Construct a graph object (no initializing)
@@ -987,7 +992,7 @@ class $734dcf9f6d72d709$export$614db49f3febe941 {
      * @returns
      */ static create(nodes, edges) {
         return $734dcf9f6d72d709$var$__awaiter(this, void 0, void 0, function*() {
-            const g = new $734dcf9f6d72d709$export$614db49f3febe941(nodes, edges);
+            const g = new $734dcf9f6d72d709$var$Graph(nodes, edges);
             yield g.initialize();
             return g;
         });
@@ -1038,7 +1043,7 @@ class $734dcf9f6d72d709$export$614db49f3febe941 {
      * @param end - The end index of the edge
      * @param data - data associated with the edge
      */ add_edge(start, end, data) {
-        const newEdge = new (0, $i8obY.Edge)(start, end, data);
+        const newEdge = new (0, $i8obY.default)(start, end, data);
         // this is a new edge that we add to the edges
         this.edges.set(this.edges.size, newEdge);
         // also add this to the node neighbours
@@ -1117,12 +1122,16 @@ class $734dcf9f6d72d709$export$614db49f3febe941 {
         return pmap;
     }
 }
+var // Export the graph Library
+$734dcf9f6d72d709$export$2e2bcd8739ae039 = $734dcf9f6d72d709$var$Graph;
 
 });
 parcelRequire.register("i8obY", function(module, exports) {
 
-$parcel$export(module.exports, "Edge", () => $d33bbd65b64ffa49$export$b9d9805c9b77a56d);
-class $d33bbd65b64ffa49$export$b9d9805c9b77a56d {
+$parcel$export(module.exports, "default", () => $d33bbd65b64ffa49$export$2e2bcd8739ae039);
+/**
+ * The edge class, edges have a start and end but they can also have data associated with that edge
+ */ class $d33bbd65b64ffa49$var$Edge {
     /**
      *
      * Construct an edge
@@ -1136,6 +1145,7 @@ class $d33bbd65b64ffa49$export$b9d9805c9b77a56d {
         this.data = Object.assign({}, data);
     }
 }
+var $d33bbd65b64ffa49$export$2e2bcd8739ae039 = $d33bbd65b64ffa49$var$Edge;
 
 });
 
@@ -1645,7 +1655,7 @@ void main() {
 
 
 
-$parcel$export(module.exports, "Graph", () => (parcelRequire("9TL8g")).Graph);
+$parcel$export(module.exports, "Graph", () => (parcelRequire("9TL8g")).default);
 $parcel$export(module.exports, "GraphMethods", () => (parcelRequire("cWcXJ")).default);
 $parcel$export(module.exports, "SampleData", () => $c57cf0c4853fb804$exports.default);
 $parcel$export(module.exports, "Constructors", () => $942e91a547b4130c$exports.default);
@@ -1654,6 +1664,7 @@ $parcel$export(module.exports, "Geometry", () => (parcelRequire("fd3jp")).defaul
 $parcel$export(module.exports, "Utilities", () => (parcelRequire("6Xdhg")).default);
 $parcel$export(module.exports, "ThreeWrapper", () => (parcelRequire("eqUI8")).default);
 $parcel$export(module.exports, "GraphDrawer", () => $6abda68f7f78a6fb$exports.default);
+$parcel$export(module.exports, "GenerateErdosReyni_n_p", () => $7308258d93363088$export$2e2bcd8739ae039);
 
 var $9TL8g = parcelRequire("9TL8g");
 
@@ -2544,7 +2555,11 @@ var $942e91a547b4130c$exports = {};
 $parcel$export($942e91a547b4130c$exports, "default", () => $942e91a547b4130c$export$2e2bcd8739ae039);
 
 var $9TL8g = parcelRequire("9TL8g");
-class $d0af3be0040778ae$export$1e3a09c15b213958 {
+/**
+ * This is the node class - they have an ID which is
+ * essentially an index and some data associated with it
+ * The data also contains the position of the
+ */ class $d0af3be0040778ae$var$_Node {
     /**
      *
      * @param data Data associated with the node, be sure to be careful to pass in any "pos" data as they correspond to position of the nodes in the visuals of the graph
@@ -2555,6 +2570,7 @@ class $d0af3be0040778ae$export$1e3a09c15b213958 {
         this.neighbours = [];
     }
 }
+var $d0af3be0040778ae$export$2e2bcd8739ae039 = $d0af3be0040778ae$var$_Node;
 
 
 
@@ -2597,17 +2613,17 @@ var $942e91a547b4130c$var$__awaiter = undefined && undefined.__awaiter || functi
         // make a node OBJ
         const nodeOBJ = new Map();
         for(let i = 0; i < nodes.length; i++){
-            const n = new (0, $d0af3be0040778ae$export$1e3a09c15b213958)(nodes[i].data);
+            const n = new (0, $d0af3be0040778ae$export$2e2bcd8739ae039)(nodes[i].data);
             nodeOBJ.set(nodes[i], n);
         }
         // make an edge object
         const edgeOBJ = new Map();
         for(let i = 0; i < edges.length; i++){
-            const e = new (0, $i8obY.Edge)(edges[i][0], edges[i][1], edges[i].data);
+            const e = new (0, $i8obY.default)(edges[i][0], edges[i][1], edges[i].data);
             edgeOBJ.set(i, e);
         }
         // make a graph object
-        const G = yield (0, $9TL8g.Graph).create(nodeOBJ, edgeOBJ);
+        const G = yield (0, $9TL8g.default).create(nodeOBJ, edgeOBJ);
         return G;
     });
 }
@@ -2675,9 +2691,9 @@ var $c57cf0c4853fb804$var$__awaiter = undefined && undefined.__awaiter || functi
         // set the node map
         data.nodes.forEach((node)=>{
             const id = node.id;
-            const pos = new (0, $fw40F.Point)(node.px * 50, 0, node.py * 50);
+            const pos = new (0, $fw40F.default)(node.px * 50, 0, node.py * 50);
             const modularity = node.member;
-            const n = new (0, $d0af3be0040778ae$export$1e3a09c15b213958)({
+            const n = new (0, $d0af3be0040778ae$export$2e2bcd8739ae039)({
                 pos: pos,
                 size: 10,
                 info: "Node Info",
@@ -2690,11 +2706,11 @@ var $c57cf0c4853fb804$var$__awaiter = undefined && undefined.__awaiter || functi
             const edge = data.edges[i];
             const start = edge[0];
             const end = edge[1];
-            const e = new (0, $i8obY.Edge)(start, end, {});
+            const e = new (0, $i8obY.default)(start, end, {});
             edges.set(i, e);
         }
         // make a graph object
-        const G = yield (0, $9TL8g.Graph).create(nodes, edges);
+        const G = yield (0, $9TL8g.default).create(nodes, edges);
         const lmap = (0, $jYcHE.default).DrawEdgeLines(G, 10);
         G.apply_edge_pos_maps(lmap);
         return G;
@@ -2841,6 +2857,59 @@ var $6abda68f7f78a6fb$var$__awaiter = undefined && undefined.__awaiter || functi
 }
 var $6abda68f7f78a6fb$export$2e2bcd8739ae039 = {
     GraphDrawer3d: $6abda68f7f78a6fb$var$GraphDrawer3d
+};
+
+
+// This essentially generates a erdos reyni graph
+// Super useful for juszt getting a random graph and studying
+// graph structure. Read more https://en.wikipedia.org/wiki/Erd%C5%91s%E2%80%93R%C3%A9nyi_model
+
+var $i8obY = parcelRequire("i8obY");
+
+var $9TL8g = parcelRequire("9TL8g");
+
+/**
+ * The G ( n , p ) G(n,p) model, a graph is constructed by connecting labeled nodes randomly. Each edge is included in the graph with probability p p, independently from every other edge.
+ * https://en.wikipedia.org/wiki/Erd%C5%91s%E2%80%93R%C3%A9nyi_model
+ * @param n Number of nodes
+ * @param p Probability of two edges to eb connected
+ * @returns A Erdos Reyni graph
+ */ function $7308258d93363088$var$GenerateErdosReyni_n_p(n, p) {
+    // first create a list of nodes
+    const nodes = new Map();
+    const edges = new Map();
+    let node; // define once use many times basically
+    for(let i = 0; i < n; i++){
+        node = new (0, $d0af3be0040778ae$export$2e2bcd8739ae039)({});
+        // set this node
+        nodes.set(i, node);
+    }
+    // now that all the nodes have been created
+    // now loop all the node combinations and then
+    // create the edge
+    let interimP;
+    let edge;
+    let index = 0;
+    for(let i = 0; i < n; i++){
+        for(let ii = 0; ii < n; ii++)// im skipping self loops so just make sure there is
+        // an if statement for the settings
+        if (i != ii) {
+            interimP = Math.random();
+            if (p > interimP) {
+                // then create and edge and add that edge to the list of edges
+                edge = new (0, $i8obY.default)(i, ii, {});
+                edges.set(index, edge);
+                index += 1;
+            }
+        }
+    }
+    // now create the actual graph
+    const G = new (0, $9TL8g.default)(nodes, edges);
+    // lastly return the graph
+    return G;
+}
+var $7308258d93363088$export$2e2bcd8739ae039 = {
+    GenerateErdosReyni_n_p: $7308258d93363088$var$GenerateErdosReyni_n_p
 };
 
 

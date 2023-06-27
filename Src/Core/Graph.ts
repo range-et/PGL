@@ -1,13 +1,17 @@
-import { Line } from "../HelperClasses/Line";
-import { Point } from "../HelperClasses/Point";
-import { _Node } from "./_Node";
-import { Edge } from "./Edge";
+import Line from "../HelperClasses/Line";
+import Point from "../HelperClasses/Point";
+import _Node from "./_Node";
+import Edge from "./Edge";
 
 interface Graph {
   nodes: Map<number, _Node>;
   edges: Map<number, Edge>;
 }
 
+/**
+ * The main graph object - this contrains nodes and edges that get modified with different 
+ * Operations etc.
+ */
 class Graph {
   /**
    *
@@ -222,4 +226,4 @@ class Graph {
 }
 
 // Export the graph Library
-export { Graph };
+export default Graph;
