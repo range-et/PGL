@@ -94,7 +94,7 @@ in the meantime - just download the build, put it in as a module and start using
 ideally at some point:
 
 ```
-npm install PGL
+npm install pgl
 ```
 
 ## Integrations
