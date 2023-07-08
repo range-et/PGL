@@ -15,6 +15,9 @@ Lastly there are a few helper classes like points and lines. Points are essentia
 Existing network visualisation libraries like NetworkX dictated the semantics of the graph library and borrowed some of the semantic ideas from three JS. The process is to define a Graph Object made of nodes and edges. Then modify this graph based on some set of properties. Then update the relevant settings. And lastly, to visualise the nodes, either as point clouds, boxes or cylinders, and to draw out the edges (bundled or not) lines.
 Here is an illustrated walkthrough of a simple set-up given a predefined set of “nodes” and “edges”.
 
+## General setup of the package 
+Apart from the graph class all the methods are stored in variables. These variables (For example SampleData) would have a function attached to it that retuns a value, or in some cases you can pass in values to do stuff (like displaceing the graph etc). I mostly did this for the sake of speed to develop - at some point shall be wrapping them up as classes.
+
 ## An example of rendering a basic graph
 The general idea of drawing a basic graph is outlined above. To recap all the basic steps:
 - Get a graph (either generate it or get onse using the sample data)

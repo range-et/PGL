@@ -23,6 +23,7 @@ Lastly there are a few helper classes like points and lines. Points are essentia
 </ul>
 <a id="md:semantics-of-the-package" class="tsd-anchor"></a><h2><a href="#md:semantics-of-the-package">Semantics of the Package</a></h2><p>Existing network visualisation libraries like NetworkX dictated the semantics of the graph library and borrowed some of the semantic ideas from three JS. The process is to define a Graph Object made of nodes and edges. Then modify this graph based on some set of properties. Then update the relevant settings. And lastly, to visualise the nodes, either as point clouds, boxes or cylinders, and to draw out the edges (bundled or not) lines.
 Here is an illustrated walkthrough of a simple set-up given a predefined set of “nodes” and “edges”.</p>
+<a id="md:general-setup-of-the-package" class="tsd-anchor"></a><h2><a href="#md:general-setup-of-the-package">General setup of the package</a></h2><p>Apart from the graph class all the methods are stored in variables. These variables (For example SampleData) would have a function attached to it that retuns a value, or in some cases you can pass in values to do stuff (like displaceing the graph etc). I mostly did this for the sake of speed to develop - at some point shall be wrapping them up as classes.</p>
 <a id="md:an-example-of-rendering-a-basic-graph" class="tsd-anchor"></a><h2><a href="#md:an-example-of-rendering-a-basic-graph">An example of rendering a basic graph</a></h2><p>The general idea of drawing a basic graph is outlined above. To recap all the basic steps:</p>
 <ul>
 <li>Get a graph (either generate it or get onse using the sample data)</li>
@@ -34,7 +35,7 @@ Here is an illustrated walkthrough of a simple set-up given a predefined set of 
 <a id="md:usage--installation" class="tsd-anchor"></a><h2><a href="#md:usage--installation">Usage / Installation</a></h2><p>// package to yet be distributed to npm but expect it shortly
 in the meantime - just download the build, put it in as a module and start using it!
 ideally at some point:</p>
-<pre><code><span class="hl-4">npm</span><span class="hl-2"> </span><span class="hl-4">install</span><span class="hl-2"> </span><span class="hl-6">PGL</span>
+<pre><code><span class="hl-4">npm</span><span class="hl-2"> </span><span class="hl-4">install</span><span class="hl-2"> </span><span class="hl-4">pgl</span>
 </code><button>Copy</button></pre>
 <a id="md:integrations" class="tsd-anchor"></a><h2><a href="#md:integrations">Integrations</a></h2><p>The Plebian Graph Library (PGL) is intricately woven into the fabric of the ThreeJS library, seamlessly integrating its rich functionalities into a comprehensive and powerful toolset for large-scale graph data visualization. By leveraging the foundation provided by ThreeJS, PGL inherits a wide range of features, including advanced shading techniques, texture mapping capabilities, and much more. These powerful rendering capabilities enable PGL to create visually stunning and immersive graph visualizations, adding depth and realism to the representation of complex network structures. With its symbiotic relationship with ThreeJS, PGL empowers users to go beyond traditional graph visualizations, unlocking a world of possibilities for exploration and analysis.</p>
 <a id="md:larger-example" class="tsd-anchor"></a><h2><a href="#md:larger-example">Larger example</a></h2><a id="md:acknowledgements" class="tsd-anchor"></a><h2><a href="#md:acknowledgements">Acknowledgements</a></h2><p>This libray was sponsored by the Geometry Lab under the Laborotory for Design Technologies at the Graduate School of Design, Harvard University. Many thanks to Andrew Witt for guiding this project.</p>
@@ -65,6 +66,7 @@ ideally at some point:</p>
 <ul>
 <li><a href="#md:notes-on-terminology"><span>Notes on terminology</span></a></li>
 <li><a href="#md:semantics-of-the-package"><span>Semantics of the <wbr/>Package</span></a></li>
+<li><a href="#md:general-setup-of-the-package"><span>General setup of the package</span></a></li>
 <li><a href="#md:an-example-of-rendering-a-basic-graph"><span>An example of rendering a basic graph</span></a></li>
 <li><a href="#md:usage--installation"><span>Usage / <wbr/>Installation</span></a></li>
 <li><a href="#md:integrations"><span>Integrations</span></a></li>

@@ -9,7 +9,7 @@
   "scripts": {
     "watch": "parcel watch",
     "build": "parcel build",
-    "document": "npx typedoc Src/index.ts"
+    "document": "npx typedoc --out docs Src"
   },
   "repository": {
     "type": "git",
@@ -36,6 +36,7 @@
     }
   },
   "dependencies": {
+    "jsdoc": "^4.0.2",
     "three": "^0.141.0"
   },
   "devDependencies": {
