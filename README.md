@@ -15,6 +15,9 @@ Lastly there are a few helper classes like points and lines. Points are essentia
 Existing network visualisation libraries like NetworkX dictated the semantics of the graph library and borrowed some of the semantic ideas from three JS. The process is to define a Graph Object made of nodes and edges. Then modify this graph based on some set of properties. Then update the relevant settings. And lastly, to visualise the nodes, either as point clouds, boxes or cylinders, and to draw out the edges (bundled or not) lines.
 Here is an illustrated walkthrough of a simple set-up given a predefined set of “nodes” and “edges”.
 
+## Documentation
+The documentation for the package is available at https://www.plebiangraphlibrary.com/ 
+
 ## General setup of the package 
 Apart from the graph class all the methods are stored in variables. These variables (For example SampleData) would have a function attached to it that retuns a value, or in some cases you can pass in values to do stuff (like displaceing the graph etc). I mostly did this for the sake of speed to develop - at some point shall be wrapping them up as classes.
 
@@ -104,7 +107,6 @@ npm install pgl
 
 The Plebian Graph Library (PGL) is intricately woven into the fabric of the ThreeJS library, seamlessly integrating its rich functionalities into a comprehensive and powerful toolset for large-scale graph data visualization. By leveraging the foundation provided by ThreeJS, PGL inherits a wide range of features, including advanced shading techniques, texture mapping capabilities, and much more. These powerful rendering capabilities enable PGL to create visually stunning and immersive graph visualizations, adding depth and realism to the representation of complex network structures. With its symbiotic relationship with ThreeJS, PGL empowers users to go beyond traditional graph visualizations, unlocking a world of possibilities for exploration and analysis.
 
-## Larger example
 
 ## Acknowledgements
 This libray was sponsored by the Geometry Lab under the Laborotory for Design Technologies at the Graduate School of Design, Harvard University. Many thanks to Andrew Witt for guiding this project.
