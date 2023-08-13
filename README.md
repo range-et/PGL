@@ -104,7 +104,7 @@ npm install pgl
 ```
 
 ## More examples 
-More examples are available at https://www.plebiangraphlibrary.com/examples Check them out as a demonstration of some of the features of the library.
+More examples are available at https://www.plebiangraphlibrary.com/examples.html Check them out as a demonstration of some of the features of the library.
 
 
 ## Integrations
