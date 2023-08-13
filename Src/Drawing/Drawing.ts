@@ -345,8 +345,12 @@ async function DrawEdgeBundling(
  * @param displacement - the amount of vertical displacement
  */
 function DisplaceEdgeInY(LineMap: Map<number, Line>, displacement: number) {
-  for (const key of LineMap.keys()) {
-    const line = LineMap.get(key)!;
+  const returnArray = new Map<number, Line>();
+  for (let key of LineMap.keys()) {
+    returnArray.set(key, structuredClone(LineMap.get(key)!));
+  }
+  for (const key of returnArray.keys()) {
+    const line = returnArray.get(key)!;
     // now for all the points in this
     let pnt, ydisval;
     for (let i = 0; i < line.points.length; i++) {
@@ -356,6 +360,7 @@ function DisplaceEdgeInY(LineMap: Map<number, Line>, displacement: number) {
       pnt.y = pnt.y + ydisval;
     }
   }
+  return returnArray;
 }
 
 /**

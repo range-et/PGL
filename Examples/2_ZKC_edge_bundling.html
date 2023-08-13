@@ -52,12 +52,11 @@
         graph3d.addVisElement(nodeVisualElements);
 
         const EdgeMap = zkcSimulated.get_edge_map();
-        const EdgeMap_copy = zkcSimulated.get_edge_map();
-        const newEdgeMap = await PGL.Drawing.DrawEdgeBundling(EdgeMap, 50, 10);
-        PGL.Drawing.DisplaceEdgeInY(newEdgeMap, 10);
+        const EdgeMap_copy = PGL.Drawing.DisplaceEdgeInY(EdgeMap, 20);
+        const newEdgeMap = await PGL.Drawing.DrawEdgeBundling(EdgeMap_copy, 50, 10);
         // then create the edge elements 
         // these are the reuglar edges 
-        const edgeVisualElements = PGL.ThreeWrapper.DrawThinEdgesFromEdgeMap(EdgeMap_copy, bounds, 0x62b6cb, 0.01);
+        const edgeVisualElements = PGL.ThreeWrapper.DrawThinEdgesFromEdgeMap(EdgeMap, bounds, 0x62b6cb, 0.01);
         graph3d.addVisElement(edgeVisualElements);
         // these are the bundled edges 
         const edgeVisualElements_Bundled = PGL.ThreeWrapper.DrawThickEdgesFromEdgeMap(newEdgeMap, bounds, 0x5fa8d3, 0.01);

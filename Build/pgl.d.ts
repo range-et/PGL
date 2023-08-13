@@ -349,7 +349,7 @@ declare function DrawEdgeBundling(LineMap: Map<number, Line>, iterations: number
  * @param LineMap - The map of edges as a line map
  * @param displacement - the amount of vertical displacement
  */
-declare function DisplaceEdgeInY(LineMap: Map<number, Line>, displacement: number): void;
+declare function DisplaceEdgeInY(LineMap: Map<number, Line>, displacement: number): Map<number, Line>;
 /**
  *
  * Displace the vertices vertically based on some prameter (For example degree or modularity)

@@ -361,8 +361,10 @@ var __awaiter = undefined && undefined.__awaiter || function(thisArg11, _argumen
  * @param LineMap - The map of edges as a line map
  * @param displacement - the amount of vertical displacement
  */ function DisplaceEdgeInY(LineMap11, displacement11) {
-    for (const key11 of LineMap11.keys()){
-        const line11 = LineMap11.get(key11);
+    const returnArray11 = new Map();
+    for (let key11 of LineMap11.keys())returnArray11.set(key11, structuredClone(LineMap11.get(key11)));
+    for (const key11 of returnArray11.keys()){
+        const line11 = returnArray11.get(key11);
         // now for all the points in this
         let pnt11, ydisval11;
         for(let i11 = 0; i11 < line11.points.length; i11++){
@@ -371,6 +373,7 @@ var __awaiter = undefined && undefined.__awaiter || function(thisArg11, _argumen
             pnt11.y = pnt11.y + ydisval11;
         }
     }
+    return returnArray11;
 }
 /**
  *

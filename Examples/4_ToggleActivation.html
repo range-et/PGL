@@ -58,7 +58,7 @@
         // first describe a global scaling factor
         const bounds = 0.1
         // first create all the node elements
-        const nodeVisualElements = PGL.ThreeWrapper.DrawTHREEGraphVertices(G, bounds, 1, 0xffffff, 1);
+        const nodeVisualElements = PGL.ThreeWrapper.DrawTHREEGraphVertices(G, bounds, 3, 0xffffff, 1);
         // now in cases of edges - this is really what slows down the whole process 
         // A trick I use is to render sample about 10% of the lines and then draw them
         // To do that collect all the edges (as an lmap)

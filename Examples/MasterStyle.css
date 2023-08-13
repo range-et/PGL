@@ -26,6 +26,12 @@ h4 {
   text-align: center;
 }
 
+main{
+  max-width: 1000px;
+  padding: 10px;
+  margin: auto;
+}
+
 .displayCanvas {
   margin-left: auto;
   margin-right: auto;

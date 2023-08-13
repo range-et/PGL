@@ -96,17 +96,21 @@ animate();
 ## Usage / Installation
 
 // package to yet be distributed to npm but expect it shortly
-in the meantime - just download the build, put it in as a module and start using it!
+in the meantime - just download the build folder and point it to the module file and start using it, put it in as a module and start using it!
 ideally at some point:
 
 ```
 npm install pgl
 ```
 
+## More examples 
+More examples are available at https://www.plebiangraphlibrary.com/examples Check them out as a demonstration of some of the features of the library.
+
+
 ## Integrations
 
-The Plebian Graph Library (PGL) is intricately woven into the fabric of the ThreeJS library, seamlessly integrating its rich functionalities into a comprehensive and powerful toolset for large-scale graph data visualization. By leveraging the foundation provided by ThreeJS, PGL inherits a wide range of features, including advanced shading techniques, texture mapping capabilities, and much more. These powerful rendering capabilities enable PGL to create visually stunning and immersive graph visualizations, adding depth and realism to the representation of complex network structures. With its symbiotic relationship with ThreeJS, PGL empowers users to go beyond traditional graph visualizations, unlocking a world of possibilities for exploration and analysis.
+The Plebian Graph Library (PGL) is built on top of the ThreeJS library, seamlessly integrating its rich functionalities into a comprehensive and powerful toolset for large-scale graph data visualization. By leveraging the foundation provided by ThreeJS, PGL inherits a wide range of features, including advanced shading techniques, texture mapping capabilities, and much more. These powerful rendering capabilities enable PGL to create visually stunning and immersive graph visualizations, adding depth and realism to the representation of complex network structures. With its symbiotic relationship with ThreeJS, PGL empowers users to go beyond traditional graph visualizations, unlocking a world of possibilities for exploration and analysis.
 
 
 ## Acknowledgements
-This libray was sponsored by the Geometry Lab under the Laborotory for Design Technologies at the Graduate School of Design, Harvard University. Many thanks to Andrew Witt for guiding this project.
+This libray was sponsored by the Geometry Lab under the Laborotory for Design Technologies at the Graduate School of Design, Harvard University. Many thanks to Andrew Witt for guiding this project. This project was developed by : Indrajeet Haldar (https://www.indrajeethaldar.com/) 
