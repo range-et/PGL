@@ -98,7 +98,7 @@ class GraphDrawer3d {
     this.camera.position.set(0, 100, 100);
     this.controls.autoRotate = true;
     this.controls.maxPolarAngle = Math.PI * 0.5;
-    this.controls.maxDistance = 1000;
+    this.controls.maxDistance = 10000;
     this.controls.minDistance = 10;
     this.controls.update();
 

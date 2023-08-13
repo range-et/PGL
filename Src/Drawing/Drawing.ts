@@ -21,8 +21,9 @@ import _Node from "../Core/_Node";
 async function SimulateKamadaKawai(
   Graph: Graph,
   iterations: number,
-  simulationBound: number = 200,
-  cohesionValue: number = 1
+  simulationBound: number = 100,
+  cohesionValue: number = 1,
+  repulsionValue: number = 1
 ) {
   const adjList = Graph.get_adjacency();
   // pos map
@@ -51,6 +52,12 @@ async function SimulateKamadaKawai(
     // same thing for the cohesion values that get recalculated
     let new_c_xpos_dispacement: number;
     let new_c_ypos_dispacement: number;
+    let new_x_r_pos: number;
+    let new_y_r_pos: number;
+    let new_c_xpos: number;
+    let new_c_ypos: number;
+    let new_g_xpos_displacement: number;
+    let new_g_ypos_displacement: number;
 
     for (const node of adjList.keys()) {
       // this chunk is for the attraction force
@@ -71,8 +78,8 @@ async function SimulateKamadaKawai(
         y_s.push(n_pos_y);
       });
       // now average out the values
-      const new_c_xpos = Utilities.calculateAverage(x_s);
-      const new_c_ypos = Utilities.calculateAverage(y_s);
+      new_c_xpos = Utilities.calculateAverage(x_s);
+      new_c_ypos = Utilities.calculateAverage(y_s);
 
       // this chunk is for the repelling force
       y_r = [];
@@ -98,22 +105,28 @@ async function SimulateKamadaKawai(
         }
       }
       // this is the repulsion value
-      const A_mult = 2;
-      const new_x_r_pos =
-        (A_mult * 1) /
+      new_x_r_pos =
+        (repulsionValue * 1) /
         (Utilities.calculateAverage(x_r) * Utilities.calculateAverage(x_r));
-      const new_y_r_pos =
-        (A_mult * 1) /
+      new_y_r_pos =
+        (repulsionValue * 1) /
         (Utilities.calculateAverage(y_r) * Utilities.calculateAverage(y_r));
 
       // calculate the dispacement amount in c/y pos
       // this is the cohesion value
-      const new_c_xpos_dispacement = cohesionValue * (new_c_xpos - nodeX);
-      const new_c_ypos_dispacement = cohesionValue * (new_c_ypos - nodeY);
+      new_c_xpos_dispacement = cohesionValue * (new_c_xpos - nodeX);
+      new_c_ypos_dispacement = cohesionValue * (new_c_ypos - nodeY);
+
+      // Also move all the points towards the center a little bit
+      // so that the graph doesent explode out
+      new_g_xpos_displacement = cohesionValue * (0 - nodeX);
+      new_g_ypos_displacement = cohesionValue * (0 - nodeY);
 
       // then add the x and y components of the two vectors
-      const new_xpos = new_x_r_pos + new_c_xpos_dispacement + nodeX;
-      const new_ypos = new_y_r_pos + new_c_ypos_dispacement + nodeY;
+      const new_xpos =
+        new_x_r_pos + new_g_xpos_displacement + new_c_xpos_dispacement + nodeX;
+      const new_ypos =
+        new_y_r_pos + new_g_ypos_displacement + new_c_ypos_dispacement + nodeY;
 
       // now set these positions
       PosMapX.set(node, new_xpos);
@@ -183,10 +196,11 @@ function InstanciateRandomPositions(Graph: Graph) {
  *
  * Constructs the edges as lines, Note: these are just a representation of the lines
  * they then have to be visulized using one of the Three JS Drawer functions like
- * draw a thick line or a thin line
+ * draw a thick line or a thin line. This draws out the edges divided by some number of
+ * divisions that you specify
  *
  * @param Graph - The graph whos edges are getting drawn
- * @param divDistance - How many divisions to make along the edge
+ * @param divDistance - How many divisions (distance) to make along the edge
  * @returns A line map - which holds a map of all the edge indices and the corresponding line representations
  */
 function DrawEdgeLines(Graph: Graph, divDistance: number) {
@@ -212,6 +226,37 @@ function DrawEdgeLines(Graph: Graph, divDistance: number) {
 
 /**
  *
+ * Constructs the edges as lines, Note: these are just a representation of the lines
+ * they then have to be visulized using one of the Three JS Drawer functions like
+ * draw a thick line or a thin line - this draws them based on the number of divisions
+ * you would like them to have
+ * @param Graph - The graph whos edges are getting drawn
+ * @param numberOfDivs - How many divisions to make along the edge
+ * @returns A line map - which holds a map of all the edge indices and the corresponding line representations
+ */
+function DrawEdgeLinesDivisions(Graph: Graph, numberOfDivs: number) {
+  // this is the return map
+  const lineMap: Map<number, Line> = new Map();
+  let edge: Edge;
+  let start: Point;
+  let end: Point;
+  for (const key of Graph.edges.keys()) {
+    edge = Graph.edges.get(key)!;
+    // get the start pos
+    start = Graph.nodes.get(edge.start)!.data.pos;
+    end = Graph.nodes.get(edge.end)!.data.pos;
+    const Line = GeometryHelpers.line_from_start_end_divisions(
+      start,
+      end,
+      numberOfDivs
+    );
+    lineMap.set(key, Line);
+  }
+  return lineMap;
+}
+
+/**
+ *
  * Edge bundling - this isnt as fast as the current KDE based methods - but it provides a basic  method of
  * Visualizing large edge flows. Note: This is an aysnc function as it takes a while for the edge bundling to happen
  *
@@ -225,7 +270,11 @@ async function DrawEdgeBundling(
   iterations: number,
   distance: number
 ) {
-  const returnArray = LineMap;
+  // first create a deep copy of the map
+  const returnArray = new Map<number, Line>();
+  for (let key of LineMap.keys()) {
+    returnArray.set(key, structuredClone(LineMap.get(key)!));
+  }
   // variables that are getting reused
   let line: Line;
   let otherLine: Line;
@@ -524,6 +573,7 @@ function UpdateEdgeLinesDivs(Graph: Graph, Divs: number) {
 export default {
   SimulateKamadaKawai,
   DrawEdgeLines,
+  DrawEdgeLinesDivisions,
   DrawEdgeBundling,
   HivePlot,
   DisplaceEdgeInY,

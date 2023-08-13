@@ -240,11 +240,21 @@ declare function calculateSquaredDistance(p1: Point, p2: Point): number;
  * @returns a new array made up of a random sample from the original array
  */
 declare function getRandomSubset(arr: any[], n: number): any[];
+/**
+ * This is a super useful method to get a random number of edges or something that you would like to draw
+ * this is primarily done because there are way too many edges sometimes and and the number of edges is really
+ * What slows the whole rendering process down
+ * @param map - the map that youd like to reduce
+ * @param n - the fraction of items that youd like to return from this map
+ * @returns A reduced map with a fractio of those many entries
+ */
+declare function getRandomSubset_map(map: Map<number, any>, n: number): Map<any, any>;
 export const Utilities: {
     calculateAverage: typeof calculateAverage;
     calculateDistance: typeof calculateDistance;
     calculateSquaredDistance: typeof calculateSquaredDistance;
     getRandomSubset: typeof getRandomSubset;
+    getRandomSubset_map: typeof getRandomSubset_map;
 };
 /**
  * Creates a line based on the number of divisons
@@ -285,7 +295,7 @@ export const Geometry: {
  * @returns And node map of all the nodes and their simulated positions - Please note: position maps have to to be applied to the graph!
  *
  */
-declare function SimulateKamadaKawai(Graph: Graph, iterations: number, simulationBound?: number, cohesionValue?: number): Promise<Map<number, Point>>;
+declare function SimulateKamadaKawai(Graph: Graph, iterations: number, simulationBound?: number, cohesionValue?: number, repulsionValue?: number): Promise<Map<number, Point>>;
 /**
  *
  * Randomly sets all the positions for a graph
@@ -300,13 +310,25 @@ declare function InstanciateRandomPositions(Graph: Graph): Map<number, Point>;
  *
  * Constructs the edges as lines, Note: these are just a representation of the lines
  * they then have to be visulized using one of the Three JS Drawer functions like
- * draw a thick line or a thin line
+ * draw a thick line or a thin line. This draws out the edges divided by some number of
+ * divisions that you specify
  *
  * @param Graph - The graph whos edges are getting drawn
- * @param divDistance - How many divisions to make along the edge
+ * @param divDistance - How many divisions (distance) to make along the edge
  * @returns A line map - which holds a map of all the edge indices and the corresponding line representations
  */
 declare function DrawEdgeLines(Graph: Graph, divDistance: number): Map<number, Line>;
+/**
+ *
+ * Constructs the edges as lines, Note: these are just a representation of the lines
+ * they then have to be visulized using one of the Three JS Drawer functions like
+ * draw a thick line or a thin line - this draws them based on the number of divisions
+ * you would like them to have
+ * @param Graph - The graph whos edges are getting drawn
+ * @param numberOfDivs - How many divisions to make along the edge
+ * @returns A line map - which holds a map of all the edge indices and the corresponding line representations
+ */
+declare function DrawEdgeLinesDivisions(Graph: Graph, numberOfDivs: number): Map<number, Line>;
 /**
  *
  * Edge bundling - this isnt as fast as the current KDE based methods - but it provides a basic  method of
@@ -377,6 +399,7 @@ declare function UpdateEdgeLinesDivs(Graph: Graph, Divs: number): void;
 export const Drawing: {
     SimulateKamadaKawai: typeof SimulateKamadaKawai;
     DrawEdgeLines: typeof DrawEdgeLines;
+    DrawEdgeLinesDivisions: typeof DrawEdgeLinesDivisions;
     DrawEdgeBundling: typeof DrawEdgeBundling;
     HivePlot: typeof HivePlot;
     DisplaceEdgeInY: typeof DisplaceEdgeInY;
@@ -611,8 +634,8 @@ export const GraphDrawer: {
  * @param p Probability of two edges to eb connected
  * @returns A Erdos Reyni graph
  */
-export function GenerateErdosReyni_n_p(n: number, p: number): Graph;
-export const GenerateErdosReyni_n_p: {
+declare function GenerateErdosReyni_n_p(n: number, p: number): Promise<Graph>;
+export const Models: {
     GenerateErdosReyni_n_p: typeof GenerateErdosReyni_n_p;
 };
 

@@ -13,7 +13,7 @@ import _Node from "../Core/_Node";
  * @param p Probability of two edges to eb connected
  * @returns A Erdos Reyni graph
  */
-function GenerateErdosReyni_n_p(n: number, p: number) {
+async function GenerateErdosReyni_n_p(n: number, p: number) {
   // first create a list of nodes
   const nodes = new Map();
   const edges = new Map();

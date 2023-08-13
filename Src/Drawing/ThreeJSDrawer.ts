@@ -116,6 +116,7 @@ function DrawTHREEGraphEdgesThick(
 ) {
   // add the interpolation function
   const lineMap = Graph.get_edge_map();
+  console.log(lineMap)
   return DrawThickEdgesFromEdgeMap(lineMap, bounds, color, thickness);
 }
 
@@ -447,12 +448,12 @@ function ChangeTheVertexColours(
 ) {
   let Attrib = vertices.geometry.attributes;
   let k = 0;
-  const newCol = hexToRgb(color)!;
+  const col = new THREE.Color( color );
   indexArray.forEach((node) => {
     k = node * 3; // @ts-ignore
-    Attrib.customColor.array[k] = newCol.r; // @ts-ignore
-    Attrib.customColor.array[k + 1] = newCol.g; // @ts-ignore
-    Attrib.customColor.array[k + 2] = newCol.b;
+    Attrib.customColor.array[k] = col.r; // @ts-ignore
+    Attrib.customColor.array[k + 1] = col.g; // @ts-ignore
+    Attrib.customColor.array[k + 2] = col.b;
   });
   Attrib.customColor.needsUpdate = true;
 }

@@ -5,25 +5,31 @@
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="MasterStyle.css">
-  <title>ZKC3d - Example</title>
+  <link rel="stylesheet" href="MasterStyle.css" />
+  <title>Large Graph - Example</title>
 </head>
 
 <body>
-  <h4>A simple plot of the ZKC Dataset</h4>
+  <h4>A large plot using PGL - 5000 points</h4>
   <canvas id="displayCanvas" class="displayCanvas"></canvas>
   <script type="module">
     // import the library
     import * as PGL from "../Build/pgl_module.js";
 
-    // construct a simple ZKC graph
-    // this graph is pre initialized (Since it is simulated in this case)
-    const zkcSimulated = await PGL.SampleData.LoadZKCSimulated();
-    // console log this to see how this data is stored 
-    console.log(zkcSimulated);
-    // also as a reference just see how this data is stored 
-    zkcSimulated.printData();
-
+    // create an Erdos Reyni graph. Lets do 1000 Points for this example
+    const G = await PGL.Models.GenerateErdosReyni_n_p(5000, 0.0001);
+    // since these graphs can be really large - they are not initialized 
+    // so you must initialize them
+    G.initialize();
+    G.printData();
+    
+    // now in this case we shall use the Kamada Kawai algorithm to initilaize all the positions
+    const simulatedPosMap = await PGL.Drawing.SimulateKamadaKawai(G, 2);
+    G.apply_position_map(simulatedPosMap);
+    // get the line map associated 
+    const lmap = PGL.Drawing.DrawEdgeLinesDivisions(G, 1);
+    G.apply_edge_pos_maps(lmap)
+    
     // set the width and height 
     const width = 800;
     const heigth = 700;
@@ -34,11 +40,12 @@
     // then create a graph drawer object
     // to do that first make a options object
     const graphDrawerOptions = {
-      graph: zkcSimulated,
+      graph: G,
       width: width,
       height: heigth,
       canvas: canvas
     };
+
     // then create the visualization window
     // with those settings
     const graph3d = new PGL.GraphDrawer.GraphDrawer3d(graphDrawerOptions);
@@ -47,13 +54,13 @@
 
     // Create the 3d elements for the graph
     // first describe a global scaling factor
-    const bounds = 1
+    const bounds = 0.1
     // first create all the node elements
-    const nodeVisualElements = PGL.ThreeWrapper.DrawTHREEBoxBasedVertices(zkcSimulated, bounds, 0xffffff, 5);
+    const nodeVisualElements = PGL.ThreeWrapper.DrawTHREEGraphVertices(G, bounds, 1, 0xffffff, 1);
     // add the node elements to the scene
     graph3d.addVisElement(nodeVisualElements);
     // then create the edge elements 
-    const edgeVisualElements = PGL.ThreeWrapper.DrawTHREEGraphEdgesThick(zkcSimulated, bounds, 0xffafcc, 0.02);
+    const edgeVisualElements = PGL.ThreeWrapper.DrawTHREEGraphEdgesThin(G, bounds, 0xffafcc, 0.01);
     graph3d.addVisElement(edgeVisualElements);
 
     // then there are two last steps for a 3d graph
@@ -69,7 +76,6 @@
     // append the graph renderer to the container
     // and then drawing render calls
     animate();
-
   </script>
 </body>
 

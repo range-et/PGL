@@ -31,3 +31,17 @@ h4 {
   margin-right: auto;
   outline: var(--black) 3px solid;
 }
+
+#toggle{
+  padding: 10;
+  background-color: var(--navy);
+  max-width: 200px;
+  margin: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  cursor: pointer;
+}
+
+#toggle:hover{
+  background-color: var(--teal);
+}

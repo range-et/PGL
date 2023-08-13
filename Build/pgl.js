@@ -95,7 +95,7 @@ var __awaiter = undefined && undefined.__awaiter || function(thisArg11, _argumen
  *  @param cohesionValue - How sticky the nodes are i.r. how much they cluster together
  * @returns And node map of all the nodes and their simulated positions - Please note: position maps have to to be applied to the graph!
  *
- */ function SimulateKamadaKawai(Graph11, iterations11, simulationBound11 = 200, cohesionValue11 = 1) {
+ */ function SimulateKamadaKawai(Graph11, iterations11, simulationBound11 = 100, cohesionValue11 = 1, repulsionValue11 = 1) {
     return __awaiter(this, void 0, void 0, function*() {
         const adjList11 = Graph11.get_adjacency();
         // pos map
@@ -124,6 +124,12 @@ var __awaiter = undefined && undefined.__awaiter || function(thisArg11, _argumen
             // same thing for the cohesion values that get recalculated
             let new_c_xpos_dispacement11;
             let new_c_ypos_dispacement11;
+            let new_x_r_pos11;
+            let new_y_r_pos11;
+            let new_c_xpos11;
+            let new_c_ypos11;
+            let new_g_xpos_displacement11;
+            let new_g_ypos_displacement11;
             for (const node11 of adjList11.keys()){
                 // this chunk is for the attraction force
                 // get the node pos
@@ -143,8 +149,8 @@ var __awaiter = undefined && undefined.__awaiter || function(thisArg11, _argumen
                     y_s11.push(n_pos_y11);
                 });
                 // now average out the values
-                const new_c_xpos11 = (0, $6Xdhg.default).calculateAverage(x_s11);
-                const new_c_ypos11 = (0, $6Xdhg.default).calculateAverage(y_s11);
+                new_c_xpos11 = (0, $6Xdhg.default).calculateAverage(x_s11);
+                new_c_ypos11 = (0, $6Xdhg.default).calculateAverage(y_s11);
                 // this chunk is for the repelling force
                 y_r11 = [];
                 x_r11 = [];
@@ -166,16 +172,19 @@ var __awaiter = undefined && undefined.__awaiter || function(thisArg11, _argumen
                     y_r11.push(diffy11);
                 }
                 // this is the repulsion value
-                const A_mult11 = 2;
-                const new_x_r_pos11 = A_mult11 * 1 / ((0, $6Xdhg.default).calculateAverage(x_r11) * (0, $6Xdhg.default).calculateAverage(x_r11));
-                const new_y_r_pos11 = A_mult11 * 1 / ((0, $6Xdhg.default).calculateAverage(y_r11) * (0, $6Xdhg.default).calculateAverage(y_r11));
+                new_x_r_pos11 = repulsionValue11 * 1 / ((0, $6Xdhg.default).calculateAverage(x_r11) * (0, $6Xdhg.default).calculateAverage(x_r11));
+                new_y_r_pos11 = repulsionValue11 * 1 / ((0, $6Xdhg.default).calculateAverage(y_r11) * (0, $6Xdhg.default).calculateAverage(y_r11));
                 // calculate the dispacement amount in c/y pos
                 // this is the cohesion value
-                const new_c_xpos_dispacement11 = cohesionValue11 * (new_c_xpos11 - nodeX11);
-                const new_c_ypos_dispacement11 = cohesionValue11 * (new_c_ypos11 - nodeY11);
+                new_c_xpos_dispacement11 = cohesionValue11 * (new_c_xpos11 - nodeX11);
+                new_c_ypos_dispacement11 = cohesionValue11 * (new_c_ypos11 - nodeY11);
+                // Also move all the points towards the center a little bit
+                // so that the graph doesent explode out
+                new_g_xpos_displacement11 = cohesionValue11 * (0 - nodeX11);
+                new_g_ypos_displacement11 = cohesionValue11 * (0 - nodeY11);
                 // then add the x and y components of the two vectors
-                const new_xpos11 = new_x_r_pos11 + new_c_xpos_dispacement11 + nodeX11;
-                const new_ypos11 = new_y_r_pos11 + new_c_ypos_dispacement11 + nodeY11;
+                const new_xpos11 = new_x_r_pos11 + new_g_xpos_displacement11 + new_c_xpos_dispacement11 + nodeX11;
+                const new_ypos11 = new_y_r_pos11 + new_g_ypos_displacement11 + new_c_ypos_dispacement11 + nodeY11;
                 // now set these positions
                 PosMapX11.set(node11, new_xpos11);
                 PosMapY11.set(node11, new_ypos11);
@@ -232,10 +241,11 @@ var __awaiter = undefined && undefined.__awaiter || function(thisArg11, _argumen
  *
  * Constructs the edges as lines, Note: these are just a representation of the lines
  * they then have to be visulized using one of the Three JS Drawer functions like
- * draw a thick line or a thin line
+ * draw a thick line or a thin line. This draws out the edges divided by some number of
+ * divisions that you specify
  *
  * @param Graph - The graph whos edges are getting drawn
- * @param divDistance - How many divisions to make along the edge
+ * @param divDistance - How many divisions (distance) to make along the edge
  * @returns A line map - which holds a map of all the edge indices and the corresponding line representations
  */ function DrawEdgeLines(Graph11, divDistance11) {
     // this is the return map
@@ -255,6 +265,31 @@ var __awaiter = undefined && undefined.__awaiter || function(thisArg11, _argumen
 }
 /**
  *
+ * Constructs the edges as lines, Note: these are just a representation of the lines
+ * they then have to be visulized using one of the Three JS Drawer functions like
+ * draw a thick line or a thin line - this draws them based on the number of divisions
+ * you would like them to have
+ * @param Graph - The graph whos edges are getting drawn
+ * @param numberOfDivs - How many divisions to make along the edge
+ * @returns A line map - which holds a map of all the edge indices and the corresponding line representations
+ */ function DrawEdgeLinesDivisions(Graph11, numberOfDivs11) {
+    // this is the return map
+    const lineMap11 = new Map();
+    let edge11;
+    let start11;
+    let end11;
+    for (const key11 of Graph11.edges.keys()){
+        edge11 = Graph11.edges.get(key11);
+        // get the start pos
+        start11 = Graph11.nodes.get(edge11.start).data.pos;
+        end11 = Graph11.nodes.get(edge11.end).data.pos;
+        const Line11 = (0, $fd3jp.default).line_from_start_end_divisions(start11, end11, numberOfDivs11);
+        lineMap11.set(key11, Line11);
+    }
+    return lineMap11;
+}
+/**
+ *
  * Edge bundling - this isnt as fast as the current KDE based methods - but it provides a basic  method of
  * Visualizing large edge flows. Note: This is an aysnc function as it takes a while for the edge bundling to happen
  *
@@ -264,7 +299,9 @@ var __awaiter = undefined && undefined.__awaiter || function(thisArg11, _argumen
  * @returns A line map with all the updated positions of the line (Where they are bundled together) Again - this needs to be applied to the graph!
  */ function DrawEdgeBundling(LineMap11, iterations11, distance11) {
     return __awaiter(this, void 0, void 0, function*() {
-        const returnArray11 = LineMap11;
+        // first create a deep copy of the map
+        const returnArray11 = new Map();
+        for (let key11 of LineMap11.keys())returnArray11.set(key11, structuredClone(LineMap11.get(key11)));
         // variables that are getting reused
         let line11;
         let otherLine11;
@@ -532,6 +569,7 @@ So for example - the position data under a point in the graph is under
 var $e89d79794dbc0ba9$export$2e2bcd8739ae039 = {
     SimulateKamadaKawai: SimulateKamadaKawai,
     DrawEdgeLines: DrawEdgeLines,
+    DrawEdgeLinesDivisions: DrawEdgeLinesDivisions,
     DrawEdgeBundling: DrawEdgeBundling,
     HivePlot: HivePlot,
     DisplaceEdgeInY: DisplaceEdgeInY,
@@ -556,6 +594,7 @@ $parcel$export(module.exports, "default", () => $51028d69415a7fb7$export$2e2bcd8
     let runningSum = 0;
     for(let i = 0; i < arr.length; i++)runningSum = runningSum + arr[i];
     const avg = runningSum / arr.length;
+    if (Number.isNaN(avg)) return 0;
     return avg;
 }
 // calculate distance between two points
@@ -596,11 +635,28 @@ $parcel$export(module.exports, "default", () => $51028d69415a7fb7$export$2e2bcd8
     }
     return result;
 }
+/**
+ * This is a super useful method to get a random number of edges or something that you would like to draw
+ * this is primarily done because there are way too many edges sometimes and and the number of edges is really
+ * What slows the whole rendering process down
+ * @param map - the map that youd like to reduce
+ * @param n - the fraction of items that youd like to return from this map
+ * @returns A reduced map with a fractio of those many entries
+ */ function $51028d69415a7fb7$var$getRandomSubset_map(map, n) {
+    const newMap = new Map();
+    let prob;
+    for (const item of map.keys()){
+        prob = Math.random();
+        if (prob < n) newMap.set(item, map.get(item));
+    }
+    return newMap;
+}
 var $51028d69415a7fb7$export$2e2bcd8739ae039 = {
     calculateAverage: $51028d69415a7fb7$var$calculateAverage,
     calculateDistance: $51028d69415a7fb7$var$calculateDistance,
     calculateSquaredDistance: $51028d69415a7fb7$var$calculateSquaredDistance,
-    getRandomSubset: $51028d69415a7fb7$var$getRandomSubset
+    getRandomSubset: $51028d69415a7fb7$var$getRandomSubset,
+    getRandomSubset_map: $51028d69415a7fb7$var$getRandomSubset_map
 };
 
 });
@@ -1157,8 +1213,6 @@ parcelRequire.register("eqUI8", function(module, exports) {
 $parcel$export(module.exports, "default", () => $a81f7bf7ba151678$export$2e2bcd8739ae039);
 
 
-var $1jyjM = parcelRequire("1jyjM");
-
 
 
 
@@ -1272,6 +1326,7 @@ var __awaiter = undefined && undefined.__awaiter || function(thisArg11, _argumen
  */ function DrawTHREEGraphEdgesThick(Graph11, bounds11 = 1, color11 = 0xffffff, thickness11 = 0.2) {
     // add the interpolation function
     const lineMap11 = Graph11.get_edge_map();
+    console.log(lineMap11);
     return DrawThickEdgesFromEdgeMap(lineMap11, bounds11, color11, thickness11);
 }
 // draw a thing to draw out all the edges from the edge map stuff
@@ -1527,12 +1582,12 @@ var __awaiter = undefined && undefined.__awaiter || function(thisArg11, _argumen
  */ function ChangeTheVertexColours(vertices11, indexArray11, color11) {
     let Attrib11 = vertices11.geometry.attributes;
     let k11 = 0;
-    const newCol11 = (0, $1jyjM.hexToRgb)(color11);
+    const col11 = new $h9nKb$three.Color(color11);
     indexArray11.forEach((node11)=>{
         k11 = node11 * 3; // @ts-ignore
-        Attrib11.customColor.array[k11] = newCol11.r; // @ts-ignore
-        Attrib11.customColor.array[k11 + 1] = newCol11.g; // @ts-ignore
-        Attrib11.customColor.array[k11 + 2] = newCol11.b;
+        Attrib11.customColor.array[k11] = col11.r; // @ts-ignore
+        Attrib11.customColor.array[k11 + 1] = col11.g; // @ts-ignore
+        Attrib11.customColor.array[k11 + 2] = col11.b;
     });
     Attrib11.customColor.needsUpdate = true;
 }
@@ -1568,53 +1623,6 @@ var $a81f7bf7ba151678$export$2e2bcd8739ae039 = {
 };
 
 });
-parcelRequire.register("1jyjM", function(module, exports) {
-
-$parcel$export(module.exports, "hexToRgb", () => $0f522fa43e7ceed2$export$5a544e13ad4e1fa5);
-///////////////
-// color convert by Tim Down
-// https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
-/**
- *
- * converts hex to RGB
- *
- * @param c Hex ccomponent
- * @returns returns an object with r g b component values
- */ function $0f522fa43e7ceed2$var$componentToHex(c) {
-    var hex = c.toString(16);
-    return hex.length == 1 ? "0" + hex : hex;
-}
-/**
- *
- * Converts Rgb to hex
- *
- * @param r red value
- * @param g green value
- * @param b blue value
- * @returns the hex value
- */ function $0f522fa43e7ceed2$export$34d09c4a771c46ef(r, g, b) {
-    return "#" + $0f522fa43e7ceed2$var$componentToHex(r) + $0f522fa43e7ceed2$var$componentToHex(g) + $0f522fa43e7ceed2$var$componentToHex(b);
-}
-/**
- *
- * @param hex the hex color code
- * @returns RGB values as r, g, b values
- */ function $0f522fa43e7ceed2$export$5a544e13ad4e1fa5(hex) {
-    // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
-    var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-    hex = hex.toString().replace(shorthandRegex, function(m, r, g, b) {
-        return r + r + g + g + b + b;
-    });
-    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16)
-    } : null;
-}
-
-});
-
 parcelRequire.register("bWT2q", function(module, exports) {
 
 $parcel$export(module.exports, "vertexShader", () => $8b2fcdeb0edc9ee9$export$84657c60382b0f83);
@@ -1664,7 +1672,7 @@ $parcel$export(module.exports, "Geometry", () => (parcelRequire("fd3jp")).defaul
 $parcel$export(module.exports, "Utilities", () => (parcelRequire("6Xdhg")).default);
 $parcel$export(module.exports, "ThreeWrapper", () => (parcelRequire("eqUI8")).default);
 $parcel$export(module.exports, "GraphDrawer", () => $6abda68f7f78a6fb$exports.default);
-$parcel$export(module.exports, "GenerateErdosReyni_n_p", () => $7308258d93363088$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "Models", () => $7308258d93363088$exports.default);
 
 var $9TL8g = parcelRequire("9TL8g");
 
@@ -2711,7 +2719,7 @@ var $c57cf0c4853fb804$var$__awaiter = undefined && undefined.__awaiter || functi
         }
         // make a graph object
         const G = yield (0, $9TL8g.default).create(nodes, edges);
-        const lmap = (0, $jYcHE.default).DrawEdgeLines(G, 10);
+        const lmap = (0, $jYcHE.default).DrawEdgeLines(G, 20);
         G.apply_edge_pos_maps(lmap);
         return G;
     });
@@ -2826,7 +2834,7 @@ var $6abda68f7f78a6fb$var$__awaiter = undefined && undefined.__awaiter || functi
             this.camera.position.set(0, 100, 100);
             this.controls.autoRotate = true;
             this.controls.maxPolarAngle = Math.PI * 0.5;
-            this.controls.maxDistance = 1000;
+            this.controls.maxDistance = 10000;
             this.controls.minDistance = 10;
             this.controls.update();
             // finally print out that the initialization has finished
@@ -2860,6 +2868,9 @@ var $6abda68f7f78a6fb$export$2e2bcd8739ae039 = {
 };
 
 
+var $7308258d93363088$exports = {};
+
+$parcel$export($7308258d93363088$exports, "default", () => $7308258d93363088$export$2e2bcd8739ae039);
 // This essentially generates a erdos reyni graph
 // Super useful for juszt getting a random graph and studying
 // graph structure. Read more https://en.wikipedia.org/wiki/Erd%C5%91s%E2%80%93R%C3%A9nyi_model
@@ -2868,6 +2879,33 @@ var $i8obY = parcelRequire("i8obY");
 
 var $9TL8g = parcelRequire("9TL8g");
 
+var $7308258d93363088$var$__awaiter = undefined && undefined.__awaiter || function(thisArg, _arguments, P, generator) {
+    function adopt(value) {
+        return value instanceof P ? value : new P(function(resolve) {
+            resolve(value);
+        });
+    }
+    return new (P || (P = Promise))(function(resolve, reject) {
+        function fulfilled(value) {
+            try {
+                step(generator.next(value));
+            } catch (e) {
+                reject(e);
+            }
+        }
+        function rejected(value) {
+            try {
+                step(generator["throw"](value));
+            } catch (e) {
+                reject(e);
+            }
+        }
+        function step(result) {
+            result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+        }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 /**
  * The G ( n , p ) G(n,p) model, a graph is constructed by connecting labeled nodes randomly. Each edge is included in the graph with probability p p, independently from every other edge.
  * https://en.wikipedia.org/wiki/Erd%C5%91s%E2%80%93R%C3%A9nyi_model
@@ -2875,38 +2913,40 @@ var $9TL8g = parcelRequire("9TL8g");
  * @param p Probability of two edges to eb connected
  * @returns A Erdos Reyni graph
  */ function $7308258d93363088$var$GenerateErdosReyni_n_p(n, p) {
-    // first create a list of nodes
-    const nodes = new Map();
-    const edges = new Map();
-    let node; // define once use many times basically
-    for(let i = 0; i < n; i++){
-        node = new (0, $d0af3be0040778ae$export$2e2bcd8739ae039)({});
-        // set this node
-        nodes.set(i, node);
-    }
-    // now that all the nodes have been created
-    // now loop all the node combinations and then
-    // create the edge
-    let interimP;
-    let edge;
-    let index = 0;
-    for(let i = 0; i < n; i++){
-        for(let ii = 0; ii < n; ii++)// im skipping self loops so just make sure there is
-        // an if statement for the settings
-        if (i != ii) {
-            interimP = Math.random();
-            if (p > interimP) {
-                // then create and edge and add that edge to the list of edges
-                edge = new (0, $i8obY.default)(i, ii, {});
-                edges.set(index, edge);
-                index += 1;
+    return $7308258d93363088$var$__awaiter(this, void 0, void 0, function*() {
+        // first create a list of nodes
+        const nodes = new Map();
+        const edges = new Map();
+        let node; // define once use many times basically
+        for(let i = 0; i < n; i++){
+            node = new (0, $d0af3be0040778ae$export$2e2bcd8739ae039)({});
+            // set this node
+            nodes.set(i, node);
+        }
+        // now that all the nodes have been created
+        // now loop all the node combinations and then
+        // create the edge
+        let interimP;
+        let edge;
+        let index = 0;
+        for(let i = 0; i < n; i++){
+            for(let ii = 0; ii < n; ii++)// im skipping self loops so just make sure there is
+            // an if statement for the settings
+            if (i != ii) {
+                interimP = Math.random();
+                if (p > interimP) {
+                    // then create and edge and add that edge to the list of edges
+                    edge = new (0, $i8obY.default)(i, ii, {});
+                    edges.set(index, edge);
+                    index += 1;
+                }
             }
         }
-    }
-    // now create the actual graph
-    const G = new (0, $9TL8g.default)(nodes, edges);
-    // lastly return the graph
-    return G;
+        // now create the actual graph
+        const G = new (0, $9TL8g.default)(nodes, edges);
+        // lastly return the graph
+        return G;
+    });
 }
 var $7308258d93363088$export$2e2bcd8739ae039 = {
     GenerateErdosReyni_n_p: $7308258d93363088$var$GenerateErdosReyni_n_p

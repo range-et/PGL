@@ -46,7 +46,7 @@ async function LoadZKCSimulated() {
   }
   // make a graph object
   const G = await Graph.create(nodes, edges);
-  const lmap = Drawing.DrawEdgeLines(G, 10);
+  const lmap = Drawing.DrawEdgeLines(G, 20);
   G.apply_edge_pos_maps(lmap);
   return G;
 }
