@@ -68,7 +68,8 @@ await graph3d.init();
 // first describe a global scaling factor
 const bounds = 1
 // first create all the node elements
-const nodeVisualElements = PGL.ThreeWrapper.DrawTHREEBoxBasedVertices(zkcSimulated, bounds, 0xffffff, 3);
+const nodeVisualElements
+    = PGL.ThreeWrapper.DrawTHREEBoxBasedVertices(zkcSimulated, bounds, 0xffffff, 3);
 // add the node elements to the scene
 graph3d.addVisElement(nodeVisualElements);
 
@@ -77,10 +78,12 @@ const EdgeMap_copy = PGL.Drawing.DisplaceEdgeInY(EdgeMap, 20);
 const newEdgeMap = await PGL.Drawing.DrawEdgeBundling(EdgeMap_copy, 50, 10);
 // then create the edge elements
 // these are the reuglar edges
-const edgeVisualElements = PGL.ThreeWrapper.DrawThinEdgesFromEdgeMap(EdgeMap, bounds, 0x62b6cb, 0.01);
+const edgeVisualElements 
+    = PGL.ThreeWrapper.DrawThinEdgesFromEdgeMap(EdgeMap, bounds, 0x62b6cb, 0.01);
 graph3d.addVisElement(edgeVisualElements);
 // these are the bundled edges
-const edgeVisualElements_Bundled = PGL.ThreeWrapper.DrawThickEdgesFromEdgeMap(newEdgeMap, bounds, 0x5fa8d3, 0.01);
+const edgeVisualElements_Bundled
+     = PGL.ThreeWrapper.DrawThickEdgesFromEdgeMap(newEdgeMap, bounds, 0x5fa8d3, 0.01);
 graph3d.addVisElement(edgeVisualElements_Bundled);
 
 // then there are two last steps for a 3d graph

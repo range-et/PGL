@@ -268,8 +268,8 @@ animate();</code>
       <year iso-8601-date="2015">2015</year>
       <volume>527</volume>
       <issue>7576</issue>
-      <uri>https://doi.org/10.1038/527105a</uri>
-      <pub-id pub-id-type="doi">10.1038/527105a</pub-id>
+      <uri>https://doi.org/10.1038/d41586-020-00062-z</uri>
+      <pub-id pub-id-type="doi">10.1038/d41586-020-00062-z</pub-id>
       <fpage>105</fpage>
       <lpage>107</lpage>
     </element-citation>
@@ -321,6 +321,7 @@ animate();</code>
       <source>European conference on object-oriented programming</source>
       <publisher-name>Springer</publisher-name>
       <year iso-8601-date="2014">2014</year>
+      <pub-id pub-id-type="doi">10.1007/978-1-4842-4979-6_2</pub-id>
       <fpage>257</fpage>
       <lpage>281</lpage>
     </element-citation>
@@ -370,6 +371,7 @@ animate();</code>
       <year iso-8601-date="1989">1989</year>
       <volume>31</volume>
       <issue>1</issue>
+      <pub-id pub-id-type="doi">10.1142/9789814434478_0005</pub-id>
       <fpage>7</fpage>
       <lpage>15</lpage>
     </element-citation>
@@ -403,6 +405,7 @@ animate();</code>
       <year iso-8601-date="2017">2017</year>
       <volume>18</volume>
       <issue>1</issue>
+      <pub-id pub-id-type="doi">10.21307/joss-2018-003</pub-id>
       <fpage>1</fpage>
       <lpage>22</lpage>
     </element-citation>
@@ -418,6 +421,7 @@ animate();</code>
       <year iso-8601-date="1973">1973</year>
       <volume>78</volume>
       <issue>6</issue>
+      <pub-id pub-id-type="doi">10.1093/oso/9780195159509.003.0010</pub-id>
       <fpage>1360</fpage>
       <lpage>1380</lpage>
     </element-citation>
@@ -442,6 +446,7 @@ animate();</code>
       <article-title>Gephi: An open source software for exploring and manipulating networks</article-title>
       <source>International AAAI conference on weblogs and social media</source>
       <year iso-8601-date="2009">2009</year>
+      <pub-id pub-id-type="doi">10.1609/icwsm.v3i1.13937</pub-id>
     </element-citation>
   </ref>
   <ref id="ref-hagberg2008exploring">
@@ -489,6 +494,7 @@ animate();</code>
       <source>Journal of Anthropological Research</source>
       <year iso-8601-date="1977">1977</year>
       <volume>33</volume>
+      <pub-id pub-id-type="doi">10.1086/jar.33.4.3629752</pub-id>
       <fpage>452</fpage>
       <lpage>473</lpage>
     </element-citation>
