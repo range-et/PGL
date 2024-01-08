@@ -1,6 +1,6 @@
 {
   "name": "plebiangraphlibrary",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A NetworkX like package for graphs in javascript",
   "source": "./Src/index.ts",
   "main": "./Build/pgl.js",
@@ -24,7 +24,10 @@
   ],
   "files": [
     "Build/",
+    "Examples/",
     "README.md",
+    "CODE_OF_CONDUCT.md",
+    "CONTRIBUTING.md",
     "LICENSE"
   ],
   "author": "Indrajeet Haldar",
