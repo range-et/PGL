@@ -35,68 +35,58 @@ The general idea of drawing a basic graph is outlined above. To recap all the ba
 
 ```javascript
 // import the library
-import * as PGL from "../Build/pgl_module.js";
+import * as PGL from "plebiangraphlibrary";
 
-// construct a simple ZKC graph
-const zkcSimulated = await PGL.SampleData.LoadZKCSimulated();
-// console log this to see how this data is stored
-console.log(zkcSimulated);
+async function createVisualization() {
+  // Load up the ZKC dataset 
+  const zkcSimulated = await PGL.SampleData.LoadZKCSimulated();
 
-// set the width and height
-const width = 800;
-const heigth = 700;
+  // Attach the renderer to a div which is on an HTML that the script is linked too
+  const canvas = document.getElementById("displayCanvas");
+  // These are some basic options to set up a graph drawing object. Please refer to the documentation for more options
+  const graphDrawerOptions = {
+    graph: zkcSimulated,
+    width: 800,
+    height: 700,
+    canvas: canvas,
+  };
 
-// pass in the graph and the canvas into the drawing object to draw it
-// first get the canvas element
-const canvas = document.getElementById("displayCanvas");
-// then create a graph drawer object
-// to do that first make a options object
-const graphDrawerOptions = {
-  graph: zkcSimulated,
-  width: width,
-  height: heigth,
-  canvas: canvas,
-};
-// then create the visualization window
-// with those settings
-const graph3d = new PGL.GraphDrawer.GraphDrawer3d(graphDrawerOptions);
-// initialize this object before adding things to it
-await graph3d.init();
+  // Initialize a graph with these settings
+  const graph3d = new PGL.GraphDrawer.GraphDrawer3d(graphDrawerOptions);
+  await graph3d.init();
 
-// Create the 3d elements for the graph
-// first describe a global scaling factor
-const bounds = 1;
-// first create all the node elements
-const nodeVisualElements = PGL.ThreeWrapper.DrawTHREEBoxBasedVertices(
-  zkcSimulated,
-  bounds,
-  0xffffff,
-  5
-);
-// add the node elements to the scene
-graph3d.addVisElement(nodeVisualElements);
-// then create the edge elements
-const edgeVisualElements = PGL.ThreeWrapper.DrawTHREEGraphEdgesThick(
-  zkcSimulated,
-  bounds,
-  0xffafcc,
-  0.02
-);
-graph3d.addVisElement(edgeVisualElements);
+  // Create the 3d elements for the graph
+  // first describe a global scaling factor
+  const bounds = 1;
+  // Create all the geometry associated with node elements
+  const nodeVisualElements = PGL.ThreeWrapper.DrawTHREEBoxBasedVertices(
+    zkcSimulated,
+    bounds,
+    0xffffff,
+    5
+  );
+  // add the node geometry to the scene
+  graph3d.addVisElement(nodeVisualElements);
+  // then create all the geometry associated with the edge elements
+  const edgeVisualElements = PGL.ThreeWrapper.DrawTHREEGraphEdgesThick(
+    zkcSimulated,
+    bounds,
+    0xffafcc,
+    0.02
+  );
+  // add the edge geometry to the scene
+  graph3d.addVisElement(edgeVisualElements);
 
-// then there are two last steps for a 3d graph
-// this is done so that other 3d objects can be added in later
-// since the base library is three.js all standard three js things are possible
-// now moving on to the two steps :
-// make an animation function
-function animate() {
-  requestAnimationFrame(animate);
-  graph3d.rendercall();
+  // by default the camera revolves around the graph, trigger the animation call
+  function animate() {
+    requestAnimationFrame(animate);
+    graph3d.rendercall();
+  }
+
+  animate();
 }
 
-// append the graph renderer to the container
-// and then drawing render calls
-animate();
+createVisualization();
 ```
 
 ## Usage / Installation

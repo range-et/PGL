@@ -19,7 +19,7 @@
 <article-id pub-id-type="doi">N/A</article-id>
 <title-group>
 <article-title>The Plebian Graph Library: A WebGL based network
-visusalisation and diagnostics package</article-title>
+visualisation and diagnostics package</article-title>
 </title-group>
 <contrib-group>
 <contrib contrib-type="author">
@@ -58,7 +58,7 @@ a Creative Commons Attribution 4.0 International License (CC BY
 </license>
 </permissions>
 <kwd-group kwd-group-type="author">
-<kwd>Javascript</kwd>
+<kwd>JavaScript</kwd>
 <kwd>Visualisation</kwd>
 <kwd>Graphs</kwd>
 <kwd>Networks</kwd>
@@ -85,7 +85,7 @@ a Creative Commons Attribution 4.0 International License (CC BY
   &amp; Guan, 2012</xref>). The Plebian Graph Library (PGL) is a library
   that solves for the visualisation of large networks and their
   diagnostic study.</p>
-  <p>The Plebian Graph Library (PGL) is a javascript library (written in
+  <p>The Plebian Graph Library (PGL) is a JavaScript library (written in
   Typescript
   (<xref alt="Bierman et al., 2014" rid="ref-bierman2014understanding" ref-type="bibr">Bierman
   et al., 2014</xref>)) designed to facilitate the visualisation and
@@ -123,11 +123,11 @@ a Creative Commons Attribution 4.0 International License (CC BY
   et al., 2017</xref>). A diffusion simulation is then run, and insights
   and diagnostics of diffusion sequences are gathered. For example,
   whether diffusion first occurs between high eigenvector centrality
-  nodes across clusters or does the spread appears in the groups before
+  nodes across clusters or does the spread appear in the groups before
   spreading to other clusters, allowing for the visual study of the
   strength of weak ties behaviour
   (<xref alt="Granovetter, 1973" rid="ref-granovetter1973strength" ref-type="bibr">Granovetter,
-  1973</xref>). Exploratory research, analysis, communication and
+  1973</xref>). Exploratory research, analysis, communication, and
   documentation of these network behaviours, as mentioned above, would
   have been complex in a traditional visualisation library where the
   emphasis lies on validation instead of exploratory study and
@@ -136,34 +136,48 @@ a Creative Commons Attribution 4.0 International License (CC BY
 <sec id="statement-of-need">
   <title>Statement of need</title>
   <p>The Plebian Graph Library (PGL) addresses several critical needs in
-  large-scale graph data visualisation. Existing software solutions for
-  visualising large datasets are limited to local machine installations,
-  for example, Gephi
+  large-scale graph data visualization. Existing software solutions for
+  visualizing large datasets, such as Gephi
   (<xref alt="Bastian et al., 2009" rid="ref-bastian2009gephi" ref-type="bibr">Bastian
-  et al., 2009</xref>), which restricts accessibility and compatibility
-  across various devices. Additionally, those software libraries that
-  are browser-based cater to smaller datasets and lack the scalability
-  to analyse complex network structures as they rely on Scalable Vector
-  Graphics (SVG), for example, Vis.JS
-  (<xref alt="V., 2021" rid="ref-visjs" ref-type="bibr">V.,
-  2021</xref>), imposing performance limitations and two-dimensional
-  visualisations. Moreover, from the perspective of visualisations and
-  diagnosis, two-dimensional plots of large-scale graphs often result in
-  visual noise and information loss. PGL fills this gap by providing a
-  browser-based solution that leverages WebGL (using the ThreeJS
-  Library). By utilising ThreeJS, PGL surpasses the limitations of
-  traditional two-dimensional representations and SVG graphics, enabling
+  et al., 2009</xref>), are limited to local machine installations,
+  restricting accessibility and compatibility across various devices.
+  Additionally, browser-based software libraries like Vis.JS
+  (<xref alt="V., 2021" rid="ref-visjs" ref-type="bibr">V., 2021</xref>)
+  and D3[d3ieee], which rely on Scalable Vector Graphics (SVG), often
+  lack the scalability to analyze complex network structures. This
+  reliance on SVG imposes performance limitations and restricts
+  visualizations to two dimensions.</p>
+  <p>In contrast, PGL offers a robust browser-based solution leveraging
+  WebGL through the ThreeJS Library. This enables it to surpass
+  traditional two-dimensional representations’ limitations. PGL is
+  primarily designed for client-side rendering, taking full advantage of
+  the capabilities of WebGL to deliver dynamic and interactive
+  visualizations directly within the browser. While it focuses on
+  client-side rendering, the underlying graph algorithms of PGL can also
+  be utilized in server-side processes, providing flexibility in
+  application architecture.</p>
+  <p>A performance benchmark conducted against D3, an industry-standard
+  visualization library, showcases PGL’s capabilities. In this test
+  involving approximately 5000 nodes and 200000 edges, D3-based SVG
+  graphs only achieved a frame rate of 1.5 frames per second, bottoming
+  at a frame every two seconds with a maximum of 12 frames per second.
+  In contrast, PGL maintained a minimum of 52 frames per second and
+  averaging 58 frames per second under similar conditions. This
+  benchmark, performed on both Firefox and Chrome browsers (with
+  negligible differences in performance) on a computer with an Nvidia
+  RTX 2080 GPU, highlights PGL’s superior performance and efficiency in
+  rendering complex network visualizations.</p>
+  <p>Furthermore, PGL’s three-dimensional rendering approach allows for
   a more comprehensive range of data stratification methods and
-  facilitating more immersive and interactive visualisations.
-  Furthermore, the capacity to navigate information-dense networks in
-  three dimensions allows for greater number of nodes and a significant
-  reduction in visual noise while diagnosing large-scale networks. Since
-  its creation, it has enabled a primary academic study of large-scale
-  social networks in the form of an academic thesis, On the Mathematics
-  of Memetics
+  facilitates more immersive and interactive visualizations. The ability
+  to navigate information-dense networks in three dimensions
+  significantly reduces visual noise and enhances clarity in diagnosing
+  large-scale networks. Since its inception, PGL has played a crucial
+  role in academic research, particularly in the study of large-scale
+  social networks, as demonstrated in the academic thesis “On the
+  Mathematics of Memetics”
   (<xref alt="Haldar, 2022" rid="ref-haldar2022mathematics" ref-type="bibr">Haldar,
-  2022</xref>), where it was used to generate the primary inferences of
-  the study.</p>
+  2022</xref>), where it was used to generate primary inferences.</p>
 </sec>
 <sec id="usage">
   <title>Usage</title>
@@ -177,71 +191,63 @@ a Creative Commons Attribution 4.0 International License (CC BY
   cylinders, and draw out the edges (bundled or not). The following is a
   short example of the canonical ZKC dataset visualised in the library,
   simulated with Edge bundling.</p>
+  <p>First, initialize a node project and install the library using
+  :</p>
+  <code language="bash">npm i plebiangraphlibrary</code>
+  <p>Then</p>
   <code language="javascript">// import the library
-import * as PGL from &quot;../Build/pgl_module.js&quot;;
+import * as PGL from &quot;plebiangraphlibrary&quot;;
 
-// construct a simple ZKC graph
-// this graph is pre initialized (Since it is simulated in this case)
-const zkcSimulated = await PGL.SampleData.LoadZKCSimulated();
-// console log this to see how this data is stored
-zkcSimulated.printData();
+async function createVisualization() {
+  // Load up the ZKC dataset 
+  const zkcSimulated = await PGL.SampleData.LoadZKCSimulated();
 
-// set the width and height
-const width = 800;
-const heigth = 700;
-
-// pass in the graph and the canvas into the drawing object to draw it
-// first get the canvas element
-const canvas = document.getElementById(&quot;displayCanvas&quot;);
-// then create a graph drawer object
-// to do that first make a options object
-const graphDrawerOptions = {
+  // Attach the renderer to a div which is on an HTML that the script is linked too
+  const canvas = document.getElementById(&quot;displayCanvas&quot;);
+  // These are some basic options to set up a graph drawing object. Please refer to the documentation for more options
+  const graphDrawerOptions = {
     graph: zkcSimulated,
-    width: width,
-    height: heigth,
-    canvas: canvas
-};
-// then create the visualization window
-// with those settings
-const graph3d = new PGL.GraphDrawer.GraphDrawer3d(graphDrawerOptions);
-// initialize this object before adding things to it
-await graph3d.init();
+    width: 800,
+    height: 700,
+    canvas: canvas,
+  };
 
-// Create the 3d elements for the graph
-// first describe a global scaling factor
-const bounds = 1
-// first create all the node elements
-const nodeVisualElements
-    = PGL.ThreeWrapper.DrawTHREEBoxBasedVertices(zkcSimulated, bounds, 0xffffff, 3);
-// add the node elements to the scene
-graph3d.addVisElement(nodeVisualElements);
+  // Initialize a graph with these settings
+  const graph3d = new PGL.GraphDrawer.GraphDrawer3d(graphDrawerOptions);
+  await graph3d.init();
 
-const EdgeMap = zkcSimulated.get_edge_map();
-const EdgeMap_copy = PGL.Drawing.DisplaceEdgeInY(EdgeMap, 20);
-const newEdgeMap = await PGL.Drawing.DrawEdgeBundling(EdgeMap_copy, 50, 10);
-// then create the edge elements
-// these are the reuglar edges
-const edgeVisualElements 
-    = PGL.ThreeWrapper.DrawThinEdgesFromEdgeMap(EdgeMap, bounds, 0x62b6cb, 0.01);
-graph3d.addVisElement(edgeVisualElements);
-// these are the bundled edges
-const edgeVisualElements_Bundled
-     = PGL.ThreeWrapper.DrawThickEdgesFromEdgeMap(newEdgeMap, bounds, 0x5fa8d3, 0.01);
-graph3d.addVisElement(edgeVisualElements_Bundled);
+  // Create the 3d elements for the graph
+  // first describe a global scaling factor
+  const bounds = 1;
+  // Create all the geometry associated with node elements
+  const nodeVisualElements = PGL.ThreeWrapper.DrawTHREEBoxBasedVertices(
+    zkcSimulated,
+    bounds,
+    0xffffff,
+    5
+  );
+  // add the node geometry to the scene
+  graph3d.addVisElement(nodeVisualElements);
+  // then create all the geometry associated with the edge elements
+  const edgeVisualElements = PGL.ThreeWrapper.DrawTHREEGraphEdgesThick(
+    zkcSimulated,
+    bounds,
+    0xffafcc,
+    0.02
+  );
+  // add the edge geometry to the scene
+  graph3d.addVisElement(edgeVisualElements);
 
-// then there are two last steps for a 3d graph
-// this is done so that other 3d objects can be added in later
-// since the base library is three.js all standard three js actions are possible
-// now moving on to the two steps :
-// make an animation function
-function animate() {
+  // by default the camera revolves around the graph, trigger the animation call
+  function animate() {
     requestAnimationFrame(animate);
     graph3d.rendercall();
+  }
+
+  animate();
 }
 
-// append the graph renderer to the container
-// and then drawing render calls
-animate();</code>
+createVisualization();</code>
 </sec>
 <sec id="documentation">
   <title>Documentation</title>
@@ -249,7 +255,10 @@ animate();</code>
   Guides for general guides and detailed descriptors of all the
   functions are also included. Further documentation is available at
   https://www.plebiangraphlibrary.com/. Examples are available at
-  https://www.plebiangraphlibrary.com/examples.html.</p>
+  https://www.plebiangraphlibrary.com/examples.html. A boilerplate
+  example walking through the installation and creation of an example
+  library is documented here https://github.com/range-et/pgl_example,
+  this is the same example documented above.</p>
 </sec>
 <sec id="acknowledgements">
   <title>Acknowledgements</title>
