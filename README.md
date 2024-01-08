@@ -106,6 +106,7 @@ Install it from the npm repository. Note that this method needs a npm folder to 
 ```
 npm i plebiangraphlibrary
 ```
+There is a boiler plate example of this in [repository](https://github.com/range-et/pgl_example)
 
 Or head over to the github, download the pgl_module.js [Builds](https://github.com/range-et/PGL/tree/main/Build) file and then start using it as a standalone module.
 
@@ -121,9 +122,9 @@ The Plebian Graph Library (PGL) is built on top of the ThreeJS library, seamless
 
 Contributions are welcome to the Plebian Graph Library (PGL)! Whether you're fixing a bug, adding a feature, improving documentation, or spreading the word, your contribution is valuable. Here's how you can get involved:
 
-1. Reporting Issues: If you encounter any bugs or issues, please report them in the Issues section of our GitHub repository. Provide as much detail as you can, including steps to reproduce the issue.
+* Reporting Issues: If you encounter any bugs or issues, please report them in the Issues section of our GitHub repository. Provide as much detail as you can, including steps to reproduce the issue.
 
-1. Submitting Changes:
+* Submitting Changes:
   - Fork the repository on GitHub.
   - Clone your forked repository to your local machine.
   - Create a new branch for your feature or bug fix.
@@ -131,9 +132,9 @@ Contributions are welcome to the Plebian Graph Library (PGL)! Whether you're fix
   - Commit your changes and push them to your fork.
   - Submit a pull request back to the main repository. In your pull request, describe the changes and link to any relevant issues.
 
-1. Seeking Support: If you have questions or need help integrating PGL into your project, feel free to reach out on the github [issues page](https://github.com/range-et/PGL/issues), I shall be more than happy to help out there.
+* Seeking Support: If you have questions or need help integrating PGL into your project, feel free to reach out on the github [issues page](https://github.com/range-et/PGL/issues), I shall be more than happy to help out there.
 
-1. Improving Documentation: Good documentation is crucial for any project. If you see an area that needs improvement or have ideas for new content, don't hesitate to reach out and open an issue.
+* Improving Documentation: Good documentation is crucial for any project. If you see an area that needs improvement or have ideas for new content, don't hesitate to reach out and open an issue.
 
 Also remember to check out the contributions file where there are more details on how to contribute to the project.
 
