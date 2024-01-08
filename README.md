@@ -135,6 +135,8 @@ Contributions are welcome to the Plebian Graph Library (PGL)! Whether you're fix
 
 1. Improving Documentation: Good documentation is crucial for any project. If you see an area that needs improvement or have ideas for new content, don't hesitate to reach out and open an issue.
 
+Also remember to check out the contributions file where there are more details on how to contribute to the project.
+
 Remember to follow our Code of Conduct to ensure a welcoming and inclusive environment for everyone
 
 ## Acknowledgements
