@@ -116,7 +116,6 @@ function DrawTHREEGraphEdgesThick(
 ) {
   // add the interpolation function
   const lineMap = Graph.get_edge_map();
-  console.log(lineMap)
   return DrawThickEdgesFromEdgeMap(lineMap, bounds, color, thickness);
 }
 

@@ -4,8 +4,11 @@
 # the command file
 command_notes.txt
 
+# the test diff image folder 
+test/diff_image.png
+
 # the github folder
-.github\
+.github/
 
 # Logs
 logs

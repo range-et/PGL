@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --skyBlue: #bee9e8;
+      --teal: #62b6cb;
+      --navy: #1b4965;
+      --lavender: #cae9ff;
+      --electricBlue: #5fa8d3;
+      --charcoal: #333533;
+      --black: #242423;
+      --yellow: #f5cb5c;
+      --cream: #e8eddf;
+      --grey: #cfdbd5;
+    }
+
+    * {
+      font-family: "Courier New", Courier, monospace;
+      color: var(--cream);
+    }
+
+    body {
+      background-color: var(--charcoal);
+      text-align: center;
+    }
+
+    h4 {
+      z-index: 10;
+      text-align: center;
+    }
+
+    main {
+      max-width: 1000px;
+      padding: 10px;
+      margin: auto;
+    }
+
+    .displayCanvas {
+      margin-left: auto;
+      margin-right: auto;
+      outline: var(--black) 3px solid;
+    }
+  </style>
+  <title>Test 1</title>
+</head>
+
+<body>
+  <h4>Test_2</h4>
+  <canvas id="displayCanvas" class="displayCanvas"></canvas>
+  <script type="module">
+    // import the library
+    import * as PGL from "/js/pgl_module.js";
+
+    // Create a simplified graph as a triangle
+    const graph = {
+      nodes: [
+        { id: 0, px: 0, py: 0.5, member: 0 },
+        { id: 1, px: -0.5, py: -0.5, member: 0 },
+        { id: 2, px: 0.5, py: -0.5, member: 0 }],
+      edges: [
+        [0, 1],
+        [0, 2],
+        [1, 2]]
+    }
+
+    const nodes = new Map();
+    const edges = new Map();
+    // set the node map
+    graph.nodes.forEach((node) => {
+      const id = node.id;
+      const pos = {x:node.px * 50, y:0, z:node.py * 50};
+      const modularity = node.member;
+      const n = {data: { pos: pos, size: 10, modularity: modularity }, neighbours:[]};
+      nodes.set(id, n);
+    });
+    // set the edge map
+    for (let i = 0; i < graph.edges.length; i++) {
+      const edge = graph.edges[i];
+      const start = edge[0];
+      const end = edge[1];
+      const e = {start: start, end: end, data: {}};
+      edges.set(i, e);
+    }
+    // make a graph object
+    const G = await PGL.Graph.create(nodes, edges);
+    console.log(G)
+    const lmap = PGL.Drawing.DrawEdgeLines(G, 20);
+    G.apply_edge_pos_maps(lmap);
+
+    // set the width and height 
+    const width = 800;
+    const heigth = 700;
+
+    // pass in the graph and the canvas into the drawing object to draw it
+    // first get the canvas element
+    const canvas = document.getElementById("displayCanvas");
+    // then create a graph drawer object
+    // to do that first make a options object
+    const graphDrawerOptions = {
+      graph: G,
+      width: width,
+      height: heigth,
+      canvas: canvas
+    };
+    // then create the visualization window
+    // with those settings
+    const graph3d = new PGL.GraphDrawer.GraphDrawer3d(graphDrawerOptions);
+    // initialize this object before adding things to it 
+    await graph3d.init();
+
+    // Disable camera rotation
+    graph3d.controls.autoRotate = false;
+
+    // Create the 3d elements for the graph
+    // first describe a global scaling factor
+    const bounds = 1
+    // first create all the node elements
+    const nodeVisualElements = PGL.ThreeWrapper.DrawTHREEBoxBasedVertices(G, bounds, 0xffffff, 5);
+    // add the node elements to the scene
+    graph3d.addVisElement(nodeVisualElements);
+    // then create the edge elements 
+    const edgeVisualElements = PGL.ThreeWrapper.DrawTHREEGraphEdgesThick(G, bounds, 0xffafcc, 0.02);
+    graph3d.addVisElement(edgeVisualElements);
+
+    // then there are two last steps for a 3d graph
+    // this is done so that other 3d objects can be added in later
+    // since the base library is three.js all standard three js things are possible
+    // now moving on to the two steps :
+    // make an animation function
+    function animate() {
+      requestAnimationFrame(animate);
+      graph3d.rendercall();
+    }
+
+    // append the graph renderer to the container
+    // and then drawing render calls
+    animate();
+
+  </script>
+</body>
+
+</html>

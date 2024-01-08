@@ -1327,7 +1327,6 @@ var __awaiter = undefined && undefined.__awaiter || function(thisArg11, _argumen
  */ function DrawTHREEGraphEdgesThick(Graph11, bounds11 = 1, color11 = 0xffffff, thickness11 = 0.2) {
     // add the interpolation function
     const lineMap11 = Graph11.get_edge_map();
-    console.log(lineMap11);
     return DrawThickEdgesFromEdgeMap(lineMap11, bounds11, color11, thickness11);
 }
 // draw a thing to draw out all the edges from the edge map stuff

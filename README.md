@@ -1,14 +1,16 @@
 ## Introduction
 
-The Plebian Graph Library (PGL) is a library designed to facilitate the visualization of large-scale network data (Network X line plotting in Javascript/Typescript). Leveraging the power of WebGL, PGL offers an efficient and interactive solution for visualizing network data in web browsers. Whether dealing with local datasets or data retrieved from APIs, PGL provides a versatile platform for conducting extensive network simulations, physical modeling, and immersive visualizations. With a rich set of features including graph condensation based on selected criteria, randomized edge pruning in highly connected graphs, and support for diverse visualization techniques like network diffusions and Kamada Kawai layouts, and edge bundling, PGL empowers users to gain valuable insights from complex network structures.
+The Plebian Graph Library (PGL) is a library designed to facilitate the visualization of large-scale network data (Network X line plotting in Javascript/Typescript). Leveraging the power of WebGL, PGL offers an efficient and interactive solution for visualizing network data in web browsers (Tested on Firefox, Edge and Chrome). Whether dealing with local datasets or data retrieved from APIs, PGL provides a versatile platform for conducting extensive network simulations, physical modeling, and immersive visualizations. With a rich set of features including graph condensation based on selected criteria, randomized edge pruning in highly connected graphs, and support for diverse visualization techniques like network diffusions and Kamada Kawai layouts, and edge bundling, PGL empowers users to gain valuable insights from complex network structures.
 
 ## Notes on terminology
+
 It can be a bit cunfusing especially when working with Nodes/Edges/Vetices/Lines in this library (Also in general in working with graphs). Hence the terminology that I've followed here is as following:
-- Nodes (The libray and the class is called _Node so as to not confuse with NodeJS ) and Edges make up a graph.
-- Vertices and Lines make up the 3d visualisation side of a graph. 
-- Nodes are the abstract idea, vertices are what's visualized 
+
+- Nodes (The libray and the class is called \_Node so as to not confuse with NodeJS ) and Edges make up a graph.
+- Vertices and Lines make up the 3d visualisation side of a graph.
+- Nodes are the abstract idea, vertices are what's visualized
 - Edges are the abstract idea , lines are what's visualized
-Lastly there are a few helper classes like points and lines. Points are essentially vectors and are used for displacement and also for describing a place in relation to the global coordinate system. Line are an array of points that get translated into lines using one of the visualization methods. Points can have different visualisations like boxes, billboarded planes and cylinders etc.
+  Lastly there are a few helper classes like points and lines. Points are essentially vectors and are used for displacement and also for describing a place in relation to the global coordinate system. Line are an array of points that get translated into lines using one of the visualization methods. Points can have different visualisations like boxes, billboarded planes and cylinders etc.
 
 ## Semantics of the Package
 
@@ -16,16 +18,20 @@ Existing network visualisation libraries like NetworkX dictated the semantics of
 Here is an illustrated walkthrough of a simple set-up given a predefined set of “nodes” and “edges”.
 
 ## Documentation
-The documentation for the package is available at https://www.plebiangraphlibrary.com/ 
 
-## General setup of the package 
+The documentation for the package is available at [documentation](https://www.plebiangraphlibrary.com/)
+
+## General setup of the package
+
 Apart from the graph class all the methods are stored in variables. These variables (For example SampleData) would have a function attached to it that retuns a value, or in some cases you can pass in values to do stuff (like displaceing the graph etc). I mostly did this for the sake of speed to develop - at some point shall be wrapping them up as classes.
 
 ## An example of rendering a basic graph
+
 The general idea of drawing a basic graph is outlined above. To recap all the basic steps:
+
 - Get a graph (either generate it or get onse using the sample data)
 - Create a graph drawing window (this is essentially a three js canvas)
-- Then add the elements like the nodes of the graphs using one of the many drawing options 
+- Then add the elements like the nodes of the graphs using one of the many drawing options
 
 ```javascript
 // import the library
@@ -95,22 +101,22 @@ animate();
 
 ## Usage / Installation
 
-// package to yet be distributed to npm but expect it shortly
-in the meantime - just download the build folder and point it to the module file and start using it, put it in as a module and start using it!
-ideally at some point:
+Install it from the npm repository. Note that this method needs a npm folder to be set up with a build tool like parcel to package the visualisations
 
 ```
-npm install pgl
+npm i plebiangraphlibrary
 ```
 
-## More examples 
-More examples are available at https://www.plebiangraphlibrary.com/examples.html Check them out as a demonstration of some of the features of the library.
+Or head over to the github, download the pgl_module.js [Builds](https://github.com/range-et/PGL/tree/main/Build) file and then start using it as a standalone module.
 
+## More examples
+
+More examples are available at [Examples](https://www.plebiangraphlibrary.com/examples.html) Check them out as a demonstration of some of the features of the library.
 
 ## Integrations
 
 The Plebian Graph Library (PGL) is built on top of the ThreeJS library, seamlessly integrating its rich functionalities into a comprehensive and powerful toolset for large-scale graph data visualization. By leveraging the foundation provided by ThreeJS, PGL inherits a wide range of features, including advanced shading techniques, texture mapping capabilities, and much more. These powerful rendering capabilities enable PGL to create visually stunning and immersive graph visualizations, adding depth and realism to the representation of complex network structures. With its symbiotic relationship with ThreeJS, PGL empowers users to go beyond traditional graph visualizations, unlocking a world of possibilities for exploration and analysis.
 
-
 ## Acknowledgements
-This libray was sponsored by the Geometry Lab under the Laborotory for Design Technologies at the Graduate School of Design, Harvard University. Many thanks to Andrew Witt for guiding this project. This project was developed by : Indrajeet Haldar (https://www.indrajeethaldar.com/) 
+
+This libray was sponsored by the Geometry Lab under the Laborotory for Design Technologies at the Graduate School of Design, Harvard University. Many thanks to Andrew Witt for guiding this project. This project was developed by : [Indrajeet Haldar](https://www.indrajeethaldar.com/)
