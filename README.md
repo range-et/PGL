@@ -117,6 +117,26 @@ More examples are available at [Examples](https://www.plebiangraphlibrary.com/ex
 
 The Plebian Graph Library (PGL) is built on top of the ThreeJS library, seamlessly integrating its rich functionalities into a comprehensive and powerful toolset for large-scale graph data visualization. By leveraging the foundation provided by ThreeJS, PGL inherits a wide range of features, including advanced shading techniques, texture mapping capabilities, and much more. These powerful rendering capabilities enable PGL to create visually stunning and immersive graph visualizations, adding depth and realism to the representation of complex network structures. With its symbiotic relationship with ThreeJS, PGL empowers users to go beyond traditional graph visualizations, unlocking a world of possibilities for exploration and analysis.
 
+## Contributing
+
+Contributions are welcome to the Plebian Graph Library (PGL)! Whether you're fixing a bug, adding a feature, improving documentation, or spreading the word, your contribution is valuable. Here's how you can get involved:
+
+1. Reporting Issues: If you encounter any bugs or issues, please report them in the Issues section of our GitHub repository. Provide as much detail as you can, including steps to reproduce the issue.
+
+1. Submitting Changes:
+  - Fork the repository on GitHub.
+  - Clone your forked repository to your local machine.
+  - Create a new branch for your feature or bug fix.
+  - Make your changes and test them.
+  - Commit your changes and push them to your fork.
+  - Submit a pull request back to the main repository. In your pull request, describe the changes and link to any relevant issues.
+
+1. Seeking Support: If you have questions or need help integrating PGL into your project, feel free to reach out on the github [issues page](https://github.com/range-et/PGL/issues), I shall be more than happy to help out there.
+
+1. Improving Documentation: Good documentation is crucial for any project. If you see an area that needs improvement or have ideas for new content, don't hesitate to reach out and open an issue.
+
+Remember to follow our Code of Conduct to ensure a welcoming and inclusive environment for everyone
+
 ## Acknowledgements
 
 This libray was sponsored by the Geometry Lab under the Laborotory for Design Technologies at the Graduate School of Design, Harvard University. Many thanks to Andrew Witt for guiding this project. This project was developed by : [Indrajeet Haldar](https://www.indrajeethaldar.com/)
