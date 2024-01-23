@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="MasterStyle.css">
+    <title>ZKC3d - Example</title>
+</head>
+
+<body>
+    <h4>A simple plot of the ZKC Dataset <a href="https://github.com/range-et/PGL/blob/main/public/2_ZKC_edge_bundling.html">Code</a></h4>
+    <canvas id="displayCanvas" class="displayCanvas"></canvas>
+    <script type="module">
+        // import the library
+        import * as PGL from "../Build/pgl_module.js";
+
+        // construct a simple ZKC graph
+        // this graph is pre initialized (Since it is simulated in this case)
+        const zkcSimulated = await PGL.SampleData.LoadZKCSimulated();
+        // console log this to see how this data is stored 
+        zkcSimulated.printData();
+
+        // set the width and height 
+        const width = 800;
+        const heigth = 700;
+
+        // pass in the graph and the canvas into the drawing object to draw it
+        // first get the canvas element
+        const canvas = document.getElementById("displayCanvas");
+        // then create a graph drawer object
+        // to do that first make a options object
+        const graphDrawerOptions = {
+            graph: zkcSimulated,
+            width: width,
+            height: heigth,
+            canvas: canvas
+        };
+        // then create the visualization window
+        // with those settings
+        const graph3d = new PGL.GraphDrawer.GraphDrawer3d(graphDrawerOptions);
+        // initialize this object before adding things to it 
+        await graph3d.init();
+
+        // Create the 3d elements for the graph
+        // first describe a global scaling factor
+        const bounds = 1
+        // first create all the node elements
+        const nodeVisualElements = PGL.ThreeWrapper.DrawTHREEBoxBasedVertices(zkcSimulated, bounds, 0xffffff, 3);
+        // add the node elements to the scene
+        graph3d.addVisElement(nodeVisualElements);
+
+        const EdgeMap = zkcSimulated.get_edge_map();
+        const EdgeMap_copy = PGL.Drawing.DisplaceEdgeInY(EdgeMap, 20);
+        const newEdgeMap = await PGL.Drawing.DrawEdgeBundling(EdgeMap_copy, 50, 10);
+        // then create the edge elements 
+        // these are the reuglar edges 
+        const edgeVisualElements = PGL.ThreeWrapper.DrawThinEdgesFromEdgeMap(EdgeMap, bounds, 0x62b6cb, 0.01);
+        graph3d.addVisElement(edgeVisualElements);
+        // these are the bundled edges 
+        const edgeVisualElements_Bundled = PGL.ThreeWrapper.DrawThickEdgesFromEdgeMap(newEdgeMap, bounds, 0x5fa8d3, 0.01);
+        graph3d.addVisElement(edgeVisualElements_Bundled);
+
+        // then there are two last steps for a 3d graph
+        // this is done so that other 3d objects can be added in later
+        // since the base library is three.js all standard three js things are possible
+        // now moving on to the two steps :
+        // make an animation function
+        function animate() {
+            requestAnimationFrame(animate);
+            graph3d.rendercall();
+        }
+
+        // append the graph renderer to the container
+        // and then drawing render calls
+        animate();
+
+    </script>
+</body>
+
+</html>
