@@ -1,6 +1,6 @@
 ## Introduction
 
-The Plebian Graph Library (PGL) is a library designed to facilitate the visualization of large-scale network data (Network X line plotting in Javascript/Typescript). Leveraging the power of WebGL, PGL offers an efficient and interactive solution for visualizing network data in web browsers (Tested on Firefox, Edge and Chrome). Whether dealing with local datasets or data retrieved from APIs, PGL provides a versatile platform for conducting extensive network simulations, physical modeling, and immersive visualizations. With a rich set of features including graph condensation based on selected criteria, randomized edge pruning in highly connected graphs, and support for diverse visualization techniques like network diffusions and Kamada Kawai layouts, and edge bundling, PGL empowers users to gain valuable insights from complex network structures.
+The Plebeian Graph Library (PGL) is a library designed to facilitate the visualization of large-scale network data (Network X line plotting in Javascript/Typescript). Leveraging the power of WebGL, PGL offers an efficient and interactive solution for visualizing network data in web browsers (Tested on Firefox, Edge and Chrome). Whether dealing with local datasets or data retrieved from APIs, PGL provides a versatile platform for conducting extensive network simulations, physical modeling, and immersive visualizations. With a rich set of features including graph condensation based on selected criteria, randomized edge pruning in highly connected graphs, and support for diverse visualization techniques like network diffusions and Kamada Kawai layouts, and edge bundling, PGL empowers users to gain valuable insights from complex network structures.
 
 ## Notes on terminology
 
@@ -19,7 +19,7 @@ Here is an illustrated walkthrough of a simple set-up given a predefined set of 
 
 ## Documentation
 
-The documentation for the package is available at [documentation](https://www.plebiangraphlibrary.com/)
+The documentation for the package is available at [documentation](https://www.plebeiangraphlibrary.com/)
 
 ## General setup of the package
 
@@ -35,7 +35,7 @@ The general idea of drawing a basic graph is outlined above. To recap all the ba
 
 ```javascript
 // import the library
-import * as PGL from "plebiangraphlibrary";
+import * as PGL from "plebeiangraphlibrary";
 
 async function createVisualization() {
   // Load up the ZKC dataset 
@@ -94,7 +94,7 @@ createVisualization();
 Install it from the npm repository. Note that this method needs a npm folder to be set up with a build tool like parcel to package the visualisations
 
 ```
-npm i plebiangraphlibrary
+npm i plebeiangraphlibrary
 ```
 There is a boiler plate example of this in [repository](https://github.com/range-et/pgl_example)
 
@@ -102,11 +102,11 @@ Or head over to the github, download the pgl_module.js [Builds](https://github.c
 
 ## More examples
 
-More examples are available at [Examples](https://www.plebiangraphlibrary.com/examples.html) Check them out as a demonstration of some of the features of the library.
+More examples are available at [Examples](https://www.plebeiangraphlibrary.com/examples.html) Check them out as a demonstration of some of the features of the library.
 
 ## Integrations
 
-The Plebian Graph Library (PGL) is built on top of the ThreeJS library, seamlessly integrating its rich functionalities into a comprehensive and powerful toolset for large-scale graph data visualization. By leveraging the foundation provided by ThreeJS, PGL inherits a wide range of features, including advanced shading techniques, texture mapping capabilities, and much more. These powerful rendering capabilities enable PGL to create visually stunning and immersive graph visualizations, adding depth and realism to the representation of complex network structures. With its symbiotic relationship with ThreeJS, PGL empowers users to go beyond traditional graph visualizations, unlocking a world of possibilities for exploration and analysis.
+The plebeian Graph Library (PGL) is built on top of the ThreeJS library, seamlessly integrating its rich functionalities into a comprehensive and powerful toolset for large-scale graph data visualization. By leveraging the foundation provided by ThreeJS, PGL inherits a wide range of features, including advanced shading techniques, texture mapping capabilities, and much more. These powerful rendering capabilities enable PGL to create visually stunning and immersive graph visualizations, adding depth and realism to the representation of complex network structures. With its symbiotic relationship with ThreeJS, PGL empowers users to go beyond traditional graph visualizations, unlocking a world of possibilities for exploration and analysis.
 
 ## Benchmarking 
 
@@ -114,7 +114,7 @@ A performance benchmark conducted against D3, an industry-standard visualization
 
 ## Contributing
 
-Contributions are welcome to the Plebian Graph Library (PGL)! Whether you're fixing a bug, adding a feature, improving documentation, or spreading the word, your contribution is valuable. Here's how you can get involved:
+Contributions are welcome to the plebeian Graph Library (PGL)! Whether you're fixing a bug, adding a feature, improving documentation, or spreading the word, your contribution is valuable. Here's how you can get involved:
 
 * Reporting Issues: If you encounter any bugs or issues, please report them in the Issues section of our GitHub repository. Provide as much detail as you can, including steps to reproduce the issue.
 

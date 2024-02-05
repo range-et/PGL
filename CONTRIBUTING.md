@@ -1,4 +1,4 @@
-# Contributing to Plebian Graph Library (PGL)
+# Contributing to Plebeian Graph Library (PGL)
 
 First off, thank you for considering contributing to PGL! It's people like you that make the open source community such a great place. Here are some guidelines to help you get started.
 

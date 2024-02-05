@@ -1,5 +1,5 @@
 {
-  "name": "plebiangraphlibrary",
+  "name": "plebeiangraphlibrary",
   "version": "1.0.6",
   "description": "A NetworkX like package for graphs in javascript",
   "source": "./Src/index.ts",
@@ -35,7 +35,7 @@
   "bugs": {
     "url": "https://github.com/range-et/PGL/issues"
   },
-  "homepage": "https://www.plebiangraphlibrary.com/",
+  "homepage": "https://www.plebeiangraphlibrary.com/",
   "targets": {
     "main": {
       "includeNodeModules": false

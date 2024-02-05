@@ -1,7 +1,7 @@
-# Code of Conduct for Plebian Graph Library (PGL)
+# Code of Conduct for Plebeian Graph Library (PGL)
 
 ## My Pledge
-In the interest of fostering an open and welcoming environment, I, as the maintainer and primary contributor of the Plebian Graph Library (PGL), pledge to make participation in this project a harassment-free experience for everyone, regardless of individual differences.
+In the interest of fostering an open and welcoming environment, I, as the maintainer and primary contributor of the Plebeian Graph Library (PGL), pledge to make participation in this project a harassment-free experience for everyone, regardless of individual differences.
 
 ## Standards
 

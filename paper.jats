@@ -18,7 +18,7 @@
 <article-id pub-id-type="publisher-id">0</article-id>
 <article-id pub-id-type="doi">N/A</article-id>
 <title-group>
-<article-title>The Plebian Graph Library: A WebGL based network
+<article-title>The plebeian Graph Library: A WebGL based network
 visualisation and diagnostics package</article-title>
 </title-group>
 <contrib-group>
@@ -82,11 +82,11 @@ a Creative Commons Attribution 4.0 International License (CC BY
   documentation and analysis only from the perspective of mathematical
   models of this particular property of large-scale networks
   (<xref alt="Gao &amp; Guan, 2012" rid="ref-gao2012network" ref-type="bibr">Gao
-  &amp; Guan, 2012</xref>). The Plebian Graph Library (PGL) is a library
-  that solves for the visualisation of large networks and their
+  &amp; Guan, 2012</xref>). The plebeian Graph Library (PGL) is a
+  library that solves for the visualisation of large networks and their
   diagnostic study.</p>
-  <p>The Plebian Graph Library (PGL) is a JavaScript library (written in
-  Typescript
+  <p>The plebeian Graph Library (PGL) is a JavaScript library (written
+  in Typescript
   (<xref alt="Bierman et al., 2014" rid="ref-bierman2014understanding" ref-type="bibr">Bierman
   et al., 2014</xref>)) designed to facilitate the visualisation and
   diagnostic analysis of large-scale network data in browsers using
@@ -135,9 +135,9 @@ a Creative Commons Attribution 4.0 International License (CC BY
 </sec>
 <sec id="statement-of-need">
   <title>Statement of need</title>
-  <p>The Plebian Graph Library (PGL) addresses several critical needs in
-  large-scale graph data visualization. Existing software solutions for
-  visualizing large datasets, such as Gephi
+  <p>The plebeian Graph Library (PGL) addresses several critical needs
+  in large-scale graph data visualization. Existing software solutions
+  for visualizing large datasets, such as Gephi
   (<xref alt="Bastian et al., 2009" rid="ref-bastian2009gephi" ref-type="bibr">Bastian
   et al., 2009</xref>), are limited to local machine installations,
   restricting accessibility and compatibility across various devices.
@@ -193,10 +193,10 @@ a Creative Commons Attribution 4.0 International License (CC BY
   simulated with Edge bundling.</p>
   <p>First, initialize a node project and install the library using
   :</p>
-  <code language="bash">npm i plebiangraphlibrary</code>
+  <code language="bash">npm i plebeiangraphlibrary</code>
   <p>Then</p>
   <code language="javascript">// import the library
-import * as PGL from &quot;plebiangraphlibrary&quot;;
+import * as PGL from &quot;plebeiangraphlibrary&quot;;
 
 async function createVisualization() {
   // Load up the ZKC dataset 
@@ -254,8 +254,8 @@ createVisualization();</code>
   <p>Package documentation is available on GitHub for the package.
   Guides for general guides and detailed descriptors of all the
   functions are also included. Further documentation is available at
-  https://www.plebiangraphlibrary.com/. Examples are available at
-  https://www.plebiangraphlibrary.com/examples.html. A boilerplate
+  https://www.plebeiangraphlibrary.com/. Examples are available at
+  https://www.plebeiangraphlibrary.com/examples.html. A boilerplate
   example walking through the installation and creation of an example
   library is documented here https://github.com/range-et/pgl_example,
   this is the same example documented above.</p>
