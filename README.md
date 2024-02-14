@@ -4,17 +4,17 @@ The Plebeian Graph Library (PGL) is a library designed to facilitate the visuali
 
 ## Notes on terminology
 
-It can be a bit cunfusing especially when working with Nodes/Edges/Vetices/Lines in this library (Also in general in working with graphs). Hence the terminology that I've followed here is as following:
+It can be a bit confusing especially when working with Nodes/Edges/Vertices/Lines in this library (Also in general in working with graphs). Hence the terminology that I've followed here is as following:
 
-- Nodes (The libray and the class is called \_Node so as to not confuse with NodeJS ) and Edges make up a graph.
-- Vertices and Lines make up the 3d visualisation side of a graph.
+- Nodes (The library and the class is called \_Node so as to not confuse with NodeJS ) and Edges make up a graph.
+- Vertices and Lines make up the 3d visualization side of a graph.
 - Nodes are the abstract idea, vertices are what's visualized
 - Edges are the abstract idea , lines are what's visualized
-  Lastly there are a few helper classes like points and lines. Points are essentially vectors and are used for displacement and also for describing a place in relation to the global coordinate system. Line are an array of points that get translated into lines using one of the visualization methods. Points can have different visualisations like boxes, billboarded planes and cylinders etc.
+  Lastly there are a few helper classes like points and lines. Points are essentially vectors and are used for displacement and also for describing a place in relation to the global coordinate system. Line are an array of points that get translated into lines using one of the visualization methods. Points can have different visualizations like boxes, billboarded planes and cylinders etc.
 
 ## Semantics of the Package
 
-Existing network visualisation libraries like NetworkX dictated the semantics of the graph library and borrowed some of the semantic ideas from three JS. The process is to define a Graph Object made of nodes and edges. Then modify this graph based on some set of properties. Then update the relevant settings. And lastly, to visualise the nodes, either as point clouds, boxes or cylinders, and to draw out the edges (bundled or not) lines.
+Existing network visualization libraries like NetworkX dictated the semantics of the graph library and borrowed some of the semantic ideas from three JS. The process is to define a Graph Object made of nodes and edges. Then modify this graph based on some set of properties. Then update the relevant settings. And lastly, to visualize the nodes, either as point clouds, boxes or cylinders, and to draw out the edges (bundled or not) lines.
 Here is an illustrated walkthrough of a simple set-up given a predefined set of “nodes” and “edges”.
 
 ## Documentation
@@ -23,13 +23,13 @@ The documentation for the package is available at [documentation](https://www.pl
 
 ## General setup of the package
 
-Apart from the graph class all the methods are stored in variables. These variables (For example SampleData) would have a function attached to it that retuns a value, or in some cases you can pass in values to do stuff (like displaceing the graph etc). I mostly did this for the sake of speed to develop - at some point shall be wrapping them up as classes.
+Apart from the graph class all the methods are stored in variables. These variables (For example SampleData) would have a function attached to it that returns a value, or in some cases you can pass in values to do stuff (like displacing the graph etc). I mostly did this for the sake of speed to develop - at some point shall be wrapping them up as classes.
 
 ## An example of rendering a basic graph
 
 The general idea of drawing a basic graph is outlined above. To recap all the basic steps:
 
-- Get a graph (either generate it or get onse using the sample data)
+- Get a graph (either generate it or get one using the sample data)
 - Create a graph drawing window (this is essentially a three js canvas)
 - Then add the elements like the nodes of the graphs using one of the many drawing options
 
@@ -91,14 +91,14 @@ createVisualization();
 
 ## Usage / Installation
 
-Install it from the npm repository. Note that this method needs a npm folder to be set up with a build tool like parcel to package the visualisations
+Install it from the npm repository. Note that this method needs a npm folder to be set up with a build tool like parcel to package the visualizations
 
 ```
 npm i plebeiangraphlibrary
 ```
 There is a boiler plate example of this in [repository](https://github.com/range-et/pgl_example)
 
-Or head over to the github, download the pgl_module.js [Builds](https://github.com/range-et/PGL/tree/main/Build) file and then start using it as a standalone module.
+Or head over to the GitHub, download the pgl_module.js [Builds](https://github.com/range-et/PGL/tree/main/Build) file and then start using it as a standalone module.
 
 ## More examples
 
@@ -126,7 +126,7 @@ Contributions are welcome to the plebeian Graph Library (PGL)! Whether you're fi
   - Commit your changes and push them to your fork.
   - Submit a pull request back to the main repository. In your pull request, describe the changes and link to any relevant issues.
 
-* Seeking Support: If you have questions or need help integrating PGL into your project, feel free to reach out on the github [issues page](https://github.com/range-et/PGL/issues), I shall be more than happy to help out there.
+* Seeking Support: If you have questions or need help integrating PGL into your project, feel free to reach out on the GitHub [issues page](https://github.com/range-et/PGL/issues), I shall be more than happy to help out there.
 
 * Improving Documentation: Good documentation is crucial for any project. If you see an area that needs improvement or have ideas for new content, don't hesitate to reach out and open an issue.
 
@@ -136,4 +136,4 @@ Remember to follow our Code of Conduct to ensure a welcoming and inclusive envir
 
 ## Acknowledgements
 
-This libray was sponsored by the Geometry Lab under the Laborotory for Design Technologies at the Graduate School of Design, Harvard University. Many thanks to Andrew Witt for guiding this project. This project was developed by : [Indrajeet Haldar](https://www.indrajeethaldar.com/)
+This library was sponsored by the Geometry Lab under the Laboratory for Design Technologies at the Graduate School of Design, Harvard University. Many thanks to Andrew Witt for guiding this project. This project was developed by : [Indrajeet Haldar](https://www.indrajeethaldar.com/)
