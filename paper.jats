@@ -76,17 +76,20 @@ a Creative Commons Attribution 4.0 International License (CC BY
   networks limits the communication of the findings to researchers
   familiar with these research methods
   (<xref alt="Tobi &amp; Kampen, 2018" rid="ref-tobi2018research" ref-type="bibr">Tobi
-  &amp; Kampen, 2018</xref>). Moreover, the more abstract nature of
-  statistical solutions reduces the complexity of diagnosing network
-  properties, especially network diffusion. It allows for limited
-  documentation and analysis only from the perspective of mathematical
-  models of this particular property of large-scale networks
-  (<xref alt="Gao &amp; Guan, 2012" rid="ref-gao2012network" ref-type="bibr">Gao
-  &amp; Guan, 2012</xref>). The plebeian Graph Library (PGL) is a
-  library that solves for the visualisation of large networks and their
-  diagnostic study.</p>
-  <p>The plebeian Graph Library (PGL) is a JavaScript library (written
-  in Typescript
+  &amp; Kampen, 2018</xref>). Statistical analyses may not always
+  capture the nuanced patterns and correlations within complex datasets,
+  a limitation that visual inspection can overcome
+  (<xref alt="Vaishnavi et al., 2016" rid="ref-Vaishnavi2016A" ref-type="bibr">Vaishnavi
+  et al., 2016</xref>). The Plebeian Graph Library (PGL) is a library
+  that solves for the visualisation of large networks and their
+  diagnostic study. PGL enables a deeper, more intuitive understanding
+  of intricate processes such as network diffusion by allowing for
+  direct, interactive exploration of data bridging the gap between raw
+  data and actionable insights.</p>
+</sec>
+<sec id="introduction">
+  <title>Introduction</title>
+  <p>PGL is a JavaScript library (written in Typescript
   (<xref alt="Bierman et al., 2014" rid="ref-bierman2014understanding" ref-type="bibr">Bierman
   et al., 2014</xref>)) designed to facilitate the visualisation and
   diagnostic analysis of large-scale network data in browsers using
@@ -98,20 +101,20 @@ a Creative Commons Attribution 4.0 International License (CC BY
   visualisations whilst offering a range of diagnostic tools for
   organising network data using standard search algorithms
   (<xref alt="Mattson et al., 2013" rid="ref-mattson2013standards" ref-type="bibr">Mattson
-  et al., 2013</xref>) such as network diffusions, Breadth-first search,
-  Depth-first search and Dijkstra’s search algorithm. With a rich set of
+  et al., 2013</xref>) such as network diffusions, breadth-first search,
+  depth-first search and dijkstra’s search algorithm. With a rich set of
   diagnostic features, including network condensation, weighted edge
   pruning in highly connected graphs, and support for visualisation
   techniques like Kamada Kawai layouts
   (<xref alt="Kamada &amp; Kawai, 1989" rid="ref-kamada1989algorithm" ref-type="bibr">Kamada
-  &amp; Kawai, 1989</xref>), Hierarchical plots, Hive plots and Edge
+  &amp; Kawai, 1989</xref>), hierarchical plots, hive plots and edge
   bundling
   (<xref alt="Bourqui et al., 2016" rid="ref-bourqui2016multilayer" ref-type="bibr">Bourqui
   et al., 2016</xref>), PGL empowers researchers to gain valuable
   insights from complex network structures. Additionally, PGL contains
-  canonical example of the Zackary’s Karate Club (ZKC) dataset
+  the canonical example of the Zackary’s Karate Club (ZKC) dataset
   (<xref alt="Zachary, 1977" rid="ref-zachary1977information" ref-type="bibr">Zachary,
-  1977</xref>), and the Erdosh Reyni Random Graph model
+  1977</xref>), and Erdosh Reyni Random Graph model
   (<xref alt="Li, 2021" rid="ref-li2021brief" ref-type="bibr">Li,
   2021</xref>) as a generator to study and compare network
   structures.</p>
@@ -121,30 +124,32 @@ a Creative Commons Attribution 4.0 International License (CC BY
   recursive importance, i.e. eigenvector centralities
   (<xref alt="Lacobucci et al., 2017" rid="ref-lacobucci2017eigenvector" ref-type="bibr">Lacobucci
   et al., 2017</xref>). A diffusion simulation is then run, and insights
-  and diagnostics of diffusion sequences are gathered. For example,
-  whether diffusion first occurs between high eigenvector centrality
-  nodes across clusters or does the spread appear in the groups before
-  spreading to other clusters, allowing for the visual study of the
-  strength of weak ties behaviour
+  and diagnostics of diffusion sequences are gathered. For example, we
+  can observe graphically whether diffusion first occurs between high
+  eigenvector centrality nodes across clusters or instead appears in the
+  groups before spreading to other clusters. This enables the visual
+  study of the strength of weak ties behaviour
   (<xref alt="Granovetter, 1973" rid="ref-granovetter1973strength" ref-type="bibr">Granovetter,
   1973</xref>). Exploratory research, analysis, communication, and
   documentation of these network behaviours, as mentioned above, would
-  have been complex in a traditional visualisation library where the
+  have been complex using a traditional visualisation library where the
   emphasis lies on validation instead of exploratory study and
   diagnostics.</p>
 </sec>
 <sec id="statement-of-need">
   <title>Statement of need</title>
-  <p>The plebeian Graph Library (PGL) addresses several critical needs
-  in large-scale graph data visualization. Existing software solutions
-  for visualizing large datasets, such as Gephi
+  <p>PGL addresses several critical needs in large-scale graph data
+  visualization. Existing software solutions for visualizing large
+  datasets, such as Gephi
   (<xref alt="Bastian et al., 2009" rid="ref-bastian2009gephi" ref-type="bibr">Bastian
   et al., 2009</xref>), are limited to local machine installations,
   restricting accessibility and compatibility across various devices.
   Additionally, browser-based software libraries like Vis.JS
-  (<xref alt="V., 2021" rid="ref-visjs" ref-type="bibr">V., 2021</xref>)
-  and D3[d3ieee], which rely on Scalable Vector Graphics (SVG), often
-  lack the scalability to analyze complex network structures. This
+  (<xref alt="Almende B.V., 2017" rid="ref-visjs" ref-type="bibr">Almende
+  B.V., 2017</xref>) and D3
+  (<xref alt="Bostock et al., 2011" rid="ref-D3" ref-type="bibr">Bostock
+  et al., 2011</xref>) , which rely on Scalable Vector Graphics (SVG),
+  often lack the scalability to analyze complex network structures. This
   reliance on SVG imposes performance limitations and restricts
   visualizations to two dimensions.</p>
   <p>In contrast, PGL offers a robust browser-based solution leveraging
@@ -158,39 +163,40 @@ a Creative Commons Attribution 4.0 International License (CC BY
   application architecture.</p>
   <p>A performance benchmark conducted against D3, an industry-standard
   visualization library, showcases PGL’s capabilities. In this test
-  involving approximately 5000 nodes and 200000 edges, D3-based SVG
-  graphs only achieved a frame rate of 1.5 frames per second, bottoming
-  at a frame every two seconds with a maximum of 12 frames per second.
-  In contrast, PGL maintained a minimum of 52 frames per second and
-  averaging 58 frames per second under similar conditions. This
-  benchmark, performed on both Firefox and Chrome browsers (with
-  negligible differences in performance) on a computer with an Nvidia
-  RTX 2080 GPU, highlights PGL’s superior performance and efficiency in
-  rendering complex network visualizations.</p>
+  involving rendering a graph of approximately 5,000 nodes and 200,000
+  edges, D3-based SVG graphs only achieved a frame rate of 1.5 frames
+  per second, bottoming at a frame every two seconds with a maximum of
+  12 frames per second. In contrast, PGL maintained a minimum of 52
+  frames per second and averaging 58 frames per second under similar
+  conditions. This benchmark, performed on both Firefox and Chrome
+  browsers (with negligible differences in performance) on a computer
+  with an Nvidia RTX 2080 GPU, highlights PGL’s superior performance and
+  efficiency in rendering complex network visualizations.</p>
   <p>Furthermore, PGL’s three-dimensional rendering approach allows for
   a more comprehensive range of data stratification methods and
   facilitates more immersive and interactive visualizations. The ability
   to navigate information-dense networks in three dimensions
   significantly reduces visual noise and enhances clarity in diagnosing
-  large-scale networks. Since its inception, PGL has played a crucial
-  role in academic research, particularly in the study of large-scale
-  social networks, as demonstrated in the academic thesis “On the
-  Mathematics of Memetics”
+  large-scale networks. Since its inception, PGL has been instrumental
+  in my academic research, especially in the exploration of large-scale
+  social networks. This is documented in my thesis, “On the Mathematics
+  of Memetics”
   (<xref alt="Haldar, 2022" rid="ref-haldar2022mathematics" ref-type="bibr">Haldar,
-  2022</xref>), where it was used to generate primary inferences.</p>
+  2022</xref>), where it served as a crucial tool for generating primary
+  inferences.</p>
 </sec>
 <sec id="usage">
   <title>Usage</title>
   <p>Existing network libraries like NetworkX
   (<xref alt="Hagberg et al., 2008" rid="ref-hagberg2008exploring" ref-type="bibr">Hagberg
-  et al., 2008</xref>) dictated the semantics of the graph library and
-  borrowed some of the semantic ideas from ThreeJS. The overall
-  structure is to define a Graph Object made of nodes and edges. Then,
-  modify this graph based on some properties and update the relevant
-  settings. Lastly, visualise the nodes as point clouds, boxes or
-  cylinders, and draw out the edges (bundled or not). The following is a
-  short example of the canonical ZKC dataset visualised in the library,
-  simulated with Edge bundling.</p>
+  et al., 2008</xref>) strongly influenced the semantics of the graph
+  library and borrowed some of the semantic ideas from ThreeJS. The
+  overall structure is to define a Graph Object made of nodes and edges.
+  Then, modify this graph based on some properties and update the
+  relevant settings. Lastly, visualise the nodes as point clouds, boxes
+  or cylinders, and draw out the edges (bundled or not). The following
+  is a short example of the canonical ZKC dataset visualised in the
+  library, simulated with Edge bundling.</p>
   <p>First, initialize a node project and install the library using
   :</p>
   <code language="bash">npm i plebeiangraphlibrary</code>
@@ -251,14 +257,13 @@ createVisualization();</code>
 </sec>
 <sec id="documentation">
   <title>Documentation</title>
-  <p>Package documentation is available on GitHub for the package.
-  Guides for general guides and detailed descriptors of all the
-  functions are also included. Further documentation is available at
-  https://www.plebeiangraphlibrary.com/. Examples are available at
-  https://www.plebeiangraphlibrary.com/examples.html. A boilerplate
-  example walking through the installation and creation of an example
-  library is documented here https://github.com/range-et/pgl_example,
-  this is the same example documented above.</p>
+  <p>Package documentation is available on GitHub. Guides for general
+  usage and detailed descriptors of all the functions are also included.
+  Further documentation is available at
+  [https://www.plebeiangraphlibrary.com/]. Examples are available at
+  [https://www.plebeiangraphlibrary.com/examples.html]. The example
+  described above is documented at
+  [https://github.com/range-et/pgl_example].</p>
 </sec>
 <sec id="acknowledgements">
   <title>Acknowledgements</title>
@@ -304,22 +309,20 @@ createVisualization();</code>
       <lpage>1225</lpage>
     </element-citation>
   </ref>
-  <ref id="ref-gao2012network">
+  <ref id="ref-Vaishnavi2016A">
     <element-citation publication-type="article-journal">
       <person-group person-group-type="author">
-        <name><surname>Gao</surname><given-names>Xia</given-names></name>
-        <name><surname>Guan</surname><given-names>Jiancheng</given-names></name>
+        <name><surname>Vaishnavi</surname><given-names>K.</given-names></name>
+        <name><surname>Kannan</surname><given-names>Ashwin</given-names></name>
+        <name><surname>Cline</surname><given-names>David</given-names></name>
+        <name><surname>Etemadpour</surname><given-names>Ronak</given-names></name>
       </person-group>
-      <article-title>Network model of knowledge diffusion</article-title>
-      <source>Scientometrics</source>
-      <publisher-name>Springer</publisher-name>
-      <year iso-8601-date="2012">2012</year>
-      <volume>90</volume>
-      <issue>3</issue>
-      <uri>https://doi.org/10.1007/s11192-011-0554-z</uri>
-      <pub-id pub-id-type="doi">10.1007/s11192-011-0554-z</pub-id>
-      <fpage>749</fpage>
-      <lpage>762</lpage>
+      <article-title>A visualization tool for learning statistical analysis in multi tabular datasets</article-title>
+      <source>2016 IEEE 16th International Conference on Advanced Learning Technologies (ICALT)</source>
+      <year iso-8601-date="2016">2016</year>
+      <pub-id pub-id-type="doi">10.1109/ICALT.2016.13</pub-id>
+      <fpage>222</fpage>
+      <lpage>226</lpage>
     </element-citation>
   </ref>
   <ref id="ref-bierman2014understanding">
@@ -441,11 +444,11 @@ createVisualization();</code>
   <ref id="ref-visjs">
     <element-citation>
       <person-group person-group-type="author">
-        <name><surname>V.</surname><given-names>Almende B.</given-names></name>
+        <string-name>Almende B.V.</string-name>
       </person-group>
-      <article-title>Vis.js</article-title>
-      <year iso-8601-date="2021">2021</year>
-      <uri>https://visjs.org/</uri>
+      <article-title>vis.js: A dynamic, browser-based visualization library</article-title>
+      <publisher-name>https://visjs.org/</publisher-name>
+      <year iso-8601-date="2017">2017</year>
     </element-citation>
   </ref>
   <ref id="ref-bastian2009gephi">
@@ -519,6 +522,27 @@ createVisualization();</code>
       <article-title>Brief overview of graph theory: Erdos-renyi random graph model and small world phenomenon</article-title>
       <source>University of Chicago</source>
       <year iso-8601-date="2021">2021</year>
+    </element-citation>
+  </ref>
+  <ref id="ref-D3">
+    <element-citation publication-type="article-journal">
+      <person-group person-group-type="author">
+        <name><surname>Bostock</surname><given-names>Michael</given-names></name>
+        <name><surname>Ogievetsky</surname><given-names>Vadim</given-names></name>
+        <name><surname>Heer</surname><given-names>Jeffrey</given-names></name>
+      </person-group>
+      <article-title>D3 data-driven documents</article-title>
+      <source>IEEE Transactions on Visualization and Computer Graphics</source>
+      <publisher-name>IEEE Educational Activities Department</publisher-name>
+      <publisher-loc>USA</publisher-loc>
+      <year iso-8601-date="2011-12">2011</year><month>12</month>
+      <volume>17</volume>
+      <issue>12</issue>
+      <issn>1077-2626</issn>
+      <uri>https://doi.org/10.1109/TVCG.2011.185</uri>
+      <pub-id pub-id-type="doi">10.1109/TVCG.2011.185</pub-id>
+      <fpage>2301</fpage>
+      <lpage>2309</lpage>
     </element-citation>
   </ref>
 </ref-list>
