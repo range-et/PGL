@@ -9,8 +9,7 @@ It can be a bit confusing especially when working with Nodes/Edges/Vertices/Line
 - Nodes (The library and the class is called \_Node so as to not confuse with NodeJS ) and Edges make up a graph.
 - Vertices and Lines make up the 3d visualization side of a graph.
 - Nodes are the abstract idea, vertices are what's visualized
-- Edges are the abstract idea , lines are what's visualized
-  Lastly there are a few helper classes like points and lines. Points are essentially vectors and are used for displacement and also for describing a place in relation to the global coordinate system. Line are an array of points that get translated into lines using one of the visualization methods. Points can have different visualizations like boxes, billboarded planes and cylinders etc.
+- Edges are the abstract idea , lines are what's visualized. Lastly, there are a few helper classes like points and lines. Points are essentially vectors and are used for displacement and also for describing a place in relation to the global coordinate system. Line are an array of points that get translated into lines using one of the visualization methods. Points can have different visualizations like boxes, billboarded planes and cylinders etc.
 
 ## Semantics of the Package
 
