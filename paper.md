@@ -40,7 +40,7 @@ Furthermore, PGL's three-dimensional rendering approach allows for a more compre
 
 Existing network libraries like NetworkX [@hagberg2008exploring] strongly influenced the semantics of the graph library and borrowed some of the semantic ideas from ThreeJS. The overall structure is to define a Graph Object made of nodes and edges. Then, modify this graph based on some properties and update the relevant settings. Lastly, visualise the nodes as point clouds, boxes or cylinders, and draw out the edges (bundled or not). The following is a short example of the canonical ZKC dataset visualised in the library, simulated with Edge bundling.
 
-First, initialize a node project and install the library using :
+First, initialize a node project and install the library using:
 
 ```bash
 npm i plebeiangraphlibrary
