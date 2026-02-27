@@ -157,6 +157,30 @@ function DrawTHREEGraphEdgesThin(
   return DrawThinEdgesFromEdgeMap(emap, bounds, color);
 }
 
+/**
+ * Draw a single thick line through an ordered list of node IDs (e.g. a path).
+ * Uses graph positions; line width in pixels (pass thickness >= 1 for pixel width).
+ *
+ * @param Graph - Graph with position map
+ * @param bounds - Scale factor for positions
+ * @param pathNodeIds - Ordered node IDs (start to end)
+ * @param color - Hex color for the path line
+ * @param thickness - Line width in pixels (e.g. 5 for a thick path)
+ */
+function DrawThickPathFromNodeIds(
+  Graph: Graph,
+  bounds: number,
+  pathNodeIds: number[],
+  color: number = 0xffffff,
+  thickness: number = 5
+) {
+  const pmap = Graph.get_position_map();
+  const pathPoints = pathNodeIds.map((id) => pmap.get(id)).filter((p): p is Point => p != null);
+  if (pathPoints.length < 2) return new THREE.Group();
+  const pathLine = new Line(pathPoints);
+  return createThickEdgesGroup(new Map([[0, pathLine]]), bounds, color, thickness);
+}
+
 // function to draw edges from edge map
 /**
  *
@@ -393,52 +417,88 @@ function DrawSimplifiedEdges(
 }
 
 /**
+ * Set vertex colors by node ID. Uses the geometry's "label" attribute (node ID per vertex) to map node IDs to vertex indices; if "label" is missing, indexArray is treated as vertex indices.
  *
- * Change all the vertex colors based on some array of properties
- *
- * @param vertices - ThreeJS Points object, be sure to pass in the points object and not the group that the points belong too
- * @param indexArray - The array of the indices of all the nodes whose values that have to be changed
- * @param color - The color that they have to be changed too
+ * @param vertices - THREE.Points with customColor (and optionally label) attribute, or a Group whose first child is that Points object
+ * @param indexArray - Node IDs to color, or vertex indices if geometry has no label attribute
+ * @param color - Hex color to apply
  */
 function ChangeTheVertexColours(
-  vertices: THREE.Points,
+  vertices: THREE.Points | THREE.Group,
   indexArray: number[],
   color: number
 ) {
-  let Attrib = vertices.geometry.attributes;
-  let k = 0;
-  const col = new THREE.Color( color );
-  indexArray.forEach((node) => {
-    k = node * 3; // @ts-ignore
-    Attrib.customColor.array[k] = col.r; // @ts-ignore
-    Attrib.customColor.array[k + 1] = col.g; // @ts-ignore
-    Attrib.customColor.array[k + 2] = col.b;
-  });
-  Attrib.customColor.needsUpdate = true;
+  try {
+    const points = (vertices instanceof THREE.Group ? vertices.children[0] : vertices) as THREE.Points | undefined;
+    const geom = points?.geometry;
+    if (!geom?.attributes) return;
+    const customColor = geom.attributes.customColor as THREE.BufferAttribute | undefined;
+    const arr = customColor?.array;
+    if (!arr || arr.length === 0) return;
+    const col = new THREE.Color(color);
+    const labelAttr = geom.attributes.label as THREE.BufferAttribute | undefined;
+    const labels = labelAttr?.array as Int32Array | undefined;
+
+    if (labels && labels.length > 0) {
+      // Map node IDs to vertex indices via label attribute
+      indexArray.forEach((nodeId) => {
+        for (let i = 0; i < labels.length; i++) {
+          if (labels[i] === nodeId) {
+            const k = i * 3;
+            if (k + 2 < arr.length) {
+              arr[k] = col.r;
+              arr[k + 1] = col.g;
+              arr[k + 2] = col.b;
+            }
+            break;
+          }
+        }
+      });
+    } else {
+      // No label: treat indexArray as vertex indices
+      indexArray.forEach((node) => {
+        const k = node * 3;
+        if (k + 2 < arr.length) {
+          arr[k] = col.r;
+          arr[k + 1] = col.g;
+          arr[k + 2] = col.b;
+        }
+      });
+    }
+    if (customColor) customColor.needsUpdate = true;
+  } catch {
+    // Points object or customColor may be missing; skip coloring
+  }
 }
 
 /**
- *
- * This resets all the colors to white
- *
- * @param vertices - ThreeJS Points object, be sure to pass in the points object and not the group that the points belong too
+ * Reset all vertex colors to white.
+ * @param vertices - THREE.Points with customColor attribute, or a Group whose first child is that Points object
  */
-function ResetVertexColors(vertices: THREE.Points) {
-  let Attrib = vertices.geometry.attributes;
-  let k = 0;
-  for (let i = 0; i < Attrib.customColor.count; i++) {
-    k = i * 3; // @ts-ignore
-    Attrib.customColor.array[k] = 255; // @ts-ignore
-    Attrib.customColor.array[k + 1] = 255; // @ts-ignore
-    Attrib.customColor.array[k + 2] = 255;
+function ResetVertexColors(vertices: THREE.Points | THREE.Group) {
+  try {
+    const points = (vertices instanceof THREE.Group ? vertices.children[0] : vertices) as THREE.Points | undefined;
+    const customColor = points?.geometry?.attributes?.customColor as THREE.BufferAttribute | undefined;
+    const arr = customColor?.array;
+    if (!arr || arr.length === 0) return;
+    const count = customColor?.count ?? Math.floor(arr.length / 3);
+    for (let i = 0; i < count; i++) {
+      const k = i * 3;
+      arr[k] = 1;
+      arr[k + 1] = 1;
+      arr[k + 2] = 1;
+    }
+    if (customColor) customColor.needsUpdate = true;
+  } catch {
+    // skip if wrong object or missing attribute
   }
-  Attrib.customColor.needsUpdate = true;
 }
 
 export default {
   DrawTHREEGraphVertices,
   DrawTHREEGraphEdgesThick,
   DrawTHREEGraphEdgesThin,
+  DrawThickPathFromNodeIds,
   AddBoxBasedImaging,
   AddInModularityBasedPointGroups,
   DrawThinEdgesFromEdgeMap,

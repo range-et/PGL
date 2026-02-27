@@ -72,17 +72,10 @@ class Graph {
   async constructAdjacencyList() {
     // I'm constructing a Graph here so some of the stuff doesnt matter
     this.edges.forEach((edge) => {
-      // get the start point
       const start = edge.start;
       const end = edge.end;
-      // set the node property
-      if (this.nodes.get(start)) {
-        const relevantSNode = this.nodes.get(start);
-        relevantSNode!.neighbours.push(end);
-      } else if (this.nodes.get(end)) {
-        const relevantENode = this.nodes.get(end);
-        relevantENode!.neighbours.push(start);
-      }
+      if (this.nodes.get(start)) this.nodes.get(start)!.neighbours.push(end);
+      if (this.nodes.get(end)) this.nodes.get(end)!.neighbours.push(start);
     });
     // then for each node then get the unique neighbours
     for (const key of this.nodes.keys()) {
@@ -115,11 +108,12 @@ class Graph {
    */
   add_edge(start: number, end: number, data: any) {
     const newEdge = new Edge(start, end, data);
-    // this is a new edge that we add to the edges
     this.edges.set(this.edges.size, newEdge);
-    // also add this to the node neighbours
-    const relevantNode = this.nodes.get(start);
-    relevantNode!.neighbours.push(end);
+    // keep adjacency consistent for undirected graph (both directions)
+    const startNode = this.nodes.get(start);
+    const endNode = this.nodes.get(end);
+    if (startNode) startNode.neighbours.push(end);
+    if (endNode) endNode.neighbours.push(start);
   }
 
   // get an adjacency list reprentation of the graph

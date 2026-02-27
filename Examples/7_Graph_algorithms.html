@@ -6,14 +6,19 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="MasterStyle.css">
-  <title>Example 7 – Graph algorithms</title>
+  <title>Example 7 – Graph algorithms: diameter path</title>
 </head>
 
 <body class="example-page">
   <header class="example-header">
     <a href="examples.html" class="back-link">← All examples</a>
-    <h1>Example 7 – Graph algorithms</h1>
-    <p class="example-desc">BFS, Dijkstra, SelectSubgraph: path from start node (green/red) and subgraph highlighting.</p>
+    <h1>Example 7 – Graph algorithms: diameter path</h1>
+    <p class="example-desc">
+      <strong>1)</strong> Pick random node → <strong style="color:#00ff00">color 1 (green)</strong>.<br>
+      <strong>2)</strong> Dijkstra out, find farthest node <strong>end1</strong> → <strong style="color:#0066ff">color 2 (blue)</strong>. Path start→end1 drawn in <strong style="color:#00ff00">color 1</strong>.<br>
+      <strong>3)</strong> Dijkstra from end1, find farthest <strong>end2</strong> → <strong style="color:#ff4444">color 3 (red)</strong>. Path end1→end2 drawn in <strong style="color:#0066ff">color 2</strong>.<br>
+      <strong>4)</strong> BFS back from end2 to start. That path drawn in <strong style="color:#ff4444">color 3</strong>. Three segments form a closed loop.
+    </p>
     <a href="https://github.com/range-et/PGL/blob/main/Examples/7_Graph_algorithms.html" class="code-link" target="_blank" rel="noopener">View code</a>
   </header>
   <div class="canvas-wrap">
@@ -24,18 +29,54 @@
     const G = await PGL.SampleData.LoadZKCSimulated();
     G.printData();
 
-    const startNode = 0;
-    const bfsMap = await PGL.GraphMethods.BFSSearch(G, startNode);
-    const pathToNode = [];
-    let cur = 5;
-    while (cur !== -1 && bfsMap.has(cur)) {
-      pathToNode.push(cur);
-      cur = bfsMap.get(cur);
+    const nodeIds = [...G.nodes.keys()];
+    const adj = G.get_adjacency();
+    const withNeighbors = nodeIds.filter((id) => (adj.get(id)?.length ?? 0) > 0);
+    const pickFrom = withNeighbors.length > 0 ? withNeighbors : nodeIds;
+    const start = pickFrom[Math.floor(Math.random() * pickFrom.length)];
+
+    function tracePath(bfsMap, fromNode) {
+      const path = [];
+      let cur = fromNode;
+      while (cur !== -1 && bfsMap.has(cur)) {
+        path.push(cur);
+        cur = bfsMap.get(cur);
+      }
+      return path;
+    }
+    function pathFromTo(bfsMap, fromNode, toNode) {
+      const back = tracePath(bfsMap, toNode);
+      back.reverse();
+      return back;
     }
 
-    const nodeList = [...G.nodes.keys()].slice(0, 15);
-    const subgraph = await PGL.GraphMethods.SelectSubgraph(G, nodeList);
-    subgraph.printData();
+    const bfsStart = await PGL.GraphMethods.BFSSearch(G, start);
+    const D1 = await PGL.GraphMethods.Dijkstra(G, start);
+    let end1 = start;
+    let d1Max = -1;
+    for (const n of D1.keys()) {
+      const d = D1.get(n);
+      if (d > d1Max) {
+        d1Max = d;
+        end1 = n;
+      }
+    }
+
+    const bfsEnd1 = await PGL.GraphMethods.BFSSearch(G, end1);
+    const D2 = await PGL.GraphMethods.Dijkstra(G, end1);
+    let end2 = end1;
+    let d2Max = -1;
+    for (const n of D2.keys()) {
+      const d = D2.get(n);
+      if (d > d2Max) {
+        d2Max = d;
+        end2 = n;
+      }
+    }
+
+    const path1 = pathFromTo(bfsStart, start, end1);
+    const path2 = pathFromTo(bfsEnd1, end1, end2);
+    const path3 = tracePath(bfsStart, end2);
 
     const lmap = PGL.Drawing.DrawEdgeLinesDivisions(G, 1);
     G.apply_edge_pos_maps(lmap);
@@ -47,14 +88,33 @@
     await graph3d.init();
 
     const bounds = 1;
-    const nodeVisualElements = PGL.ThreeWrapper.DrawTHREEBoxBasedVertices(G, bounds, 0x888888, 4);
-    PGL.ThreeWrapper.ChangeTheVertexColours(nodeVisualElements.children[0], pathToNode, 0xff0000);
-    PGL.ThreeWrapper.ChangeTheVertexColours(nodeVisualElements.children[0], [startNode], 0x00ff00);
+    const COLOR1 = 0x00ff00;
+    const COLOR2 = 0x0066ff;
+    const COLOR3 = 0xff4444;
+
+    const nodeVisualElements = PGL.ThreeWrapper.DrawTHREEGraphVertices(G, bounds, 4, 0x888888);
+    PGL.ThreeWrapper.ChangeTheVertexColours(nodeVisualElements, [start], COLOR1);
+    PGL.ThreeWrapper.ChangeTheVertexColours(nodeVisualElements, [end1], COLOR2);
+    PGL.ThreeWrapper.ChangeTheVertexColours(nodeVisualElements, [end2], COLOR3);
     graph3d.addVisElement(nodeVisualElements);
-    const edgeVisualElements = PGL.ThreeWrapper.DrawTHREEGraphEdgesThin(G, bounds, 0xffafcc);
+
+    const edgeVisualElements = PGL.ThreeWrapper.DrawTHREEGraphEdgesThin(G, bounds, 0xcccccc);
     graph3d.addVisElement(edgeVisualElements);
 
-    function animate() { requestAnimationFrame(animate); graph3d.rendercall(); }
+    if (path1.length >= 2) {
+      graph3d.addVisElement(PGL.ThreeWrapper.DrawThickPathFromNodeIds(G, bounds, path1, COLOR1, 5));
+    }
+    if (path2.length >= 2) {
+      graph3d.addVisElement(PGL.ThreeWrapper.DrawThickPathFromNodeIds(G, bounds, path2, COLOR2, 5));
+    }
+    if (path3.length >= 2) {
+      graph3d.addVisElement(PGL.ThreeWrapper.DrawThickPathFromNodeIds(G, bounds, path3, COLOR3, 5));
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      graph3d.rendercall();
+    }
     animate();
   </script>
   </div>

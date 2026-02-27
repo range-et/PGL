@@ -830,21 +830,21 @@ var $0a378558e9c2f574$var$__awaiter = undefined && undefined.__awaiter || functi
     return $0a378558e9c2f574$var$__awaiter(this, void 0, void 0, function*() {
         const adj = Graph.get_adjacency();
         const exploredFromMap = new Map();
-        const explored = [];
-        const stack = [];
-        // queue the first node
-        stack.push(node);
+        const explored = new Set([
+            node
+        ]);
+        const queue = [
+            node
+        ];
         exploredFromMap.set(node, -1);
-        // search through the whole graph
-        while(stack.length > 0){
-            const currentNode = stack.pop();
-            // add this current node to the explored list
-            explored.push(currentNode);
+        while(queue.length > 0){
+            const currentNode = queue.shift();
             const neighbours = adj.get(currentNode);
             for(let i = 0; i < neighbours.length; i++){
                 const neighbour = neighbours[i];
-                if (!explored.includes(neighbour)) {
-                    stack.push(neighbour);
+                if (!explored.has(neighbour)) {
+                    explored.add(neighbour);
+                    queue.push(neighbour);
                     exploredFromMap.set(neighbour, currentNode);
                 }
             }
@@ -865,20 +865,17 @@ var $0a378558e9c2f574$var$__awaiter = undefined && undefined.__awaiter || functi
     return $0a378558e9c2f574$var$__awaiter(this, void 0, void 0, function*() {
         const adj = Graph.get_adjacency();
         const Dmap = new Map();
-        // get the explored from map
         const exploredFromMap = yield $0a378558e9c2f574$var$BFSSearch(Graph, Node);
-        // then for each element in the map go through
-        // contact trace where that element came from
         for (const n of adj.keys()){
+            if (!exploredFromMap.has(n)) continue; // unreachable (disconnected)
             let i = 0;
             let exploredFrom = exploredFromMap.get(n);
-            while(exploredFrom != -1){
+            while(exploredFrom !== undefined && exploredFrom !== -1){
                 exploredFrom = exploredFromMap.get(exploredFrom);
                 i += 1;
             }
             Dmap.set(n, i);
         }
-        // now return this map
         return Dmap;
     });
 }
@@ -894,12 +891,27 @@ var $0a378558e9c2f574$var$__awaiter = undefined && undefined.__awaiter || functi
  * @returns returns an object with a start, end - the two points of a graph and the diameter of the graph
  */ function $0a378558e9c2f574$var$GraphDiameter(Graph) {
     return $0a378558e9c2f574$var$__awaiter(this, void 0, void 0, function*() {
-        // find the diameter of the graph
-        // start Dijkstra from some random node
-        let seed = Math.floor(Math.random() * Graph.nodes.size);
+        const nodeIds = [
+            ...Graph.nodes.keys()
+        ];
+        if (nodeIds.length === 0) return {
+            start: 0,
+            end: 0,
+            distance: 0
+        };
+        if (nodeIds.length === 1) return {
+            start: nodeIds[0],
+            end: nodeIds[0],
+            distance: 0
+        };
+        const adj = Graph.get_adjacency();
+        const withNeighbors = nodeIds.filter((id)=>{
+            var _a, _b;
+            return ((_b = (_a = adj.get(id)) === null || _a === void 0 ? void 0 : _a.length) !== null && _b !== void 0 ? _b : 0) > 0;
+        });
+        const pickFrom = withNeighbors.length > 0 ? withNeighbors : nodeIds;
+        let seed = pickFrom[Math.floor(Math.random() * pickFrom.length)];
         let Dstart = yield $0a378558e9c2f574$var$Dijkstra(Graph, seed);
-        // iterate through all the values and then get
-        // the value that is the highest amongst the others
         let currentDistance = -1;
         for (const n of Dstart.keys()){
             const dval = Dstart.get(n);
@@ -908,10 +920,8 @@ var $0a378558e9c2f574$var$__awaiter = undefined && undefined.__awaiter || functi
                 currentDistance = dval;
             }
         }
-        // then search from there to the furthest point again
         const newStart = seed;
         Dstart = yield $0a378558e9c2f574$var$Dijkstra(Graph, seed);
-        // repeat the thing
         currentDistance = -1;
         for (const n of Dstart.keys()){
             const dval = Dstart.get(n);
@@ -920,12 +930,11 @@ var $0a378558e9c2f574$var$__awaiter = undefined && undefined.__awaiter || functi
                 currentDistance = dval;
             }
         }
-        const returnObj = {
+        return {
             start: newStart,
             end: seed,
             distance: currentDistance
         };
-        return returnObj;
     });
 }
 // Select a subrgaph
@@ -1057,17 +1066,10 @@ var $b0efdff792a30fe0$var$__awaiter = undefined && undefined.__awaiter || functi
         return $b0efdff792a30fe0$var$__awaiter(this, void 0, void 0, function*() {
             // I'm constructing a Graph here so some of the stuff doesnt matter
             this.edges.forEach((edge)=>{
-                // get the start point
                 const start = edge.start;
                 const end = edge.end;
-                // set the node property
-                if (this.nodes.get(start)) {
-                    const relevantSNode = this.nodes.get(start);
-                    relevantSNode.neighbours.push(end);
-                } else if (this.nodes.get(end)) {
-                    const relevantENode = this.nodes.get(end);
-                    relevantENode.neighbours.push(start);
-                }
+                if (this.nodes.get(start)) this.nodes.get(start).neighbours.push(end);
+                if (this.nodes.get(end)) this.nodes.get(end).neighbours.push(start);
             });
             // then for each node then get the unique neighbours
             for (const key of this.nodes.keys()){
@@ -1097,11 +1099,12 @@ var $b0efdff792a30fe0$var$__awaiter = undefined && undefined.__awaiter || functi
      * @param data - data associated with the edge
      */ add_edge(start, end, data) {
         const newEdge = new (0, $5v7Uc.default)(start, end, data);
-        // this is a new edge that we add to the edges
         this.edges.set(this.edges.size, newEdge);
-        // also add this to the node neighbours
-        const relevantNode = this.nodes.get(start);
-        relevantNode.neighbours.push(end);
+        // keep adjacency consistent for undirected graph (both directions)
+        const startNode = this.nodes.get(start);
+        const endNode = this.nodes.get(end);
+        if (startNode) startNode.neighbours.push(end);
+        if (endNode) endNode.neighbours.push(start);
     }
     // get an adjacency list reprentation of the graph
     // this onlu has the indices and not the actual data
@@ -1210,6 +1213,8 @@ parcelRequire.register("gTJou", function(module, exports) {
 $parcel$export(module.exports, "default", () => $c4d4feb6deac3a62$export$2e2bcd8739ae039);
 
 var $I1Jpx = parcelRequire("I1Jpx");
+
+var $49USC = parcelRequire("49USC");
 
 var $1xDj5 = parcelRequire("1xDj5");
 
@@ -1351,6 +1356,27 @@ var __awaiter = undefined && undefined.__awaiter || function(thisArg11, _argumen
     // first get the edge map positions
     const emap11 = Graph11.get_edge_map();
     return DrawThinEdgesFromEdgeMap(emap11, bounds11, color11);
+}
+/**
+ * Draw a single thick line through an ordered list of node IDs (e.g. a path).
+ * Uses graph positions; line width in pixels (pass thickness >= 1 for pixel width).
+ *
+ * @param Graph - Graph with position map
+ * @param bounds - Scale factor for positions
+ * @param pathNodeIds - Ordered node IDs (start to end)
+ * @param color - Hex color for the path line
+ * @param thickness - Line width in pixels (e.g. 5 for a thick path)
+ */ function DrawThickPathFromNodeIds(Graph11, bounds11, pathNodeIds11, color11 = 0xffffff, thickness11 = 5) {
+    const pmap11 = Graph11.get_position_map();
+    const pathPoints11 = pathNodeIds11.map((id11)=>pmap11.get(id11)).filter((p11)=>p11 != null);
+    if (pathPoints11.length < 2) return new $I1Jpx.Group();
+    const pathLine11 = new (0, $49USC.default)(pathPoints11);
+    return (0, $1xDj5.createThickEdgesGroup)(new Map([
+        [
+            0,
+            pathLine11
+        ]
+    ]), bounds11, color11, thickness11);
 }
 // function to draw edges from edge map
 /**
@@ -1539,44 +1565,75 @@ var __awaiter = undefined && undefined.__awaiter || function(thisArg11, _argumen
     return lineGroup11;
 }
 /**
+ * Set vertex colors by node ID. Uses the geometry's "label" attribute (node ID per vertex) to map node IDs to vertex indices; if "label" is missing, indexArray is treated as vertex indices.
  *
- * Change all the vertex colors based on some array of properties
- *
- * @param vertices - ThreeJS Points object, be sure to pass in the points object and not the group that the points belong too
- * @param indexArray - The array of the indices of all the nodes whose values that have to be changed
- * @param color - The color that they have to be changed too
+ * @param vertices - THREE.Points with customColor (and optionally label) attribute, or a Group whose first child is that Points object
+ * @param indexArray - Node IDs to color, or vertex indices if geometry has no label attribute
+ * @param color - Hex color to apply
  */ function ChangeTheVertexColours(vertices11, indexArray11, color11) {
-    let Attrib11 = vertices11.geometry.attributes;
-    let k11 = 0;
-    const col11 = new $I1Jpx.Color(color11);
-    indexArray11.forEach((node11)=>{
-        k11 = node11 * 3; // @ts-ignore
-        Attrib11.customColor.array[k11] = col11.r; // @ts-ignore
-        Attrib11.customColor.array[k11 + 1] = col11.g; // @ts-ignore
-        Attrib11.customColor.array[k11 + 2] = col11.b;
-    });
-    Attrib11.customColor.needsUpdate = true;
+    try {
+        const points11 = vertices11 instanceof $I1Jpx.Group ? vertices11.children[0] : vertices11;
+        const geom11 = points11 === null || points11 === void 0 ? void 0 : points11.geometry;
+        if (!(geom11 === null || geom11 === void 0 ? void 0 : geom11.attributes)) return;
+        const customColor11 = geom11.attributes.customColor;
+        const arr11 = customColor11 === null || customColor11 === void 0 ? void 0 : customColor11.array;
+        if (!arr11 || arr11.length === 0) return;
+        const col11 = new $I1Jpx.Color(color11);
+        const labelAttr11 = geom11.attributes.label;
+        const labels11 = labelAttr11 === null || labelAttr11 === void 0 ? void 0 : labelAttr11.array;
+        if (labels11 && labels11.length > 0) // Map node IDs to vertex indices via label attribute
+        indexArray11.forEach((nodeId11)=>{
+            for(let i11 = 0; i11 < labels11.length; i11++)if (labels11[i11] === nodeId11) {
+                const k11 = i11 * 3;
+                if (k11 + 2 < arr11.length) {
+                    arr11[k11] = col11.r;
+                    arr11[k11 + 1] = col11.g;
+                    arr11[k11 + 2] = col11.b;
+                }
+                break;
+            }
+        });
+        else // No label: treat indexArray as vertex indices
+        indexArray11.forEach((node11)=>{
+            const k11 = node11 * 3;
+            if (k11 + 2 < arr11.length) {
+                arr11[k11] = col11.r;
+                arr11[k11 + 1] = col11.g;
+                arr11[k11 + 2] = col11.b;
+            }
+        });
+        if (customColor11) customColor11.needsUpdate = true;
+    } catch (_a11) {
+    // Points object or customColor may be missing; skip coloring
+    }
 }
 /**
- *
- * This resets all the colors to white
- *
- * @param vertices - ThreeJS Points object, be sure to pass in the points object and not the group that the points belong too
+ * Reset all vertex colors to white.
+ * @param vertices - THREE.Points with customColor attribute, or a Group whose first child is that Points object
  */ function ResetVertexColors(vertices11) {
-    let Attrib11 = vertices11.geometry.attributes;
-    let k11 = 0;
-    for(let i11 = 0; i11 < Attrib11.customColor.count; i11++){
-        k11 = i11 * 3; // @ts-ignore
-        Attrib11.customColor.array[k11] = 255; // @ts-ignore
-        Attrib11.customColor.array[k11 + 1] = 255; // @ts-ignore
-        Attrib11.customColor.array[k11 + 2] = 255;
+    var _a11, _b11, _c11;
+    try {
+        const points11 = vertices11 instanceof $I1Jpx.Group ? vertices11.children[0] : vertices11;
+        const customColor11 = (_b11 = (_a11 = points11 === null || points11 === void 0 ? void 0 : points11.geometry) === null || _a11 === void 0 ? void 0 : _a11.attributes) === null || _b11 === void 0 ? void 0 : _b11.customColor;
+        const arr11 = customColor11 === null || customColor11 === void 0 ? void 0 : customColor11.array;
+        if (!arr11 || arr11.length === 0) return;
+        const count11 = (_c11 = customColor11 === null || customColor11 === void 0 ? void 0 : customColor11.count) !== null && _c11 !== void 0 ? _c11 : Math.floor(arr11.length / 3);
+        for(let i11 = 0; i11 < count11; i11++){
+            const k11 = i11 * 3;
+            arr11[k11] = 1;
+            arr11[k11 + 1] = 1;
+            arr11[k11 + 2] = 1;
+        }
+        if (customColor11) customColor11.needsUpdate = true;
+    } catch (_d11) {
+    // skip if wrong object or missing attribute
     }
-    Attrib11.customColor.needsUpdate = true;
 }
 var $c4d4feb6deac3a62$export$2e2bcd8739ae039 = {
     DrawTHREEGraphVertices: DrawTHREEGraphVertices,
     DrawTHREEGraphEdgesThick: DrawTHREEGraphEdgesThick,
     DrawTHREEGraphEdgesThin: DrawTHREEGraphEdgesThin,
+    DrawThickPathFromNodeIds: DrawThickPathFromNodeIds,
     AddBoxBasedImaging: AddBoxBasedImaging,
     AddInModularityBasedPointGroups: AddInModularityBasedPointGroups,
     DrawThinEdgesFromEdgeMap: DrawThinEdgesFromEdgeMap,

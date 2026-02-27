@@ -467,6 +467,17 @@ declare function DrawThickEdgesFromEdgeMap(EdgeMap: Map<number, Line>, bounds: n
  */
 declare function DrawTHREEGraphEdgesThin(Graph: Graph, bounds?: number, color?: number): THREE.Group<THREE.Object3DEventMap>;
 /**
+ * Draw a single thick line through an ordered list of node IDs (e.g. a path).
+ * Uses graph positions; line width in pixels (pass thickness >= 1 for pixel width).
+ *
+ * @param Graph - Graph with position map
+ * @param bounds - Scale factor for positions
+ * @param pathNodeIds - Ordered node IDs (start to end)
+ * @param color - Hex color for the path line
+ * @param thickness - Line width in pixels (e.g. 5 for a thick path)
+ */
+declare function DrawThickPathFromNodeIds(Graph: Graph, bounds: number, pathNodeIds: number[], color?: number, thickness?: number): THREE.Group<THREE.Object3DEventMap>;
+/**
  *
  * Draw Line map as lines given the edge map assocaited with the graph
  *
@@ -532,25 +543,23 @@ declare function AddInModularityBasedPointGroups(Graph: Graph, propertyName: str
  */
 declare function DrawSimplifiedEdges(Graph: Graph, amount: number, color?: number): THREE.Group<THREE.Object3DEventMap>;
 /**
+ * Set vertex colors by node ID. Uses the geometry's "label" attribute (node ID per vertex) to map node IDs to vertex indices; if "label" is missing, indexArray is treated as vertex indices.
  *
- * Change all the vertex colors based on some array of properties
- *
- * @param vertices - ThreeJS Points object, be sure to pass in the points object and not the group that the points belong too
- * @param indexArray - The array of the indices of all the nodes whose values that have to be changed
- * @param color - The color that they have to be changed too
+ * @param vertices - THREE.Points with customColor (and optionally label) attribute, or a Group whose first child is that Points object
+ * @param indexArray - Node IDs to color, or vertex indices if geometry has no label attribute
+ * @param color - Hex color to apply
  */
-declare function ChangeTheVertexColours(vertices: THREE.Points, indexArray: number[], color: number): void;
+declare function ChangeTheVertexColours(vertices: THREE.Points | THREE.Group, indexArray: number[], color: number): void;
 /**
- *
- * This resets all the colors to white
- *
- * @param vertices - ThreeJS Points object, be sure to pass in the points object and not the group that the points belong too
+ * Reset all vertex colors to white.
+ * @param vertices - THREE.Points with customColor attribute, or a Group whose first child is that Points object
  */
-declare function ResetVertexColors(vertices: THREE.Points): void;
+declare function ResetVertexColors(vertices: THREE.Points | THREE.Group): void;
 export const ThreeWrapper: {
     DrawTHREEGraphVertices: typeof DrawTHREEGraphVertices;
     DrawTHREEGraphEdgesThick: typeof DrawTHREEGraphEdgesThick;
     DrawTHREEGraphEdgesThin: typeof DrawTHREEGraphEdgesThin;
+    DrawThickPathFromNodeIds: typeof DrawThickPathFromNodeIds;
     AddBoxBasedImaging: typeof AddBoxBasedImaging;
     AddInModularityBasedPointGroups: typeof AddInModularityBasedPointGroups;
     DrawThinEdgesFromEdgeMap: typeof DrawThinEdgesFromEdgeMap;

@@ -18,23 +18,18 @@ async function BFSSearch(Graph:Graph, node:number) {
   const adj = Graph.get_adjacency();
   const exploredFromMap:Map<number,number> = new Map();
 
-  const explored:number[] = [];
-  const stack:number[] = [];
-
-  // queue the first node
-  stack.push(node);
+  const explored = new Set<number>([node]);
+  const queue: number[] = [node];
   exploredFromMap.set(node, -1);
 
-  // search through the whole graph
-  while (stack.length > 0) {
-    const currentNode = stack.pop()!;
-    // add this current node to the explored list
-    explored.push(currentNode);
+  while (queue.length > 0) {
+    const currentNode = queue.shift()!;
     const neighbours = adj.get(currentNode);
     for (let i = 0; i < neighbours!.length; i++) {
       const neighbour = neighbours![i];
-      if (!explored.includes(neighbour)) {
-        stack.push(neighbour);
+      if (!explored.has(neighbour)) {
+        explored.add(neighbour);
+        queue.push(neighbour);
         exploredFromMap.set(neighbour, currentNode);
       }
     }
@@ -55,20 +50,17 @@ async function BFSSearch(Graph:Graph, node:number) {
 async function Dijkstra(Graph:Graph, Node:number) {
   const adj = Graph.get_adjacency();
   const Dmap:Map<number, number> = new Map();
-  // get the explored from map
   const exploredFromMap = await BFSSearch(Graph, Node);
-  // then for each element in the map go through
-  // contact trace where that element came from
   for (const n of adj.keys()) {
+    if (!exploredFromMap.has(n)) continue; // unreachable (disconnected)
     let i = 0;
-    let exploredFrom = exploredFromMap.get(n)!;
-    while (exploredFrom != -1) {
-      exploredFrom = exploredFromMap.get(exploredFrom)!;
+    let exploredFrom: number | undefined = exploredFromMap.get(n);
+    while (exploredFrom !== undefined && exploredFrom !== -1) {
+      exploredFrom = exploredFromMap.get(exploredFrom);
       i += 1;
     }
     Dmap.set(n, i);
   }
-  // now return this map
   return Dmap;
 }
 
@@ -84,12 +76,16 @@ async function Dijkstra(Graph:Graph, Node:number) {
  * @returns returns an object with a start, end - the two points of a graph and the diameter of the graph
  */
 async function GraphDiameter(Graph:Graph) {
-  // find the diameter of the graph
-  // start Dijkstra from some random node
-  let seed = Math.floor(Math.random() * Graph.nodes.size);
+  const nodeIds = [...Graph.nodes.keys()];
+  if (nodeIds.length === 0) return { start: 0, end: 0, distance: 0 };
+  if (nodeIds.length === 1) return { start: nodeIds[0], end: nodeIds[0], distance: 0 };
+
+  const adj = Graph.get_adjacency();
+  const withNeighbors = nodeIds.filter((id) => (adj.get(id)?.length ?? 0) > 0);
+  const pickFrom = withNeighbors.length > 0 ? withNeighbors : nodeIds;
+  let seed = pickFrom[Math.floor(Math.random() * pickFrom.length)];
+
   let Dstart = await Dijkstra(Graph, seed);
-  // iterate through all the values and then get
-  // the value that is the highest amongst the others
   let currentDistance = -1;
   for (const n of Dstart.keys()) {
     const dval = Dstart.get(n)!;
@@ -98,10 +94,8 @@ async function GraphDiameter(Graph:Graph) {
       currentDistance = dval;
     }
   }
-  // then search from there to the furthest point again
   const newStart = seed;
   Dstart = await Dijkstra(Graph, seed);
-  // repeat the thing
   currentDistance = -1;
   for (const n of Dstart.keys()) {
     const dval = Dstart.get(n)!;
@@ -110,12 +104,7 @@ async function GraphDiameter(Graph:Graph) {
       currentDistance = dval;
     }
   }
-  const returnObj = {
-    start: newStart,
-    end: seed,
-    distance: currentDistance,
-  };
-  return returnObj;
+  return { start: newStart, end: seed, distance: currentDistance };
 }
 
 // Select a subrgaph
