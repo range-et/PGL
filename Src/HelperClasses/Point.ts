@@ -22,7 +22,7 @@ class Point {
   // Type
   /**
    * Displaces a point - note this method moves the existing point
-   * @param Point This is the displacement vactor, used as a point but the same idea holds
+   * @param Point - Displacement vector (used as a point)
    */
   translate(Point:Point) {
     this.x = this.x + Point.x;

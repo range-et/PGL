@@ -56,10 +56,10 @@
         const newEdgeMap = await PGL.Drawing.DrawEdgeBundling(EdgeMap_copy, 50, 10);
         // then create the edge elements 
         // these are the reuglar edges 
-        const edgeVisualElements = PGL.ThreeWrapper.DrawThinEdgesFromEdgeMap(EdgeMap, bounds, 0x62b6cb, 0.01);
+        const edgeVisualElements = PGL.ThreeWrapper.DrawThinEdgesFromEdgeMap(EdgeMap, bounds, 0x62b6cb, 0.1);
         graph3d.addVisElement(edgeVisualElements);
         // these are the bundled edges 
-        const edgeVisualElements_Bundled = PGL.ThreeWrapper.DrawThickEdgesFromEdgeMap(newEdgeMap, bounds, 0x5fa8d3, 0.01);
+        const edgeVisualElements_Bundled = PGL.ThreeWrapper.DrawThickEdgesFromEdgeMap(newEdgeMap, bounds, 0x5fa8d3, 5);
         graph3d.addVisElement(edgeVisualElements_Bundled);
 
         // then there are two last steps for a 3d graph

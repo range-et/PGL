@@ -2,9 +2,7 @@ import * as THREE from "three";
 import Point from "../HelperClasses/Point";
 import Line from "../HelperClasses/Line";
 import { hexToRgb } from "../HelperClasses/ColorHelper";
-import { Line2 } from "three/examples/jsm/lines/Line2.js";
-import { LineMaterial } from "three/examples/jsm/lines/LineMaterial";
-import { LineGeometry } from "three/examples/jsm/lines/LineGeometry";
+import { createThickEdgesGroup } from "./ThickLine";
 import { vertexShader } from "../Shaders/vertexShader.glsl";
 import { fragmentShader } from "../Shaders/fragmentShader.glsl";
 import GraphMethods from "../GraphAlgorithms/GraphMethods";
@@ -105,14 +103,14 @@ function DrawTHREEGraphVertices(
  * @param Graph - The graph whose edges have to be drawn
  * @param bounds - the global scale for all the edges to be drawn defaults to 1
  * @param color - color of the edges defaults to white
- * @param thickness - thickness of the edges (defaults to 0.2)
+ * @param thickness - thickness of the edges (defaults to 0.4; screen-space pixels ≈ thickness × 100 for values &lt; 1)
  * @returns a Three Js group of edges that can be added to the scene
  */
 function DrawTHREEGraphEdgesThick(
   Graph: Graph,
   bounds: number = 1,
   color = 0xffffff,
-  thickness: number = 0.2
+  thickness: number = 0.4
 ) {
   // add the interpolation function
   const lineMap = Graph.get_edge_map();
@@ -127,52 +125,16 @@ function DrawTHREEGraphEdgesThick(
  * @param EdgeMap - The edge map associated with the graph
  * @param bounds - The global scale of the graph - defaults to 1
  * @param color - The color of the edges - defaults to white
- * @param thickness - thickness of the edges - defaults to 0.2
+ * @param thickness - thickness of the edges (defaults to 0.4; pixels ≈ thickness × 100 for values &lt; 1)
  * @returns
  */
 function DrawThickEdgesFromEdgeMap(
   EdgeMap: Map<number, Line>,
   bounds: number,
   color: number = 0xffffff,
-  thickness: number = 0.2
+  thickness: number = 0.4
 ) {
-  // this is the line thing
-  const mat = new LineMaterial({
-    color: color,
-    linewidth: thickness, // in world units with size attenuation, pixels otherwise
-    vertexColors: true,
-
-    //resolution:  // to be set by renderer, eventually
-    dashed: false,
-    alphaToCoverage: true,
-  });
-
-  const meshes = new THREE.Group();
-  for (let lval of EdgeMap.values()) {
-    const mcolor = new THREE.Color();
-    // convert the color that we shall be using
-    mcolor.setHex(color);
-    const pnts: number[] = [];
-    const cols: number[] = [];
-
-    lval.points.forEach((pnt) => {
-      pnts.push(
-        pnt.x * bounds - bounds / 2,
-        pnt.y * bounds - bounds / 2,
-        pnt.z * bounds - bounds / 2
-      );
-      cols.push(mcolor.r, mcolor.g, mcolor.b);
-    });
-
-    const geo = new LineGeometry();
-    geo.setPositions(pnts);
-    geo.setColors(cols);
-    const line = new Line2(geo, mat);
-    line.computeLineDistances();
-    line.scale.set(1, 1, 1);
-    meshes.add(line);
-  }
-  return meshes;
+  return createThickEdgesGroup(EdgeMap, bounds, color, thickness);
 }
 
 // make a thing that draws out all the lines (Thin)
@@ -260,23 +222,22 @@ function AddBoxBasedImaging(
   } else {
     sizes = size;
   }
-  // returns a group
+  // returns a group (iterate map entries so any node ID set works)
   const group = new THREE.Group();
   const material = new THREE.MeshBasicMaterial({ color: color });
-  let nodeData;
-  let geometry: THREE.BoxGeometry;
-  let nodeMesh: THREE.Mesh;
-  for (let i = 0; i < nodeMap.size; i++) {
-    nodeData = nodeMap.get(i)!;
-    geometry = new THREE.BoxGeometry(sizes[i], sizes[i], sizes[i]);
-    geometry.name = i.toString();
-    nodeMesh = new THREE.Mesh(geometry, material);
+  let i = 0;
+  for (const [id, nodeData] of nodeMap) {
+    const s = typeof sizes === "number" ? sizes : sizes[i];
+    const geometry = new THREE.BoxGeometry(s, s, s);
+    geometry.name = String(id);
+    const nodeMesh = new THREE.Mesh(geometry, material);
     nodeMesh.position.set(
       nodeData.x * bounds,
       nodeData.y * bounds,
       nodeData.z * bounds
     );
     group.add(nodeMesh);
+    i += 1;
   }
   return group;
 }
@@ -321,27 +282,26 @@ function AddCylinderBasedImaging(
   size: number | number[] = 10
 ) {
   // precompute all the sizes
-  let sizes: any;
+  let sizes: number | number[];
   if (typeof size == "number") {
-    sizes.Array(nodeMap.size).fill(size);
+    sizes = Array(nodeMap.size).fill(size) as number[];
   } else {
     sizes = size;
   }
-  // returns a group
+  // returns a group (iterate map entries so any node ID set works)
   const group = new THREE.Group();
   const material = new THREE.MeshBasicMaterial({ color: color });
-  let radius, circumfurence, segments;
-  let nodeData: Point;
-  for (let i = 0; i < nodeMap.size; i++) {
-    nodeData = nodeMap.get(i)!;
-    radius = sizes[i];
-    circumfurence = 2 * radius * Math.PI;
-    segments = Math.ceil(circumfurence / divisonLength);
+  let i = 0;
+  for (const [id, nodeData] of nodeMap) {
+    const radius = typeof sizes === "number" ? sizes : sizes[i];
+    const circumfurence = 2 * radius * Math.PI;
+    const segments = Math.ceil(circumfurence / divisonLength);
     const geometry = new THREE.CylinderGeometry(radius, radius, 10, segments);
-    geometry.name = i.toString();
+    geometry.name = String(id);
     const nodeMesh = new THREE.Mesh(geometry, material);
     nodeMesh.position.set(nodeData.x, nodeData.y, nodeData.z);
     group.add(nodeMesh);
+    i += 1;
   }
   return group;
 }
@@ -366,7 +326,7 @@ async function AddInModularityBasedPointGroups(
   let modularity: number;
   for (let node of Graph.nodes.keys()) {
     ndata = Graph.nodes.get(node)!;
-    modularity = eval(`ndata.data.${propertyName}}`);
+    modularity = eval(`ndata.data.${propertyName}`);
     if (groups.has(modularity)) {
       groups.get(modularity)!.push(node);
     } else {

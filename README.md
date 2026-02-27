@@ -18,7 +18,13 @@ Here is an illustrated walkthrough of a simple set-up given a predefined set of 
 
 ## Documentation
 
-The documentation for the package is available at [documentation](https://www.plebeiangraphlibrary.com/)
+The documentation for the package is available at [documentation](https://www.plebeiangraphlibrary.com/). You can also generate API docs locally with:
+
+```bash
+npm run document
+```
+
+This writes TypeDoc output to the `docs/` folder. **API overview:** the library exposes the following namespaces: `Graph`, `GraphMethods` (BFS, Dijkstra, GraphDiameter, SelectSubgraph), `SampleData` (LoadZKC, LoadZKCSimulated), `Constructors` (ConstructGraphNodeEdgesList), `Drawing` (SimulateKamadaKawai, DrawEdgeLines, DrawEdgeBundling, DisplaceEdgeInY, etc.), `Geometry`, `Utilities`, `ThreeWrapper`, `GraphDrawer`, `Models` (Erdos–Renyi), and `Hierarchy` (clusterByDistance, clusterByStrategy for flow-map style clustering).
 
 ## General setup of the package
 

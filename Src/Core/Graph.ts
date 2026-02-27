@@ -9,8 +9,8 @@ interface Graph {
 }
 
 /**
- * The main graph object - this contrains nodes and edges that get modified with different 
- * Operations etc.
+ * The main graph object: contains nodes and edges that get modified with different
+ * operations (layout, clustering, etc.).
  */
 class Graph {
   /**
@@ -18,7 +18,7 @@ class Graph {
    * Construct a graph object (no initializing)
    *
    * @param nodes - Map of all the nodes associated with the graph
-   * @param edges - Map of all the edges assocaiated with the graph
+   * @param edges - Map of all the edges associated with the graph
    */
   constructor(nodes: Map<number, _Node>, edges: Map<number, Edge>) {
     this.nodes = nodes;
@@ -43,7 +43,7 @@ class Graph {
 
   // initialize
   /**
-   *  Initializes the graph and constructs a node adajaceny list list
+   * Initializes the graph and constructs the node adjacency list.
    */
   async initialize() {
     await this.constructAdjacencyList();
@@ -53,7 +53,7 @@ class Graph {
   /**
    *
    * This is the official create method to make a graph based on a set of nodes and edges
-   * It also auto initializes the graph and sets all the adjaceny lists in the memory
+   * It also auto-initializes the graph and sets all the adjacency lists in memory.
    *
    * @param nodes - map of nodes
    * @param edges - map of edges
@@ -98,9 +98,9 @@ class Graph {
 
   // add a node
   /**
-   * Add a noce to the graph
-   * @param nodeID - the node ID
-   * @param data - data associated with the node
+   * Add a node to the graph.
+   * @param nodeID - The node ID
+   * @param data - Data associated with the node
    */
   add_node(nodeID: number, data: _Node) {
     this.nodes.set(nodeID, data);
@@ -127,7 +127,7 @@ class Graph {
   // associated with the node to speed things up
   /**
    *
-   * @returns Get the adjaceny (adjacency lists) associated with the graph
+   * @returns The adjacency lists associated with the graph
    */
   get_adjacency() {
     const SparseMap: Map<number, number[]> = new Map();
@@ -177,8 +177,8 @@ class Graph {
   get_edge_map() {
     const lines: Map<number, Line> = new Map();
     for (const key of this.edges.keys()) {
-      const edge = this.edges.get(key)!.data.ldata;
-      lines.set(key, edge);
+      const ldata = this.edges.get(key)!.data.ldata;
+      if (ldata != null) lines.set(key, ldata);
     }
     return lines;
   }
@@ -203,7 +203,7 @@ class Graph {
   // get the positon map of the graph
   /**
    * Gets the position map and the edge map respectively
-   * @returns the positon map and the edge map as pmap and emap
+   * @returns The position map and the edge map as pmap and emap
    */
   get_map() {
     return {
@@ -213,8 +213,8 @@ class Graph {
   }
 
   /**
-   * get the postion of the nodes in the graph
-   * @returns the position map
+   * Get the position of the nodes in the graph.
+   * @returns The position map (node ID to Point)
    */
   get_position_map() {
     const pmap: Map<number, Point> = new Map();

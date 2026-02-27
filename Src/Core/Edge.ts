@@ -5,7 +5,7 @@ interface Edge {
 }
 
 /**
- * The edge class, edges have a start and end but they can also have data associated with that edge
+ * Edge class: connects two nodes by start/end IDs; can hold optional data (e.g. "ldata" for line geometry).
  */
 class Edge {
   /**
@@ -14,7 +14,7 @@ class Edge {
    * 
    * @param start Start index of the edge based on the array of nodes
    * @param end End index of the edge based on the array of nodes
-   * @param data Data associated, note that ldata is reserved for how to draw the lines associated with the edge
+   * @param data - Optional data; "ldata" is reserved for line geometry used when drawing the edge
    */
   constructor(start:number, end:number, data:any) {
     this.start = start;

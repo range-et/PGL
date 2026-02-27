@@ -15,7 +15,7 @@ declare class Point {
     constructor(x: number, y: number, z: number);
     /**
      * Displaces a point - note this method moves the existing point
-     * @param Point This is the displacement vactor, used as a point but the same idea holds
+     * @param Point - Displacement vector (used as a point)
      */
     translate(Point: Point): void;
 }
@@ -34,14 +34,13 @@ interface _Node {
     neighbours: number[];
 }
 /**
- * This is the node class - they have an ID which is
- * essentially an index and some data associated with it
- * The data also contains the position of the
+ * Node class: each node has an ID (index) and arbitrary data.
+ * The data typically includes "pos" (Point) for visualization.
  */
 declare class _Node {
     /**
      *
-     * @param data Data associated with the node, be sure to be careful to pass in any "pos" data as they correspond to position of the nodes in the visuals of the graph
+     * @param data - Data associated with the node; include "pos" (Point) for graph visuals
      */
     constructor(data: any);
 }
@@ -51,7 +50,7 @@ interface Edge {
     data: any;
 }
 /**
- * The edge class, edges have a start and end but they can also have data associated with that edge
+ * Edge class: connects two nodes by start/end IDs; can hold optional data (e.g. "ldata" for line geometry).
  */
 declare class Edge {
     /**
@@ -60,7 +59,7 @@ declare class Edge {
      *
      * @param start Start index of the edge based on the array of nodes
      * @param end End index of the edge based on the array of nodes
-     * @param data Data associated, note that ldata is reserved for how to draw the lines associated with the edge
+     * @param data - Optional data; "ldata" is reserved for line geometry used when drawing the edge
      */
     constructor(start: number, end: number, data: any);
 }
@@ -69,8 +68,8 @@ export interface Graph {
     edges: Map<number, Edge>;
 }
 /**
- * The main graph object - this contrains nodes and edges that get modified with different
- * Operations etc.
+ * The main graph object: contains nodes and edges that get modified with different
+ * operations (layout, clustering, etc.).
  */
 export class Graph {
     /**
@@ -78,7 +77,7 @@ export class Graph {
      * Construct a graph object (no initializing)
      *
      * @param nodes - Map of all the nodes associated with the graph
-     * @param edges - Map of all the edges assocaiated with the graph
+     * @param edges - Map of all the edges associated with the graph
      */
     constructor(nodes: Map<number, _Node>, edges: Map<number, Edge>);
     /**
@@ -86,13 +85,13 @@ export class Graph {
      */
     printData(): void;
     /**
-     *  Initializes the graph and constructs a node adajaceny list list
+     * Initializes the graph and constructs the node adjacency list.
      */
     initialize(): Promise<void>;
     /**
      *
      * This is the official create method to make a graph based on a set of nodes and edges
-     * It also auto initializes the graph and sets all the adjaceny lists in the memory
+     * It also auto-initializes the graph and sets all the adjacency lists in memory.
      *
      * @param nodes - map of nodes
      * @param edges - map of edges
@@ -104,9 +103,9 @@ export class Graph {
      */
     constructAdjacencyList(): Promise<void>;
     /**
-     * Add a noce to the graph
-     * @param nodeID - the node ID
-     * @param data - data associated with the node
+     * Add a node to the graph.
+     * @param nodeID - The node ID
+     * @param data - Data associated with the node
      */
     add_node(nodeID: number, data: _Node): void;
     /**
@@ -118,7 +117,7 @@ export class Graph {
     add_edge(start: number, end: number, data: any): void;
     /**
      *
-     * @returns Get the adjaceny (adjacency lists) associated with the graph
+     * @returns The adjacency lists associated with the graph
      */
     get_adjacency(): Map<number, number[]>;
     /**
@@ -146,15 +145,15 @@ export class Graph {
     }): void;
     /**
      * Gets the position map and the edge map respectively
-     * @returns the positon map and the edge map as pmap and emap
+     * @returns The position map and the edge map as pmap and emap
      */
     get_map(): {
         pmap: Map<number, Point>;
         emap: Map<number, Line>;
     };
     /**
-     * get the postion of the nodes in the graph
-     * @returns the position map
+     * Get the position of the nodes in the graph.
+     * @returns The position map (node ID to Point)
      */
     get_position_map(): Map<number, Point>;
 }
@@ -434,7 +433,7 @@ export const SampleData: {
  * @param alpha - the alpha value of the node defaults to 1 (opaque)
  * @returns a three JS group that contains all the vertices as a point cloud or a three js points object that can be added to the scene
  */
-declare function DrawTHREEGraphVertices(Graph: Graph, bounds?: number, size?: number | number[], color?: number, alpha?: number): THREE.Group;
+declare function DrawTHREEGraphVertices(Graph: Graph, bounds?: number, size?: number | number[], color?: number, alpha?: number): THREE.Group<THREE.Object3DEventMap>;
 /**
  *
  * Draws out all the edges (Thick edges of a graph)
@@ -442,10 +441,10 @@ declare function DrawTHREEGraphVertices(Graph: Graph, bounds?: number, size?: nu
  * @param Graph - The graph whose edges have to be drawn
  * @param bounds - the global scale for all the edges to be drawn defaults to 1
  * @param color - color of the edges defaults to white
- * @param thickness - thickness of the edges (defaults to 0.2)
+ * @param thickness - thickness of the edges (defaults to 0.4; screen-space pixels ≈ thickness × 100 for values &lt; 1)
  * @returns a Three Js group of edges that can be added to the scene
  */
-declare function DrawTHREEGraphEdgesThick(Graph: Graph, bounds?: number, color?: number, thickness?: number): THREE.Group;
+declare function DrawTHREEGraphEdgesThick(Graph: Graph, bounds?: number, color?: number, thickness?: number): THREE.Group<THREE.Object3DEventMap>;
 /**
  *
  * Draw thick edges from an edge map
@@ -453,10 +452,10 @@ declare function DrawTHREEGraphEdgesThick(Graph: Graph, bounds?: number, color?:
  * @param EdgeMap - The edge map associated with the graph
  * @param bounds - The global scale of the graph - defaults to 1
  * @param color - The color of the edges - defaults to white
- * @param thickness - thickness of the edges - defaults to 0.2
+ * @param thickness - thickness of the edges (defaults to 0.4; pixels ≈ thickness × 100 for values &lt; 1)
  * @returns
  */
-declare function DrawThickEdgesFromEdgeMap(EdgeMap: Map<number, Line>, bounds: number, color?: number, thickness?: number): THREE.Group;
+declare function DrawThickEdgesFromEdgeMap(EdgeMap: Map<number, Line>, bounds: number, color?: number, thickness?: number): THREE.Group<THREE.Object3DEventMap>;
 /**
  *
  * Draw thin lines for all the edges given a graph
@@ -466,7 +465,7 @@ declare function DrawThickEdgesFromEdgeMap(EdgeMap: Map<number, Line>, bounds: n
  * @param color - color of the lines - defaults to white
  * @returns
  */
-declare function DrawTHREEGraphEdgesThin(Graph: Graph, bounds?: number, color?: number): THREE.Group;
+declare function DrawTHREEGraphEdgesThin(Graph: Graph, bounds?: number, color?: number): THREE.Group<THREE.Object3DEventMap>;
 /**
  *
  * Draw Line map as lines given the edge map assocaited with the graph
@@ -476,7 +475,7 @@ declare function DrawTHREEGraphEdgesThin(Graph: Graph, bounds?: number, color?: 
  * @param color - Color of the edges defaults to 1
  * @returns
  */
-declare function DrawThinEdgesFromEdgeMap(LineMap: Map<number, Line>, bounds?: number, color?: number): THREE.Group;
+declare function DrawThinEdgesFromEdgeMap(LineMap: Map<number, Line>, bounds?: number, color?: number): THREE.Group<THREE.Object3DEventMap>;
 /**
  *
  * Adde boxes where all the boxes are
@@ -487,7 +486,7 @@ declare function DrawThinEdgesFromEdgeMap(LineMap: Map<number, Line>, bounds?: n
  * @param size - size of the nodes defaults to 10
  * @returns a group of vertices that contains all of the boxes associated with each one of the vertices
  */
-declare function AddBoxBasedImaging(nodeMap: Map<number, Point>, bounds?: number, color?: number, size?: number | number[]): THREE.Group;
+declare function AddBoxBasedImaging(nodeMap: Map<number, Point>, bounds?: number, color?: number, size?: number | number[]): THREE.Group<THREE.Object3DEventMap>;
 /**
  *
  * Draw box based verices given a graph
@@ -498,7 +497,7 @@ declare function AddBoxBasedImaging(nodeMap: Map<number, Point>, bounds?: number
  * @param size - Default size of the nodes defaults to 10
  * @returns
  */
-declare function DrawTHREEBoxBasedVertices(Graph: Graph, bounds?: number, color?: number, size?: number | number[]): THREE.Group;
+declare function DrawTHREEBoxBasedVertices(Graph: Graph, bounds?: number, color?: number, size?: number | number[]): THREE.Group<THREE.Object3DEventMap>;
 /**
  *
  * Draw cylinders where all the vertices are based on a node map
@@ -509,7 +508,7 @@ declare function DrawTHREEBoxBasedVertices(Graph: Graph, bounds?: number, color?
  * @param size - the default size of the cylinder, defaults to 10
  * @returns
  */
-declare function AddCylinderBasedImaging(nodeMap: Map<number, Point>, divisonLength?: number, color?: number, size?: number | number[]): THREE.Group;
+declare function AddCylinderBasedImaging(nodeMap: Map<number, Point>, divisonLength?: number, color?: number, size?: number | number[]): THREE.Group<THREE.Object3DEventMap>;
 /**
  *
  * Split up a graph and return an boject containing a bunch of node groups and edge groups based on some parameterS
@@ -519,8 +518,8 @@ declare function AddCylinderBasedImaging(nodeMap: Map<number, Point>, divisonLen
  * @returns - an object that hasa set of node vertices and a set of edge lines based on the splitting factor
  */
 declare function AddInModularityBasedPointGroups(Graph: Graph, propertyName: string): Promise<{
-    nodeGroups: Map<number, THREE.Group>;
-    EdgeGroups: Map<number, THREE.Group>;
+    nodeGroups: Map<number, THREE.Group<THREE.Object3DEventMap>>;
+    EdgeGroups: Map<number, THREE.Group<THREE.Object3DEventMap>>;
 }>;
 /**
  *
@@ -531,7 +530,7 @@ declare function AddInModularityBasedPointGroups(Graph: Graph, propertyName: str
  * @param color - color of these edges - defaults to 0.1
  * @returns - a group of simple lines based on all the edges supplied to it
  */
-declare function DrawSimplifiedEdges(Graph: Graph, amount: number, color?: number): THREE.Group;
+declare function DrawSimplifiedEdges(Graph: Graph, amount: number, color?: number): THREE.Group<THREE.Object3DEventMap>;
 /**
  *
  * Change all the vertex colors based on some array of properties
@@ -637,6 +636,59 @@ export const GraphDrawer: {
 declare function GenerateErdosReyni_n_p(n: number, p: number): Promise<Graph>;
 export const Models: {
     GenerateErdosReyni_n_p: typeof GenerateErdosReyni_n_p;
+};
+/**
+ * Options for distance-based clustering.
+ */
+interface ClusterByDistanceOptions {
+    /** Maximum distance between two nodes for them to be in the same cluster. */
+    distanceThreshold: number;
+}
+/**
+ * Result of a clustering step: maps each node ID to its cluster ID.
+ */
+interface ClusterResult {
+    /** Map from original node ID to cluster ID (integer). */
+    nodeToCluster: Map<number, number>;
+    /** Map from cluster ID to centroid position (e.g. for super-node placement). */
+    clusterCentroids: Map<number, Point>;
+    /** List of unique cluster IDs. */
+    clusterIds: number[];
+}
+/**
+ * Strategy interface for hierarchical node combining.
+ * Implementations (e.g. KD-tree distance-based, or future class-based) produce a clustering.
+ */
+interface ClusterStrategy {
+    /**
+     * Compute clustering of graph nodes.
+     * @param graph - The graph to cluster
+     * @param options - Strategy-specific options
+     * @returns Assignment of each node to a cluster and cluster centroids
+     */
+    cluster(graph: Graph, options: Record<string, unknown>): ClusterResult;
+}
+/**
+ * Cluster the graph by distance (KD-tree based) and return a simplified graph.
+ * Nodes within `distanceThreshold` are merged; super-nodes are placed at cluster centroids.
+ *
+ * @param graph - The graph to cluster
+ * @param options - { distanceThreshold: number }
+ * @returns A new graph with one node per cluster and aggregated edges between clusters
+ */
+declare function clusterByDistance(graph: Graph, options: ClusterByDistanceOptions): Promise<Graph>;
+/**
+ * Cluster the graph using a custom strategy and return a simplified graph.
+ *
+ * @param graph - The graph to cluster
+ * @param strategy - A ClusterStrategy implementation
+ * @param options - Strategy-specific options
+ * @returns A new graph with one node per cluster and aggregated edges
+ */
+declare function clusterByStrategy(graph: Graph, strategy: ClusterStrategy, options: Record<string, unknown>): Promise<Graph>;
+export const Hierarchy: {
+    clusterByDistance: typeof clusterByDistance;
+    clusterByStrategy: typeof clusterByStrategy;
 };
 
 //# sourceMappingURL=pgl.d.ts.map

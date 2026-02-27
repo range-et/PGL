@@ -8,14 +8,13 @@ interface _Node {
 }
 
 /**
- * This is the node class - they have an ID which is 
- * essentially an index and some data associated with it 
- * The data also contains the position of the 
+ * Node class: each node has an ID (index) and arbitrary data.
+ * The data typically includes "pos" (Point) for visualization.
  */
 class _Node {
   /**
    * 
-   * @param data Data associated with the node, be sure to be careful to pass in any "pos" data as they correspond to position of the nodes in the visuals of the graph
+   * @param data - Data associated with the node; include "pos" (Point) for graph visuals
    */
   constructor(data:any) {
     // this data is an arbitrary thing with which I can create any object

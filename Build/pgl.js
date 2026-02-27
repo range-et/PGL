@@ -1,7 +1,4 @@
 var $h9nKb$three = require("three");
-var $h9nKb$threeexamplesjsmlinesLine2js = require("three/examples/jsm/lines/Line2.js");
-var $h9nKb$threeexamplesjsmlinesLineMaterial = require("three/examples/jsm/lines/LineMaterial");
-var $h9nKb$threeexamplesjsmlinesLineGeometry = require("three/examples/jsm/lines/LineGeometry");
 var $h9nKb$threeexamplesjsmcontrolsOrbitControls = require("three/examples/jsm/controls/OrbitControls");
 
 function $parcel$export(e, n, v, s) {
@@ -20,7 +17,7 @@ typeof globalThis !== 'undefined'
 var $parcel$modules = {};
 var $parcel$inits = {};
 
-var parcelRequire = $parcel$global["parcelRequired21f"];
+var parcelRequire = $parcel$global["parcelRequire71ec"];
 if (parcelRequire == null) {
   parcelRequire = function(id) {
     if (id in $parcel$modules) {
@@ -43,7 +40,7 @@ if (parcelRequire == null) {
     $parcel$inits[id] = init;
   };
 
-  $parcel$global["parcelRequired21f"] = parcelRequire;
+  $parcel$global["parcelRequire71ec"] = parcelRequire;
 }
 parcelRequire.register("jYcHE", function(module, exports) {
 
@@ -756,7 +753,7 @@ class $b4bcf46d914a9151$var$Point {
     // Type
     /**
      * Displaces a point - note this method moves the existing point
-     * @param Point This is the displacement vactor, used as a point but the same idea holds
+     * @param Point - Displacement vector (used as a point)
      */ translate(Point) {
         this.x = this.x + Point.x;
         this.y = this.y + Point.y;
@@ -1010,15 +1007,15 @@ var $734dcf9f6d72d709$var$__awaiter = undefined && undefined.__awaiter || functi
     });
 };
 /**
- * The main graph object - this contrains nodes and edges that get modified with different
- * Operations etc.
+ * The main graph object: contains nodes and edges that get modified with different
+ * operations (layout, clustering, etc.).
  */ class $734dcf9f6d72d709$var$Graph {
     /**
      *
      * Construct a graph object (no initializing)
      *
      * @param nodes - Map of all the nodes associated with the graph
-     * @param edges - Map of all the edges assocaiated with the graph
+     * @param edges - Map of all the edges associated with the graph
      */ constructor(nodes, edges){
         this.nodes = nodes;
         this.edges = edges;
@@ -1034,7 +1031,7 @@ var $734dcf9f6d72d709$var$__awaiter = undefined && undefined.__awaiter || functi
     }
     // initialize
     /**
-     *  Initializes the graph and constructs a node adajaceny list list
+     * Initializes the graph and constructs the node adjacency list.
      */ initialize() {
         return $734dcf9f6d72d709$var$__awaiter(this, void 0, void 0, function*() {
             yield this.constructAdjacencyList();
@@ -1044,7 +1041,7 @@ var $734dcf9f6d72d709$var$__awaiter = undefined && undefined.__awaiter || functi
     /**
      *
      * This is the official create method to make a graph based on a set of nodes and edges
-     * It also auto initializes the graph and sets all the adjaceny lists in the memory
+     * It also auto-initializes the graph and sets all the adjacency lists in memory.
      *
      * @param nodes - map of nodes
      * @param edges - map of edges
@@ -1089,9 +1086,9 @@ var $734dcf9f6d72d709$var$__awaiter = undefined && undefined.__awaiter || functi
     }
     // add a node
     /**
-     * Add a noce to the graph
-     * @param nodeID - the node ID
-     * @param data - data associated with the node
+     * Add a node to the graph.
+     * @param nodeID - The node ID
+     * @param data - Data associated with the node
      */ add_node(nodeID, data) {
         this.nodes.set(nodeID, data);
     }
@@ -1114,7 +1111,7 @@ var $734dcf9f6d72d709$var$__awaiter = undefined && undefined.__awaiter || functi
     // associated with the node to speed things up
     /**
      *
-     * @returns Get the adjaceny (adjacency lists) associated with the graph
+     * @returns The adjacency lists associated with the graph
      */ get_adjacency() {
         const SparseMap = new Map();
         // iterate through the node list
@@ -1149,8 +1146,8 @@ var $734dcf9f6d72d709$var$__awaiter = undefined && undefined.__awaiter || functi
      */ get_edge_map() {
         const lines = new Map();
         for (const key of this.edges.keys()){
-            const edge = this.edges.get(key).data.ldata;
-            lines.set(key, edge);
+            const ldata = this.edges.get(key).data.ldata;
+            if (ldata != null) lines.set(key, ldata);
         }
         return lines;
     }
@@ -1165,7 +1162,7 @@ var $734dcf9f6d72d709$var$__awaiter = undefined && undefined.__awaiter || functi
     // get the positon map of the graph
     /**
      * Gets the position map and the edge map respectively
-     * @returns the positon map and the edge map as pmap and emap
+     * @returns The position map and the edge map as pmap and emap
      */ get_map() {
         return {
             pmap: this.get_position_map(),
@@ -1173,8 +1170,8 @@ var $734dcf9f6d72d709$var$__awaiter = undefined && undefined.__awaiter || functi
         };
     }
     /**
-     * get the postion of the nodes in the graph
-     * @returns the position map
+     * Get the position of the nodes in the graph.
+     * @returns The position map (node ID to Point)
      */ get_position_map() {
         const pmap = new Map();
         for (const node of this.nodes.keys())pmap.set(node, this.nodes.get(node).data.pos);
@@ -1189,7 +1186,7 @@ parcelRequire.register("i8obY", function(module, exports) {
 
 $parcel$export(module.exports, "default", () => $d33bbd65b64ffa49$export$2e2bcd8739ae039);
 /**
- * The edge class, edges have a start and end but they can also have data associated with that edge
+ * Edge class: connects two nodes by start/end IDs; can hold optional data (e.g. "ldata" for line geometry).
  */ class $d33bbd65b64ffa49$var$Edge {
     /**
      *
@@ -1197,7 +1194,7 @@ $parcel$export(module.exports, "default", () => $d33bbd65b64ffa49$export$2e2bcd8
      *
      * @param start Start index of the edge based on the array of nodes
      * @param end End index of the edge based on the array of nodes
-     * @param data Data associated, note that ldata is reserved for how to draw the lines associated with the edge
+     * @param data - Optional data; "ldata" is reserved for line geometry used when drawing the edge
      */ constructor(start, end, data){
         this.start = start;
         this.end = end;
@@ -1216,8 +1213,7 @@ parcelRequire.register("eqUI8", function(module, exports) {
 $parcel$export(module.exports, "default", () => $a81f7bf7ba151678$export$2e2bcd8739ae039);
 
 
-
-
+var $2vhjw = parcelRequire("2vhjw");
 
 var $bWT2q = parcelRequire("bWT2q");
 
@@ -1324,9 +1320,9 @@ var __awaiter = undefined && undefined.__awaiter || function(thisArg11, _argumen
  * @param Graph - The graph whose edges have to be drawn
  * @param bounds - the global scale for all the edges to be drawn defaults to 1
  * @param color - color of the edges defaults to white
- * @param thickness - thickness of the edges (defaults to 0.2)
+ * @param thickness - thickness of the edges (defaults to 0.4; screen-space pixels ≈ thickness × 100 for values &lt; 1)
  * @returns a Three Js group of edges that can be added to the scene
- */ function DrawTHREEGraphEdgesThick(Graph11, bounds11 = 1, color11 = 0xffffff, thickness11 = 0.2) {
+ */ function DrawTHREEGraphEdgesThick(Graph11, bounds11 = 1, color11 = 0xffffff, thickness11 = 0.4) {
     // add the interpolation function
     const lineMap11 = Graph11.get_edge_map();
     return DrawThickEdgesFromEdgeMap(lineMap11, bounds11, color11, thickness11);
@@ -1339,38 +1335,10 @@ var __awaiter = undefined && undefined.__awaiter || function(thisArg11, _argumen
  * @param EdgeMap - The edge map associated with the graph
  * @param bounds - The global scale of the graph - defaults to 1
  * @param color - The color of the edges - defaults to white
- * @param thickness - thickness of the edges - defaults to 0.2
+ * @param thickness - thickness of the edges (defaults to 0.4; pixels ≈ thickness × 100 for values &lt; 1)
  * @returns
- */ function DrawThickEdgesFromEdgeMap(EdgeMap11, bounds11, color11 = 0xffffff, thickness11 = 0.2) {
-    // this is the line thing
-    const mat11 = new (0, $h9nKb$threeexamplesjsmlinesLineMaterial.LineMaterial)({
-        color: color11,
-        linewidth: thickness11,
-        vertexColors: true,
-        //resolution:  // to be set by renderer, eventually
-        dashed: false,
-        alphaToCoverage: true
-    });
-    const meshes11 = new $h9nKb$three.Group();
-    for (let lval11 of EdgeMap11.values()){
-        const mcolor11 = new $h9nKb$three.Color();
-        // convert the color that we shall be using
-        mcolor11.setHex(color11);
-        const pnts11 = [];
-        const cols11 = [];
-        lval11.points.forEach((pnt11)=>{
-            pnts11.push(pnt11.x * bounds11 - bounds11 / 2, pnt11.y * bounds11 - bounds11 / 2, pnt11.z * bounds11 - bounds11 / 2);
-            cols11.push(mcolor11.r, mcolor11.g, mcolor11.b);
-        });
-        const geo11 = new (0, $h9nKb$threeexamplesjsmlinesLineGeometry.LineGeometry)();
-        geo11.setPositions(pnts11);
-        geo11.setColors(cols11);
-        const line11 = new (0, $h9nKb$threeexamplesjsmlinesLine2js.Line2)(geo11, mat11);
-        line11.computeLineDistances();
-        line11.scale.set(1, 1, 1);
-        meshes11.add(line11);
-    }
-    return meshes11;
+ */ function DrawThickEdgesFromEdgeMap(EdgeMap11, bounds11, color11 = 0xffffff, thickness11 = 0.4) {
+    return (0, $2vhjw.createThickEdgesGroup)(EdgeMap11, bounds11, color11, thickness11);
 }
 // make a thing that draws out all the lines (Thin)
 /**
@@ -1430,21 +1398,20 @@ var __awaiter = undefined && undefined.__awaiter || function(thisArg11, _argumen
     let sizes11;
     if (typeof size11 == "number") sizes11 = Array(nodeMap11.size).fill(size11);
     else sizes11 = size11;
-    // returns a group
+    // returns a group (iterate map entries so any node ID set works)
     const group11 = new $h9nKb$three.Group();
     const material11 = new $h9nKb$three.MeshBasicMaterial({
         color: color11
     });
-    let nodeData11;
-    let geometry11;
-    let nodeMesh11;
-    for(let i11 = 0; i11 < nodeMap11.size; i11++){
-        nodeData11 = nodeMap11.get(i11);
-        geometry11 = new $h9nKb$three.BoxGeometry(sizes11[i11], sizes11[i11], sizes11[i11]);
-        geometry11.name = i11.toString();
-        nodeMesh11 = new $h9nKb$three.Mesh(geometry11, material11);
+    let i11 = 0;
+    for (const [id11, nodeData11] of nodeMap11){
+        const s11 = typeof sizes11 === "number" ? sizes11 : sizes11[i11];
+        const geometry11 = new $h9nKb$three.BoxGeometry(s11, s11, s11);
+        geometry11.name = String(id11);
+        const nodeMesh11 = new $h9nKb$three.Mesh(geometry11, material11);
         nodeMesh11.position.set(nodeData11.x * bounds11, nodeData11.y * bounds11, nodeData11.z * bounds11);
         group11.add(nodeMesh11);
+        i11 += 1;
     }
     return group11;
 }
@@ -1476,25 +1443,24 @@ var __awaiter = undefined && undefined.__awaiter || function(thisArg11, _argumen
  */ function AddCylinderBasedImaging(nodeMap11, divisonLength11 = 16, color11 = 0xffffff, size11 = 10) {
     // precompute all the sizes
     let sizes11;
-    if (typeof size11 == "number") sizes11.Array(nodeMap11.size).fill(size11);
+    if (typeof size11 == "number") sizes11 = Array(nodeMap11.size).fill(size11);
     else sizes11 = size11;
-    // returns a group
+    // returns a group (iterate map entries so any node ID set works)
     const group11 = new $h9nKb$three.Group();
     const material11 = new $h9nKb$three.MeshBasicMaterial({
         color: color11
     });
-    let radius11, circumfurence11, segments11;
-    let nodeData11;
-    for(let i11 = 0; i11 < nodeMap11.size; i11++){
-        nodeData11 = nodeMap11.get(i11);
-        radius11 = sizes11[i11];
-        circumfurence11 = 2 * radius11 * Math.PI;
-        segments11 = Math.ceil(circumfurence11 / divisonLength11);
+    let i11 = 0;
+    for (const [id11, nodeData11] of nodeMap11){
+        const radius11 = typeof sizes11 === "number" ? sizes11 : sizes11[i11];
+        const circumfurence11 = 2 * radius11 * Math.PI;
+        const segments11 = Math.ceil(circumfurence11 / divisonLength11);
         const geometry11 = new $h9nKb$three.CylinderGeometry(radius11, radius11, 10, segments11);
-        geometry11.name = i11.toString();
+        geometry11.name = String(id11);
         const nodeMesh11 = new $h9nKb$three.Mesh(geometry11, material11);
         nodeMesh11.position.set(nodeData11.x, nodeData11.y, nodeData11.z);
         group11.add(nodeMesh11);
+        i11 += 1;
     }
     return group11;
 }
@@ -1515,7 +1481,7 @@ var __awaiter = undefined && undefined.__awaiter || function(thisArg11, _argumen
         let modularity;
         for (let node of Graph.nodes.keys()){
             ndata = Graph.nodes.get(node);
-            modularity = eval(`ndata.data.${propertyName}}`);
+            modularity = eval(`ndata.data.${propertyName}`);
             if (groups.has(modularity)) groups.get(modularity).push(node);
             else groups.set(modularity, [
                 node
@@ -1625,6 +1591,184 @@ var $a81f7bf7ba151678$export$2e2bcd8739ae039 = {
 };
 
 });
+parcelRequire.register("2vhjw", function(module, exports) {
+
+$parcel$export(module.exports, "createThickEdgesGroup", () => $1d2be82fc40a9241$export$7b0c62ef08ca9c15);
+/**
+ * Internal thick-line drawing: billboarded mesh-line (ribbon with screen-space width).
+ * No dependency on Three.js examples; geometry and material are maintained in-house.
+ * Based on the MeshLine approach (see e.g. threejs-meshline / THREE.MeshLine).
+ */ 
+
+var $436k9 = parcelRequire("436k9");
+
+var $fXX8p = parcelRequire("fXX8p");
+/** Default line width in pixels (screen space) */ const $1d2be82fc40a9241$var$DEFAULT_LINE_WIDTH_PX = 2;
+/** Default resolution for material (canvas size); can be updated on resize */ const $1d2be82fc40a9241$var$DEFAULT_RESOLUTION = new $h9nKb$three.Vector2(800, 700);
+function $1d2be82fc40a9241$export$20bd75665e2e29b9(line, bounds, color, lineWidthPx = $1d2be82fc40a9241$var$DEFAULT_LINE_WIDTH_PX, resolution) {
+    if (line.points.length < 2) {
+        const geo = new $h9nKb$three.BufferGeometry();
+        return new $h9nKb$three.Mesh(geo, new $h9nKb$three.MeshBasicMaterial({
+            color: color
+        }));
+    }
+    const positions = line.points.map((p)=>new $h9nKb$three.Vector3(p.x * bounds, p.y * bounds, p.z * bounds));
+    const geometry = (0, $436k9.buildMeshLineGeometry)(positions);
+    const material = (0, $fXX8p.createMeshLineMaterial)({
+        color: color,
+        lineWidth: lineWidthPx,
+        resolution: resolution !== null && resolution !== void 0 ? resolution : $1d2be82fc40a9241$var$DEFAULT_RESOLUTION
+    });
+    return new $h9nKb$three.Mesh(geometry, material);
+}
+/**
+ * Create a group of thick line meshes from an edge map.
+ * Lines are billboarded and drawn with the given pixel width.
+ *
+ * @param edgeMap - Map of edge id to Line
+ * @param bounds - Scale factor for coordinates
+ * @param color - Hex color for all lines
+ * @param lineWidthPx - Line width in pixels (screen space); default 2
+ * @param resolution - Canvas size (optional, for correct pixel scaling)
+ * @returns THREE.Group containing one mesh per edge
+ */ /**
+ * Convert legacy thickness (world-unit style 0.02, 0.03) to pixel width for screen-space lines.
+ */ function $1d2be82fc40a9241$var$toPixelWidth(thickness) {
+    if (thickness >= 1) return Math.max(1, Math.round(thickness));
+    return Math.max(1, Math.round(thickness * 100));
+}
+function $1d2be82fc40a9241$export$7b0c62ef08ca9c15(edgeMap, bounds, color, thickness = $1d2be82fc40a9241$var$DEFAULT_LINE_WIDTH_PX, resolution) {
+    const lineWidthPx = $1d2be82fc40a9241$var$toPixelWidth(thickness);
+    const group = new $h9nKb$three.Group();
+    for (const line of edgeMap.values()){
+        if (!(line === null || line === void 0 ? void 0 : line.points) || line.points.length < 2) continue;
+        group.add($1d2be82fc40a9241$export$20bd75665e2e29b9(line, bounds, color, lineWidthPx, resolution));
+    }
+    return group;
+}
+
+});
+parcelRequire.register("436k9", function(module, exports) {
+
+$parcel$export(module.exports, "buildMeshLineGeometry", () => $2f2c59116e45c6bb$export$55668220777ec285);
+/**
+ * Ribbon geometry for billboarded thick lines (MeshLine-style).
+ * Each line point becomes two vertices (left/right edge); the material
+ * expands them in screen space so the line has visible thickness.
+ */ 
+function $2f2c59116e45c6bb$export$55668220777ec285(positions) {
+    const n = positions.length;
+    if (n < 2) return new $h9nKb$three.BufferGeometry();
+    const posArr = [];
+    const prevArr = [];
+    const nextArr = [];
+    const sideArr = [];
+    for(let i = 0; i < n; i++){
+        const p = positions[i];
+        const pPrev = i > 0 ? positions[i - 1] : p;
+        const pNext = i < n - 1 ? positions[i + 1] : p;
+        // Left edge vertex
+        posArr.push(p.x, p.y, p.z);
+        prevArr.push(pPrev.x, pPrev.y, pPrev.z);
+        nextArr.push(pNext.x, pNext.y, pNext.z);
+        sideArr.push(-1);
+        // Right edge vertex
+        posArr.push(p.x, p.y, p.z);
+        prevArr.push(pPrev.x, pPrev.y, pPrev.z);
+        nextArr.push(pNext.x, pNext.y, pNext.z);
+        sideArr.push(1);
+    }
+    const geometry = new $h9nKb$three.BufferGeometry();
+    geometry.setAttribute("position", new $h9nKb$three.Float32BufferAttribute(posArr, 3));
+    geometry.setAttribute("positionPrev", new $h9nKb$three.Float32BufferAttribute(prevArr, 3));
+    geometry.setAttribute("positionNext", new $h9nKb$three.Float32BufferAttribute(nextArr, 3));
+    geometry.setAttribute("side", new $h9nKb$three.Float32BufferAttribute(sideArr, 1));
+    // Triangle list: each quad (segment) = two triangles (0,1,2) and (2,1,3)
+    const indices = [];
+    for(let i = 0; i < n - 1; i++){
+        const a = i * 2;
+        indices.push(a, a + 1, a + 2, a + 2, a + 1, a + 3);
+    }
+    geometry.setIndex(indices);
+    geometry.computeBoundingSphere();
+    return geometry;
+}
+
+});
+
+parcelRequire.register("fXX8p", function(module, exports) {
+
+$parcel$export(module.exports, "createMeshLineMaterial", () => $b9fa3ca18b98d59b$export$b6150c01f92eba96);
+/**
+ * Billboarded thick-line material (screen-space width).
+ * Adapted from the MeshLine approach: vertex shader expands the ribbon
+ * in clip space so lines have consistent pixel width and always face the camera.
+ */ 
+const $b9fa3ca18b98d59b$var$MESHLINE_VERTEX = `
+attribute vec3 positionPrev;
+attribute vec3 positionNext;
+attribute float side;
+
+uniform vec2 resolution;
+uniform float lineWidth;
+
+void main() {
+  vec4 clipPos = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+  vec4 clipPrev = projectionMatrix * modelViewMatrix * vec4(positionPrev, 1.0);
+  vec4 clipNext = projectionMatrix * modelViewMatrix * vec4(positionNext, 1.0);
+
+  vec2 ndcCurr = clipPos.xy / clipPos.w;
+  vec2 ndcPrev = clipPrev.xy / clipPrev.w;
+  vec2 ndcNext = clipNext.xy / clipNext.w;
+
+  vec2 dir = normalize(ndcNext - ndcPrev);
+  vec2 perp = vec2(-dir.y, dir.x);
+
+  float w = clipPos.w;
+  float pixelScale = min(resolution.x, resolution.y);
+  float ndcPerPixel = 2.0 / pixelScale;
+  vec2 offsetNdc = perp * side * (lineWidth * 0.5 * ndcPerPixel);
+  clipPos.xy += offsetNdc * w;
+
+  gl_Position = clipPos;
+}
+`;
+const $b9fa3ca18b98d59b$var$MESHLINE_FRAGMENT = `
+uniform vec3 color;
+
+void main() {
+  gl_FragColor = vec4(color, 1.0);
+}
+`;
+function $b9fa3ca18b98d59b$export$b6150c01f92eba96(options = {}) {
+    var _a, _b, _c;
+    const color = (_a = options.color) !== null && _a !== void 0 ? _a : 0xffffff;
+    const lineWidth = (_b = options.lineWidth) !== null && _b !== void 0 ? _b : 2;
+    const resolution = (_c = options.resolution) !== null && _c !== void 0 ? _c : new $h9nKb$three.Vector2(800, 700);
+    const threeColor = new $h9nKb$three.Color(color);
+    return new $h9nKb$three.ShaderMaterial({
+        uniforms: {
+            resolution: {
+                value: resolution
+            },
+            lineWidth: {
+                value: lineWidth
+            },
+            color: {
+                value: new $h9nKb$three.Vector3(threeColor.r, threeColor.g, threeColor.b)
+            }
+        },
+        vertexShader: $b9fa3ca18b98d59b$var$MESHLINE_VERTEX,
+        fragmentShader: $b9fa3ca18b98d59b$var$MESHLINE_FRAGMENT,
+        transparent: false,
+        depthTest: true,
+        side: $h9nKb$three.DoubleSide
+    });
+}
+
+});
+
+
 parcelRequire.register("bWT2q", function(module, exports) {
 
 $parcel$export(module.exports, "vertexShader", () => $8b2fcdeb0edc9ee9$export$84657c60382b0f83);
@@ -1675,8 +1819,15 @@ $parcel$export(module.exports, "Utilities", () => (parcelRequire("6Xdhg")).defau
 $parcel$export(module.exports, "ThreeWrapper", () => (parcelRequire("eqUI8")).default);
 $parcel$export(module.exports, "GraphDrawer", () => $6abda68f7f78a6fb$exports.default);
 $parcel$export(module.exports, "Models", () => $7308258d93363088$exports.default);
+$parcel$export(module.exports, "Hierarchy", () => $e31e6eca1eba1baf$exports.default);
 
 var $9TL8g = parcelRequire("9TL8g");
+
+
+var $9TL8g = parcelRequire("9TL8g");
+
+var $cWcXJ = parcelRequire("cWcXJ");
+
 
 var $cWcXJ = parcelRequire("cWcXJ");
 var $c57cf0c4853fb804$exports = {};
@@ -2566,13 +2717,12 @@ $parcel$export($942e91a547b4130c$exports, "default", () => $942e91a547b4130c$exp
 
 var $9TL8g = parcelRequire("9TL8g");
 /**
- * This is the node class - they have an ID which is
- * essentially an index and some data associated with it
- * The data also contains the position of the
+ * Node class: each node has an ID (index) and arbitrary data.
+ * The data typically includes "pos" (Point) for visualization.
  */ class $d0af3be0040778ae$var$_Node {
     /**
      *
-     * @param data Data associated with the node, be sure to be careful to pass in any "pos" data as they correspond to position of the nodes in the visuals of the graph
+     * @param data - Data associated with the node; include "pos" (Point) for graph visuals
      */ constructor(data){
         // this data is an arbitrary thing with which I can create any object
         this.data = Object.assign({}, data);
@@ -2731,6 +2881,8 @@ $c57cf0c4853fb804$export$2e2bcd8739ae039 = {
     LoadZKC: $c57cf0c4853fb804$var$LoadZKC,
     LoadZKCSimulated: $c57cf0c4853fb804$var$LoadZKCSimulated
 };
+
+
 
 
 
@@ -2952,6 +3104,289 @@ var $7308258d93363088$var$__awaiter = undefined && undefined.__awaiter || functi
 }
 var $7308258d93363088$export$2e2bcd8739ae039 = {
     GenerateErdosReyni_n_p: $7308258d93363088$var$GenerateErdosReyni_n_p
+};
+
+
+
+
+var $e31e6eca1eba1baf$exports = {};
+
+$parcel$export($e31e6eca1eba1baf$exports, "default", () => $e31e6eca1eba1baf$export$2e2bcd8739ae039);
+$parcel$export($e31e6eca1eba1baf$exports, "createKDDistanceStrategy", () => $6fb2afd4b7f1d7b7$export$6f3ad585c6c6bfb5, (v) => $6fb2afd4b7f1d7b7$export$6f3ad585c6c6bfb5 = v);
+$parcel$export($e31e6eca1eba1baf$exports, "buildSimplifiedGraph", () => $d0b36de3485b8eec$exports.buildSimplifiedGraph, (v) => $d0b36de3485b8eec$exports.buildSimplifiedGraph = v);
+/**
+ * Hierarchical node combining: cluster nodes (e.g. by distance) and build a simplified graph.
+ * Inspired by FlowmapBlue-style location clustering; uses KD-tree distance-based grouping by default.
+ */ /**
+ * KD-tree distance-based cluster strategy.
+ * Nodes within the given distance threshold are merged into the same cluster.
+ */ 
+var $fd3jp = parcelRequire("fd3jp");
+/**
+ * Minimal 3D KD-tree for range queries (points within distance).
+ * Used by the distance-based cluster strategy.
+ */ function $a8b1a05002a80b84$var$sqDist(a, b) {
+    const dx = a.x - b.x;
+    const dy = a.y - b.y;
+    const dz = a.z - b.z;
+    return dx * dx + dy * dy + dz * dz;
+}
+function $a8b1a05002a80b84$var$selectAxis(depth) {
+    const axes = [
+        "x",
+        "y",
+        "z"
+    ];
+    return axes[depth % 3];
+}
+/**
+ * Build a KD-tree from points with node IDs.
+ * Returns a tree structure used for range queries.
+ */ function $a8b1a05002a80b84$var$buildKDT(items, depth) {
+    if (items.length === 0) return null;
+    if (items.length === 1) return {
+        item: items[0]
+    };
+    const axis = $a8b1a05002a80b84$var$selectAxis(depth);
+    const sorted = [
+        ...items
+    ].sort((a, b)=>a.point[axis] - b.point[axis]);
+    const mid = Math.floor(sorted.length / 2);
+    const median = sorted[mid];
+    const left = mid > 0 ? $a8b1a05002a80b84$var$buildKDT(sorted.slice(0, mid), depth + 1) : null;
+    const right = mid + 1 < sorted.length ? $a8b1a05002a80b84$var$buildKDT(sorted.slice(mid + 1), depth + 1) : null;
+    return {
+        left: left !== null && left !== void 0 ? left : undefined,
+        right: right !== null && right !== void 0 ? right : undefined,
+        item: median
+    };
+}
+/**
+ * Query all points within squared distance dSq of the given point.
+ * Returns array of node IDs.
+ */ function $a8b1a05002a80b84$var$rangeQuery(node, center, dSq, depth, out) {
+    if (node === null) return;
+    const axis = $a8b1a05002a80b84$var$selectAxis(depth);
+    const dist = $a8b1a05002a80b84$var$sqDist(center, node.item.point);
+    if (dist <= dSq) out.push(node.item.nodeId);
+    const planeDist = center[axis] - node.item.point[axis];
+    const planeDistSq = planeDist * planeDist;
+    if (planeDist <= 0) {
+        if (node.left) $a8b1a05002a80b84$var$rangeQuery(node.left, center, dSq, depth + 1, out);
+        if (node.right && planeDistSq <= dSq) $a8b1a05002a80b84$var$rangeQuery(node.right, center, dSq, depth + 1, out);
+    } else {
+        if (node.right) $a8b1a05002a80b84$var$rangeQuery(node.right, center, dSq, depth + 1, out);
+        if (node.left && planeDistSq <= dSq) $a8b1a05002a80b84$var$rangeQuery(node.left, center, dSq, depth + 1, out);
+    }
+}
+function $a8b1a05002a80b84$export$c3701a8b10dd9c83(items, radius) {
+    const tree = $a8b1a05002a80b84$var$buildKDT(items, 0);
+    const radiusSq = radius * radius;
+    const result = new Map();
+    for (const { point: point, nodeId: nodeId } of items){
+        const out = [];
+        if (tree) $a8b1a05002a80b84$var$rangeQuery(tree, point, radiusSq, 0, out);
+        result.set(nodeId, out);
+    }
+    return result;
+}
+
+
+class $6fb2afd4b7f1d7b7$var$UnionFind {
+    constructor(){
+        this.parent = new Map();
+    }
+    find(x) {
+        if (!this.parent.has(x)) this.parent.set(x, x);
+        if (this.parent.get(x) !== x) this.parent.set(x, this.find(this.parent.get(x)));
+        return this.parent.get(x);
+    }
+    union(x, y) {
+        const px = this.find(x);
+        const py = this.find(y);
+        if (px !== py) this.parent.set(px, py);
+    }
+}
+function $6fb2afd4b7f1d7b7$export$6f3ad585c6c6bfb5() {
+    return {
+        cluster (graph, options) {
+            const { distanceThreshold: distanceThreshold } = options;
+            const pmap = graph.get_position_map();
+            const items = [];
+            for (const [nodeId, point] of pmap)items.push({
+                point: point,
+                nodeId: nodeId
+            });
+            if (items.length === 0) return {
+                nodeToCluster: new Map(),
+                clusterCentroids: new Map(),
+                clusterIds: []
+            };
+            const withinRadius = (0, $a8b1a05002a80b84$export$c3701a8b10dd9c83)(items, distanceThreshold);
+            const uf = new $6fb2afd4b7f1d7b7$var$UnionFind();
+            for (const [nodeId, neighbors] of withinRadius)for (const other of neighbors)uf.union(nodeId, other);
+            const rootToClusterId = new Map();
+            let nextId = 0;
+            const nodeToCluster = new Map();
+            const clusterToNodes = new Map();
+            for (const { nodeId: nodeId } of items){
+                const root = uf.find(nodeId);
+                if (!rootToClusterId.has(root)) rootToClusterId.set(root, nextId++);
+                const cid = rootToClusterId.get(root);
+                nodeToCluster.set(nodeId, cid);
+                if (!clusterToNodes.has(cid)) clusterToNodes.set(cid, []);
+                clusterToNodes.get(cid).push(nodeId);
+            }
+            const clusterCentroids = new Map();
+            for (const [cid, nids] of clusterToNodes){
+                const points = nids.map((id)=>pmap.get(id));
+                clusterCentroids.set(cid, (0, $fd3jp.default).centroid(points));
+            }
+            const clusterIds = [
+                ...clusterToNodes.keys()
+            ];
+            return {
+                nodeToCluster: nodeToCluster,
+                clusterCentroids: clusterCentroids,
+                clusterIds: clusterIds
+            };
+        }
+    };
+}
+
+
+var $d0b36de3485b8eec$exports = {};
+
+$parcel$export($d0b36de3485b8eec$exports, "buildSimplifiedGraph", () => $d0b36de3485b8eec$export$38cdc4a9373e213);
+/**
+ * Build a simplified Graph from a clustering result and the original graph.
+ * Super-nodes are placed at cluster centroids; edges between clusters are aggregated.
+ */ 
+var $9TL8g = parcelRequire("9TL8g");
+
+
+var $i8obY = parcelRequire("i8obY");
+var $d0b36de3485b8eec$var$__awaiter = undefined && undefined.__awaiter || function(thisArg, _arguments, P, generator) {
+    function adopt(value) {
+        return value instanceof P ? value : new P(function(resolve) {
+            resolve(value);
+        });
+    }
+    return new (P || (P = Promise))(function(resolve, reject) {
+        function fulfilled(value) {
+            try {
+                step(generator.next(value));
+            } catch (e) {
+                reject(e);
+            }
+        }
+        function rejected(value) {
+            try {
+                step(generator["throw"](value));
+            } catch (e) {
+                reject(e);
+            }
+        }
+        function step(result) {
+            result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+        }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+function $d0b36de3485b8eec$export$38cdc4a9373e213(originalGraph, clusterResult) {
+    var _a;
+    return $d0b36de3485b8eec$var$__awaiter(this, void 0, void 0, function*() {
+        const { nodeToCluster: nodeToCluster, clusterCentroids: clusterCentroids, clusterIds: clusterIds } = clusterResult;
+        const nodes = new Map();
+        const edges = new Map();
+        for (const cid of clusterIds){
+            const pos = clusterCentroids.get(cid);
+            const n = new (0, $d0af3be0040778ae$export$2e2bcd8739ae039)({
+                pos: pos
+            });
+            nodes.set(cid, n);
+        }
+        const edgeCount = new Map();
+        const key = (a, b)=>a <= b ? `${a},${b}` : `${b},${a}`;
+        for (const [, edge] of originalGraph.edges){
+            const ca = nodeToCluster.get(edge.start);
+            const cb = nodeToCluster.get(edge.end);
+            if (ca === undefined || cb === undefined) continue;
+            if (ca === cb) continue;
+            const k = key(ca, cb);
+            edgeCount.set(k, ((_a = edgeCount.get(k)) !== null && _a !== void 0 ? _a : 0) + 1);
+        }
+        let eid = 0;
+        for (const [k, count] of edgeCount){
+            const [a, b] = k.split(",").map(Number);
+            edges.set(eid++, new (0, $i8obY.default)(a, b, {
+                count: count
+            }));
+        }
+        const simplified = new (0, $9TL8g.default)(nodes, edges);
+        yield simplified.initialize();
+        return simplified;
+    });
+}
+
+
+var $e31e6eca1eba1baf$var$__awaiter = undefined && undefined.__awaiter || function(thisArg, _arguments, P, generator) {
+    function adopt(value) {
+        return value instanceof P ? value : new P(function(resolve) {
+            resolve(value);
+        });
+    }
+    return new (P || (P = Promise))(function(resolve, reject) {
+        function fulfilled(value) {
+            try {
+                step(generator.next(value));
+            } catch (e) {
+                reject(e);
+            }
+        }
+        function rejected(value) {
+            try {
+                step(generator["throw"](value));
+            } catch (e) {
+                reject(e);
+            }
+        }
+        function step(result) {
+            result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+        }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+/**
+ * Cluster the graph by distance (KD-tree based) and return a simplified graph.
+ * Nodes within `distanceThreshold` are merged; super-nodes are placed at cluster centroids.
+ *
+ * @param graph - The graph to cluster
+ * @param options - { distanceThreshold: number }
+ * @returns A new graph with one node per cluster and aggregated edges between clusters
+ */ function $e31e6eca1eba1baf$var$clusterByDistance(graph, options) {
+    return $e31e6eca1eba1baf$var$__awaiter(this, void 0, void 0, function*() {
+        const strategy = (0, $6fb2afd4b7f1d7b7$export$6f3ad585c6c6bfb5)();
+        const result = strategy.cluster(graph, options);
+        return (0, $d0b36de3485b8eec$exports.buildSimplifiedGraph)(graph, result);
+    });
+}
+/**
+ * Cluster the graph using a custom strategy and return a simplified graph.
+ *
+ * @param graph - The graph to cluster
+ * @param strategy - A ClusterStrategy implementation
+ * @param options - Strategy-specific options
+ * @returns A new graph with one node per cluster and aggregated edges
+ */ function $e31e6eca1eba1baf$var$clusterByStrategy(graph, strategy, options) {
+    return $e31e6eca1eba1baf$var$__awaiter(this, void 0, void 0, function*() {
+        const result = strategy.cluster(graph, options);
+        return (0, $d0b36de3485b8eec$exports.buildSimplifiedGraph)(graph, result);
+    });
+}
+var $e31e6eca1eba1baf$export$2e2bcd8739ae039 = {
+    clusterByDistance: $e31e6eca1eba1baf$var$clusterByDistance,
+    clusterByStrategy: $e31e6eca1eba1baf$var$clusterByStrategy
 };
 
 

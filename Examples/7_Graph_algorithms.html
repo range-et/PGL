@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="MasterStyle.css">
+  <title>Graph algorithms - BFS, Dijkstra, SelectSubgraph</title>
+</head>
+
+<body>
+  <h4>Graph algorithms: BFS, Dijkstra, SelectSubgraph <a href="https://github.com/range-et/PGL/blob/main/Examples/7_Graph_algorithms.html">Code</a></h4>
+  <canvas id="displayCanvas" class="displayCanvas"></canvas>
+  <script type="module">
+    import * as PGL from "../Build/pgl_module.js";
+
+    const G = await PGL.SampleData.LoadZKCSimulated();
+    G.printData();
+
+    const startNode = 0;
+    const bfsMap = await PGL.GraphMethods.BFSSearch(G, startNode);
+    const pathToNode = [];
+    let cur = 5;
+    while (cur !== -1 && bfsMap.has(cur)) {
+      pathToNode.push(cur);
+      cur = bfsMap.get(cur);
+    }
+
+    const nodeList = [...G.nodes.keys()].slice(0, 15);
+    const subgraph = await PGL.GraphMethods.SelectSubgraph(G, nodeList);
+    subgraph.printData();
+
+    const lmap = PGL.Drawing.DrawEdgeLinesDivisions(G, 1);
+    G.apply_edge_pos_maps(lmap);
+
+    const width = 800;
+    const height = 700;
+    const canvas = document.getElementById("displayCanvas");
+    const graph3d = new PGL.GraphDrawer.GraphDrawer3d({ graph: G, width, height, canvas });
+    await graph3d.init();
+
+    const bounds = 1;
+    const nodeVisualElements = PGL.ThreeWrapper.DrawTHREEBoxBasedVertices(G, bounds, 0x888888, 4);
+    PGL.ThreeWrapper.ChangeTheVertexColours(nodeVisualElements.children[0], pathToNode, 0xff0000);
+    PGL.ThreeWrapper.ChangeTheVertexColours(nodeVisualElements.children[0], [startNode], 0x00ff00);
+    graph3d.addVisElement(nodeVisualElements);
+    const edgeVisualElements = PGL.ThreeWrapper.DrawTHREEGraphEdgesThin(G, bounds, 0xffafcc);
+    graph3d.addVisElement(edgeVisualElements);
+
+    function animate() { requestAnimationFrame(animate); graph3d.rendercall(); }
+    animate();
+  </script>
+</body>
+
+</html>
