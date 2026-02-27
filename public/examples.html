@@ -2,33 +2,60 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="MasterStyle.css" />
-    <title>PGL Examples</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="MasterStyle.css" />
+  <title>PGL Examples</title>
 </head>
 
-<body>
-    <main>
-        <h1>Here are the examples for the Plebeian Graph Library:</h1>
-        <hr>
-        <h3>Example 1:</h3>
-        <p>A simple example of a simple graph - this is the ZKC dataset, this come with the library to familiarize
-            yourself with the library</p>
-        <a href="1_ZKC_simple.html">Example 1</iframe></a>
-        <hr>
-        <h3>Example 2:</h3>
-        <p>The same example but with the edge bundling, edge displacement functionalities being demonstrated</p>
-        <a href="2_ZKC_edge_bundling.html">Example 2</iframe></a>
-        <hr>
-        <h3>Example 3:</h3>
-        <p>A key feature of the library is to render really large graphs, this is an example with 5000 points. It also has some of the other features like the kamada kawai layout feature being demonstrated here. The Erdos-Reyni model is also whats used here to generate the really large graph</p>
-        <a href="3_LargePointCloud.html">Example 3</iframe></a>
-        <hr>
-        <h3>Example 4:</h3>
-        <p>Lastly, edges really slow down the rendering time associated with the visualisation, in most cases I render in batches and draw some of the edges, this example shows the edge sampling operation. Also one of the key features of the library, dynamically changing properties of the graph, for example in this case it randomly activates some of the nodes, this feature is what helps in simulating diffusion cascades on networks</p>
-        <a href="4_ToggleActivation.html">Example 4</a>
-    </main>
+<body class="index-page">
+  <main>
+    <h1>Plebeian Graph Library</h1>
+    <p class="subtitle">3D graph visualization with Three.js — examples</p>
+
+    <section class="example-list">
+      <a href="1_ZKC_simple.html" class="example-card">
+        <div class="num">Example 1</div>
+        <div class="title">Simple ZKC</div>
+        <p class="desc">Basic 3D graph: ZKC dataset with box nodes and thick edges. Good starting point for loading data and drawing a graph.</p>
+      </a>
+      <a href="2_ZKC_edge_bundling.html" class="example-card">
+        <div class="num">Example 2</div>
+        <div class="title">Edge bundling</div>
+        <p class="desc">ZKC with curved, bundled edges and vertical displacement for an arc-style flow look. Combines DrawEdgeBundling and DisplaceEdgeInY.</p>
+      </a>
+      <a href="3_LargePointCloud.html" class="example-card">
+        <div class="num">Example 3</div>
+        <div class="title">Large point cloud</div>
+        <p class="desc">Erdős–Rényi random graph (5000 nodes), Kamada–Kawai layout, and point-cloud + thin edges. Scales to larger graphs.</p>
+      </a>
+      <a href="4_ToggleActivation.html" class="example-card">
+        <div class="num">Example 4</div>
+        <div class="title">Toggle activation</div>
+        <p class="desc">Interactive node highlighting: click to toggle a subset "active" and recolor nodes. Useful for diffusion or selection demos.</p>
+      </a>
+      <a href="5_Hierarchy_simple.html" class="example-card">
+        <div class="num">Example 5</div>
+        <div class="title">Hierarchy</div>
+        <p class="desc">3D KD-tree clustering: nodes within a distance threshold are merged into super-nodes at centroids. Simplified graph with thick edges.</p>
+      </a>
+      <a href="6_Flowmap_style.html" class="example-card">
+        <div class="num">Example 6</div>
+        <div class="title">Flow map</div>
+        <p class="desc">FlowmapBlue-style: zoom in/out to change clustering. Zoom out = fewer merged nodes and flows; zoom in = more detail. 3D KD-tree by camera distance.</p>
+      </a>
+      <a href="7_Graph_algorithms.html" class="example-card">
+        <div class="num">Example 7</div>
+        <div class="title">Graph algorithms</div>
+        <p class="desc">BFS, Dijkstra, SelectSubgraph: path from a start node highlighted in green/red, and a subgraph drawn. Shows GraphMethods usage.</p>
+      </a>
+      <a href="8_ThreeWrapper_variants.html" class="example-card">
+        <div class="num">Example 8</div>
+        <div class="title">ThreeWrapper variants</div>
+        <p class="desc">Different draw styles: box nodes, simplified (cylinder-style) edges, and modularity-based node/edge groups by a node property.</p>
+      </a>
+    </section>
+  </main>
 </body>
 
 </html>
