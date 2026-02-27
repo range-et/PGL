@@ -6,11 +6,17 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="MasterStyle.css">
-  <title>ZKC3d - Example</title>
+  <title>Example 1 – Simple ZKC</title>
 </head>
 
-<body>
-  <h4>A simple plot of the ZKC Dataset <a href="https://github.com/range-et/PGL/blob/main/public/1_ZKC_simple.html">Code</a></h4>
+<body class="example-page">
+  <header class="example-header">
+    <a href="index.html" class="back-link">← All examples</a>
+    <h1>Example 1 – Simple ZKC</h1>
+    <p class="example-desc">Basic 3D graph: ZKC dataset with box nodes and thick edges.</p>
+    <a href="https://github.com/range-et/PGL/blob/main/Examples/1_ZKC_simple.html" class="code-link" target="_blank" rel="noopener">View code</a>
+  </header>
+  <div class="canvas-wrap">
   <canvas id="displayCanvas" class="displayCanvas"></canvas>
   <script type="module">
     // import the library
@@ -69,8 +75,8 @@
     // append the graph renderer to the container
     // and then drawing render calls
     animate();
-
   </script>
+  </div>
 </body>
 
 </html>

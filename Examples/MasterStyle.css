@@ -9,45 +9,153 @@
   --yellow: #f5cb5c;
   --cream: #e8eddf;
   --grey: #cfdbd5;
+  --cardBg: #2a2a2a;
+  --border: #3d3d3d;
 }
 
 * {
-  font-family: "Courier New", Courier, monospace;
-  color: var(--cream);
+  box-sizing: border-box;
 }
 
 body {
-  background-color: var(--charcoal);
-  text-align: center;
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  background: linear-gradient(160deg, var(--charcoal) 0%, var(--black) 100%);
+  color: var(--cream);
+  margin: 0;
+  min-height: 100vh;
+  line-height: 1.5;
 }
 
-h4 {
-  z-index: 10;
-  text-align: center;
+/* ----- Index page ----- */
+.index-page main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2rem 1rem 3rem;
 }
 
-main{
-  max-width: 1000px;
-  padding: 10px;
-  margin: auto;
+.index-page h1 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
+}
+
+.index-page .subtitle {
+  color: var(--grey);
+  font-size: 0.95rem;
+  margin-bottom: 2rem;
+}
+
+.index-page .example-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.index-page .example-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  background: var(--cardBg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  text-align: left;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.index-page .example-card:hover {
+  border-color: var(--teal);
+  background: #323232;
+}
+
+.index-page .example-card .num {
+  font-size: 0.8rem;
+  color: var(--teal);
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.index-page .example-card .title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+
+.index-page .example-card .desc {
+  font-size: 0.875rem;
+  color: var(--grey);
+  margin: 0;
+}
+
+/* ----- Example pages ----- */
+.example-page .example-header {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 1rem 1rem 0.5rem;
+  text-align: left;
+}
+
+.example-page .back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  color: var(--teal);
+  text-decoration: none;
+  margin-bottom: 0.75rem;
+}
+
+.example-page .back-link:hover {
+  color: var(--skyBlue);
+}
+
+.example-page .example-header h1 {
+  font-size: 1.35rem;
+  font-weight: 600;
+  margin: 0 0 0.35rem 0;
+}
+
+.example-page .example-desc {
+  font-size: 0.9rem;
+  color: var(--grey);
+  margin: 0 0 0.75rem 0;
+}
+
+.example-page .example-header .code-link {
+  font-size: 0.8rem;
+  color: var(--electricBlue);
+  text-decoration: none;
+}
+
+.example-page .example-header .code-link:hover {
+  text-decoration: underline;
+}
+
+.example-page .canvas-wrap {
+  text-align: center;
+  padding: 0 1rem 1.5rem;
 }
 
 .displayCanvas {
-  margin-left: auto;
-  margin-right: auto;
-  outline: var(--black) 3px solid;
+  display: block;
+  margin: 0 auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border);
 }
 
-#toggle{
-  padding: 10;
-  background-color: var(--navy);
+#toggle {
+  padding: 0.6rem 1.2rem;
+  background: var(--navy);
+  border-radius: 8px;
   max-width: 200px;
-  margin: 10px;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 1rem auto;
   cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.15s;
 }
 
-#toggle:hover{
-  background-color: var(--teal);
+#toggle:hover {
+  background: var(--teal);
 }

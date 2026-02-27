@@ -6,12 +6,17 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="MasterStyle.css">
-  <title>Flow map (FlowmapBlue-style) - Hierarchy + arcs</title>
+  <title>Example 6 – Flow map</title>
 </head>
 
-<body>
-  <h4>Flow map (FlowmapBlue-style): zoom to collapse/expand — KD-tree clustering by camera distance</h4>
-  <p>Zoom out → fewer, merged nodes and flows. Zoom in → more detail. Threshold = f(camera distance).</p>
+<body class="example-page">
+  <header class="example-header">
+    <a href="index.html" class="back-link">← All examples</a>
+    <h1>Example 6 – Flow map</h1>
+    <p class="example-desc">FlowmapBlue-style: zoom in/out to change clustering. Zoom out = fewer merged nodes; zoom in = more detail. 3D KD-tree by camera distance.</p>
+    <a href="https://github.com/range-et/PGL/blob/main/Examples/6_Flowmap_style.html" class="code-link" target="_blank" rel="noopener">View code</a>
+  </header>
+  <div class="canvas-wrap">
   <canvas id="displayCanvas" class="displayCanvas"></canvas>
   <script type="module">
     import * as PGL from "../Build/pgl_module.js";
@@ -75,6 +80,7 @@
     }
     animate();
   </script>
+  </div>
 </body>
 
 </html>

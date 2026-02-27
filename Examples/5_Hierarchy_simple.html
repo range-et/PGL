@@ -6,12 +6,17 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="MasterStyle.css">
-  <title>Hierarchy - Clustered graph (KD-tree distance)</title>
+  <title>Example 5 – Hierarchy</title>
 </head>
 
-<body>
-  <h4>Hierarchy: KD-tree clustering — simplified graph (super-nodes at centroids, thick edges)</h4>
-  <p>Expected: fewer nodes and edges than the original; each node is a cluster centroid. No heavy bundling (keeps load fast).</p>
+<body class="example-page">
+  <header class="example-header">
+    <a href="index.html" class="back-link">← All examples</a>
+    <h1>Example 5 – Hierarchy</h1>
+    <p class="example-desc">3D KD-tree clustering: nodes within a distance threshold merge into super-nodes at centroids. Simplified graph with thick edges.</p>
+    <a href="https://github.com/range-et/PGL/blob/main/Examples/5_Hierarchy_simple.html" class="code-link" target="_blank" rel="noopener">View code</a>
+  </header>
+  <div class="canvas-wrap">
   <canvas id="displayCanvas" class="displayCanvas"></canvas>
   <script type="module">
     import * as PGL from "../Build/pgl_module.js";
@@ -43,6 +48,7 @@
     }
     animate();
   </script>
+  </div>
 </body>
 
 </html>
