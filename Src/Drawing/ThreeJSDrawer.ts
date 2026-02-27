@@ -12,15 +12,15 @@ import _Node from "../Core/_Node";
 // Draw the graph out as a bunch of vertices
 // As like tiny squares
 /**
- *
- * Draw the veritces of the graph out as a point cloud
+ * Draw the vertices of the graph as a point cloud. **Static geometry** — use for one-shot layout.
+ * For time-based simulation use DrawTHREEGraphVerticesMutable and updatePositions() each frame.
  *
  * @param Graph - the graph that has to be drawn out
- * @param bounds - A global scaling parameter defaults to 1 but change to scale up a garph
- * @param size - The size of all the nodes - either input an array the same length of the number of nodes decribing how big each node is, or a global node value as a number or defaults to 1
+ * @param bounds - A global scaling parameter defaults to 1 but change to scale up a graph
+ * @param size - The size of all the nodes - either an array the same length as nodes or a single number
  * @param color - the color of the node defaults to white
  * @param alpha - the alpha value of the node defaults to 1 (opaque)
- * @returns a three JS group that contains all the vertices as a point cloud or a three js points object that can be added to the scene
+ * @returns a THREE.Group containing the point cloud
  */
 function DrawTHREEGraphVertices(
   Graph: Graph,
@@ -95,10 +95,99 @@ function DrawTHREEGraphVertices(
   return vertices;
 }
 
+export interface MutableVerticesResult {
+  group: THREE.Group;
+  updatePositions(positions: Float32Array | Map<number, Point>): void;
+}
+
+/**
+ * **Mutable** point cloud: positions can be updated each frame. Use for time-based simulation.
+ * Call updatePositions(simulation.getPositions()) (or a Map) in your animation loop.
+ * Node order matches get_node_ids_order().
+ */
+function DrawTHREEGraphVerticesMutable(
+  Graph: Graph,
+  bounds: number = 1,
+  size: number | number[] = 1,
+  color: number = 0xffffff,
+  alpha: number = 1
+): MutableVerticesResult {
+  const nodeIds = Graph.get_node_ids_order();
+  const n = nodeIds.length;
+  const pmap = Graph.get_position_map();
+  const positionAttribute: number[] = [];
+  let sizes: number[];
+  const colors = Array(n).fill(color);
+  const labels = nodeIds.slice();
+  const colorVal = new THREE.Color();
+  colorVal.setRGB(255, 255, 255);
+  for (let i = 0; i < n; i++) {
+    const nodeData = pmap.get(nodeIds[i])!;
+    positionAttribute.push(
+      nodeData.x * bounds,
+      nodeData.y * bounds,
+      nodeData.z * bounds
+    );
+    colorVal.toArray(colors, i * 3);
+  }
+  if (typeof size === "number") {
+    sizes = Array(n).fill(size);
+  } else {
+    sizes = size;
+  }
+
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute(
+    "position",
+    new THREE.Float32BufferAttribute(positionAttribute, 3)
+  );
+  geometry.setAttribute(
+    "customColor",
+    new THREE.Float32BufferAttribute(colors, 3)
+  );
+  geometry.setAttribute("size", new THREE.Float32BufferAttribute(sizes, 1));
+  geometry.setAttribute("label", new THREE.Int32BufferAttribute(labels, 1));
+  geometry.name = "nodes";
+
+  const PointMaterial = new THREE.ShaderMaterial({
+    uniforms: {
+      color: { value: new THREE.Color(0xffffff) },
+      pointTexture: {
+        value: new THREE.TextureLoader().load("./Textures/Square.png"),
+      },
+      alphaTest: { value: alpha },
+    },
+    vertexShader: vertexShader,
+    fragmentShader: fragmentShader,
+  });
+
+  const group = new THREE.Group();
+  group.add(new THREE.Points(geometry, PointMaterial));
+  const positionAttr = geometry.getAttribute("position") as THREE.BufferAttribute;
+
+  function updatePositions(positions: Float32Array | Map<number, Point>): void {
+    const arr = positionAttr.array as Float32Array;
+    if (positions instanceof Float32Array) {
+      for (let i = 0; i < n * 3; i++) {
+        arr[i] = positions[i] * bounds;
+      }
+    } else {
+      for (let i = 0; i < n; i++) {
+        const p = positions.get(nodeIds[i])!;
+        arr[i * 3] = p.x * bounds;
+        arr[i * 3 + 1] = p.y * bounds;
+        arr[i * 3 + 2] = p.z * bounds;
+      }
+    }
+    positionAttr.needsUpdate = true;
+  }
+
+  return { group, updatePositions };
+}
+
 // then make a thing which draws out all the edges (THICK)
 /**
- *
- * Draws out all the edges (Thick edges of a graph)
+ * Draws all edges as thick lines. **Static geometry** — use for one-shot layout.
  *
  * @param Graph - The graph whose edges have to be drawn
  * @param bounds - the global scale for all the edges to be drawn defaults to 1
@@ -139,13 +228,13 @@ function DrawThickEdgesFromEdgeMap(
 
 // make a thing that draws out all the lines (Thin)
 /**
- *
- * Draw thin lines for all the edges given a graph
+ * Draw thin lines for all edges. **Static geometry** — use for one-shot layout.
+ * For time-based simulation use DrawTHREEGraphEdgesThinMutable and updateEdges() each frame.
  *
  * @param Graph - The graph that has to be drawn
- * @param bounds - The global scale factor for the the edges - defaults to 1
+ * @param bounds - The global scale factor for the edges - defaults to 1
  * @param color - color of the lines - defaults to white
- * @returns
+ * @returns a THREE.Group of lines
  */
 function DrawTHREEGraphEdgesThin(
   Graph: Graph,
@@ -155,6 +244,53 @@ function DrawTHREEGraphEdgesThin(
   // first get the edge map positions
   const emap = Graph.get_edge_map();
   return DrawThinEdgesFromEdgeMap(emap, bounds, color);
+}
+
+export interface MutableEdgesResult {
+  group: THREE.Group;
+  updateEdges(): void;
+}
+
+/**
+ * **Mutable** thin edges: geometry is refreshed from the graph each frame. Use for time-based simulation.
+ * After updating the graph's position map and edge map, call updateEdges() in your animation loop.
+ */
+function DrawTHREEGraphEdgesThinMutable(
+  Graph: Graph,
+  bounds: number = 1,
+  color: number = 0xffffff
+): MutableEdgesResult {
+  const material = new THREE.LineBasicMaterial({ color });
+  const group = new THREE.Group();
+
+  function updateEdges(): void {
+    while (group.children.length > 0) {
+      const child = group.children[0];
+      group.remove(child);
+      if (child instanceof THREE.Line && child.geometry) {
+        child.geometry.dispose();
+      }
+    }
+    const emap = Graph.get_edge_map();
+    for (const edge of emap.values()) {
+      const points: THREE.Vector3[] = [];
+      edge.points.forEach((element) => {
+        points.push(
+          new THREE.Vector3(
+            element.x * bounds,
+            element.y * bounds,
+            element.z * bounds
+          )
+        );
+      });
+      const geometry = new THREE.BufferGeometry().setFromPoints(points);
+      const line = new THREE.Line(geometry, material);
+      group.add(line);
+    }
+  }
+
+  updateEdges();
+  return { group, updateEdges };
 }
 
 /**
@@ -347,10 +483,12 @@ async function AddInModularityBasedPointGroups(
   // returns an array of groups
   const groups: Map<number, number[]> = new Map();
   let ndata: _Node;
-  let modularity: number;
+  let modularity: number | undefined;
   for (let node of Graph.nodes.keys()) {
     ndata = Graph.nodes.get(node)!;
-    modularity = eval(`ndata.data.${propertyName}`);
+    const val = (ndata.data as Record<string, unknown>)[propertyName];
+    modularity = typeof val === "number" ? val : (val != null ? Number(val) : undefined);
+    if (modularity === undefined) continue;
     if (groups.has(modularity)) {
       groups.get(modularity)!.push(node);
     } else {
@@ -496,8 +634,10 @@ function ResetVertexColors(vertices: THREE.Points | THREE.Group) {
 
 export default {
   DrawTHREEGraphVertices,
+  DrawTHREEGraphVerticesMutable,
   DrawTHREEGraphEdgesThick,
   DrawTHREEGraphEdgesThin,
+  DrawTHREEGraphEdgesThinMutable,
   DrawThickPathFromNodeIds,
   AddBoxBasedImaging,
   AddInModularityBasedPointGroups,

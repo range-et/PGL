@@ -24,7 +24,28 @@ The documentation for the package is available at [documentation](https://www.pl
 npm run document
 ```
 
-This writes TypeDoc output to the `docs/` folder. **API overview:** the library exposes the following namespaces: `Graph`, `GraphMethods` (BFS, Dijkstra, GraphDiameter, SelectSubgraph), `SampleData` (LoadZKC, LoadZKCSimulated), `Constructors` (ConstructGraphNodeEdgesList), `Drawing` (SimulateKamadaKawai, DrawEdgeLines, DrawEdgeBundling, DisplaceEdgeInY, etc.), `Geometry`, `Utilities`, `ThreeWrapper`, `GraphDrawer`, `Models` (Erdos–Renyi), and `Hierarchy` (clusterByDistance, clusterByStrategy for flow-map style clustering).
+This writes TypeDoc output to the `docs/` folder. **API overview:** the library exposes the following namespaces: `Graph`, `GraphMethods` (BFS, Dijkstra, GraphDiameter, SelectSubgraph), `SampleData` (LoadZKC, LoadZKCSimulated), `Constructors` (ConstructGraphNodeEdgesList), `Drawing` (SimulateKamadaKawai, DrawEdgeLines, DrawEdgeBundling, DisplaceEdgeInY, etc.), `Geometry`, `Utilities`, `ThreeWrapper`, `GraphDrawer`, `Models` (Erdos–Renyi), `Hierarchy` (clusterByDistance, clusterByStrategy for flow-map style clustering), **Simulation** (createKamadaKawai3D), **MatrixHelpers** (matrixVectorMultiply, normalizeVector), and **glMatrix** (re-exported [gl-matrix](https://github.com/toji/gl-matrix) for vector/matrix math in the browser).
+
+### Graph simulations
+
+For time-based layout updates (e.g. in a `requestAnimationFrame` loop), use **createKamadaKawai3D(graph, options)**. It returns an object with **step(deltaTime)**, **getPositions()** (Float32Array), and **getPositionMap()**. Use **DrawTHREEGraphVerticesMutable** so you can call **updatePositions(simulation.getPositions())** each frame without recreating geometry. See Examples 9 (live simulation) and 11 (custom layout).
+
+### Types (Point, PointLike)
+
+The library exports **Point** (class with `x`, `y`, `z` and `translate()`) and **PointLike** (`{ x: number; y: number; z: number }`) for typing position maps and custom layout results. Use `PointLike` for plain objects; use `new PGL.Point(x, y, z)` when you need the class.
+
+### Drawing API: static vs mutable
+
+- **Static** (one-shot layout): `DrawTHREEGraphVertices`, `DrawTHREEGraphEdgesThin` — create geometry once from the graph.
+- **Mutable** (animation loops): `DrawTHREEGraphVerticesMutable` (and `updatePositions()`), `DrawTHREEGraphEdgesThinMutable` (and `updateEdges()`) — update geometry each frame for time-based simulation.
+
+### LOD and flow-map style
+
+**Hierarchy** (clusterByDistance, clusterByStrategy) and Example 6 provide FlowmapBlue-style level-of-detail: cluster nodes by distance (e.g. KD-tree), merge nearby nodes into super-nodes, and simplify the graph for zoom-dependent detail. See Examples 5 (Hierarchy) and 6 (Flow map).
+
+### Matrix math in the browser
+
+**get_node_ids_order()** returns a stable array of node IDs. **get_adjacency_matrix()** returns `{ matrix: Float32Array (row-major n×n), nodeIds }`. Use **matrixVectorMultiply(A, n, x, out)** and **normalizeVector(x)** for power iteration or diffusion in the browser. The library re-exports **glMatrix** (vec3, mat4, etc.) so you can do full vector/matrix math without adding another dependency. Dense adjacency matrix is for small/medium graphs; for very large graphs use **get_adjacency()** (sparse). See Examples 10 and 11.
 
 ## General setup of the package
 
@@ -93,6 +114,11 @@ async function createVisualization() {
 
 createVisualization();
 ```
+
+## Testing
+
+- **Unit tests:** `npm run test:unit` (Vitest; tests Utilities, Graph, Simulation, matrix helpers).
+- **Visual regression:** `npm test` (Puppeteer + pixelmatch against a baseline screenshot).
 
 ## Usage / Installation
 

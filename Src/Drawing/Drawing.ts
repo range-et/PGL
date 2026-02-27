@@ -378,17 +378,21 @@ function DisplaceVertices(
 ) {
   let max: number = 0;
   let value: number, ydisplacement: number;
+  const getParam = (data: Record<string, unknown>) => {
+    const v = data[parameter];
+    return typeof v === "number" ? v : Number(v) || 0;
+  };
   // go through the thing and set the min max values
   for (let node of Graph.nodes.values()) {
-    value = eval("node.data." + parameter);
+    value = getParam(node.data as Record<string, unknown>);
     if (value >= max) {
       max = value;
     }
   }
   // go through the nodes again and set the values
   for (const node of Graph.nodes.values()) {
-    value = eval("node.data." + parameter);
-    ydisplacement = (value / max) * displacement;
+    value = getParam(node.data as Record<string, unknown>);
+    ydisplacement = max > 0 ? (value / max) * displacement : 0;
     // now filter the values so that we know that the values are between a max and a min
     ydisplacement = Math.max(0, ydisplacement); // this sets the lower bound to be something
     ydisplacement = Math.min(displacement, ydisplacement); // this sets the upper bound of the thing

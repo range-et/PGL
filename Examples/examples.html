@@ -36,8 +36,8 @@
       </a>
       <a href="5_Hierarchy_simple.html" class="example-card">
         <div class="num">Example 5</div>
-        <div class="title">Hierarchy</div>
-        <p class="desc">3D KD-tree clustering: nodes within a distance threshold are merged into super-nodes at centroids. Simplified graph with thick edges.</p>
+        <div class="title">Hierarchy (simplify by merging nearby nodes)</div>
+        <p class="desc">Merge nodes within a distance in 3D into super-nodes at cluster centers; edges between clusters are combined. Fewer nodes, same overall structure — good for LOD or flow-map style views.</p>
       </a>
       <a href="6_Flowmap_style.html" class="example-card">
         <div class="num">Example 6</div>
@@ -53,6 +53,21 @@
         <div class="num">Example 8</div>
         <div class="title">ThreeWrapper variants</div>
         <p class="desc">Different draw styles: box nodes, simplified (cylinder-style) edges, and modularity-based node/edge groups by a node property.</p>
+      </a>
+      <a href="9_Simulation_live.html" class="example-card">
+        <div class="num">Example 9</div>
+        <div class="title">Live 3D simulation</div>
+        <p class="desc">Time-based 3D Kamada–Kawai: layout evolves in real time. Uses createKamadaKawai3D, step(dt), and mutable vertices.</p>
+      </a>
+      <a href="10_Adjacency_matrix.html" class="example-card">
+        <div class="num">Example 10</div>
+        <div class="title">Adjacency matrix + power iteration</div>
+        <p class="desc">get_adjacency_matrix() and matrix math in the browser. Power iteration for leading eigenvector; node size reflects value.</p>
+      </a>
+      <a href="11_Custom_layout.html" class="example-card">
+        <div class="num">Example 11</div>
+        <div class="title">Custom layout from matrix math</div>
+        <p class="desc">Adjacency → power iteration for two coordinates → apply_position_map. Full pipeline: matrix math to 3D layout.</p>
       </a>
     </section>
   </main>

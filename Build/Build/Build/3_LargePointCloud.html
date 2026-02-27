@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="MasterStyle.css" />
+  <title>Example 3 – Large point cloud</title>
+</head>
+
+<body class="example-page">
+  <header class="example-header">
+    <a href="examples.html" class="back-link">← All examples</a>
+    <h1>Example 3 – Large point cloud</h1>
+    <p class="example-desc">Erdős–Rényi graph (5000 nodes), Kamada–Kawai layout, point cloud + thin edges.</p>
+    <a href="https://github.com/range-et/PGL/blob/main/Examples/3_LargePointCloud.html" class="code-link" target="_blank" rel="noopener">View code</a>
+  </header>
+  <div class="canvas-wrap">
+  <canvas id="displayCanvas" class="displayCanvas"></canvas>
+  <script type="module">
+    // import the library
+    import * as PGL from "../Build/pgl_module.js";
+
+    // create an Erdos Reyni graph. Lets do 1000 Points for this example
+    const G = await PGL.Models.GenerateErdosReyni_n_p(5000, 0.0001);
+    // since these graphs can be really large - they are not initialized 
+    // so you must initialize them
+    G.initialize();
+    G.printData();
+    
+    // now in this case we shall use the Kamada Kawai algorithm to initilaize all the positions
+    const simulatedPosMap = await PGL.Drawing.SimulateKamadaKawai(G, 2);
+    G.apply_position_map(simulatedPosMap);
+    // get the line map associated 
+    const lmap = PGL.Drawing.DrawEdgeLinesDivisions(G, 1);
+    G.apply_edge_pos_maps(lmap)
+    
+    // set the width and height 
+    const width = 800;
+    const heigth = 700;
+
+    // pass in the graph and the canvas into the drawing object to draw it
+    // first get the canvas element
+    const canvas = document.getElementById("displayCanvas");
+    // then create a graph drawer object
+    // to do that first make a options object
+    const graphDrawerOptions = {
+      graph: G,
+      width: width,
+      height: heigth,
+      canvas: canvas
+    };
+
+    // then create the visualization window
+    // with those settings
+    const graph3d = new PGL.GraphDrawer.GraphDrawer3d(graphDrawerOptions);
+    // initialize this object before adding things to it 
+    await graph3d.init();
+
+    // Create the 3d elements for the graph
+    // first describe a global scaling factor
+    const bounds = 0.1
+    // first create all the node elements
+    const nodeVisualElements = PGL.ThreeWrapper.DrawTHREEGraphVertices(G, bounds, 1, 0xffffff, 1);
+    // add the node elements to the scene
+    graph3d.addVisElement(nodeVisualElements);
+    // then create the edge elements 
+    const edgeVisualElements = PGL.ThreeWrapper.DrawTHREEGraphEdgesThin(G, bounds, 0xffafcc);
+    graph3d.addVisElement(edgeVisualElements);
+
+    // then there are two last steps for a 3d graph
+    // this is done so that other 3d objects can be added in later
+    // since the base library is three.js all standard three js things are possible
+    // now moving on to the two steps :
+    // make an animation function
+    function animate() {
+      requestAnimationFrame(animate);
+      graph3d.rendercall();
+    }
+
+    // append the graph renderer to the container
+    // and then drawing render calls
+    animate();
+  </script>
+  </div>
+</body>
+
+</html>

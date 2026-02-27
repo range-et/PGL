@@ -217,6 +217,38 @@ class Graph {
     }
     return pmap;
   }
+
+  /**
+   * Returns a deterministic order of node IDs (same as iteration order of nodes).
+   * Use this order for adjacency matrix rows/columns, simulation buffers, and drawer indices.
+   * @returns Array of node IDs in stable order
+   */
+  get_node_ids_order(): number[] {
+    return Array.from(this.nodes.keys());
+  }
+
+  /**
+   * Returns the adjacency matrix and the node ID order. Dense form is for small/medium graphs;
+   * for very large graphs use get_adjacency() (sparse) instead.
+   * @returns { matrix: Float32Array (row-major n×n), nodeIds: number[] }
+   */
+  get_adjacency_matrix(): { matrix: Float32Array; nodeIds: number[] } {
+    const nodeIds = this.get_node_ids_order();
+    const n = nodeIds.length;
+    const matrix = new Float32Array(n * n);
+    const adj = this.get_adjacency();
+    const idToIndex = new Map<number, number>();
+    nodeIds.forEach((id, i) => idToIndex.set(id, i));
+    for (let i = 0; i < n; i++) {
+      const nodeId = nodeIds[i];
+      const neighbours = adj.get(nodeId) ?? [];
+      for (const nbId of neighbours) {
+        const j = idToIndex.get(nbId);
+        if (j !== undefined) matrix[i * n + j] = 1;
+      }
+    }
+    return { matrix, nodeIds };
+  }
 }
 
 // Export the graph Library

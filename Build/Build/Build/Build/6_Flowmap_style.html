@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="MasterStyle.css">
+  <title>Example 6 – Flow map</title>
+</head>
+
+<body class="example-page">
+  <header class="example-header">
+    <a href="examples.html" class="back-link">← All examples</a>
+    <h1>Example 6 – Flow map</h1>
+    <p class="example-desc">FlowmapBlue-style: zoom in/out to change clustering. Zoom out = fewer merged nodes; zoom in = more detail. 3D KD-tree by camera distance.</p>
+    <a href="https://github.com/range-et/PGL/blob/main/Examples/6_Flowmap_style.html" class="code-link" target="_blank" rel="noopener">View code</a>
+  </header>
+  <div class="canvas-wrap">
+  <canvas id="displayCanvas" class="displayCanvas"></canvas>
+  <script type="module">
+    import * as PGL from "../Build/pgl_module.js";
+
+    const original = await PGL.SampleData.LoadZKCSimulated();
+    const width = 800;
+    const height = 700;
+    const canvas = document.getElementById("displayCanvas");
+    const graph3d = new PGL.GraphDrawer.GraphDrawer3d({ graph: original, width, height, canvas });
+    await graph3d.init();
+
+    const bounds = 1;
+    const arcHeight = 25;
+    let nodeGroup = null;
+    let edgeGroup = null;
+    let currentThreshold = -1;
+    let pending = false;
+
+    function distanceToThreshold(distance) {
+      return Math.max(8, Math.min(70, distance * 0.12));
+    }
+
+    async function updateByZoom() {
+      const distance = graph3d.camera.position.distanceTo(graph3d.controls.target);
+      const threshold = distanceToThreshold(distance);
+      if (pending || Math.abs(threshold - currentThreshold) < 3) return;
+      pending = true;
+      currentThreshold = threshold;
+      try {
+        const simplified = await PGL.Hierarchy.clusterByDistance(original, { distanceThreshold: threshold });
+        if (nodeGroup) graph3d.scene.remove(nodeGroup);
+        if (edgeGroup) graph3d.scene.remove(edgeGroup);
+        let lmap = PGL.Drawing.DrawEdgeLinesDivisions(simplified, 1);
+        lmap = PGL.Drawing.DisplaceEdgeInY(lmap, arcHeight);
+        simplified.apply_edge_pos_maps(lmap);
+        nodeGroup = PGL.ThreeWrapper.DrawTHREEBoxBasedVertices(simplified, bounds, 0xffffff, 10);
+        edgeGroup = PGL.ThreeWrapper.DrawThickEdgesFromEdgeMap(lmap, bounds, 0x5fa8d3, 1);
+        graph3d.scene.add(nodeGroup);
+        graph3d.scene.add(edgeGroup);
+      } finally {
+        pending = false;
+      }
+    }
+
+    // Initial view (same clustering as first zoom level)
+    const initialDist = graph3d.camera.position.distanceTo(graph3d.controls.target);
+    currentThreshold = distanceToThreshold(initialDist);
+    const initialSimplified = await PGL.Hierarchy.clusterByDistance(original, { distanceThreshold: currentThreshold });
+    let lmap0 = PGL.Drawing.DrawEdgeLinesDivisions(initialSimplified, 1);
+    lmap0 = PGL.Drawing.DisplaceEdgeInY(lmap0, arcHeight);
+    initialSimplified.apply_edge_pos_maps(lmap0);
+    nodeGroup = PGL.ThreeWrapper.DrawTHREEBoxBasedVertices(initialSimplified, bounds, 0xffffff, 10);
+    edgeGroup = PGL.ThreeWrapper.DrawThickEdgesFromEdgeMap(lmap0, bounds, 0x5fa8d3, 1);
+    graph3d.scene.add(nodeGroup);
+    graph3d.scene.add(edgeGroup);
+
+    function animate() {
+      requestAnimationFrame(animate);
+      updateByZoom();
+      graph3d.rendercall();
+    }
+    animate();
+  </script>
+  </div>
+</body>
+
+</html>
