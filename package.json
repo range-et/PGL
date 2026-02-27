@@ -12,6 +12,9 @@
     "build:all": "npm run build && npm run document",
     "test": "node ./test/test_1.js",
     "document": "npx typedoc --out docs Src",
+    "document:public": "npm run document && cp -R docs/. public/",
+    "examples:public": "cp -R Examples/. public/",
+    "deploy:public": "npm run build && npm run document && cp -R Build/. public/Build/ && cp -R Examples/. public/ && cp -R docs/. public/",
     "serve": "python3 -m http.server 3000"
   },
   "repository": {

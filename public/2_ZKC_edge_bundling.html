@@ -5,13 +5,19 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="MasterStyle.css">
-    <title>ZKC3d - Example</title>
+  <link rel="stylesheet" href="MasterStyle.css">
+  <title>Example 2 – Edge bundling</title>
 </head>
 
-<body>
-    <h4>A simple plot of the ZKC Dataset <a href="https://github.com/range-et/PGL/blob/main/public/2_ZKC_edge_bundling.html">Code</a></h4>
-    <canvas id="displayCanvas" class="displayCanvas"></canvas>
+<body class="example-page">
+  <header class="example-header">
+    <a href="index.html" class="back-link">← All examples</a>
+    <h1>Example 2 – Edge bundling</h1>
+    <p class="example-desc">ZKC with curved, bundled edges and vertical displacement (arc-style).</p>
+    <a href="https://github.com/range-et/PGL/blob/main/Examples/2_ZKC_edge_bundling.html" class="code-link" target="_blank" rel="noopener">View code</a>
+  </header>
+  <div class="canvas-wrap">
+  <canvas id="displayCanvas" class="displayCanvas"></canvas>
     <script type="module">
         // import the library
         import * as PGL from "../Build/pgl_module.js";
@@ -56,10 +62,10 @@
         const newEdgeMap = await PGL.Drawing.DrawEdgeBundling(EdgeMap_copy, 50, 10);
         // then create the edge elements 
         // these are the reuglar edges 
-        const edgeVisualElements = PGL.ThreeWrapper.DrawThinEdgesFromEdgeMap(EdgeMap, bounds, 0x62b6cb, 0.01);
+        const edgeVisualElements = PGL.ThreeWrapper.DrawThinEdgesFromEdgeMap(EdgeMap, bounds, 0x62b6cb, 0.1);
         graph3d.addVisElement(edgeVisualElements);
         // these are the bundled edges 
-        const edgeVisualElements_Bundled = PGL.ThreeWrapper.DrawThickEdgesFromEdgeMap(newEdgeMap, bounds, 0x5fa8d3, 0.01);
+        const edgeVisualElements_Bundled = PGL.ThreeWrapper.DrawThickEdgesFromEdgeMap(newEdgeMap, bounds, 0x5fa8d3, 5);
         graph3d.addVisElement(edgeVisualElements_Bundled);
 
         // then there are two last steps for a 3d graph
@@ -75,8 +81,8 @@
         // append the graph renderer to the container
         // and then drawing render calls
         animate();
-
     </script>
+  </div>
 </body>
 
 </html>

@@ -5,14 +5,20 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="MasterStyle.css" />
-    <title>Large Graph Toggle - Example</title>
+  <link rel="stylesheet" href="MasterStyle.css" />
+  <title>Example 4 – Toggle activation</title>
 </head>
 
-<body>
-    <h4>Toggle and activate some nodes <a href="https://github.com/range-et/PGL/blob/main/public/4_ToggleActivation.html">Code</a></h4>
-    <div id="toggle">Toggle Activation</div>
-    <canvas id="displayCanvas" class="displayCanvas"></canvas>
+<body class="example-page">
+  <header class="example-header">
+    <a href="index.html" class="back-link">← All examples</a>
+    <h1>Example 4 – Toggle activation</h1>
+    <p class="example-desc">Click the button to toggle a subset of nodes “active” and recolor the graph.</p>
+    <a href="https://github.com/range-et/PGL/blob/main/Examples/4_ToggleActivation.html" class="code-link" target="_blank" rel="noopener">View code</a>
+  </header>
+  <div class="canvas-wrap">
+  <div id="toggle">Toggle Activation</div>
+  <canvas id="displayCanvas" class="displayCanvas"></canvas>
     <script type="module">
         // import the library
         import * as PGL from "../Build/pgl_module.js";
@@ -99,8 +105,8 @@
         }
         // assign this function to the toggle button
         document.getElementById("toggle").onclick = toggle_randomizer;
-
     </script>
+  </div>
 </body>
 
 </html>

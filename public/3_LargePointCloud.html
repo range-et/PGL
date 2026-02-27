@@ -6,11 +6,17 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="MasterStyle.css" />
-  <title>Large Graph - Example</title>
+  <title>Example 3 – Large point cloud</title>
 </head>
 
-<body>
-  <h4>A large plot using PGL - 5000 points <a href="https://github.com/range-et/PGL/blob/main/public/3_LargePointCloud.html">Code</a></h4>
+<body class="example-page">
+  <header class="example-header">
+    <a href="index.html" class="back-link">← All examples</a>
+    <h1>Example 3 – Large point cloud</h1>
+    <p class="example-desc">Erdős–Rényi graph (5000 nodes), Kamada–Kawai layout, point cloud + thin edges.</p>
+    <a href="https://github.com/range-et/PGL/blob/main/Examples/3_LargePointCloud.html" class="code-link" target="_blank" rel="noopener">View code</a>
+  </header>
+  <div class="canvas-wrap">
   <canvas id="displayCanvas" class="displayCanvas"></canvas>
   <script type="module">
     // import the library
@@ -60,7 +66,7 @@
     // add the node elements to the scene
     graph3d.addVisElement(nodeVisualElements);
     // then create the edge elements 
-    const edgeVisualElements = PGL.ThreeWrapper.DrawTHREEGraphEdgesThin(G, bounds, 0xffafcc, 0.01);
+    const edgeVisualElements = PGL.ThreeWrapper.DrawTHREEGraphEdgesThin(G, bounds, 0xffafcc);
     graph3d.addVisElement(edgeVisualElements);
 
     // then there are two last steps for a 3d graph
@@ -77,6 +83,7 @@
     // and then drawing render calls
     animate();
   </script>
+  </div>
 </body>
 
 </html>
