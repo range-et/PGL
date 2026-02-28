@@ -104,6 +104,22 @@ class tn {
     }
     return this.edges.delete(e), !0;
   }
+  /**
+   * Remove a node by ID and all edges incident to it. Updates adjacency lists
+   * for remaining nodes.
+   *
+   * @param nodeId - The node ID to remove
+   * @returns true if the node existed and was removed, false otherwise
+   */
+  remove_node(e) {
+    if (!this.nodes.has(e)) return !1;
+    const n = [];
+    for (const [i, r] of this.edges.entries())
+      (r.start === e || r.end === e) && n.push(i);
+    for (const i of n)
+      this.remove_edge(i);
+    return this.nodes.delete(e), !0;
+  }
   // get an adjacency list representation of the graph
   // this only has the indices and not the actual data
   // associated with the node to speed things up

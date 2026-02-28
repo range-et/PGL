@@ -144,6 +144,30 @@ class Graph {
     return true;
   }
 
+  /**
+   * Remove a node by ID and all edges incident to it. Updates adjacency lists
+   * for remaining nodes.
+   *
+   * @param nodeId - The node ID to remove
+   * @returns true if the node existed and was removed, false otherwise
+   */
+  remove_node(nodeId: number): boolean {
+    if (!this.nodes.has(nodeId)) return false;
+    // Collect edge IDs to remove (can't delete while iterating)
+    const edgeIdsToRemove: number[] = [];
+    for (const [edgeId, edge] of this.edges.entries()) {
+      if (edge.start === nodeId || edge.end === nodeId) {
+        edgeIdsToRemove.push(edgeId);
+      }
+    }
+    // Remove each incident edge (updates adjacency)
+    for (const edgeId of edgeIdsToRemove) {
+      this.remove_edge(edgeId);
+    }
+    this.nodes.delete(nodeId);
+    return true;
+  }
+
   // get an adjacency list representation of the graph
   // this only has the indices and not the actual data
   // associated with the node to speed things up

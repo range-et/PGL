@@ -66,6 +66,33 @@ describe("Graph", () => {
     });
   });
 
+  describe("remove_node", () => {
+    it("removes node and all incident edges", () => {
+      const { graph } = makeGraph(4, [[0, 1], [1, 2], [2, 3], [0, 2]]);
+      graph.initialize();
+      expect(graph.nodes.size).toBe(4);
+      expect(graph.edges.size).toBe(4);
+      const removed = graph.remove_node(1);
+      expect(removed).toBe(true);
+      expect(graph.nodes.size).toBe(3);
+      expect(graph.nodes.has(1)).toBe(false);
+      // Edges 0-1 and 1-2 should be gone (2 edges removed)
+      expect(graph.edges.size).toBe(2);
+      for (const edge of graph.edges.values()) {
+        expect(edge.start).not.toBe(1);
+        expect(edge.end).not.toBe(1);
+      }
+      expect(graph.nodes.get(0)!.neighbours).not.toContain(1);
+      expect(graph.nodes.get(2)!.neighbours).not.toContain(1);
+    });
+    it("returns false when node does not exist", () => {
+      const { graph } = makeGraph(2, [[0, 1]]);
+      graph.initialize();
+      expect(graph.remove_node(999)).toBe(false);
+      expect(graph.nodes.size).toBe(2);
+    });
+  });
+
   describe("remove_edge", () => {
     it("removes edge and updates adjacency", () => {
       const nodes = new Map<number, _Node>();

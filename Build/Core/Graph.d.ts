@@ -63,6 +63,14 @@ declare class Graph {
      */
     remove_edge(edgeId: number): boolean;
     /**
+     * Remove a node by ID and all edges incident to it. Updates adjacency lists
+     * for remaining nodes.
+     *
+     * @param nodeId - The node ID to remove
+     * @returns true if the node existed and was removed, false otherwise
+     */
+    remove_node(nodeId: number): boolean;
+    /**
      *
      * @returns The adjacency lists associated with the graph
      */
