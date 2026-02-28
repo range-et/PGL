@@ -18,6 +18,7 @@
  * - {@link Graph} — main graph class (nodes + edges)
  * - {@link createKamadaKawai3D} / {@link createStressSGD3D} — layout simulations
  * - `SampleData`, `Drawing`, `ThreeWrapper`, `GraphDrawer` — data loaders and visualization
+ * - `NodePickDetails`, `EdgePickDetails`, `InteractionOptions` — interaction callback types
  */
 export { Graph, _Node, Edge } from './Core';
 export { GraphMethods } from './GraphAlgorithms';

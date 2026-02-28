@@ -18,6 +18,7 @@
  * - {@link Graph} — main graph class (nodes + edges)
  * - {@link createKamadaKawai3D} / {@link createStressSGD3D} — layout simulations
  * - `SampleData`, `Drawing`, `ThreeWrapper`, `GraphDrawer` — data loaders and visualization
+ * - `NodePickDetails`, `EdgePickDetails`, `InteractionOptions` — interaction callback types
  */
 export { Graph, _Node, Edge } from './Core';
 export { GraphMethods } from './GraphAlgorithms';
@@ -38,3 +39,4 @@ export * as glMatrix from 'gl-matrix';
 export { createKamadaKawai3D, createStressSGD3D } from './Simulation';
 export type { KamadaKawai3DOptions, StressSGD3DOptions, KamadaKawai3DSimulation, StressSGD3DSimulation, } from './Simulation';
 export type { LoadGraphFromObjResult } from './SampleData';
+export type { NodePickDetails, EdgePickDetails, InteractionOptions, } from './Drawing/InteractionLayer';

@@ -65,10 +65,16 @@ declare class GraphDrawer3d {
      */
     rendercall(): void;
     /**
-     * Enable opt-in interaction: node and edge picking via click/hover.
+     * Enable opt-in interaction: node and edge picking via click/hover, and optional drag-to-reposition.
      * Callbacks receive graph details (node data, neighbours, edge endpoints).
      *
-     * @param options - Must include `graph`; optional `onNodeClick`, `onEdgeClick`, `onNodeHover`, `onEdgeHover`, `hoverEnabled`
+     * @param options - Interaction options. Must include `graph`. Optional:
+     *   - `onNodeClick`, `onEdgeClick` — click callbacks
+     *   - `onNodeHover`, `onEdgeHover` — hover callbacks (receive `null` when leaving)
+     *   - `hoverEnabled` — default true; set false to disable hover
+     *   - `enableNodeDrag` — enable drag-to-reposition (use with mutable vertices/edges)
+     *   - `onNodeDrag(nodeId, newPosition)` — called each pointer move while dragging
+     *   - `controls` — OrbitControls to disable during drag (auto-passed if omitted)
      */
     enableInteraction(options: InteractionOptions): void;
     /**

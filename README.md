@@ -22,7 +22,7 @@ The documentation for the package is available at [documentation](https://www.pl
 npm run document
 ```
 
-This writes TypeDoc output to the `docs/` folder. **API overview:** the library exposes the following namespaces: `Graph`, `GraphMethods` (BFS, Dijkstra, GraphDiameter, SelectSubgraph — note: `Dijkstra` returns hop-count distances via BFS for unweighted graphs), `SampleData` (LoadZKC, LoadZKCSimulated, LoadGraphFromEdgeListText for (sgd)²-style edge lists, LoadGraphFromObjText for OBJ meshes → graph + positions), `Constructors` (ConstructGraphNodeEdgesList), `Drawing` (SimulateKamadaKawai, DrawEdgeLines, DrawEdgeBundling, DisplaceEdgeInY, etc.), `Geometry`, `Utilities`, `ThreeWrapper`, `GraphDrawer`, `Models` (Erdos–Renyi), `Hierarchy` (clusterByDistance, clusterByStrategy for flow-map style clustering), **Simulation** (createKamadaKawai3D, createStressSGD3D — stress layout methods from (sgd)², Imperial), **MatrixHelpers** (matrixVectorMultiply, normalizeVector), and **glMatrix** (re-exported [gl-matrix](https://github.com/toji/gl-matrix) for vector/matrix math in the browser).
+This writes TypeDoc output to the `docs/` folder. **API overview:** the library exposes the following namespaces: `Graph`, `GraphMethods` (BFS, Dijkstra, GraphDiameter, SelectSubgraph — note: `Dijkstra` returns hop-count distances via BFS for unweighted graphs), `SampleData` (LoadZKC, LoadZKCSimulated, LoadGraphFromEdgeListText for (sgd)²-style edge lists, LoadGraphFromObjText for OBJ meshes → graph + positions), `Constructors` (ConstructGraphNodeEdgesList), `Drawing` (SimulateKamadaKawai, DrawEdgeLines, DrawEdgeBundling, DisplaceEdgeInY, etc.), `Geometry`, `Utilities`, `ThreeWrapper`, `GraphDrawer`, **Interaction** (opt-in: `enableInteraction`, `disableInteraction`; types `NodePickDetails`, `EdgePickDetails`, `InteractionOptions` for click/hover/drag callbacks), `Models` (Erdos–Renyi), `Hierarchy` (clusterByDistance, clusterByStrategy for flow-map style clustering), **Simulation** (createKamadaKawai3D, createStressSGD3D — stress layout methods from (sgd)², Imperial), **MatrixHelpers** (matrixVectorMultiply, normalizeVector), and **glMatrix** (re-exported [gl-matrix](https://github.com/toji/gl-matrix) for vector/matrix math in the browser).
 
 ### Graph simulations
 
@@ -39,12 +39,64 @@ The library exports **Point** (class with `x`, `y`, `z` and `translate()`) and *
 
 ### Interaction (opt-in)
 
-Interaction is **100% opt-in**. Call `graph3d.enableInteraction({ graph, onNodeClick, onEdgeClick, onNodeHover, onEdgeHover })` to add click and hover picking. Callbacks receive graph details:
+Interaction is **100% opt-in**. Call `graph3d.enableInteraction(options)` after adding visual elements. No interaction occurs unless you call it.
+
+**Options:**
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `graph` | `Graph` | Required. Used to look up node/edge details for callbacks. |
+| `onNodeClick` | `(details: NodePickDetails) => void` | Fired when a node is clicked. |
+| `onEdgeClick` | `(details: EdgePickDetails) => void` | Fired when an edge is clicked. |
+| `onNodeHover` | `(details: NodePickDetails \| null) => void` | Fired when pointer enters/leaves a node. `null` when leaving. |
+| `onEdgeHover` | `(details: EdgePickDetails \| null) => void` | Fired when pointer enters/leaves an edge. `null` when leaving. |
+| `hoverEnabled` | `boolean` | Default `true`. Set `false` to disable hover callbacks. |
+| `enableNodeDrag` | `boolean` | Enable drag-to-reposition. Requires `onNodeDrag`. |
+| `onNodeDrag` | `(nodeId: number, newPosition: PointLike) => void` | Called each pointer move while dragging. Update graph and call `updatePositions()` / `updateEdges()`. |
+| `controls` | `OrbitControls` | Optional. Pass `graph3d.controls` to disable camera orbit during drag. Auto-passed by GraphDrawer. |
+
+**Callback payloads:**
 
 - **NodePickDetails**: `nodeId`, `data`, `neighbours`, `position`
 - **EdgePickDetails**: `edgeId`, `start`, `end`, `data`
 
-Use these for tooltips, highlighting (e.g. `ChangeTheVertexColours`), or custom UI. Thick edges are easier to pick than thin lines. See Examples 14 (click), 15 (hover), and 16 (highlight neighbours).
+**Example — click and hover:**
+
+```javascript
+graph3d.enableInteraction({
+  graph: G,
+  onNodeClick: (d) => console.log("Node", d.nodeId, "neighbours:", d.neighbours),
+  onNodeHover: (d) => { if (d) showTooltip(d); else hideTooltip(); },
+});
+```
+
+**Example — drag to reposition (use mutable vertices and edges):**
+
+```javascript
+const { group, updatePositions } = PGL.ThreeWrapper.DrawTHREEBoxBasedVerticesMutable(G, 1, 0xffffff, 5);
+const { group: edgeGroup, updateEdges } = PGL.ThreeWrapper.DrawTHREEGraphEdgesThinMutable(G, 1, 0xffafcc);
+graph3d.addVisElement(group);
+graph3d.addVisElement(edgeGroup);
+
+graph3d.enableInteraction({
+  graph: G,
+  enableNodeDrag: true,
+  onNodeDrag: (nodeId, newPos) => {
+    const node = G.nodes.get(nodeId);
+    if (node?.data?.pos) {
+      node.data.pos.x = newPos.x;
+      node.data.pos.y = newPos.y;
+      node.data.pos.z = newPos.z;
+    }
+    const lmap = PGL.Drawing.DrawEdgeLinesDivisions(G, 1);
+    G.apply_edge_pos_maps(lmap);
+    updatePositions(G.get_position_map());
+    updateEdges();
+  },
+});
+```
+
+**Tips:** Thick edges are easier to pick than thin lines. Use `bounds: 1` or `5` for better picking. Set `graph3d.controls.autoRotate = false` for interactive demos. See Examples 14 (click), 15 (hover), 16 (highlight neighbours), 17 (drag).
 
 ### LOD and flow-map style
 
@@ -146,7 +198,7 @@ Or head over to the GitHub, download the pgl_module.js [Builds](https://github.c
 
 ## More examples
 
-More examples are available at [Examples](https://www.plebeiangraphlibrary.com/examples.html) Check them out as a demonstration of some of the features of the library.
+More examples are available at [Examples](https://www.plebeiangraphlibrary.com/examples.html). They cover layout (Kamada–Kawai, Stress SGD), edge bundling, flow maps, and **interaction** (Examples 14–17: click, hover, neighbour highlight, drag-to-reposition).
 
 ## Integrations
 

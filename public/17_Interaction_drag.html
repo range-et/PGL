@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="MasterStyle.css">
+  <title>Example 17 – Interaction (drag nodes)</title>
+</head>
+
+<body class="example-page">
+  <header class="example-header">
+    <a href="examples.html" class="back-link">← All examples</a>
+    <h1>Example 17 – Interaction (drag nodes)</h1>
+    <p class="example-desc">Drag cubes to reposition nodes. Uses enableNodeDrag and onNodeDrag with mutable box vertices and edges.</p>
+    <a href="https://github.com/range-et/PGL/blob/main/Examples/17_Interaction_drag.html" class="code-link" target="_blank" rel="noopener">View code</a>
+  </header>
+  <div class="canvas-wrap">
+    <canvas id="displayCanvas" class="displayCanvas"></canvas>
+  <script type="module">
+    import * as PGL from "../Build/pgl_module.js";
+
+    const G = await PGL.SampleData.LoadZKCSimulated();
+    const width = 800;
+    const height = 700;
+    const canvas = document.getElementById("displayCanvas");
+
+    const graph3d = new PGL.GraphDrawer.GraphDrawer3d({ graph: G, width, height, canvas });
+    await graph3d.init();
+
+    graph3d.controls.autoRotate = false;
+
+    const bounds = 1;
+    const { group: nodeGroup, updatePositions } = PGL.ThreeWrapper.DrawTHREEBoxBasedVerticesMutable(G, bounds, 0xffffff, 5);
+    const { group: edgeGroup, updateEdges } = PGL.ThreeWrapper.DrawTHREEGraphEdgesThinMutable(G, bounds, 0xffafcc);
+    graph3d.addVisElement(nodeGroup);
+    graph3d.addVisElement(edgeGroup);
+
+    graph3d.enableInteraction({
+      graph: G,
+      enableNodeDrag: true,
+      onNodeDrag: (nodeId, newPos) => {
+        const node = G.nodes.get(nodeId);
+        if (node?.data?.pos) {
+          node.data.pos.x = newPos.x;
+          node.data.pos.y = newPos.y;
+          node.data.pos.z = newPos.z;
+        }
+        const lmap = PGL.Drawing.DrawEdgeLinesDivisions(G, 1);
+        G.apply_edge_pos_maps(lmap);
+        updatePositions(G.get_position_map());
+        updateEdges();
+      },
+    });
+
+    function animate() {
+      requestAnimationFrame(animate);
+      graph3d.rendercall();
+    }
+    animate();
+  </script>
+  </div>
+</body>
+
+</html>

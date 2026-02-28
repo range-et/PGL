@@ -1,5 +1,6 @@
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { default as Graph } from '../Core/Graph';
+import { InteractionLayer, InteractionOptions } from './InteractionLayer';
 import * as THREE from "three";
 interface GraphDrawer3d {
     canvas: HTMLCanvasElement;
@@ -13,6 +14,7 @@ interface GraphDrawer3d {
     camera: THREE.PerspectiveCamera;
     scene: THREE.Scene;
     graphs: Map<number, Graph>;
+    interactionLayer?: InteractionLayer;
 }
 /**
  * This is the main graph drawer class
@@ -62,6 +64,23 @@ declare class GraphDrawer3d {
      * Remember to do this since this is a common are for bugs to occur
      */
     rendercall(): void;
+    /**
+     * Enable opt-in interaction: node and edge picking via click/hover, and optional drag-to-reposition.
+     * Callbacks receive graph details (node data, neighbours, edge endpoints).
+     *
+     * @param options - Interaction options. Must include `graph`. Optional:
+     *   - `onNodeClick`, `onEdgeClick` — click callbacks
+     *   - `onNodeHover`, `onEdgeHover` — hover callbacks (receive `null` when leaving)
+     *   - `hoverEnabled` — default true; set false to disable hover
+     *   - `enableNodeDrag` — enable drag-to-reposition (use with mutable vertices/edges)
+     *   - `onNodeDrag(nodeId, newPosition)` — called each pointer move while dragging
+     *   - `controls` — OrbitControls to disable during drag (auto-passed if omitted)
+     */
+    enableInteraction(options: InteractionOptions): void;
+    /**
+     * Disable interaction and remove event listeners.
+     */
+    disableInteraction(): void;
 }
 export { GraphDrawer3d };
 declare const _default: {

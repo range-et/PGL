@@ -5,8 +5,10 @@
  */
 
 import * as THREE from "three";
+import type { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import type Graph from "../Core/Graph";
 import type Point from "../HelperClasses/Point";
+import type { PointLike } from "../HelperClasses/Point";
 
 /** Details passed to node click/hover callbacks */
 export interface NodePickDetails {
@@ -24,14 +26,29 @@ export interface EdgePickDetails {
   data: unknown;
 }
 
-/** Options for enableInteraction */
+/**
+ * Options for GraphDrawer3d.enableInteraction.
+ * Requires `graph`; all callbacks are optional.
+ */
 export interface InteractionOptions {
+  /** Graph used to look up node/edge details for callbacks. */
   graph: Graph;
+  /** Fired when a node is clicked. */
   onNodeClick?: (details: NodePickDetails) => void;
+  /** Fired when an edge is clicked. */
   onEdgeClick?: (details: EdgePickDetails) => void;
+  /** Fired when pointer enters/leaves a node. Receives `null` when leaving. */
   onNodeHover?: (details: NodePickDetails | null) => void;
+  /** Fired when pointer enters/leaves an edge. Receives `null` when leaving. */
   onEdgeHover?: (details: EdgePickDetails | null) => void;
+  /** Default true. Set false to disable hover callbacks. */
   hoverEnabled?: boolean;
+  /** Enable drag-to-reposition for nodes (use with box/instanced vertices). Disables OrbitControls during drag. */
+  enableNodeDrag?: boolean;
+  /** Called each pointer move while dragging. Update graph position and call updatePositions()/updateEdges() for mutable geometry. */
+  onNodeDrag?: (nodeId: number, newPosition: PointLike) => void;
+  /** OrbitControls to disable during drag (prevents camera orbit while moving nodes). Auto-passed by GraphDrawer if omitted. */
+  controls?: OrbitControls;
 }
 
 function resolveNodeId(intersection: THREE.Intersection): number | null {
@@ -92,6 +109,10 @@ function buildEdgePickDetails(graph: Graph, edgeId: number): EdgePickDetails | n
  * Interaction layer: raycasting + callbacks for node/edge picking.
  * Used internally by GraphDrawer3d.enableInteraction().
  */
+const _intersectPoint = new THREE.Vector3();
+const _plane = new THREE.Plane();
+const _planeNormal = new THREE.Vector3();
+
 export class InteractionLayer {
   private scene: THREE.Scene;
   private camera: THREE.Camera;
@@ -104,8 +125,14 @@ export class InteractionLayer {
   private lastHoverNodeId: number | null = null;
   private lastHoverEdgeId: number | null = null;
 
+  private dragNodeId: number | null = null;
+  private wasDragging = false;
+  private controls: OrbitControls | undefined;
+
   private boundOnClick: (e: MouseEvent) => void;
   private boundOnPointerMove: (e: PointerEvent) => void;
+  private boundOnPointerDown: (e: PointerEvent) => void;
+  private boundOnPointerUp: (e: PointerEvent) => void;
 
   constructor(
     scene: THREE.Scene,
@@ -122,6 +149,7 @@ export class InteractionLayer {
     this.raycaster = new THREE.Raycaster();
     this.mouse = new THREE.Vector2();
     this.hoverEnabled = options.hoverEnabled !== false;
+    this.controls = options.controls;
 
     // Widen Line threshold for easier edge picking
     this.raycaster.params.Line = { threshold: 5 };
@@ -130,16 +158,26 @@ export class InteractionLayer {
 
     this.boundOnClick = this.onClick.bind(this);
     this.boundOnPointerMove = this.onPointerMove.bind(this);
+    this.boundOnPointerDown = this.onPointerDown.bind(this);
+    this.boundOnPointerUp = this.onPointerUp.bind(this);
 
     domElement.addEventListener("click", this.boundOnClick);
     if (this.hoverEnabled) {
       domElement.addEventListener("pointermove", this.boundOnPointerMove);
+    }
+    if (options.enableNodeDrag && options.onNodeDrag) {
+      domElement.addEventListener("pointerdown", this.boundOnPointerDown);
+      domElement.addEventListener("pointerup", this.boundOnPointerUp);
+      domElement.addEventListener("pointerleave", this.boundOnPointerUp);
     }
   }
 
   dispose(): void {
     this.domElement.removeEventListener("click", this.boundOnClick);
     this.domElement.removeEventListener("pointermove", this.boundOnPointerMove);
+    this.domElement.removeEventListener("pointerdown", this.boundOnPointerDown);
+    this.domElement.removeEventListener("pointerup", this.boundOnPointerUp);
+    this.domElement.removeEventListener("pointerleave", this.boundOnPointerUp);
   }
 
   private getMouseNDC(event: MouseEvent | PointerEvent): void {
@@ -189,6 +227,10 @@ export class InteractionLayer {
   }
 
   private onClick(event: MouseEvent): void {
+    if (this.wasDragging) {
+      this.wasDragging = false;
+      return;
+    }
     this.getMouseNDC(event);
     const { nodeId, edgeId } = this.pick();
 
@@ -201,8 +243,47 @@ export class InteractionLayer {
     }
   }
 
+  private onPointerDown(event: PointerEvent): void {
+    this.wasDragging = false;
+    if (event.button !== 0) return;
+    this.getMouseNDC(event);
+    const { nodeId } = this.pick();
+    if (nodeId != null && this.options.enableNodeDrag && this.options.onNodeDrag) {
+      this.dragNodeId = nodeId;
+      if (this.controls) this.controls.enabled = false;
+    }
+  }
+
+  private onPointerUp(_event: PointerEvent): void {
+    if (this.dragNodeId != null) {
+      this.wasDragging = true;
+      this.dragNodeId = null;
+      if (this.controls) this.controls.enabled = true;
+    }
+  }
+
+  private getDragPosition(): { x: number; y: number; z: number } | null {
+    if (this.dragNodeId == null) return null;
+    const pos = this.graph.get_position_map().get(this.dragNodeId);
+    if (!pos) return null;
+    _planeNormal.set(0, 0, -1).applyQuaternion(this.camera.quaternion);
+    _plane.setFromNormalAndCoplanarPoint(_planeNormal, new THREE.Vector3(pos.x, pos.y, pos.z));
+    this.raycaster.setFromCamera(this.mouse, this.camera);
+    if (this.raycaster.ray.intersectPlane(_plane, _intersectPoint)) {
+      return { x: _intersectPoint.x, y: _intersectPoint.y, z: _intersectPoint.z };
+    }
+    return null;
+  }
+
   private onPointerMove(event: PointerEvent): void {
     this.getMouseNDC(event);
+
+    if (this.dragNodeId != null && this.options.onNodeDrag) {
+      const newPos = this.getDragPosition();
+      if (newPos) this.options.onNodeDrag(this.dragNodeId, newPos);
+      return;
+    }
+
     const { nodeId, edgeId } = this.pick();
     this.fireHoverCallbacks(nodeId, edgeId);
   }
