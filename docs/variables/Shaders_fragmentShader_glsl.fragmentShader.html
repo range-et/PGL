@@ -18,7 +18,7 @@
 <h1>Variable fragmentShader<code class="tsd-tag ts-flagConst">Const</code> </h1></div>
 <div class="tsd-signature"><span class="tsd-kind-variable">fragment<wbr/>Shader</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;\nuniform vec3 color;\nuniform sampler2D pointTexture;\nuniform float alphaTest;\n\nvarying vec3 vColor;\n\nvoid main() {\n    gl_FragColor = vec4( color * vColor, 1.0 );\n    gl_FragColor = gl_FragColor * texture2D( pointTexture, gl_PointCoord );\n    if ( gl_FragColor.a &lt; alphaTest ) discard;\n}\n&quot;</span><span class="tsd-signature-symbol"> = ...</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/range-et/PGL/blob/3da56a2/Src/Shaders/fragmentShader.glsl.ts#L1">Shaders/fragmentShader.glsl.ts:1</a></li></ul></aside></div>
+<li>Defined in <a href="https://github.com/range-et/PGL/blob/b21800a/Src/Shaders/fragmentShader.glsl.ts#L1">Shaders/fragmentShader.glsl.ts:1</a></li></ul></aside></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

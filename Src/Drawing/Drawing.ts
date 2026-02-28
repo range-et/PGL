@@ -211,7 +211,6 @@ function DrawEdgeLines(Graph: Graph, divDistance: number) {
   let end: Point;
   for (const key of Graph.edges.keys()) {
     edge = Graph.edges.get(key)!;
-    // get the start pos
     start = Graph.nodes.get(edge.start)!.data.pos;
     end = Graph.nodes.get(edge.end)!.data.pos;
     const Line = GeometryHelpers.line_from_start_end_distance(
@@ -242,7 +241,6 @@ function DrawEdgeLinesDivisions(Graph: Graph, numberOfDivs: number) {
   let end: Point;
   for (const key of Graph.edges.keys()) {
     edge = Graph.edges.get(key)!;
-    // get the start pos
     start = Graph.nodes.get(edge.start)!.data.pos;
     end = Graph.nodes.get(edge.end)!.data.pos;
     const Line = GeometryHelpers.line_from_start_end_divisions(
@@ -545,7 +543,6 @@ function UpdateEdgeLinesDist(Graph: Graph, divDistance: number) {
   let line: Line;
   for (const key of Graph.edges.keys()) {
     edge = Graph.edges.get(key)!;
-    // get the start pos
     start = Graph.nodes.get(edge.start)!.data.pos;
     end = Graph.nodes.get(edge.end)!.data.pos;
     line = GeometryHelpers.line_from_start_end_distance(
@@ -571,7 +568,6 @@ function UpdateEdgeLinesDivs(Graph: Graph, Divs: number) {
   let line: Line;
   for (const key of Graph.edges.keys()) {
     edge = Graph.edges.get(key)!;
-    // get the start pos
     start = Graph.nodes.get(edge.start)!.data.pos;
     end = Graph.nodes.get(edge.end)!.data.pos;
     line = GeometryHelpers.line_from_start_end_divisions(start, end, Divs);

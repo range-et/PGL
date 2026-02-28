@@ -9,12 +9,12 @@ interface _Node {
 /**
  * Node class: each node has an ID (index) and arbitrary data.
  * The data typically includes "pos" (Point) for visualization.
+ * @see NodeData for typed shape when creating nodes
  */
 declare class _Node {
     /**
-     *
      * @param data - Data associated with the node; include "pos" (Point) for graph visuals
      */
-    constructor(data: any);
+    constructor(data?: any);
 }
 export default _Node;

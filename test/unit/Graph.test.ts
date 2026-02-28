@@ -66,6 +66,29 @@ describe("Graph", () => {
     });
   });
 
+  describe("remove_edge", () => {
+    it("removes edge and updates adjacency", () => {
+      const nodes = new Map<number, _Node>();
+      nodes.set(0, new _Node({ pos: new Point(0, 0, 0) }));
+      nodes.set(1, new _Node({ pos: new Point(1, 0, 0) }));
+      const graph = new Graph(nodes, new Map());
+      graph.initialize();
+      graph.add_edge(0, 1, {});
+      expect(graph.edges.size).toBe(1);
+      expect(graph.nodes.get(0)!.neighbours).toContain(1);
+      const removed = graph.remove_edge(0);
+      expect(removed).toBe(true);
+      expect(graph.edges.size).toBe(0);
+      expect(graph.nodes.get(0)!.neighbours).not.toContain(1);
+      expect(graph.nodes.get(1)!.neighbours).not.toContain(0);
+    });
+    it("returns false when edge does not exist", () => {
+      const { graph } = makeGraph(2, [[0, 1]]);
+      graph.initialize();
+      expect(graph.remove_edge(999)).toBe(false);
+    });
+  });
+
   describe("add_edge", () => {
     it("assigns unique edge IDs using internal counter", () => {
       const nodes = new Map<number, _Node>();

@@ -1,7 +1,7 @@
 import { default as Line } from '../HelperClasses/Line';
 import { default as Point } from '../HelperClasses/Point';
 import { default as _Node } from './_Node';
-import { default as Edge } from './Edge';
+import { default as Edge, EdgeData } from './Edge';
 /**
  * The main graph object: contains nodes and edges that get modified with different
  * operations (layout, clustering, etc.).
@@ -53,7 +53,15 @@ declare class Graph {
      * @param end - The end index of the edge
      * @param data - data associated with the edge
      */
-    add_edge(start: number, end: number, data: any): void;
+    add_edge(start: number, end: number, data?: EdgeData): void;
+    /**
+     * Remove an edge by ID. Updates adjacency lists.
+     * Call {@link constructAdjacencyList} after bulk removals if you need a clean adjacency state.
+     *
+     * @param edgeId - The edge ID (from add_edge or edges Map key)
+     * @returns true if the edge existed and was removed, false otherwise
+     */
+    remove_edge(edgeId: number): boolean;
     /**
      *
      * @returns The adjacency lists associated with the graph
@@ -94,7 +102,7 @@ declare class Graph {
      * Get the position of the nodes in the graph.
      * Nodes without a defined `data.pos` are skipped.
      *
-     * @returns The position map (node ID to Point)
+     * @returns The position map (node ID to PointLike)
      */
     get_position_map(): Map<number, Point>;
     /**

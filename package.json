@@ -1,11 +1,17 @@
 {
   "name": "plebeiangraphlibrary",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "description": "A NetworkX like package for graphs in javascript",
   "source": "./Src/index.ts",
   "main": "./Build/pgl.js",
   "types": "./Build/index.d.ts",
   "module": "./Build/pgl_module.js",
+  "exports": {
+    ".": {
+      "import": { "types": "./Build/index.d.ts", "default": "./Build/pgl_module.js" },
+      "require": { "types": "./Build/index.d.ts", "default": "./Build/pgl.js" }
+    }
+  },
   "scripts": {
     "watch": "vite build --watch",
     "build": "rm -rf Build && vite build",

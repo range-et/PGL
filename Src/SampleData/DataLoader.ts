@@ -9,7 +9,6 @@
 // load up the ZKC dataset
 import { zkc } from "./ZKC";
 import { zkc_simulated } from "./ZKC_simulated";
-import { dwt_1005 } from "./dwt_1005";
 import GraphConstructors from "../HelperClasses/GraphConstructors";
 import Graph from "../Core/Graph";
 import Point from "../HelperClasses/Point";
@@ -167,9 +166,11 @@ async function LoadGraphFromObjText(objText: string): Promise<LoadGraphFromObjRe
 /**
  * Load the DWT 1005 graph from the paper (1005 nodes, adjacency-list format).
  * Same structural graph used in the 2D stress layout reference.
+ * Lazy-loaded to avoid bundling the large dataset for users who don't need it.
  * @see dwt_1005.ts
  */
 async function LoadDwt1005(): Promise<Graph> {
+  const { dwt_1005 } = await import("./dwt_1005");
   const adj = dwt_1005 as Record<string, number[]>;
   const nodeIdsSet = new Set<number>();
   for (const key of Object.keys(adj)) {

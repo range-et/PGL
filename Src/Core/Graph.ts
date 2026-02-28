@@ -1,7 +1,7 @@
 import Line from "../HelperClasses/Line";
 import Point from "../HelperClasses/Point";
 import _Node from "./_Node";
-import Edge from "./Edge";
+import Edge, { type EdgeData } from "./Edge";
 
 /**
  * The main graph object: contains nodes and edges that get modified with different
@@ -108,7 +108,7 @@ class Graph {
    * @param end - The end index of the edge
    * @param data - data associated with the edge
    */
-  add_edge(start: number, end: number, data: any) {
+  add_edge(start: number, end: number, data: EdgeData = {}) {
     const newEdge = new Edge(start, end, data);
     const edgeId = this._nextEdgeId++;
     this.edges.set(edgeId, newEdge);
@@ -117,6 +117,31 @@ class Graph {
     const endNode = this.nodes.get(end);
     if (startNode) startNode.neighbours.push(end);
     if (endNode) endNode.neighbours.push(start);
+  }
+
+  /**
+   * Remove an edge by ID. Updates adjacency lists.
+   * Call {@link constructAdjacencyList} after bulk removals if you need a clean adjacency state.
+   *
+   * @param edgeId - The edge ID (from add_edge or edges Map key)
+   * @returns true if the edge existed and was removed, false otherwise
+   */
+  remove_edge(edgeId: number): boolean {
+    const edge = this.edges.get(edgeId);
+    if (!edge) return false;
+    const { start, end } = edge;
+    const startNode = this.nodes.get(start);
+    const endNode = this.nodes.get(end);
+    if (startNode) {
+      const idx = startNode.neighbours.indexOf(end);
+      if (idx > -1) startNode.neighbours.splice(idx, 1);
+    }
+    if (endNode) {
+      const idx = endNode.neighbours.indexOf(start);
+      if (idx > -1) endNode.neighbours.splice(idx, 1);
+    }
+    this.edges.delete(edgeId);
+    return true;
   }
 
   // get an adjacency list representation of the graph
@@ -213,10 +238,10 @@ class Graph {
    * Get the position of the nodes in the graph.
    * Nodes without a defined `data.pos` are skipped.
    *
-   * @returns The position map (node ID to Point)
+   * @returns The position map (node ID to PointLike)
    */
   get_position_map(): Map<number, Point> {
-    const pmap: Map<number, Point> = new Map();
+    const pmap = new Map<number, Point>();
     for (const nodeId of this.nodes.keys()) {
       const pos = this.nodes.get(nodeId)?.data?.pos;
       if (pos != null) {

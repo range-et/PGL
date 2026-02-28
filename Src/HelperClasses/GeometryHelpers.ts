@@ -1,5 +1,5 @@
 import Point from "./Point";
-import Line  from "./Line";
+import Line from "./Line";
 import Utilities from "./Utilities";
 
 /**

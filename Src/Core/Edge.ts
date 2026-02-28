@@ -1,3 +1,8 @@
+import type Line from "../HelperClasses/Line";
+
+/** Edge data shape. `ldata` is reserved for line geometry when drawing. */
+export type EdgeData = { ldata?: Line } & Record<string, unknown>;
+
 interface Edge {
   start: number;
   end: number;
@@ -9,14 +14,13 @@ interface Edge {
  */
 class Edge {
   /**
-   * 
    * Construct an edge
-   * 
+   *
    * @param start Start index of the edge based on the array of nodes
    * @param end End index of the edge based on the array of nodes
    * @param data - Optional data; "ldata" is reserved for line geometry used when drawing the edge
    */
-  constructor(start:number, end:number, data:any) {
+  constructor(start: number, end: number, data: any = {}) {
     this.start = start;
     this.end = end;
     this.data = { ...data };

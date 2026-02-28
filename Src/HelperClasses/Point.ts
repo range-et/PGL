@@ -4,6 +4,11 @@
  */
 export type PointLike = { x: number; y: number; z: number };
 
+/**
+ * Node data shape. `pos` is used for layout/visualization. Extend with custom fields as needed.
+ */
+export type NodeData = { pos?: PointLike } & Record<string, unknown>;
+
 interface Point extends PointLike {}
 
 class Point {

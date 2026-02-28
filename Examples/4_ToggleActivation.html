@@ -27,7 +27,7 @@
         const G = await PGL.Models.GenerateErdosReyni_n_p(1000, 0.02);
         // since these graphs can be really large - they are not initialized 
         // so you must initialize them
-        G.initialize();
+        await G.initialize();
         G.printData();
 
         // now in this case we shall use the Kamada Kawai algorithm to initilaize all the positions

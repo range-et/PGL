@@ -36,6 +36,7 @@ declare function LoadGraphFromObjText(objText: string): Promise<LoadGraphFromObj
 /**
  * Load the DWT 1005 graph from the paper (1005 nodes, adjacency-list format).
  * Same structural graph used in the 2D stress layout reference.
+ * Lazy-loaded to avoid bundling the large dataset for users who don't need it.
  * @see dwt_1005.ts
  */
 declare function LoadDwt1005(): Promise<Graph>;
