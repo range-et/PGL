@@ -95,8 +95,13 @@ function DrawTHREEGraphVertices(
   return vertices;
 }
 
+/**
+ * Result of DrawTHREEGraphVerticesMutable. Use `updatePositions()` each frame with simulation positions.
+ */
 export interface MutableVerticesResult {
+  /** THREE.Group to add to the scene */
   group: THREE.Group;
+  /** Update vertex positions from Float32Array (node order) or Map&lt;nodeId, Point&gt; */
   updatePositions(positions: Float32Array | Map<number, Point>): void;
 }
 
@@ -246,8 +251,13 @@ function DrawTHREEGraphEdgesThin(
   return DrawThinEdgesFromEdgeMap(emap, bounds, color);
 }
 
+/**
+ * Result of DrawTHREEGraphEdgesThinMutable. Call `updateEdges()` after applying new positions to the graph.
+ */
 export interface MutableEdgesResult {
+  /** THREE.Group containing the line segments */
   group: THREE.Group;
+  /** Rebuild edge geometry from the graph's current position and edge maps */
   updateEdges(): void;
 }
 
@@ -413,8 +423,13 @@ function AddBoxBasedImaging(
   return group;
 }
 
+/**
+ * Result of DrawTHREEBoxBasedVerticesMutable. Use `updatePositions()` each frame for simulation.
+ */
 export interface MutableBoxVerticesResult {
+  /** THREE.Group containing the instanced box mesh */
   group: THREE.Group;
+  /** Update box positions from Float32Array or Map&lt;nodeId, Point&gt; */
   updatePositions(positions: Float32Array | Map<number, Point>): void;
 }
 

@@ -34,7 +34,7 @@ class GraphDrawer3d {
    * camera -  A perspective camera from the threeJS library 
    * scene - The three JS scene that gets define automatically
    * 
-   * @param GraphDrawerOptions3d - These above options are construdeted into a single object and passed into the Options elem
+   * @param GraphDrawerOptions3d - These options are constructed into a single object and passed in
    */
   constructor(GraphDrawerOptions3d: {
     canvas: HTMLCanvasElement;
@@ -114,7 +114,7 @@ class GraphDrawer3d {
    * 
    * This is the main way to add elements to the viewer window that gets initialized
    * 
-   * @param element A geomerty element + material element to add to the scene as a group line or point cloud
+   * @param element A geometry element (THREE.Group, Line, or Points) to add to the scene
    */
   addVisElement(element: THREE.Group | THREE.Line | THREE.Points) {
     this.scene.add(element);
@@ -132,6 +132,7 @@ class GraphDrawer3d {
   }
 }
 
+export { GraphDrawer3d };
 export default {
   GraphDrawer3d,
 };

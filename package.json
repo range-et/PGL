@@ -1,6 +1,6 @@
 {
   "name": "plebeiangraphlibrary",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "A NetworkX like package for graphs in javascript",
   "source": "./Src/index.ts",
   "main": "./Build/pgl.js",
@@ -8,15 +8,15 @@
   "module": "./Build/pgl_module.js",
   "scripts": {
     "watch": "vite build --watch",
-    "build": "vite build",
+    "build": "rm -rf Build && vite build",
     "build:all": "npm run build && npm run document",
     "test": "node ./test/test_1.js",
     "test:unit": "vitest run",
     "test:unit:watch": "vitest",
-    "document": "npx typedoc --out docs Src",
-    "document:public": "npm run document && cp -R docs/. public/",
-    "examples:public": "cp -R Examples/. public/",
-    "deploy:public": "npm run build && npm run document && cp -R Build/. public/Build/ && cp -R Examples/. public/ && cp -R docs/. public/",
+    "document": "rm -rf docs && npx typedoc --options typedoc.json",
+    "document:public": "npm run document && rm -rf public && mkdir -p public && cp -R docs/. public/",
+    "examples:public": "rm -rf public && mkdir -p public && cp -R Examples/. public/",
+    "deploy:public": "npm run build && npm run document && rm -rf public && mkdir -p public && mkdir -p public/Build && cp -R Build/. public/Build/ && cp -R Examples/. public/ && cp -R docs/. public/",
     "serve": "python3 -m http.server 3000"
   },
   "repository": {

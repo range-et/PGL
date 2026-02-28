@@ -1,3 +1,6 @@
+/**
+ * Line: an array of Points used for edge geometry (e.g. bundled edges, subdivided lines).
+ */
 import Point from "./Point";
 
 interface Line {

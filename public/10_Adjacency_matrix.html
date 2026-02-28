@@ -45,7 +45,7 @@
       const range = max - min || 1;
       const sizes = nodeIds.map((_, i) => 0.3 + 0.7 * (x[i] - min) / range);
 
-      const simulatedPosMap = await PGL.Drawing.SimulateKamadaKawai(G, 3, 200, 1, 1.2);
+      const simulatedPosMap = await PGL.Drawing.SimulateKamadaKawai(G, 3, 2000, 1, 1.2);
       G.apply_position_map(simulatedPosMap);
       const lmap = PGL.Drawing.DrawEdgeLinesDivisions(G, 1);
       G.apply_edge_pos_maps(lmap);

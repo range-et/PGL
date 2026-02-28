@@ -76,7 +76,7 @@ declare class Graph {
     get_edge_map(): Map<number, Line>;
     /**
      * Applies all the maps to the graph
-     * @param layout - Applies an object of maps associated with with a graph is made up of {pmap:(the position map), emap:{the edge map}}
+     * @param layout - Applies an object of maps associated with a graph: {pmap:(the position map), emap:(the edge map)}
      */
     apply_drawing_maps(layout: {
         pmap: Map<number, Point>;

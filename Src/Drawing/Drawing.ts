@@ -15,13 +15,13 @@ import _Node from "../Core/_Node";
  * @param iterations - The second input number
  *  @param simulationBound - The bounds of simulation (Mostly a global number to scale the graph up or down)
  *  @param cohesionValue - How sticky the nodes are i.r. how much they cluster together
- * @returns And node map of all the nodes and their simulated positions - Please note: position maps have to to be applied to the graph!
+ * @returns A node map of all the nodes and their simulated positions. Note: position maps have to be applied to the graph.
  *
  */
 async function SimulateKamadaKawai(
   Graph: Graph,
   iterations: number,
-  simulationBound: number = 100,
+  simulationBound: number = 1000,
   cohesionValue: number = 1,
   repulsionValue: number = 1
 ) {
@@ -40,7 +40,7 @@ async function SimulateKamadaKawai(
   for (let i = 0; i < iterations; i++) {
     // calculate the clustering force
     // these two keep track of the node being simulated's
-    // position - redeclaring is sorta unncessary
+    // position - redeclaring is sorta unnecessary
     let nodeX: number;
     let nodeY: number;
     // also keep track of all the x_s and y_s

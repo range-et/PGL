@@ -1,7 +1,7 @@
-// note this file is always reffered to as
-// _Node to not confuse with node (js) and
-// Vertices which are another 3d object that
-// can be changed in three js
+/**
+ * Graph node: holds arbitrary data (e.g. `pos` for layout) and neighbour IDs.
+ * Named `_Node` to avoid confusion with Node.js and Three.js Vertices.
+ */
 interface _Node {
   data: any;
   neighbours: number[];

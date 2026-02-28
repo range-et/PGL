@@ -1,3 +1,11 @@
+/**
+ * Graph algorithms: BFS, shortest paths (hop count), diameter, subgraph selection.
+ *
+ * @packageDocumentation
+ *
+ * **Note:** `Dijkstra` returns hop-count distances via BFS — it does not support weighted edges.
+ * For unweighted graphs this is equivalent to shortest path.
+ */
 import Edge from "../Core/Edge";
 import Graph from "../Core/Graph";
 import _Node from "../Core/_Node";

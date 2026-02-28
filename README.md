@@ -1,10 +1,10 @@
 ## Introduction
 
-The Plebeian Graph Library (PGL) is a library designed to facilitate the visualization of large-scale network data (Network X line plotting in Javascript/Typescript). Leveraging the power of WebGL, PGL offers an efficient and interactive solution for visualizing network data in web browsers (Tested on Firefox, Edge and Chrome). Whether dealing with local datasets or data retrieved from APIs, PGL provides a versatile platform for conducting extensive network simulations, physical modeling, and immersive visualizations. With a rich set of features including graph condensation based on selected criteria, randomized edge pruning in highly connected graphs, and support for diverse visualization techniques like network diffusions and Kamada Kawai layouts, and edge bundling, PGL empowers users to gain valuable insights from complex network structures.
+The Plebeian Graph Library (PGL) is a library designed to facilitate the visualization of large-scale network data (NetworkX-style graph plotting in JavaScript/TypeScript). Leveraging the power of WebGL, PGL offers an efficient and interactive solution for visualizing network data in web browsers (Tested on Firefox, Edge and Chrome). Whether dealing with local datasets or data retrieved from APIs, PGL provides a versatile platform for conducting extensive network simulations, physical modeling, and immersive visualizations. With a rich set of features including graph condensation based on selected criteria, randomized edge pruning in highly connected graphs, and support for diverse visualization techniques like network diffusions and Kamada Kawai layouts, and edge bundling, PGL empowers users to gain valuable insights from complex network structures.
 
 ## Notes on terminology
 
-It can be a bit confusing especially when working with Nodes/Edges/Vertices/Lines in this library (Also in general in working with graphs). Hence the terminology that I've followed here is as following:
+It can be a bit confusing especially when working with Nodes/Edges/Vertices/Lines in this library (Also in general in working with graphs). Hence the terminology that I've followed here is as follows:
 
 - Nodes (The library and the class is called \_Node so as to not confuse with NodeJS ) and Edges make up a graph.
 - Vertices and Lines make up the 3d visualization side of a graph.
@@ -22,7 +22,7 @@ The documentation for the package is available at [documentation](https://www.pl
 npm run document
 ```
 
-This writes TypeDoc output to the `docs/` folder. **API overview:** the library exposes the following namespaces: `Graph`, `GraphMethods` (BFS, Dijkstra, GraphDiameter, SelectSubgraph), `SampleData` (LoadZKC, LoadZKCSimulated, LoadGraphFromEdgeListText for (sgd)²-style edge lists, LoadGraphFromObjText for OBJ meshes → graph + positions), `Constructors` (ConstructGraphNodeEdgesList), `Drawing` (SimulateKamadaKawai, DrawEdgeLines, DrawEdgeBundling, DisplaceEdgeInY, etc.), `Geometry`, `Utilities`, `ThreeWrapper`, `GraphDrawer`, `Models` (Erdos–Renyi), `Hierarchy` (clusterByDistance, clusterByStrategy for flow-map style clustering), **Simulation** (createKamadaKawai3D, createStressSGD3D — stress layout methods from (sgd)², Imperial), **MatrixHelpers** (matrixVectorMultiply, normalizeVector), and **glMatrix** (re-exported [gl-matrix](https://github.com/toji/gl-matrix) for vector/matrix math in the browser).
+This writes TypeDoc output to the `docs/` folder. **API overview:** the library exposes the following namespaces: `Graph`, `GraphMethods` (BFS, Dijkstra, GraphDiameter, SelectSubgraph — note: `Dijkstra` returns hop-count distances via BFS for unweighted graphs), `SampleData` (LoadZKC, LoadZKCSimulated, LoadGraphFromEdgeListText for (sgd)²-style edge lists, LoadGraphFromObjText for OBJ meshes → graph + positions), `Constructors` (ConstructGraphNodeEdgesList), `Drawing` (SimulateKamadaKawai, DrawEdgeLines, DrawEdgeBundling, DisplaceEdgeInY, etc.), `Geometry`, `Utilities`, `ThreeWrapper`, `GraphDrawer`, `Models` (Erdos–Renyi), `Hierarchy` (clusterByDistance, clusterByStrategy for flow-map style clustering), **Simulation** (createKamadaKawai3D, createStressSGD3D — stress layout methods from (sgd)², Imperial), **MatrixHelpers** (matrixVectorMultiply, normalizeVector), and **glMatrix** (re-exported [gl-matrix](https://github.com/toji/gl-matrix) for vector/matrix math in the browser).
 
 ### Graph simulations
 
@@ -47,7 +47,7 @@ The library exports **Point** (class with `x`, `y`, `z` and `translate()`) and *
 
 ## General setup of the package
 
-Apart from the graph class all the methods are stored in variables. These variables (For example SampleData) would have a function attached to it that returns a value, or in some cases you can pass in values to do stuff (like displacing the graph etc). I mostly did this for the sake of speed to develop - at some point shall be wrapping them up as classes.
+Apart from the graph class all the methods are stored in variables. These variables (For example SampleData) would have a function attached to it that returns a value, or in some cases you can pass in values to do stuff (like displacing the graph etc). I mostly did this for the sake of speed to develop — they will eventually be wrapped up as classes.
 
 ## Semantics of the Package
 

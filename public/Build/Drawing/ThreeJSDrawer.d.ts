@@ -14,8 +14,13 @@ import * as THREE from "three";
  * @returns a THREE.Group containing the point cloud
  */
 declare function DrawTHREEGraphVertices(Graph: Graph, bounds?: number, size?: number | number[], color?: number, alpha?: number): THREE.Group<THREE.Object3DEventMap>;
+/**
+ * Result of DrawTHREEGraphVerticesMutable. Use `updatePositions()` each frame with simulation positions.
+ */
 export interface MutableVerticesResult {
+    /** THREE.Group to add to the scene */
     group: THREE.Group;
+    /** Update vertex positions from Float32Array (node order) or Map&lt;nodeId, Point&gt; */
     updatePositions(positions: Float32Array | Map<number, Point>): void;
 }
 /**
@@ -55,8 +60,13 @@ declare function DrawThickEdgesFromEdgeMap(EdgeMap: Map<number, Line>, bounds: n
  * @returns a THREE.Group of lines
  */
 declare function DrawTHREEGraphEdgesThin(Graph: Graph, bounds?: number, color?: number): THREE.Group<THREE.Object3DEventMap>;
+/**
+ * Result of DrawTHREEGraphEdgesThinMutable. Call `updateEdges()` after applying new positions to the graph.
+ */
 export interface MutableEdgesResult {
+    /** THREE.Group containing the line segments */
     group: THREE.Group;
+    /** Rebuild edge geometry from the graph's current position and edge maps */
     updateEdges(): void;
 }
 /**
@@ -95,8 +105,13 @@ declare function DrawThinEdgesFromEdgeMap(LineMap: Map<number, Line>, bounds?: n
  * @returns a group containing one InstancedMesh for all boxes
  */
 declare function AddBoxBasedImaging(nodeMap: Map<number, Point>, bounds?: number, color?: number, size?: number | number[]): THREE.Group<THREE.Object3DEventMap>;
+/**
+ * Result of DrawTHREEBoxBasedVerticesMutable. Use `updatePositions()` each frame for simulation.
+ */
 export interface MutableBoxVerticesResult {
+    /** THREE.Group containing the instanced box mesh */
     group: THREE.Group;
+    /** Update box positions from Float32Array or Map&lt;nodeId, Point&gt; */
     updatePositions(positions: Float32Array | Map<number, Point>): void;
 }
 /**

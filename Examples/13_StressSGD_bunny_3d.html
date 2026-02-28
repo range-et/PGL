@@ -45,7 +45,7 @@
       G.printData();
 
       // Scale mesh positions into a comfortable range (bunny is ~0.1 units); then we'll use scaleBound to hold size
-      const scale = 400;
+      const scale = 4000;
       const initialPositions = new Float32Array(meshPositions.length);
       for (let i = 0; i < meshPositions.length; i++) initialPositions[i] = meshPositions[i] * scale;
 
@@ -53,13 +53,11 @@
       const simulation = await PGL.createStressSGD3D(G, {
         dimensions: 3,
         initialPositions,
-        simulationBound: 80,
-        iterationsPerStep: 40,
-        useSchedule: true,
+        epochsPerStep: 1,
         tMax: 100,
         eps: 0.01,
-        scheduleSpeed: 0.2,
-        scaleBound: 120,
+        scaleBound: 1200,
+        initialPreservation: 0.15, // blend toward mesh shape so bunny stays 3D
       });
       setStatus("");
 

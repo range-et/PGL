@@ -32,7 +32,7 @@
 
         // now in this case we shall use the Kamada Kawai algorithm to initilaize all the positions
         // this essentially spreads them out a little
-        const simulatedPosMap = await PGL.Drawing.SimulateKamadaKawai(G, 3, 500, 1, 1.5);
+        const simulatedPosMap = await PGL.Drawing.SimulateKamadaKawai(G, 3, 5000, 1, 1.5);
         G.apply_position_map(simulatedPosMap);
         // get the line map associated 
         const lmap = PGL.Drawing.DrawEdgeLinesDivisions(G, 1);

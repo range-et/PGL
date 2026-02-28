@@ -1,46 +1,45 @@
 import Graph from "../Core/Graph";
 import Point from "../HelperClasses/Point";
-import * as glMatrix from "gl-matrix";
 import GraphMethods from "../GraphAlgorithms/GraphMethods";
 
-const { vec3 } = glMatrix;
-
 export interface StressSGD3DOptions {
-  /** Optional. Layout in 2D (x,y only; z=0) or 3D. Omit or set to 2 for a proper flat shape (like s_gd2); set to 3 for 3D (can collapse to a line). Default 2. */
+  /** Layout in 2D (x,y only; z=0) or 3D. Default 2. Matches s_gd2 reference. */
   dimensions?: 2 | 3;
-  /** Bounds for initial random positions (default 100) */
+  /** Scale for initial random positions in [0,1] (default 1). Reference uses [0,1]; multiply for visibility. */
   simulationBound?: number;
-  /** Number of random pair updates per step(dt) (default 50) */
-  iterationsPerStep?: number;
-  /** Pull each node toward origin (default 0). Nonzero values shrink the layout and can collapse to a point; use 0 and rely on re-centering below. */
+  /** Number of epochs per step(dt) (default 1). Each epoch processes all pairs once in random order. */
+  epochsPerStep?: number;
+  /** Pull each node toward origin (default 0). Not in reference. */
   centerPull?: number;
-  /** After each step, re-center and clamp scale to this (default 150, 0 = disable) */
+  /** After each step, re-center and clamp scale (default 0 = disable). Not in reference; add for visualization. */
   scaleBound?: number;
-  /** Use s_gd2-style schedule (default true). If false, uses fixed learningRate. */
+  /** Use s_gd2 schedule (default true). */
   useSchedule?: boolean;
-  /** Fixed learning rate when useSchedule is false (default 0.08) */
+  /** Fixed eta when useSchedule is false (default 0.08). */
   learningRate?: number;
-  /** Schedule: number of epochs for eta decay (default 80). See s_gd2 t_max. */
+  /** Schedule: number of epochs for eta decay (default 80). Reference t_max. */
   tMax?: number;
-  /** Schedule: minimum eta = eps/w_max (default 0.01). See s_gd2 eps. */
+  /** Schedule: eta_min = eps/w_max (default 0.01). Reference eps. */
   eps?: number;
-  /** How much to advance the schedule per step(dt). Lower = slower convergence (default 0.25). Use 1 for original speed. */
-  scheduleSpeed?: number;
-  /** Optional initial positions (n*3 floats, same order as graph node ids). Use e.g. mesh positions for 3D so layout refines from a known shape instead of random (avoids collapse to line). */
+  /** Optional initial positions (n*3 floats). Use e.g. mesh positions for 3D. */
   initialPositions?: Float32Array;
+  /** Blend toward initial positions each step (0–1). Use ~0.1–0.2 for meshes to preserve 3D shape. Default 0. */
+  initialPreservation?: number;
+  /** Random seed for reproducibility (default: random). */
+  seed?: number;
 }
 
-const DEFAULT_OPTIONS: Omit<Required<StressSGD3DOptions>, "initialPositions"> = {
+const DEFAULT_OPTIONS: Omit<Required<StressSGD3DOptions>, "initialPositions" | "seed"> = {
   dimensions: 2,
-  simulationBound: 100,
-  iterationsPerStep: 50,
+  simulationBound: 1,
+  epochsPerStep: 1,
   centerPull: 0,
-  scaleBound: 150,
+  scaleBound: 0,
   useSchedule: true,
   learningRate: 0.08,
   tMax: 80,
   eps: 0.01,
-  scheduleSpeed: 0.25,
+  initialPreservation: 0,
 };
 
 export interface StressSGD3DSimulation {
@@ -56,7 +55,24 @@ interface StressPair {
   w: number;
 }
 
-/** Compute all-pairs shortest path (hop count) and build stress pair list. */
+/** Fisher-Yates shuffle (matches reference fisheryates_shuffle). */
+function fisherYatesShuffle<T>(arr: T[], rng: () => number): void {
+  for (let i = arr.length - 1; i >= 1; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
+
+/** Simple LCG for reproducible random (matches reference rk_interval). */
+function createRng(seed: number): () => number {
+  let s = seed;
+  return () => {
+    s = (s * 1103515245 + 12345) & 0x7fffffff;
+    return s / 0x7fffffff;
+  };
+}
+
+/** Compute all-pairs shortest path (hop count) and build stress pair list. Matches reference bfs(). */
 async function computeStressPairs(
   graph: Graph,
   nodeIds: number[],
@@ -85,24 +101,25 @@ async function computeStressPairs(
 }
 
 /**
- * Creates a 3D stress-minimization simulation via stochastic gradient descent.
- *
- * **Methods from (sgd)² (Imperial College London):** This implementation follows the reference
- * implementation s_gd2 (https://github.com/jxz12/s_gd2): same step formula (mu cap,
- * r = mu*(mag-d)/(2*mag)) and exponential eta schedule (eta_max = 1/w_min, eta_min = eps/w_max)
- * as in the paper.
+ * Creates a stress-minimization simulation via stochastic gradient descent.
+ * Faithful port of s_gd2 reference (https://github.com/jxz12/s_gd2):
+ * - Epoch-based: each step does full epoch(s) with Fisher-Yates shuffle
+ * - Step formula: r = mu*(mag-d)/(2*mag), i -= r*diff, j += r*diff (diff = X_i - X_j)
+ * - Schedule: eta(t) = eta_max * exp(-lambda*t)
  *
  * @see Paper: Zheng, J. X., Pawar, S., Goodman, D. F. M. "Graph Drawing by Stochastic Gradient
  *   Descent." IEEE Trans. Visualization and Computer Graphics. arXiv:1710.04626
- * @see Reference implementation: (sgd)² at https://github.com/jxz12/s_gd2 (Imperial College London)
- *
- * Use step(dt) in your animation loop and getPositions() / getPositionMap() to update the drawer.
+ * @see Reference: reference/s_gd2/cpp/s_gd2/layout.cpp
  */
 export async function createStressSGD3D(
   graph: Graph,
   options: StressSGD3DOptions = {}
 ): Promise<StressSGD3DSimulation> {
-  const opts = { ...DEFAULT_OPTIONS, ...options };
+  const opts = {
+    ...DEFAULT_OPTIONS,
+    ...options,
+    seed: options.seed ?? Math.floor(Math.random() * 0x7fffffff),
+  };
   const nodeIds = graph.get_node_ids_order();
   const n = nodeIds.length;
   const idToIndex = new Map<number, number>();
@@ -110,10 +127,10 @@ export async function createStressSGD3D(
 
   const pairs = await computeStressPairs(graph, nodeIds, idToIndex);
   if (pairs.length === 0) {
-    // Fallback: no pairs (e.g. disconnected or single node); still return valid simulation
+    // Fallback: no pairs
   }
 
-  // s_gd2-style schedule: eta_max = 1/w_min, eta_min = eps/w_max, eta(t) = eta_max * exp(-lambda*t)
+  // Reference schedule: eta_max = 1/w_min, eta_min = eps/w_max, eta(t) = eta_max * exp(-lambda*t)
   let wMin = Infinity;
   let wMax = -Infinity;
   for (const p of pairs) {
@@ -130,59 +147,72 @@ export async function createStressSGD3D(
     t >= opts.tMax ? etaMin : etaMax * Math.exp(-lambda * t);
 
   const dims = opts.dimensions;
+  const rng = createRng(opts.seed);
   const positions = new Float32Array(n * 3);
+
+  let initialPositionsBackup: Float32Array | null = null;
   if (opts.initialPositions && opts.initialPositions.length >= n * 3) {
     positions.set(opts.initialPositions.subarray(0, n * 3));
+    if (opts.initialPreservation > 0) {
+      initialPositionsBackup = new Float32Array(opts.initialPositions.subarray(0, n * 3));
+    }
     if (dims === 2) {
       for (let i = 0; i < n; i++) positions[i * 3 + 2] = 0;
     }
   } else {
+    // Reference: X = np.random.rand(n, 2) or (n, 3) — uniform in [0,1]
+    const scale = opts.simulationBound;
     for (let i = 0; i < n; i++) {
-      positions[i * 3] = (Math.random() * 2 - 1) * opts.simulationBound;
-      positions[i * 3 + 1] = (Math.random() * 2 - 1) * opts.simulationBound;
-      positions[i * 3 + 2] = dims === 2 ? 0 : (Math.random() * 2 - 1) * opts.simulationBound;
+      positions[i * 3] = rng() * scale;
+      positions[i * 3 + 1] = rng() * scale;
+      positions[i * 3 + 2] = dims === 2 ? 0 : rng() * scale;
     }
   }
 
-  let scheduleStepIndex = 0;
-  const scratch = {
-    pi: vec3.create(),
-    pj: vec3.create(),
-    diff: vec3.create(),
-    centroid: vec3.create(),
-  };
-  const eps = 1e-10;
+  let epochIndex = 0;
+  const magEps = 1e-12;
 
   function step(_deltaTime: number): void {
-    const iters = Math.max(1, opts.iterationsPerStep);
-    const eta = opts.useSchedule
-      ? getEta(scheduleStepIndex)
-      : opts.learningRate;
-    scheduleStepIndex += opts.scheduleSpeed;
+    const epochs = Math.max(1, opts.epochsPerStep);
+    for (let ep = 0; ep < epochs && epochIndex < opts.tMax; ep++) {
+      const eta = opts.useSchedule ? getEta(epochIndex) : opts.learningRate;
+      epochIndex++;
 
-    for (let k = 0; k < iters; k++) {
-      if (pairs.length === 0) break;
-      const pair = pairs[Math.floor(Math.random() * pairs.length)];
-      const { i, j, d, w } = pair;
-      vec3.set(scratch.pi, positions[i * 3], positions[i * 3 + 1], positions[i * 3 + 2]);
-      vec3.set(scratch.pj, positions[j * 3], positions[j * 3 + 1], positions[j * 3 + 2]);
-      vec3.subtract(scratch.diff, scratch.pj, scratch.pi);
-      if (dims === 2) scratch.diff[2] = 0;
-      const mag = Math.max(vec3.length(scratch.diff), eps);
-      // s_gd2 step: mu = eta*w_ij (cap at 1), r = mu*(mag-d)/(2*mag), then i -= r*diff, j += r*diff
-      let mu = eta * w;
-      if (mu > 1) mu = 1;
-      const r = (mu * (mag - d)) / (2 * mag);
-      vec3.scale(scratch.diff, scratch.diff, r);
-      positions[i * 3] -= scratch.diff[0];
-      positions[i * 3 + 1] -= scratch.diff[1];
-      if (dims === 3) positions[i * 3 + 2] -= scratch.diff[2];
-      positions[j * 3] += scratch.diff[0];
-      positions[j * 3 + 1] += scratch.diff[1];
-      if (dims === 3) positions[j * 3 + 2] += scratch.diff[2];
+      // Fisher-Yates shuffle (reference: fisheryates_shuffle)
+      fisherYatesShuffle(pairs, rng);
+
+      // Process all pairs in shuffled order (reference: for each term)
+      for (const t of pairs) {
+        const { i, j, d, w } = t;
+        let mu = eta * w;
+        if (mu > 1) mu = 1;
+
+        // diff = X_i - X_j (reference: dx = X[i*2]-X[j*2], ...)
+        const dx = positions[i * 3] - positions[j * 3];
+        const dy = positions[i * 3 + 1] - positions[j * 3 + 1];
+        const dz = dims === 3 ? positions[i * 3 + 2] - positions[j * 3 + 2] : 0;
+        const mag = Math.max(Math.sqrt(dx * dx + dy * dy + dz * dz), magEps);
+
+        const r = (mu * (mag - d)) / (2 * mag);
+
+        // Reference: X[i] -= r*diff, X[j] += r*diff
+        positions[i * 3] -= r * dx;
+        positions[i * 3 + 1] -= r * dy;
+        if (dims === 3) positions[i * 3 + 2] -= r * dz;
+        positions[j * 3] += r * dx;
+        positions[j * 3 + 1] += r * dy;
+        if (dims === 3) positions[j * 3 + 2] += r * dz;
+      }
     }
 
-    // Optional shrink toward origin (not used by s_gd2; usually leave 0 or layout collapses)
+    // Blend toward initial positions (preserves 3D mesh shape when using initialPositions)
+    if (opts.initialPreservation > 0 && initialPositionsBackup) {
+      const p = opts.initialPreservation;
+      for (let i = 0; i < n * 3; i++) {
+        positions[i] = (1 - p) * positions[i] + p * initialPositionsBackup[i];
+      }
+    }
+
     if (opts.centerPull > 0) {
       for (let i = 0; i < n; i++) {
         positions[i * 3] -= opts.centerPull * positions[i * 3];
@@ -191,38 +221,33 @@ export async function createStressSGD3D(
       }
     }
 
-    // Re-center (subtract centroid) and optionally clamp scale so layout doesn't drift or explode
+    // Optional re-center and scale clamp (not in reference; for visualization)
     if (opts.scaleBound > 0 && n > 0) {
-      scratch.centroid[0] = 0;
-      scratch.centroid[1] = 0;
-      scratch.centroid[2] = 0;
+      let cx = 0, cy = 0, cz = 0;
       for (let i = 0; i < n; i++) {
-        scratch.centroid[0] += positions[i * 3];
-        scratch.centroid[1] += positions[i * 3 + 1];
-        scratch.centroid[2] += positions[i * 3 + 2];
+        cx += positions[i * 3];
+        cy += positions[i * 3 + 1];
+        cz += positions[i * 3 + 2];
       }
-      scratch.centroid[0] /= n;
-      scratch.centroid[1] /= n;
-      scratch.centroid[2] /= n;
+      cx /= n; cy /= n; cz /= n;
       let maxDist = 0;
       for (let i = 0; i < n; i++) {
-        positions[i * 3] -= scratch.centroid[0];
-        positions[i * 3 + 1] -= scratch.centroid[1];
-        positions[i * 3 + 2] -= scratch.centroid[2];
+        positions[i * 3] -= cx;
+        positions[i * 3 + 1] -= cy;
+        positions[i * 3 + 2] -= cz;
         const dist = Math.sqrt(
-          positions[i * 3] * positions[i * 3] +
-          positions[i * 3 + 1] * positions[i * 3 + 1] +
-          (dims === 3 ? positions[i * 3 + 2] * positions[i * 3 + 2] : 0)
+          positions[i * 3] ** 2 + positions[i * 3 + 1] ** 2 +
+          (dims === 3 ? positions[i * 3 + 2] ** 2 : 0)
         );
         if (dist > maxDist) maxDist = dist;
       }
-      if (maxDist > opts.scaleBound) {
+      // Scale to fit scaleBound (both up and down)
+      if (maxDist > 0) {
         const s = opts.scaleBound / maxDist;
         for (let i = 0; i < n * 3; i++) positions[i] *= s;
       }
     }
 
-    // Keep 2D layout flat: force z=0 so it never collapses to a vertical line
     if (dims === 2) {
       for (let i = 0; i < n; i++) positions[i * 3 + 2] = 0;
     }

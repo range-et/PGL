@@ -1,6 +1,15 @@
+/**
+ * Sample data loaders: ZKC, ZKC simulated, (sgd)² edge lists, OBJ meshes, DWT 1005.
+ *
+ * @packageDocumentation
+ *
+ * Use `SampleData.LoadZKC`, `SampleData.LoadZKCSimulated`, `SampleData.LoadGraphFromEdgeListText`,
+ * `SampleData.LoadGraphFromObjText`, `SampleData.LoadDwt1005`.
+ */
 // load up the ZKC dataset
 import { zkc } from "./ZKC";
 import { zkc_simulated } from "./ZKC_simulated";
+import { dwt_1005 } from "./dwt_1005";
 import GraphConstructors from "../HelperClasses/GraphConstructors";
 import Graph from "../Core/Graph";
 import Point from "../HelperClasses/Point";
@@ -56,7 +65,7 @@ async function LoadZKC() {
 
 /**
  * 
- * @returns the ZKC dataset with the positons simulated before hand
+ * @returns the ZKC dataset with the positions simulated beforehand
  */
 async function LoadZKCSimulated() {
   // make a map
@@ -155,5 +164,45 @@ async function LoadGraphFromObjText(objText: string): Promise<LoadGraphFromObjRe
   return { graph: G, positions };
 }
 
+/**
+ * Load the DWT 1005 graph from the paper (1005 nodes, adjacency-list format).
+ * Same structural graph used in the 2D stress layout reference.
+ * @see dwt_1005.ts
+ */
+async function LoadDwt1005(): Promise<Graph> {
+  const adj = dwt_1005 as Record<string, number[]>;
+  const nodeIdsSet = new Set<number>();
+  for (const key of Object.keys(adj)) {
+    const id = parseInt(key, 10);
+    if (!Number.isNaN(id)) nodeIdsSet.add(id);
+    for (const nb of adj[key]) nodeIdsSet.add(nb);
+  }
+  const edgeSet = new Set<string>();
+  for (const key of Object.keys(adj)) {
+    const id = parseInt(key, 10);
+    if (Number.isNaN(id)) continue;
+    for (const nb of adj[key]) {
+      const a = Math.min(id, nb);
+      const b = Math.max(id, nb);
+      edgeSet.add(`${a},${b}`);
+    }
+  }
+  const nodes = new Map<number, _Node>();
+  const origin = new Point(0, 0, 0);
+  // Deterministic order 1..N so simulation and drawer node order match
+  const sortedIds = [...nodeIdsSet].sort((a, b) => a - b);
+  for (const id of sortedIds) {
+    nodes.set(id, new _Node({ pos: origin }));
+  }
+  const edges = new Map<number, Edge>();
+  let idx = 0;
+  for (const key of edgeSet) {
+    const [a, b] = key.split(",").map((s) => parseInt(s, 10));
+    edges.set(idx++, new Edge(a, b, {}));
+  }
+  const G = await Graph.create(nodes, edges);
+  return G;
+}
+
 // exports
-export default { LoadZKC, LoadZKCSimulated, LoadGraphFromEdgeListText, LoadGraphFromObjText };
+export default { LoadZKC, LoadZKCSimulated, LoadGraphFromEdgeListText, LoadGraphFromObjText, LoadDwt1005 };

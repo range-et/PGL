@@ -65,7 +65,7 @@ class Graph {
     return g;
   }
 
-  // construct the adjacency list represntation
+  // construct the adjacency list representation
   /**
    * Constructs the adjacency associated with the graph
    */
@@ -116,8 +116,8 @@ class Graph {
     if (endNode) endNode.neighbours.push(start);
   }
 
-  // get an adjacency list reprentation of the graph
-  // this onlu has the indices and not the actual data
+  // get an adjacency list representation of the graph
+  // this only has the indices and not the actual data
   // associated with the node to speed things up
   /**
    *
@@ -180,7 +180,7 @@ class Graph {
   // graph apply pos and edge map
   /**
    * Applies all the maps to the graph
-   * @param layout - Applies an object of maps associated with with a graph is made up of {pmap:(the position map), emap:{the edge map}}
+   * @param layout - Applies an object of maps associated with a graph: {pmap:(the position map), emap:(the edge map)}
    */
   apply_drawing_maps(layout: {
     pmap: Map<number, Point>;
@@ -194,7 +194,7 @@ class Graph {
     }
   }
 
-  // get the positon map of the graph
+  // get the position map of the graph
   /**
    * Gets the position map and the edge map respectively
    * @returns The position map and the edge map as pmap and emap

@@ -9,7 +9,7 @@ import { default as Graph } from '../Core/Graph';
  * @param iterations - The second input number
  *  @param simulationBound - The bounds of simulation (Mostly a global number to scale the graph up or down)
  *  @param cohesionValue - How sticky the nodes are i.r. how much they cluster together
- * @returns And node map of all the nodes and their simulated positions - Please note: position maps have to to be applied to the graph!
+ * @returns A node map of all the nodes and their simulated positions. Note: position maps have to be applied to the graph.
  *
  */
 declare function SimulateKamadaKawai(Graph: Graph, iterations: number, simulationBound?: number, cohesionValue?: number, repulsionValue?: number): Promise<Map<number, Point>>;

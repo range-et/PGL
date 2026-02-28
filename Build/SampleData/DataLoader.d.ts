@@ -13,7 +13,7 @@ declare function LoadGraphFromEdgeListText(edgeListText: string): Promise<Graph>
 declare function LoadZKC(): Promise<Graph>;
 /**
  *
- * @returns the ZKC dataset with the positons simulated before hand
+ * @returns the ZKC dataset with the positions simulated beforehand
  */
 declare function LoadZKCSimulated(): Promise<Graph>;
 /**
@@ -33,10 +33,17 @@ export interface LoadGraphFromObjResult {
  * @see e.g. Stanford Bunny https://graphics.stanford.edu/~mdfisher/Data/Meshes/bunny.obj
  */
 declare function LoadGraphFromObjText(objText: string): Promise<LoadGraphFromObjResult>;
+/**
+ * Load the DWT 1005 graph from the paper (1005 nodes, adjacency-list format).
+ * Same structural graph used in the 2D stress layout reference.
+ * @see dwt_1005.ts
+ */
+declare function LoadDwt1005(): Promise<Graph>;
 declare const _default: {
     LoadZKC: typeof LoadZKC;
     LoadZKCSimulated: typeof LoadZKCSimulated;
     LoadGraphFromEdgeListText: typeof LoadGraphFromEdgeListText;
     LoadGraphFromObjText: typeof LoadGraphFromObjText;
+    LoadDwt1005: typeof LoadDwt1005;
 };
 export default _default;

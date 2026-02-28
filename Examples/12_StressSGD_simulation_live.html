@@ -21,24 +21,18 @@
     <script type="module">
       import * as PGL from "../Build/pgl_module.js";
 
-      // Run "npm run build" and hard-refresh so this uses the latest layout (dimensions: 2 = flat shape).
-      // Use a structural graph from s_gd2 (https://github.com/jxz12/s_gd2): football = 115 nodes, US college football network
-      const edgeListUrl = "https://raw.githubusercontent.com/jxz12/s_gd2/master/data/football.txt";
-      const response = await fetch(edgeListUrl);
-      const text = await response.text();
-      const G = await PGL.SampleData.LoadGraphFromEdgeListText(text);
-      await G.initialize();
+      // DWT 1005 graph from the paper (1005 nodes). dimensions: 3 = full 3D layout (like Example 9).
+      const G = await PGL.SampleData.LoadDwt1005();
       G.printData();
 
+      // Faithful s_gd2 port: epoch-based, Fisher-Yates shuffle, [0,1] init
       const simulation = await PGL.createStressSGD3D(G, {
         dimensions: 2,
-        simulationBound: 60,
-        iterationsPerStep: 80,
-        useSchedule: true,
-        tMax: 120,
+        simulationBound: 1,
+        epochsPerStep: 1,
+        tMax: 80,
         eps: 0.01,
-        scheduleSpeed: 0.15,
-        scaleBound: 120,
+        scaleBound: 1200, // scale output for visibility (not in reference)
       });
       // Keep graph and simulation in sync: apply positions then rebuild edge geometry from graph
       G.apply_position_map(simulation.getPositionMap());
