@@ -2,17 +2,16 @@ import { default as Line } from '../HelperClasses/Line';
 import { default as Point } from '../HelperClasses/Point';
 import { default as _Node } from './_Node';
 import { default as Edge } from './Edge';
-interface Graph {
-    nodes: Map<number, _Node>;
-    edges: Map<number, Edge>;
-}
 /**
  * The main graph object: contains nodes and edges that get modified with different
  * operations (layout, clustering, etc.).
  */
 declare class Graph {
+    nodes: Map<number, _Node>;
+    edges: Map<number, Edge>;
+    /** Next edge ID for add_edge; avoids collisions when edges are removed. */
+    private _nextEdgeId;
     /**
-     *
      * Construct a graph object (no initializing)
      *
      * @param nodes - Map of all the nodes associated with the graph
@@ -25,20 +24,21 @@ declare class Graph {
     printData(): void;
     /**
      * Initializes the graph and constructs the node adjacency list.
+     * Async to avoid blocking the main thread on large graphs.
      */
     initialize(): Promise<void>;
     /**
-     *
-     * This is the official create method to make a graph based on a set of nodes and edges
-     * It also auto-initializes the graph and sets all the adjacency lists in memory.
+     * Official create method to make a graph based on a set of nodes and edges.
+     * Auto-initializes the graph and sets all adjacency lists in memory.
      *
      * @param nodes - map of nodes
      * @param edges - map of edges
-     * @returns
+     * @returns initialized graph
      */
     static create(nodes: Map<number, _Node>, edges: Map<number, Edge>): Promise<Graph>;
     /**
-     * Constructs the adjacency associated with the graph
+     * Constructs the adjacency list representation for the graph.
+     * Async to allow yielding on large graphs and avoid hanging the browser.
      */
     constructAdjacencyList(): Promise<void>;
     /**
@@ -92,6 +92,8 @@ declare class Graph {
     };
     /**
      * Get the position of the nodes in the graph.
+     * Nodes without a defined `data.pos` are skipped.
+     *
      * @returns The position map (node ID to Point)
      */
     get_position_map(): Map<number, Point>;

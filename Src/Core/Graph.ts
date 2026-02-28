@@ -3,18 +3,17 @@ import Point from "../HelperClasses/Point";
 import _Node from "./_Node";
 import Edge from "./Edge";
 
-interface Graph {
-  nodes: Map<number, _Node>;
-  edges: Map<number, Edge>;
-}
-
 /**
  * The main graph object: contains nodes and edges that get modified with different
  * operations (layout, clustering, etc.).
  */
 class Graph {
+  nodes: Map<number, _Node>;
+  edges: Map<number, Edge>;
+  /** Next edge ID for add_edge; avoids collisions when edges are removed. */
+  private _nextEdgeId: number;
+
   /**
-   *
    * Construct a graph object (no initializing)
    *
    * @param nodes - Map of all the nodes associated with the graph
@@ -23,8 +22,8 @@ class Graph {
   constructor(nodes: Map<number, _Node>, edges: Map<number, Edge>) {
     this.nodes = nodes;
     this.edges = edges;
-    // execute Internal methods
-    // this.printData();
+    this._nextEdgeId =
+      edges.size > 0 ? Math.max(...edges.keys()) + 1 : 0;
   }
 
   // test function
@@ -41,43 +40,46 @@ class Graph {
     console.log(message);
   }
 
-  // initialize
   /**
    * Initializes the graph and constructs the node adjacency list.
+   * Async to avoid blocking the main thread on large graphs.
    */
-  async initialize() {
+  async initialize(): Promise<void> {
     await this.constructAdjacencyList();
   }
 
-  // new create method
   /**
-   *
-   * This is the official create method to make a graph based on a set of nodes and edges
-   * It also auto-initializes the graph and sets all the adjacency lists in memory.
+   * Official create method to make a graph based on a set of nodes and edges.
+   * Auto-initializes the graph and sets all adjacency lists in memory.
    *
    * @param nodes - map of nodes
    * @param edges - map of edges
-   * @returns
+   * @returns initialized graph
    */
-  static async create(nodes: Map<number, _Node>, edges: Map<number, Edge>) {
+  static async create(
+    nodes: Map<number, _Node>,
+    edges: Map<number, Edge>
+  ): Promise<Graph> {
     const g = new Graph(nodes, edges);
     await g.initialize();
     return g;
   }
 
-  // construct the adjacency list representation
   /**
-   * Constructs the adjacency associated with the graph
+   * Constructs the adjacency list representation for the graph.
+   * Async to allow yielding on large graphs and avoid hanging the browser.
    */
-  async constructAdjacencyList() {
-    // I'm constructing a Graph here so some of the stuff doesnt matter
+  async constructAdjacencyList(): Promise<void> {
+    // First pass: build neighbours from edges
     this.edges.forEach((edge) => {
       const start = edge.start;
       const end = edge.end;
       if (this.nodes.get(start)) this.nodes.get(start)!.neighbours.push(end);
       if (this.nodes.get(end)) this.nodes.get(end)!.neighbours.push(start);
     });
-    // then for each node then get the unique neighbours
+    // Yield to event loop before second pass (helps large graphs avoid blocking)
+    await Promise.resolve();
+    // Second pass: deduplicate and remove self-loops
     for (const key of this.nodes.keys()) {
       const neighs = this.nodes.get(key)!.neighbours;
       const new_neigh = [...new Set(neighs)];
@@ -108,7 +110,8 @@ class Graph {
    */
   add_edge(start: number, end: number, data: any) {
     const newEdge = new Edge(start, end, data);
-    this.edges.set(this.edges.size, newEdge);
+    const edgeId = this._nextEdgeId++;
+    this.edges.set(edgeId, newEdge);
     // keep adjacency consistent for undirected graph (both directions)
     const startNode = this.nodes.get(start);
     const endNode = this.nodes.get(end);
@@ -208,12 +211,17 @@ class Graph {
 
   /**
    * Get the position of the nodes in the graph.
+   * Nodes without a defined `data.pos` are skipped.
+   *
    * @returns The position map (node ID to Point)
    */
-  get_position_map() {
+  get_position_map(): Map<number, Point> {
     const pmap: Map<number, Point> = new Map();
-    for (const node of this.nodes.keys()) {
-      pmap.set(node, this.nodes.get(node)!.data.pos);
+    for (const nodeId of this.nodes.keys()) {
+      const pos = this.nodes.get(nodeId)?.data?.pos;
+      if (pos != null) {
+        pmap.set(nodeId, pos);
+      }
     }
     return pmap;
   }

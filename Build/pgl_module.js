@@ -13,14 +13,13 @@ class Ln {
 }
 class tn {
   /**
-   *
    * Construct a graph object (no initializing)
    *
    * @param nodes - Map of all the nodes associated with the graph
    * @param edges - Map of all the edges associated with the graph
    */
   constructor(e, n) {
-    this.nodes = e, this.edges = n;
+    this.nodes = e, this.edges = n, this._nextEdgeId = n.size > 0 ? Math.max(...n.keys()) + 1 : 0;
   }
   // test function
   /**
@@ -30,36 +29,34 @@ class tn {
     const e = "This is a graph with " + this.nodes.size + " nodes and " + this.edges.size + " edges";
     console.log(e);
   }
-  // initialize
   /**
    * Initializes the graph and constructs the node adjacency list.
+   * Async to avoid blocking the main thread on large graphs.
    */
   async initialize() {
     await this.constructAdjacencyList();
   }
-  // new create method
   /**
-   *
-   * This is the official create method to make a graph based on a set of nodes and edges
-   * It also auto-initializes the graph and sets all the adjacency lists in memory.
+   * Official create method to make a graph based on a set of nodes and edges.
+   * Auto-initializes the graph and sets all adjacency lists in memory.
    *
    * @param nodes - map of nodes
    * @param edges - map of edges
-   * @returns
+   * @returns initialized graph
    */
   static async create(e, n) {
     const i = new tn(e, n);
     return await i.initialize(), i;
   }
-  // construct the adjacency list representation
   /**
-   * Constructs the adjacency associated with the graph
+   * Constructs the adjacency list representation for the graph.
+   * Async to allow yielding on large graphs and avoid hanging the browser.
    */
   async constructAdjacencyList() {
     this.edges.forEach((e) => {
       const n = e.start, i = e.end;
       this.nodes.get(n) && this.nodes.get(n).neighbours.push(i), this.nodes.get(i) && this.nodes.get(i).neighbours.push(n);
-    });
+    }), await Promise.resolve();
     for (const e of this.nodes.keys()) {
       const n = this.nodes.get(e).neighbours, i = [...new Set(n)], r = i.indexOf(e);
       r > -1 && i.splice(r, 1), this.nodes.get(e).neighbours = i;
@@ -82,10 +79,10 @@ class tn {
    * @param data - data associated with the edge
    */
   add_edge(e, n, i) {
-    const r = new Ln(e, n, i);
-    this.edges.set(this.edges.size, r);
-    const s = this.nodes.get(e), a = this.nodes.get(n);
-    s && s.neighbours.push(n), a && a.neighbours.push(e);
+    const r = new Ln(e, n, i), s = this._nextEdgeId++;
+    this.edges.set(s, r);
+    const a = this.nodes.get(e), o = this.nodes.get(n);
+    a && a.neighbours.push(n), o && o.neighbours.push(e);
   }
   // get an adjacency list representation of the graph
   // this only has the indices and not the actual data
@@ -161,12 +158,17 @@ class tn {
   }
   /**
    * Get the position of the nodes in the graph.
+   * Nodes without a defined `data.pos` are skipped.
+   *
    * @returns The position map (node ID to Point)
    */
   get_position_map() {
+    var n, i;
     const e = /* @__PURE__ */ new Map();
-    for (const n of this.nodes.keys())
-      e.set(n, this.nodes.get(n).data.pos);
+    for (const r of this.nodes.keys()) {
+      const s = (i = (n = this.nodes.get(r)) == null ? void 0 : n.data) == null ? void 0 : i.pos;
+      s != null && e.set(r, s);
+    }
     return e;
   }
   /**

@@ -65,4 +65,35 @@ describe("Graph", () => {
       expect(matrix[0 * 3 + 2]).toBe(0);
     });
   });
+
+  describe("add_edge", () => {
+    it("assigns unique edge IDs using internal counter", () => {
+      const nodes = new Map<number, _Node>();
+      nodes.set(0, new _Node({ pos: new Point(0, 0, 0) }));
+      nodes.set(1, new _Node({ pos: new Point(1, 0, 0) }));
+      const graph = new Graph(nodes, new Map());
+      graph.initialize();
+      graph.add_edge(0, 1, {});
+      graph.add_edge(0, 1, {});
+      expect(graph.edges.size).toBe(2);
+      expect(graph.edges.has(0)).toBe(true);
+      expect(graph.edges.has(1)).toBe(true);
+    });
+  });
+
+  describe("get_position_map", () => {
+    it("skips nodes without data.pos", () => {
+      const nodes = new Map<number, _Node>();
+      nodes.set(0, new _Node({ pos: new Point(1, 2, 3) }));
+      nodes.set(1, new _Node({})); // no pos
+      nodes.set(2, new _Node({ pos: new Point(7, 8, 9) }));
+      const graph = new Graph(nodes, new Map());
+      graph.initialize();
+      const pmap = graph.get_position_map();
+      expect(pmap.size).toBe(2);
+      expect(pmap.get(0)?.x).toBe(1);
+      expect(pmap.get(2)?.z).toBe(9);
+      expect(pmap.has(1)).toBe(false);
+    });
+  });
 });
