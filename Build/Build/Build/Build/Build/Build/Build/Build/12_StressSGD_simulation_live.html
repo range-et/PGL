@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="MasterStyle.css" />
+  <title>Example 12 – Stress SGD live simulation</title>
+</head>
+
+<body class="example-page">
+  <header class="example-header">
+    <a href="examples.html" class="back-link">← All examples</a>
+    <h1>Example 12 – Stress SGD live simulation</h1>
+    <p class="example-desc">Time-based 3D stress layout by stochastic gradient descent (arXiv:1710.04626). Uses createStressSGD3D, step(dt), and mutable vertices.</p>
+    <a href="https://github.com/range-et/PGL/blob/main/Examples/12_StressSGD_simulation_live.html" class="code-link" target="_blank" rel="noopener">View code</a>
+  </header>
+  <div class="canvas-wrap">
+    <canvas id="displayCanvas" class="displayCanvas"></canvas>
+    <script type="module">
+      import * as PGL from "../Build/pgl_module.js";
+
+      const G = await PGL.Models.GenerateErdosReyni_n_p(400, 0.008);
+      await G.initialize();
+      G.printData();
+
+      const simulation = await PGL.createStressSGD3D(G, {
+        simulationBound: 80,
+        learningRate: 0.12,
+        iterationsPerStep: 40,
+      });
+      G.apply_position_map(simulation.getPositionMap());
+      const lmap = PGL.Drawing.DrawEdgeLinesDivisions(G, 1);
+      G.apply_edge_pos_maps(lmap);
+
+      const width = 800;
+      const height = 700;
+      const canvas = document.getElementById("displayCanvas");
+      const graph3d = new PGL.GraphDrawer.GraphDrawer3d({
+        graph: G,
+        width,
+        height,
+        canvas,
+      });
+      await graph3d.init();
+
+      const bounds = 0.1;
+      const { group, updatePositions } = PGL.ThreeWrapper.DrawTHREEGraphVerticesMutable(G, bounds, 1, 0xffffff, 1);
+      graph3d.addVisElement(group);
+      const { group: edgeGroup, updateEdges } = PGL.ThreeWrapper.DrawTHREEGraphEdgesThinMutable(G, bounds, 0xffafcc);
+      graph3d.addVisElement(edgeGroup);
+
+      let lastTime = performance.now();
+      function animate() {
+        requestAnimationFrame(animate);
+        const now = performance.now();
+        const dt = (now - lastTime) / 1000;
+        lastTime = now;
+        simulation.step(dt);
+        G.apply_position_map(simulation.getPositionMap());
+        const lmap = PGL.Drawing.DrawEdgeLinesDivisions(G, 1);
+        G.apply_edge_pos_maps(lmap);
+        updatePositions(simulation.getPositions());
+        updateEdges();
+        graph3d.rendercall();
+      }
+      animate();
+    </script>
+  </div>
+</body>
+
+</html>

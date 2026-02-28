@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="MasterStyle.css" />
+  <title>Example 13 – Stress SGD 3D (Stanford Bunny mesh)</title>
+</head>
+
+<body class="example-page">
+  <header class="example-header">
+    <a href="examples.html" class="back-link">← All examples</a>
+    <h1>Example 13 – Stress SGD 3D (Stanford Bunny mesh)</h1>
+    <p class="example-desc">3D stress layout from a mesh: graph = mesh vertices + edges, initial positions = mesh positions. Layout refines in 3D so the shape stays bunny-like (no collapse to a line). Based on IEEE TVCG “Graph Drawing by Stochastic Gradient Descent” and Stanford Bunny OBJ.</p>
+    <a href="https://github.com/range-et/PGL/blob/main/Examples/13_StressSGD_bunny_3d.html" class="code-link" target="_blank" rel="noopener">View code</a>
+  </header>
+  <div class="canvas-wrap">
+    <canvas id="displayCanvas" class="displayCanvas"></canvas>
+    <p id="status" style="position:absolute;left:12px;top:60px;color:#fff;font-size:12px;pointer-events:none;"></p>
+    <script type="module">
+      import * as PGL from "../Build/pgl_module.js";
+
+      const status = document.getElementById("status");
+      function setStatus(msg) {
+        if (status) status.textContent = msg;
+      }
+
+      // Stanford Bunny OBJ (mesh → graph: vertices = nodes, face edges = graph edges).
+      // If fetch fails (e.g. CORS), run the examples from a local server: npx serve . or npm run dev
+      setStatus("Loading Stanford Bunny OBJ…");
+      const bunnyUrl = "https://graphics.stanford.edu/~mdfisher/Data/Meshes/bunny.obj";
+      let objText;
+      try {
+        const response = await fetch(bunnyUrl);
+        if (!response.ok) throw new Error(response.statusText);
+        objText = await response.text();
+      } catch (e) {
+        setStatus("Could not load bunny.obj (try running from a local server, e.g. npx serve .). " + (e && e.message ? e.message : ""));
+        throw e;
+      }
+      setStatus("Building graph from mesh…");
+      const { graph: G, positions: meshPositions } = await PGL.SampleData.LoadGraphFromObjText(objText);
+      await G.initialize();
+      G.printData();
+
+      // Scale mesh positions into a comfortable range (bunny is ~0.1 units); then we'll use scaleBound to hold size
+      const scale = 400;
+      const initialPositions = new Float32Array(meshPositions.length);
+      for (let i = 0; i < meshPositions.length; i++) initialPositions[i] = meshPositions[i] * scale;
+
+      setStatus("Computing all-pairs distances (one-time, may take a few seconds)…");
+      const simulation = await PGL.createStressSGD3D(G, {
+        dimensions: 3,
+        initialPositions,
+        simulationBound: 80,
+        iterationsPerStep: 40,
+        useSchedule: true,
+        tMax: 100,
+        eps: 0.01,
+        scheduleSpeed: 0.2,
+        scaleBound: 120,
+      });
+      setStatus("");
+
+      G.apply_position_map(simulation.getPositionMap());
+      const lmap = PGL.Drawing.DrawEdgeLinesDivisions(G, 1);
+      G.apply_edge_pos_maps(lmap);
+
+      const width = 800;
+      const height = 700;
+      const canvas = document.getElementById("displayCanvas");
+      const graph3d = new PGL.GraphDrawer.GraphDrawer3d({
+        graph: G,
+        width,
+        height,
+        canvas,
+      });
+      await graph3d.init();
+
+      const bounds = 0.1;
+      const { group, updatePositions } = PGL.ThreeWrapper.DrawTHREEGraphVerticesMutable(G, bounds, 0.8, 0xffffff, 1);
+      graph3d.addVisElement(group);
+      const { group: edgeGroup, updateEdges } = PGL.ThreeWrapper.DrawTHREEGraphEdgesThinMutable(G, bounds, 0x88aacc);
+      graph3d.addVisElement(edgeGroup);
+
+      let lastTime = performance.now();
+      function animate() {
+        requestAnimationFrame(animate);
+        const now = performance.now();
+        const dt = (now - lastTime) / 1000;
+        lastTime = now;
+        simulation.step(dt);
+        G.apply_position_map(simulation.getPositionMap());
+        const lmap = PGL.Drawing.DrawEdgeLinesDivisions(G, 1);
+        G.apply_edge_pos_maps(lmap);
+        updatePositions(simulation.getPositions());
+        updateEdges();
+        graph3d.rendercall();
+      }
+      animate();
+    </script>
+  </div>
+</body>
+
+</html>

@@ -86,16 +86,24 @@ declare function DrawThickPathFromNodeIds(Graph: Graph, bounds: number, pathNode
  */
 declare function DrawThinEdgesFromEdgeMap(LineMap: Map<number, Line>, bounds?: number, color?: number): THREE.Group<THREE.Object3DEventMap>;
 /**
- *
- * Adde boxes where all the boxes are
+ * Add boxes for all nodes using one InstancedMesh (efficient for 1000s of boxes).
  *
  * @param nodeMap - a map of all the nodes
  * @param bounds - global scale of the edges to be drawn, defaults to 1
  * @param color - default color of the edges, defaults to white
  * @param size - size of the nodes defaults to 10
- * @returns a group of vertices that contains all of the boxes associated with each one of the vertices
+ * @returns a group containing one InstancedMesh for all boxes
  */
 declare function AddBoxBasedImaging(nodeMap: Map<number, Point>, bounds?: number, color?: number, size?: number | number[]): THREE.Group<THREE.Object3DEventMap>;
+export interface MutableBoxVerticesResult {
+    group: THREE.Group;
+    updatePositions(positions: Float32Array | Map<number, Point>): void;
+}
+/**
+ * Box-based vertices as one InstancedMesh with updatable positions (e.g. for simulation).
+ * Node order matches get_node_ids_order() when called with a graph's position map.
+ */
+declare function DrawTHREEBoxBasedVerticesMutable(Graph: Graph, bounds?: number, color?: number, size?: number | number[]): MutableBoxVerticesResult;
 /**
  *
  * Draw box based verices given a graph
@@ -169,5 +177,6 @@ declare const _default: {
     ChangeTheVertexColours: typeof ChangeTheVertexColours;
     ResetVertexColors: typeof ResetVertexColors;
     DrawTHREEBoxBasedVertices: typeof DrawTHREEBoxBasedVertices;
+    DrawTHREEBoxBasedVerticesMutable: typeof DrawTHREEBoxBasedVerticesMutable;
 };
 export default _default;

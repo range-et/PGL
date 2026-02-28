@@ -49,8 +49,8 @@
       const bounds = 0.1;
       const { group, updatePositions } = PGL.ThreeWrapper.DrawTHREEGraphVerticesMutable(G, bounds, 1, 0xffffff, 1);
       graph3d.addVisElement(group);
-      const edgeVisualElements = PGL.ThreeWrapper.DrawTHREEGraphEdgesThin(G, bounds, 0xffafcc);
-      graph3d.addVisElement(edgeVisualElements);
+      const { group: edgeGroup, updateEdges } = PGL.ThreeWrapper.DrawTHREEGraphEdgesThinMutable(G, bounds, 0xffafcc);
+      graph3d.addVisElement(edgeGroup);
 
       let lastTime = performance.now();
       function animate() {
@@ -59,7 +59,11 @@
         const dt = (now - lastTime) / 1000;
         lastTime = now;
         simulation.step(dt);
+        G.apply_position_map(simulation.getPositionMap());
+        const lmap = PGL.Drawing.DrawEdgeLinesDivisions(G, 1);
+        G.apply_edge_pos_maps(lmap);
         updatePositions(simulation.getPositions());
+        updateEdges();
         graph3d.rendercall();
       }
       animate();

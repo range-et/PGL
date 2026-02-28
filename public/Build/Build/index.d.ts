@@ -13,5 +13,5 @@ export { default as Point } from './HelperClasses/Point';
 export type { PointLike } from './HelperClasses/Point';
 export { matrixVectorMultiply, normalizeVector } from './MatrixHelpers';
 export * as glMatrix from 'gl-matrix';
-export { createKamadaKawai3D } from './Simulation';
-export type { KamadaKawai3DOptions } from './Simulation';
+export { createKamadaKawai3D, createStressSGD3D } from './Simulation';
+export type { KamadaKawai3DOptions, StressSGD3DOptions, } from './Simulation';

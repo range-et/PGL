@@ -3,7 +3,7 @@ import Graph from "../../Src/Core/Graph";
 import _Node from "../../Src/Core/_Node";
 import Edge from "../../Src/Core/Edge";
 import Point from "../../Src/HelperClasses/Point";
-import { createKamadaKawai3D } from "../../Src/Simulation";
+import { createKamadaKawai3D, createStressSGD3D } from "../../Src/Simulation";
 
 function makeGraph(
   numNodes: number,
@@ -34,6 +34,27 @@ describe("createKamadaKawai3D", () => {
     const graph = makeGraph(3, [[0, 1], [1, 2]]);
     await graph.initialize();
     const sim = createKamadaKawai3D(graph);
+    sim.step(0.1);
+    const pmap = sim.getPositionMap();
+    expect(pmap.size).toBe(3);
+  });
+});
+
+describe("createStressSGD3D", () => {
+  it("step() produces finite positions", async () => {
+    const graph = makeGraph(5, [[0, 1], [1, 2], [2, 3], [3, 4]]);
+    await graph.initialize();
+    const sim = await createStressSGD3D(graph, { iterationsPerStep: 10 });
+    sim.step(0.016);
+    const pos = sim.getPositions();
+    for (let i = 0; i < pos.length; i++) {
+      expect(Number.isFinite(pos[i])).toBe(true);
+    }
+  });
+  it("getPositionMap returns Map with same node count", async () => {
+    const graph = makeGraph(3, [[0, 1], [1, 2]]);
+    await graph.initialize();
+    const sim = await createStressSGD3D(graph);
     sim.step(0.1);
     const pmap = sim.getPositionMap();
     expect(pmap.size).toBe(3);

@@ -36,8 +36,8 @@
       </a>
       <a href="5_Hierarchy_simple.html" class="example-card">
         <div class="num">Example 5</div>
-        <div class="title">Hierarchy</div>
-        <p class="desc">3D KD-tree clustering: nodes within a distance threshold are merged into super-nodes at centroids. Simplified graph with thick edges.</p>
+        <div class="title">Hierarchy (simplify by merging nearby nodes)</div>
+        <p class="desc">Merge nodes within a distance in 3D into super-nodes at cluster centers; edges between clusters are combined. Fewer nodes, same overall structure — good for LOD or flow-map style views.</p>
       </a>
       <a href="6_Flowmap_style.html" class="example-card">
         <div class="num">Example 6</div>
@@ -68,6 +68,16 @@
         <div class="num">Example 11</div>
         <div class="title">Custom layout from matrix math</div>
         <p class="desc">Adjacency → power iteration for two coordinates → apply_position_map. Full pipeline: matrix math to 3D layout.</p>
+      </a>
+      <a href="12_StressSGD_simulation_live.html" class="example-card">
+        <div class="num">Example 12</div>
+        <div class="title">Stress SGD live simulation</div>
+        <p class="desc">Time-based 3D stress layout by stochastic gradient descent (arXiv:1710.04626). createStressSGD3D, step(dt), mutable vertices.</p>
+      </a>
+      <a href="13_StressSGD_bunny_3d.html" class="example-card">
+        <div class="num">Example 13</div>
+        <div class="title">Stress SGD 3D (Stanford Bunny mesh)</div>
+        <p class="desc">3D stress layout from a mesh: OBJ → graph (vertices + edges), initial positions = mesh. Layout refines in 3D so the shape stays bunny-like.</p>
       </a>
     </section>
   </main>

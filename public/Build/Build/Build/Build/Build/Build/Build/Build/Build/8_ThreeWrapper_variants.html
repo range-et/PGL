@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="MasterStyle.css">
+  <title>Example 8 – ThreeWrapper variants</title>
+</head>
+
+<body class="example-page">
+  <header class="example-header">
+    <a href="examples.html" class="back-link">← All examples</a>
+    <h1>Example 8 – ThreeWrapper variants</h1>
+    <p class="example-desc">Different draw styles: box nodes, simplified edges, and modularity-based node/edge groups.</p>
+    <a href="https://github.com/range-et/PGL/blob/main/Examples/8_ThreeWrapper_variants.html" class="code-link" target="_blank" rel="noopener">View code</a>
+  </header>
+  <div class="canvas-wrap">
+  <canvas id="displayCanvas" class="displayCanvas"></canvas>
+  <script type="module">
+    import * as PGL from "../Build/pgl_module.js";
+
+    const G = await PGL.SampleData.LoadZKCSimulated();
+    const pmap = G.get_position_map();
+    const lmap = PGL.Drawing.DrawEdgeLinesDivisions(G, 1);
+    G.apply_edge_pos_maps(lmap);
+
+    const width = 800;
+    const height = 700;
+    const canvas = document.getElementById("displayCanvas");
+    const graph3d = new PGL.GraphDrawer.GraphDrawer3d({ graph: G, width, height, canvas });
+    await graph3d.init();
+
+    const bounds = 1;
+    const boxNodes = PGL.ThreeWrapper.AddBoxBasedImaging(pmap, bounds, 0xffffff, 4);
+    graph3d.addVisElement(boxNodes);
+    const simplifiedEdges = PGL.ThreeWrapper.DrawSimplifiedEdges(G, 0.15, 0x62b6cb);
+    graph3d.addVisElement(simplifiedEdges);
+
+    const modGroups = await PGL.ThreeWrapper.AddInModularityBasedPointGroups(G, "modularity");
+    for (const g of modGroups.nodeGroups.values()) graph3d.addVisElement(g);
+    for (const g of modGroups.EdgeGroups.values()) graph3d.addVisElement(g);
+
+    function animate() { requestAnimationFrame(animate); graph3d.rendercall(); }
+    animate();
+  </script>
+  </div>
+</body>
+
+</html>

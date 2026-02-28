@@ -13,7 +13,7 @@
   <header class="example-header">
     <a href="examples.html" class="back-link">← All examples</a>
     <h1>Example 5 – Hierarchy</h1>
-    <p class="example-desc">3D KD-tree clustering: nodes within a distance threshold merge into super-nodes at centroids. Simplified graph with thick edges.</p>
+    <p class="example-desc">Simplify a graph by merging nearby nodes into super-nodes. Nodes within 25 units in 3D are grouped; each group becomes one node at its center (centroid), and edges between groups are merged. You get fewer nodes and edges while keeping the overall structure — useful for LOD or flow-map style “zoomed out” views.</p>
     <a href="https://github.com/range-et/PGL/blob/main/Examples/5_Hierarchy_simple.html" class="code-link" target="_blank" rel="noopener">View code</a>
   </header>
   <div class="canvas-wrap">
@@ -21,12 +21,15 @@
   <script type="module">
     import * as PGL from "../Build/pgl_module.js";
 
+    // 1) Load original graph (many nodes)
     const original = await PGL.SampleData.LoadZKCSimulated();
     original.printData();
 
+    // 2) Cluster by 3D distance: nodes within distanceThreshold are merged into one super-node per cluster (at centroid). Edges between clusters are aggregated.
     const simplified = await PGL.Hierarchy.clusterByDistance(original, { distanceThreshold: 25 });
-    simplified.printData();
+    simplified.printData(); // fewer nodes than original
 
+    // 3) Draw the simplified graph (boxes at cluster centers, thick edges between clusters)
     const lmap = PGL.Drawing.DrawEdgeLinesDivisions(simplified, 1);
     simplified.apply_edge_pos_maps(lmap);
 

@@ -9,12 +9,10 @@ It can be a bit confusing especially when working with Nodes/Edges/Vertices/Line
 - Nodes (The library and the class is called \_Node so as to not confuse with NodeJS ) and Edges make up a graph.
 - Vertices and Lines make up the 3d visualization side of a graph.
 - Nodes are the abstract idea, vertices are what's visualized
-- Edges are the abstract idea , lines are what's visualized. Lastly, there are a few helper classes like points and lines. Points are essentially vectors and are used for displacement and also for describing a place in relation to the global coordinate system. Line are an array of points that get translated into lines using one of the visualization methods. Points can have different visualizations like boxes, billboarded planes and cylinders etc.
+- Edges are the abstract idea , lines are what's visualized. 
 
-## Semantics of the Package
+Lastly, there are a few helper classes like points and lines. Points are essentially vectors and are used for displacement and also for describing a place in relation to the global coordinate system. Line are an array of points that get translated into lines using one of the visualization methods. Points can have different visualizations like boxes, billboarded planes and cylinders etc.
 
-Existing network visualization libraries like NetworkX dictated the semantics of the graph library and borrowed some of the semantic ideas from three JS. The process is to define a Graph Object made of nodes and edges. Then modify this graph based on some set of properties. Then update the relevant settings. And lastly, to visualize the nodes, either as point clouds, boxes or cylinders, and to draw out the edges (bundled or not) lines.
-Here is an illustrated walkthrough of a simple set-up given a predefined set of “nodes” and “edges”.
 
 ## Documentation
 
@@ -24,11 +22,11 @@ The documentation for the package is available at [documentation](https://www.pl
 npm run document
 ```
 
-This writes TypeDoc output to the `docs/` folder. **API overview:** the library exposes the following namespaces: `Graph`, `GraphMethods` (BFS, Dijkstra, GraphDiameter, SelectSubgraph), `SampleData` (LoadZKC, LoadZKCSimulated), `Constructors` (ConstructGraphNodeEdgesList), `Drawing` (SimulateKamadaKawai, DrawEdgeLines, DrawEdgeBundling, DisplaceEdgeInY, etc.), `Geometry`, `Utilities`, `ThreeWrapper`, `GraphDrawer`, `Models` (Erdos–Renyi), `Hierarchy` (clusterByDistance, clusterByStrategy for flow-map style clustering), **Simulation** (createKamadaKawai3D), **MatrixHelpers** (matrixVectorMultiply, normalizeVector), and **glMatrix** (re-exported [gl-matrix](https://github.com/toji/gl-matrix) for vector/matrix math in the browser).
+This writes TypeDoc output to the `docs/` folder. **API overview:** the library exposes the following namespaces: `Graph`, `GraphMethods` (BFS, Dijkstra, GraphDiameter, SelectSubgraph), `SampleData` (LoadZKC, LoadZKCSimulated, LoadGraphFromEdgeListText for (sgd)²-style edge lists, LoadGraphFromObjText for OBJ meshes → graph + positions), `Constructors` (ConstructGraphNodeEdgesList), `Drawing` (SimulateKamadaKawai, DrawEdgeLines, DrawEdgeBundling, DisplaceEdgeInY, etc.), `Geometry`, `Utilities`, `ThreeWrapper`, `GraphDrawer`, `Models` (Erdos–Renyi), `Hierarchy` (clusterByDistance, clusterByStrategy for flow-map style clustering), **Simulation** (createKamadaKawai3D, createStressSGD3D — stress layout methods from (sgd)², Imperial), **MatrixHelpers** (matrixVectorMultiply, normalizeVector), and **glMatrix** (re-exported [gl-matrix](https://github.com/toji/gl-matrix) for vector/matrix math in the browser).
 
 ### Graph simulations
 
-For time-based layout updates (e.g. in a `requestAnimationFrame` loop), use **createKamadaKawai3D(graph, options)**. It returns an object with **step(deltaTime)**, **getPositions()** (Float32Array), and **getPositionMap()**. Use **DrawTHREEGraphVerticesMutable** so you can call **updatePositions(simulation.getPositions())** each frame without recreating geometry. See Examples 9 (live simulation) and 11 (custom layout).
+For time-based layout updates (e.g. in a `requestAnimationFrame` loop), use **createKamadaKawai3D(graph, options)** or **createStressSGD3D(graph, options)** (async). Both return an object with **step(deltaTime)**, **getPositions()** (Float32Array), and **getPositionMap()**. The Stress SGD layout follows the (sgd)² reference implementation from Imperial ([arXiv:1710.04626](https://arxiv.org/abs/1710.04626), [IEEE TVCG](https://www.computer.org/csdl/journal/tg/2019/09/08419285/13rRUyYBlgE), [github.com/jxz12/s_gd2](https://github.com/jxz12/s_gd2)). Use **DrawTHREEGraphVerticesMutable** so you can call **updatePositions(simulation.getPositions())** each frame without recreating geometry. For 3D layout that does not collapse to a line, pass **initialPositions** (e.g. from **LoadGraphFromObjText**) and use **dimensions: 3**. See Examples 9 (Kamada–Kawai live simulation), 11 (custom layout), 12 (Stress SGD live simulation), and 13 (Stress SGD 3D with Stanford Bunny mesh).
 
 ### Types (Point, PointLike)
 
@@ -50,6 +48,12 @@ The library exports **Point** (class with `x`, `y`, `z` and `translate()`) and *
 ## General setup of the package
 
 Apart from the graph class all the methods are stored in variables. These variables (For example SampleData) would have a function attached to it that returns a value, or in some cases you can pass in values to do stuff (like displacing the graph etc). I mostly did this for the sake of speed to develop - at some point shall be wrapping them up as classes.
+
+## Semantics of the Package
+
+Existing network visualization libraries like NetworkX dictated the semantics of the graph library and borrowed some of the semantic ideas from three JS. The process is to define a Graph Object made of nodes and edges. Then modify this graph based on some set of properties. Then update the relevant settings. And lastly, to visualize the nodes, either as point clouds, boxes or cylinders, and to draw out the edges (bundled or not) lines.
+Here is an illustrated walkthrough of a simple set-up given a predefined set of “nodes” and “edges”.
+
 
 ## An example of rendering a basic graph
 
@@ -165,6 +169,8 @@ Also remember to check out the contributions file where there are more details o
 
 Remember to follow our Code of Conduct to ensure a welcoming and inclusive environment for everyone
 
-## Acknowledgements
+## References and acknowledgements
 
-This library was sponsored by the Geometry Lab under the Laboratory for Design Technologies at the Graduate School of Design, Harvard University. Many thanks to Andrew Witt for guiding this project. This project was developed by : [Indrajeet Haldar](https://www.indrajeethaldar.com/)
+**Stress-based layout (createStressSGD3D):** The stress-minimization-by-SGD algorithm and schedule used in PGL are taken from the **(sgd)²** reference implementation ([jxz12/s_gd2](https://github.com/jxz12/s_gd2)) from Imperial College London. The underlying method is from the paper: J. X. Zheng, S. Pawar, D. F. M. Goodman, *Graph Drawing by Stochastic Gradient Descent*, IEEE Transactions on Visualization and Computer Graphics, [arXiv:1710.04626](https://arxiv.org/abs/1710.04626). Example graph data (e.g. football.txt) in the Stress SGD demo are from the same s_gd2 repository.
+
+**PGL:** This library was sponsored by the Geometry Lab under the Laboratory for Design Technologies at the Graduate School of Design, Harvard University. Many thanks to Andrew Witt for guiding this project. This project was developed by [Indrajeet Haldar](https://www.indrajeethaldar.com/).

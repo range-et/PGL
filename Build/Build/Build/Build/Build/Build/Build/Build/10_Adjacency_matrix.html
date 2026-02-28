@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="MasterStyle.css" />
+  <title>Example 10 – Adjacency matrix and power iteration</title>
+</head>
+
+<body class="example-page">
+  <header class="example-header">
+    <a href="examples.html" class="back-link">← All examples</a>
+    <h1>Example 10 – Adjacency matrix and power iteration</h1>
+    <p class="example-desc">get_adjacency_matrix() + power iteration in the browser. Node size reflects leading eigenvector (larger = higher value).</p>
+    <a href="https://github.com/range-et/PGL/blob/main/Examples/10_Adjacency_matrix.html" class="code-link" target="_blank" rel="noopener">View code</a>
+  </header>
+  <div class="canvas-wrap">
+    <canvas id="displayCanvas" class="displayCanvas"></canvas>
+    <script type="module">
+      import * as PGL from "../Build/pgl_module.js";
+
+      const G = await PGL.Models.GenerateErdosReyni_n_p(150, 0.04);
+      await G.initialize();
+      G.printData();
+
+      const { matrix, nodeIds } = G.get_adjacency_matrix();
+      const n = nodeIds.length;
+      const x = new Float32Array(n);
+      for (let i = 0; i < n; i++) x[i] = Math.random();
+      PGL.normalizeVector(x);
+
+      const out = new Float32Array(n);
+      for (let iter = 0; iter < 20; iter++) {
+        PGL.matrixVectorMultiply(matrix, n, x, out);
+        x.set(out);
+        PGL.normalizeVector(x);
+      }
+      let min = Infinity, max = -Infinity;
+      for (let i = 0; i < n; i++) {
+        if (x[i] < min) min = x[i];
+        if (x[i] > max) max = x[i];
+      }
+      const range = max - min || 1;
+      const sizes = nodeIds.map((_, i) => 0.3 + 0.7 * (x[i] - min) / range);
+
+      const simulatedPosMap = await PGL.Drawing.SimulateKamadaKawai(G, 3, 200, 1, 1.2);
+      G.apply_position_map(simulatedPosMap);
+      const lmap = PGL.Drawing.DrawEdgeLinesDivisions(G, 1);
+      G.apply_edge_pos_maps(lmap);
+
+      const width = 800;
+      const height = 700;
+      const canvas = document.getElementById("displayCanvas");
+      const graph3d = new PGL.GraphDrawer.GraphDrawer3d({ graph: G, width, height, canvas });
+      await graph3d.init();
+
+      const bounds = 0.08;
+      const nodeVisualElements = PGL.ThreeWrapper.DrawTHREEGraphVertices(G, bounds, sizes, 0xffffff, 1);
+      graph3d.addVisElement(nodeVisualElements);
+      const edgeVisualElements = PGL.ThreeWrapper.DrawTHREEGraphEdgesThin(G, bounds, 0x444444);
+      graph3d.addVisElement(edgeVisualElements);
+
+      function animate() {
+        requestAnimationFrame(animate);
+        graph3d.rendercall();
+      }
+      animate();
+    </script>
+  </div>
+</body>
+
+</html>

@@ -358,16 +358,20 @@ function DrawThinEdgesFromEdgeMap(
   return lines;
 }
 
-// draw the cube box graph here
+// draw the cube box graph here (single InstancedMesh for all boxes)
+const _boxInstanceMatrix = new THREE.Matrix4();
+const _boxInstancePosition = new THREE.Vector3();
+const _boxInstanceQuaternion = new THREE.Quaternion();
+const _boxInstanceScale = new THREE.Vector3();
+
 /**
- *
- * Adde boxes where all the boxes are
+ * Add boxes for all nodes using one InstancedMesh (efficient for 1000s of boxes).
  *
  * @param nodeMap - a map of all the nodes
  * @param bounds - global scale of the edges to be drawn, defaults to 1
  * @param color - default color of the edges, defaults to white
  * @param size - size of the nodes defaults to 10
- * @returns a group of vertices that contains all of the boxes associated with each one of the vertices
+ * @returns a group containing one InstancedMesh for all boxes
  */
 function AddBoxBasedImaging(
   nodeMap: Map<number, Point>,
@@ -375,31 +379,121 @@ function AddBoxBasedImaging(
   color: number = 0xffffff,
   size: number | number[] = 10
 ) {
-  // precompute all the sizes
-  let sizes: any;
-  if (typeof size == "number") {
-    sizes = Array(nodeMap.size).fill(size);
-  } else {
-    sizes = size;
-  }
-  // returns a group (iterate map entries so any node ID set works)
-  const group = new THREE.Group();
-  const material = new THREE.MeshBasicMaterial({ color: color });
-  let i = 0;
-  for (const [id, nodeData] of nodeMap) {
-    const s = typeof sizes === "number" ? sizes : sizes[i];
-    const geometry = new THREE.BoxGeometry(s, s, s);
-    geometry.name = String(id);
-    const nodeMesh = new THREE.Mesh(geometry, material);
-    nodeMesh.position.set(
+  const n = nodeMap.size;
+  const entries = Array.from(nodeMap.entries());
+  const sizes: number[] =
+    typeof size === "number" ? Array(n).fill(size) : size;
+
+  const geometry = new THREE.BoxGeometry(1, 1, 1);
+  const material = new THREE.MeshBasicMaterial({ color });
+  const instancedMesh = new THREE.InstancedMesh(geometry, material, n);
+  instancedMesh.name = "boxVertices";
+
+  _boxInstanceQuaternion.identity();
+  for (let i = 0; i < n; i++) {
+    const nodeData = entries[i][1];
+    const s = sizes[i];
+    _boxInstancePosition.set(
       nodeData.x * bounds,
       nodeData.y * bounds,
       nodeData.z * bounds
     );
-    group.add(nodeMesh);
-    i += 1;
+    _boxInstanceScale.set(s, s, s);
+    _boxInstanceMatrix.compose(
+      _boxInstancePosition,
+      _boxInstanceQuaternion,
+      _boxInstanceScale
+    );
+    instancedMesh.setMatrixAt(i, _boxInstanceMatrix);
   }
+  instancedMesh.instanceMatrix.needsUpdate = true;
+
+  const group = new THREE.Group();
+  group.add(instancedMesh);
   return group;
+}
+
+export interface MutableBoxVerticesResult {
+  group: THREE.Group;
+  updatePositions(positions: Float32Array | Map<number, Point>): void;
+}
+
+/**
+ * Box-based vertices as one InstancedMesh with updatable positions (e.g. for simulation).
+ * Node order matches get_node_ids_order() when called with a graph's position map.
+ */
+function DrawTHREEBoxBasedVerticesMutable(
+  Graph: Graph,
+  bounds: number = 1,
+  color: number = 0xffffff,
+  size: number | number[] = 10
+): MutableBoxVerticesResult {
+  const nodeIds = Graph.get_node_ids_order();
+  const n = nodeIds.length;
+  const pmap = Graph.get_position_map();
+  const sizes: number[] =
+    typeof size === "number" ? Array(n).fill(size) : size;
+
+  const geometry = new THREE.BoxGeometry(1, 1, 1);
+  const material = new THREE.MeshBasicMaterial({ color });
+  const instancedMesh = new THREE.InstancedMesh(geometry, material, n);
+  instancedMesh.name = "boxVertices";
+
+  _boxInstanceQuaternion.identity();
+  for (let i = 0; i < n; i++) {
+    const nodeData = pmap.get(nodeIds[i])!;
+    const s = sizes[i];
+    _boxInstancePosition.set(
+      nodeData.x * bounds,
+      nodeData.y * bounds,
+      nodeData.z * bounds
+    );
+    _boxInstanceScale.set(s, s, s);
+    _boxInstanceMatrix.compose(
+      _boxInstancePosition,
+      _boxInstanceQuaternion,
+      _boxInstanceScale
+    );
+    instancedMesh.setMatrixAt(i, _boxInstanceMatrix);
+  }
+  instancedMesh.instanceMatrix.needsUpdate = true;
+
+  const group = new THREE.Group();
+  group.add(instancedMesh);
+
+  function updatePositions(positions: Float32Array | Map<number, Point>): void {
+    if (positions instanceof Float32Array) {
+      for (let i = 0; i < n; i++) {
+        _boxInstancePosition.set(
+          positions[i * 3] * bounds,
+          positions[i * 3 + 1] * bounds,
+          positions[i * 3 + 2] * bounds
+        );
+        _boxInstanceScale.set(sizes[i], sizes[i], sizes[i]);
+        _boxInstanceMatrix.compose(
+          _boxInstancePosition,
+          _boxInstanceQuaternion,
+          _boxInstanceScale
+        );
+        instancedMesh.setMatrixAt(i, _boxInstanceMatrix);
+      }
+    } else {
+      for (let i = 0; i < n; i++) {
+        const p = positions.get(nodeIds[i])!;
+        _boxInstancePosition.set(p.x * bounds, p.y * bounds, p.z * bounds);
+        _boxInstanceScale.set(sizes[i], sizes[i], sizes[i]);
+        _boxInstanceMatrix.compose(
+          _boxInstancePosition,
+          _boxInstanceQuaternion,
+          _boxInstanceScale
+        );
+        instancedMesh.setMatrixAt(i, _boxInstanceMatrix);
+      }
+    }
+    instancedMesh.instanceMatrix.needsUpdate = true;
+  }
+
+  return { group, updatePositions };
 }
 
 // Draw BoxBased imaging from a graph
@@ -648,4 +742,5 @@ export default {
   ChangeTheVertexColours,
   ResetVertexColors,
   DrawTHREEBoxBasedVertices,
+  DrawTHREEBoxBasedVerticesMutable,
 };

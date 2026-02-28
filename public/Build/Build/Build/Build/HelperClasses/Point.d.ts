@@ -1,7 +1,13 @@
-interface Point {
+/**
+ * Minimal 3D point shape. Use for typing position objects (e.g. from custom layout).
+ * The Point class implements this interface.
+ */
+export type PointLike = {
     x: number;
     y: number;
     z: number;
+};
+interface Point extends PointLike {
 }
 declare class Point {
     /**
