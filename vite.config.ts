@@ -2,16 +2,20 @@ import { defineConfig } from "vite";
 import { resolve } from "path";
 import dts from "vite-plugin-dts";
 
+// Single absolute outDir so Vite and dts plugin never create Build/Build
+const buildOutDir = resolve(__dirname, "Build");
+
 // Vitest options are merged at runtime; cast so TypeDoc/tsc don't require vitest types
 const config = {
   plugins: [
     dts({
       entryRoot: "Src",
-      outDir: "Build",
       include: ["Src/**/*.ts"],
       exclude: ["Src/**/*.test.ts", "**/node_modules"],
+      outDir: buildOutDir,
     }),
   ],
+  publicDir: false,
   build: {
     lib: {
       entry: resolve(__dirname, "Src/index.ts"),
@@ -19,7 +23,7 @@ const config = {
       formats: ["es", "cjs"],
       fileName: (format: string) => (format === "es" ? "pgl_module.js" : "pgl.js"),
     },
-    outDir: "Build",
+    outDir: buildOutDir,
     emptyOutDir: true,
     sourcemap: true,
     rollupOptions: {

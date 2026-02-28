@@ -44,7 +44,7 @@ describe("createStressSGD3D", () => {
   it("step() produces finite positions", async () => {
     const graph = makeGraph(5, [[0, 1], [1, 2], [2, 3], [3, 4]]);
     await graph.initialize();
-    const sim = await createStressSGD3D(graph, { iterationsPerStep: 10 });
+    const sim = await createStressSGD3D(graph, { epochsPerStep: 10 });
     sim.step(0.016);
     const pos = sim.getPositions();
     for (let i = 0; i < pos.length; i++) {
