@@ -78,9 +78,11 @@ export function createThickEdgesGroup(
 ): THREE.Group {
   const lineWidthPx = toPixelWidth(thickness);
   const group = new THREE.Group();
-  for (const line of edgeMap.values()) {
+  for (const [edgeId, line] of edgeMap.entries()) {
     if (!line?.points || line.points.length < 2) continue;
-    group.add(createThickLineMesh(line, bounds, color, lineWidthPx, resolution));
+    const mesh = createThickLineMesh(line, bounds, color, lineWidthPx, resolution);
+    mesh.userData = { edgeId };
+    group.add(mesh);
   }
   return group;
 }

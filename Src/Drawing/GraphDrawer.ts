@@ -1,6 +1,8 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import Graph from "../Core/Graph";
+import { InteractionLayer } from "./InteractionLayer";
+import type { InteractionOptions } from "./InteractionLayer";
 
 // interface for the graph drawing class
 interface GraphDrawer3d {
@@ -15,6 +17,7 @@ interface GraphDrawer3d {
   camera: THREE.PerspectiveCamera;
   scene: THREE.Scene;
   graphs: Map<number, Graph>;
+  interactionLayer?: InteractionLayer;
 }
 
 /**
@@ -86,6 +89,9 @@ class GraphDrawer3d {
     this.renderer.setSize(this.width, this.height);
     this.renderer.setClearColor(0xff00ff, 0);
 
+    this.camera.aspect = this.width / this.height;
+    this.camera.updateProjectionMatrix();
+
     // add in a light
     this.scene.add(new THREE.AmbientLight(0xffffff));
     // add a spotlight
@@ -129,6 +135,33 @@ class GraphDrawer3d {
     // this is the render draw call
     this.renderer.render(this.scene, this.camera);
     this.controls.update();
+  }
+
+  /**
+   * Enable opt-in interaction: node and edge picking via click/hover.
+   * Callbacks receive graph details (node data, neighbours, edge endpoints).
+   *
+   * @param options - Must include `graph`; optional `onNodeClick`, `onEdgeClick`, `onNodeHover`, `onEdgeHover`, `hoverEnabled`
+   */
+  enableInteraction(options: InteractionOptions): void {
+    this.disableInteraction();
+    this.interactionLayer = new InteractionLayer(
+      this.scene,
+      this.camera,
+      this.renderer.domElement,
+      options.graph,
+      options
+    );
+  }
+
+  /**
+   * Disable interaction and remove event listeners.
+   */
+  disableInteraction(): void {
+    if (this.interactionLayer) {
+      this.interactionLayer.dispose();
+      this.interactionLayer = undefined;
+    }
   }
 }
 

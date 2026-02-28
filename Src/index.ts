@@ -43,3 +43,8 @@ export type {
   StressSGD3DSimulation,
 } from "./Simulation";
 export type { LoadGraphFromObjResult } from "./SampleData";
+export type {
+  NodePickDetails,
+  EdgePickDetails,
+  InteractionOptions,
+} from "./Drawing/InteractionLayer";

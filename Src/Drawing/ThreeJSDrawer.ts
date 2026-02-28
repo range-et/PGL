@@ -282,7 +282,7 @@ function DrawTHREEGraphEdgesThinMutable(
       }
     }
     const emap = Graph.get_edge_map();
-    for (const edge of emap.values()) {
+    for (const [edgeId, edge] of emap.entries()) {
       const points: THREE.Vector3[] = [];
       edge.points.forEach((element) => {
         points.push(
@@ -295,6 +295,7 @@ function DrawTHREEGraphEdgesThinMutable(
       });
       const geometry = new THREE.BufferGeometry().setFromPoints(points);
       const line = new THREE.Line(geometry, material);
+      line.userData = { edgeId };
       group.add(line);
     }
   }
@@ -347,7 +348,7 @@ function DrawThinEdgesFromEdgeMap(
   });
   const lines = new THREE.Group();
   let points: THREE.Vector3[];
-  for (const edge of LineMap.values()) {
+  for (const [edgeId, edge] of LineMap.entries()) {
     points = [];
     // get the edge data
     const ldata = edge.points;
@@ -363,6 +364,7 @@ function DrawThinEdgesFromEdgeMap(
     // then make the line thing
     const geometry = new THREE.BufferGeometry().setFromPoints(points);
     const line = new THREE.Line(geometry, material);
+    line.userData = { edgeId };
     lines.add(line);
   }
   return lines;
@@ -417,6 +419,7 @@ function AddBoxBasedImaging(
     instancedMesh.setMatrixAt(i, _boxInstanceMatrix);
   }
   instancedMesh.instanceMatrix.needsUpdate = true;
+  instancedMesh.userData = { nodeIds: entries.map((e) => e[0]) };
 
   const group = new THREE.Group();
   group.add(instancedMesh);
@@ -472,6 +475,7 @@ function DrawTHREEBoxBasedVerticesMutable(
     instancedMesh.setMatrixAt(i, _boxInstanceMatrix);
   }
   instancedMesh.instanceMatrix.needsUpdate = true;
+  instancedMesh.userData = { nodeIds: nodeIds.slice() };
 
   const group = new THREE.Group();
   group.add(instancedMesh);

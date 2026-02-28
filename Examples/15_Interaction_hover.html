@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="MasterStyle.css">
+  <title>Example 15 – Interaction (hover)</title>
+  <style>
+    .info-panel {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      width: 220px;
+      padding: 0.75rem;
+      background: rgba(26, 26, 26, 0.9);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-family: monospace;
+    }
+    .info-panel h3 { margin: 0 0 0.5rem; font-size: 0.9rem; color: var(--teal); }
+    .info-panel p { margin: 0.25rem 0; }
+    .canvas-wrap { position: relative; }
+  </style>
+</head>
+
+<body class="example-page">
+  <header class="example-header">
+    <a href="examples.html" class="back-link">← All examples</a>
+    <h1>Example 15 – Interaction (hover)</h1>
+    <p class="example-desc">Hover over nodes or edges to see details in the panel. Uses onNodeHover and onEdgeHover callbacks. Auto-rotate disabled for easier hovering.</p>
+    <a href="https://github.com/range-et/PGL/blob/main/Examples/15_Interaction_hover.html" class="code-link" target="_blank" rel="noopener">View code</a>
+  </header>
+  <div class="canvas-wrap">
+    <div id="infoPanel" class="info-panel">
+      <h3>Hover a node or edge</h3>
+      <p id="infoText">Details appear here when you hover.</p>
+    </div>
+    <canvas id="displayCanvas" class="displayCanvas"></canvas>
+  <script type="module">
+    // Hover callbacks: onNodeHover(details) and onEdgeHover(details) fire when pointer moves.
+    // Pass null when pointer leaves a node/edge.
+    import * as PGL from "../Build/pgl_module.js";
+
+    const G = await PGL.SampleData.LoadZKCSimulated();
+    const width = 800;
+    const height = 700;
+    const canvas = document.getElementById("displayCanvas");
+    const infoText = document.getElementById("infoText");
+
+    const graph3d = new PGL.GraphDrawer.GraphDrawer3d({ graph: G, width, height, canvas });
+    await graph3d.init();
+
+    // Disable auto-rotate so the graph stays still for easier hovering
+    graph3d.controls.autoRotate = false;
+
+    const bounds = 1;
+    const nodeVisualElements = PGL.ThreeWrapper.DrawTHREEBoxBasedVertices(G, bounds, 0xffffff, 8);
+    const edgeVisualElements = PGL.ThreeWrapper.DrawTHREEGraphEdgesThick(G, bounds, 0xffafcc, 10);
+    graph3d.addVisElement(nodeVisualElements);
+    graph3d.addVisElement(edgeVisualElements);
+
+    graph3d.enableInteraction({
+      graph: G,
+      hoverEnabled: true,
+      onNodeHover: (d) => {
+        if (d) {
+          infoText.innerHTML = `Node <b>${d.nodeId}</b><br>Neighbours: ${d.neighbours.length}<br>Position: (${d.position?.x?.toFixed(2) ?? "?"}, ${d.position?.y?.toFixed(2) ?? "?"}, ${d.position?.z?.toFixed(2) ?? "?"})`;
+        } else {
+          infoText.innerHTML = "Hover a node or edge";
+        }
+      },
+      onEdgeHover: (d) => {
+        if (d) {
+          infoText.innerHTML = `Edge <b>${d.edgeId}</b><br>Connects: ${d.start} → ${d.end}`;
+        } else {
+          infoText.innerHTML = "Hover a node or edge";
+        }
+      },
+    });
+
+    function animate() {
+      requestAnimationFrame(animate);
+      graph3d.rendercall();
+    }
+    animate();
+  </script>
+  </div>
+</body>
+
+</html>

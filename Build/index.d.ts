@@ -38,3 +38,4 @@ export * as glMatrix from 'gl-matrix';
 export { createKamadaKawai3D, createStressSGD3D } from './Simulation';
 export type { KamadaKawai3DOptions, StressSGD3DOptions, KamadaKawai3DSimulation, StressSGD3DSimulation, } from './Simulation';
 export type { LoadGraphFromObjResult } from './SampleData';
+export type { NodePickDetails, EdgePickDetails, InteractionOptions, } from './Drawing/InteractionLayer';

@@ -37,6 +37,15 @@ The library exports **Point** (class with `x`, `y`, `z` and `translate()`) and *
 - **Static** (one-shot layout): `DrawTHREEGraphVertices`, `DrawTHREEGraphEdgesThin` — create geometry once from the graph.
 - **Mutable** (animation loops): `DrawTHREEGraphVerticesMutable` (and `updatePositions()`), `DrawTHREEGraphEdgesThinMutable` (and `updateEdges()`) — update geometry each frame for time-based simulation.
 
+### Interaction (opt-in)
+
+Interaction is **100% opt-in**. Call `graph3d.enableInteraction({ graph, onNodeClick, onEdgeClick, onNodeHover, onEdgeHover })` to add click and hover picking. Callbacks receive graph details:
+
+- **NodePickDetails**: `nodeId`, `data`, `neighbours`, `position`
+- **EdgePickDetails**: `edgeId`, `start`, `end`, `data`
+
+Use these for tooltips, highlighting (e.g. `ChangeTheVertexColours`), or custom UI. Thick edges are easier to pick than thin lines. See Examples 14 (click), 15 (hover), and 16 (highlight neighbours).
+
 ### LOD and flow-map style
 
 **Hierarchy** (clusterByDistance, clusterByStrategy) and Example 6 provide FlowmapBlue-style level-of-detail: cluster nodes by distance (e.g. KD-tree), merge nearby nodes into super-nodes, and simplify the graph for zoom-dependent detail. See Examples 5 (Hierarchy) and 6 (Flow map).

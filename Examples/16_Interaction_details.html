@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="MasterStyle.css">
+  <title>Example 16 – Interaction (highlight neighbours)</title>
+  <style>
+    .info-panel {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      width: 240px;
+      padding: 0.75rem;
+      background: rgba(26, 26, 26, 0.9);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-family: monospace;
+    }
+    .info-panel h3 { margin: 0 0 0.5rem; font-size: 0.9rem; color: var(--teal); }
+    .info-panel p { margin: 0.25rem 0; }
+    .canvas-wrap { position: relative; }
+  </style>
+</head>
+
+<body class="example-page">
+  <header class="example-header">
+    <a href="examples.html" class="back-link">← All examples</a>
+    <h1>Example 16 – Interaction (highlight neighbours)</h1>
+    <p class="example-desc">Hover a node to highlight its neighbours. Combines enableInteraction with ChangeTheVertexColours.</p>
+    <a href="https://github.com/range-et/PGL/blob/main/Examples/16_Interaction_details.html" class="code-link" target="_blank" rel="noopener">View code</a>
+  </header>
+  <div class="canvas-wrap">
+    <div id="infoPanel" class="info-panel">
+      <h3>Hover a node</h3>
+      <p id="infoText">Its neighbours will be highlighted in red.</p>
+    </div>
+    <canvas id="displayCanvas" class="displayCanvas"></canvas>
+  <script type="module">
+    // Rich interaction: use NodePickDetails to drive visual feedback.
+    // ChangeTheVertexColours highlights neighbour nodes by node ID.
+    import * as PGL from "../Build/pgl_module.js";
+
+    const G = await PGL.SampleData.LoadZKCSimulated();
+    const width = 800;
+    const height = 700;
+    const canvas = document.getElementById("displayCanvas");
+    const infoText = document.getElementById("infoText");
+
+    const graph3d = new PGL.GraphDrawer.GraphDrawer3d({ graph: G, width, height, canvas });
+    await graph3d.init();
+
+    graph3d.controls.autoRotate = false;
+
+    const bounds = 1;
+    const nodeVisualElements = PGL.ThreeWrapper.DrawTHREEGraphVertices(G, bounds, 8, 0xffffff, 1);
+    const edgeMap = G.get_edge_map();
+    const edgeVisualElements = PGL.ThreeWrapper.DrawThinEdgesFromEdgeMap(edgeMap, bounds, 0x5fa8d3);
+    graph3d.addVisElement(nodeVisualElements);
+    graph3d.addVisElement(edgeVisualElements);
+
+    const HIGHLIGHT_COLOR = 0xff4444;
+
+    graph3d.enableInteraction({
+      graph: G,
+      hoverEnabled: true,
+      onNodeHover: (d) => {
+        PGL.ThreeWrapper.ResetVertexColors(nodeVisualElements.children[0]);
+        if (d) {
+          if (d.neighbours.length > 0) {
+            PGL.ThreeWrapper.ChangeTheVertexColours(nodeVisualElements.children[0], d.neighbours, HIGHLIGHT_COLOR);
+          }
+          infoText.innerHTML = `Node <b>${d.nodeId}</b><br>Degree: ${d.neighbours.length}<br>Neighbours highlighted in red`;
+        } else {
+          infoText.innerHTML = "Hover a node";
+        }
+      },
+    });
+
+    function animate() {
+      requestAnimationFrame(animate);
+      graph3d.rendercall();
+    }
+    animate();
+  </script>
+  </div>
+</body>
+
+</html>
