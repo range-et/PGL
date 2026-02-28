@@ -40,29 +40,35 @@
     </div>
     <canvas id="displayCanvas" class="displayCanvas"></canvas>
   <script type="module">
-    // Opt-in interaction layer: call enableInteraction() to add click/hover support.
-    // Callbacks receive graph details (nodeId, neighbours, position, edge start/end, etc.).
     import * as PGL from "../Build/pgl_module.js";
 
+    // Interaction is 100% opt-in — nothing is registered until you call enableInteraction().
+    // Callbacks receive a details object: { nodeId, data, neighbours, position } for nodes,
+    // { edgeId, start, end, data } for edges.
+
     const G = await PGL.SampleData.LoadZKCSimulated();
-    const width = 800;
-    const height = 700;
     const canvas = document.getElementById("displayCanvas");
     const infoText = document.getElementById("infoText");
 
-    const graph3d = new PGL.GraphDrawer.GraphDrawer3d({ graph: G, width, height, canvas });
+    const graph3d = new PGL.GraphDrawer.GraphDrawer3d({ graph: G, width: 800, height: 700, canvas });
     await graph3d.init();
 
     const bounds = 1;
+
+    // Add visual elements BEFORE enableInteraction.
+    // The interaction layer works by raycasting against objects already in the scene.
+    // If you call enableInteraction first, the raycast has nothing to hit.
+    // Thick edges are easier to pick than thin lines — prefer DrawTHREEGraphEdgesThick
+    // when you need edge click/hover callbacks.
     const nodeVisualElements = PGL.ThreeWrapper.DrawTHREEBoxBasedVertices(G, bounds, 0xffffff, 5);
     const edgeVisualElements = PGL.ThreeWrapper.DrawTHREEGraphEdgesThick(G, bounds, 0xffafcc, 10);
     graph3d.addVisElement(nodeVisualElements);
     graph3d.addVisElement(edgeVisualElements);
 
-    // Enable opt-in interaction — pass graph and callbacks
     graph3d.enableInteraction({
       graph: G,
       onNodeClick: (d) => {
+        // d.neighbours is an array of neighbour node IDs
         infoText.innerHTML = `Node <b>${d.nodeId}</b><br>Neighbours: ${d.neighbours.length}<br>Position: (${d.position?.x?.toFixed(2) ?? "?"}, ${d.position?.y?.toFixed(2) ?? "?"}, ${d.position?.z?.toFixed(2) ?? "?"})`;
       },
       onEdgeClick: (d) => {

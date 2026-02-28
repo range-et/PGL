@@ -14,6 +14,51 @@ It can be a bit confusing especially when working with Nodes/Edges/Vertices/Line
 Lastly, there are a few helper classes like points and lines. Points are essentially vectors and are used for displacement and also for describing a place in relation to the global coordinate system. Line are an array of points that get translated into lines using one of the visualization methods. Points can have different visualizations like boxes, billboarded planes and cylinders etc.
 
 
+## Quick Start: The 5-Step Pipeline
+
+Every PGL visualization follows the same five steps **in this order**. Getting the order wrong is the most common source of silent bugs.
+
+```
+Step 1 — Load or build a Graph
+         PGL.SampleData.LoadZKCSimulated()   ← positions already baked in (fastest start)
+         PGL.SampleData.LoadZKC()            ← raw graph, you must run a layout first
+         GenerateErdosReyni_n_p(n, p) + await G.initialize()  ← manual build
+
+Step 2 — Create the renderer
+         new PGL.GraphDrawer.GraphDrawer3d({ graph, canvas, width, height })
+
+Step 3 — Initialize (async — must complete before anything else)
+         await graph3d.init()
+
+Step 4 — Draw visual elements and add them to the scene
+         const nodes = PGL.ThreeWrapper.DrawTHREEBoxBasedVertices(G, bounds, 0xffffff, 5)
+         graph3d.addVisElement(nodes)
+         const edges = PGL.ThreeWrapper.DrawTHREEGraphEdgesThick(G, bounds, 0xffafcc, 10)
+         graph3d.addVisElement(edges)
+         // If you need interaction, call enableInteraction() here — after addVisElement
+         graph3d.enableInteraction({ graph: G, onNodeClick: (d) => console.log(d) })
+
+Step 5 — Start the animation loop
+         function animate() { requestAnimationFrame(animate); graph3d.rendercall(); }
+         animate()
+```
+
+**Static vs. Mutable — choose before drawing:**
+
+| Scenario | Use these draw calls | Returns |
+|---|---|---|
+| Fixed layout (no animation needed) | `DrawTHREEBoxBasedVertices`, `DrawTHREEGraphEdgesThick` | `THREE.Group` — pass directly to `addVisElement` |
+| Live simulation, drag-to-reposition | `DrawTHREEBoxBasedVerticesMutable`, `DrawTHREEGraphEdgesThinMutable` | `{ group, updatePositions(), updateEdges() }` — call updaters each frame |
+
+Mutable variants return an `updatePositions(posArray)` and `updateEdges()` function. Call both each frame *before* `rendercall()`.
+
+**When do I need to call `await G.initialize()`?**
+
+- `LoadZKCSimulated()`, `LoadZKC()`, `LoadDwt1005()`, `Graph.create()` → **auto-initialized, skip this step**
+- `GenerateErdosReyni_n_p()` or building a graph manually with `add_node` / `add_edge` → **you must call `await G.initialize()` yourself** before drawing or running algorithms
+
+---
+
 ## Documentation
 
 The documentation for the package is available at [documentation](https://www.plebeiangraphlibrary.com/). You can also generate API docs locally with:
@@ -179,6 +224,230 @@ async function createVisualization() {
 
 createVisualization();
 ```
+
+## Cookbook: Copy-Paste Recipes
+
+Each recipe below is self-contained and runnable. They assume you have imported the library as `import * as PGL from "plebeiangraphlibrary"` and have a `<canvas id="displayCanvas">` element in the page.
+
+---
+
+### Recipe 1 — Load your own graph from a plain edge list
+
+PGL supports the same space-separated edge list format used by [(sgd)²](https://github.com/jxz12/s_gd2). Each line is `nodeA nodeB`, one edge per line.
+
+```javascript
+const edgeListText = `
+0 1
+0 2
+1 2
+2 3
+3 4
+`.trim();
+
+const G = await PGL.SampleData.LoadGraphFromEdgeListText(edgeListText);
+// G is already initialized and has random starting positions.
+// Run a layout before drawing (positions are random without it):
+const posMap = PGL.Drawing.SimulateKamadaKawai(G, 50, 200);
+G.apply_position_map(posMap);
+const lmap = PGL.Drawing.DrawEdgeLinesDivisions(G, 1);
+G.apply_edge_pos_maps(lmap);
+```
+
+---
+
+### Recipe 2 — Build a graph programmatically and run a layout
+
+```javascript
+import * as PGL from "plebeiangraphlibrary";
+
+const G = new PGL.Graph();
+
+// add_node(id, { pos: PointLike, ...yourData })
+G.add_node(0, { pos: { x: 0, y: 0, z: 0 } });
+G.add_node(1, { pos: { x: 0, y: 0, z: 0 } });
+G.add_node(2, { pos: { x: 0, y: 0, z: 0 } });
+G.add_edge(0, 1);
+G.add_edge(1, 2);
+G.add_edge(2, 0);
+
+// Manual builds require an explicit initialize() call — loaders handle this automatically
+await G.initialize();
+
+// Now run a layout to compute real positions
+const posMap = PGL.Drawing.SimulateKamadaKawai(G, 100, 200);
+G.apply_position_map(posMap);
+const lmap = PGL.Drawing.DrawEdgeLinesDivisions(G, 1);
+G.apply_edge_pos_maps(lmap);
+
+// Then draw normally (steps 2–5 of the pipeline)
+```
+
+---
+
+### Recipe 3 — Color nodes by a data property
+
+Nodes are drawn as an instanced mesh. `ChangeTheVertexColours` takes the **inner mesh** (`.children[0]`), not the Group.
+
+```javascript
+const G = await PGL.SampleData.LoadZKCSimulated();
+// ... (pipeline steps 2–4) ...
+
+const nodeGroup = PGL.ThreeWrapper.DrawTHREEBoxBasedVertices(G, 1, 0xffffff, 5);
+graph3d.addVisElement(nodeGroup);
+
+// Color specific nodes red — pass the inner mesh, not the Group
+const mesh = nodeGroup.children[0];
+const redNodeIds = [0, 3, 7, 12];
+PGL.ThreeWrapper.ChangeTheVertexColours(mesh, redNodeIds, 0xff4444);
+
+// To reset all colors back to white:
+// PGL.ThreeWrapper.ResetVertexColors(mesh);
+```
+
+To color nodes by a data property (e.g. a "community" field you stored in `node.data`):
+
+```javascript
+const communityColors = { 0: 0xff6b6b, 1: 0x4ecdc4, 2: 0xffe66d, 3: 0xa8e6cf };
+for (const [community, color] of Object.entries(communityColors)) {
+  const ids = [...G.nodes.entries()]
+    .filter(([, n]) => n.data?.community === Number(community))
+    .map(([id]) => id);
+  PGL.ThreeWrapper.ChangeTheVertexColours(mesh, ids, color);
+}
+```
+
+---
+
+### Recipe 4 — Tooltip on hover (HTML overlay)
+
+```javascript
+const G = await PGL.SampleData.LoadZKCSimulated();
+const canvas = document.getElementById("displayCanvas");
+
+const graph3d = new PGL.GraphDrawer.GraphDrawer3d({ graph: G, width: 800, height: 700, canvas });
+await graph3d.init();
+
+graph3d.controls.autoRotate = false; // disable rotation so hover is stable
+
+const nodeGroup = PGL.ThreeWrapper.DrawTHREEBoxBasedVertices(G, 1, 0xffffff, 5);
+graph3d.addVisElement(nodeGroup);
+graph3d.addVisElement(PGL.ThreeWrapper.DrawTHREEGraphEdgesThick(G, 1, 0xffafcc, 10));
+
+// Create a tooltip div in your HTML: <div id="tooltip" style="position:absolute;display:none;..."></div>
+const tooltip = document.getElementById("tooltip");
+
+// enableInteraction must come after addVisElement
+graph3d.enableInteraction({
+  graph: G,
+  onNodeHover: (d) => {
+    if (d) {
+      tooltip.style.display = "block";
+      tooltip.textContent = `Node ${d.nodeId} — ${d.neighbours.length} neighbours`;
+    } else {
+      tooltip.style.display = "none";
+    }
+  },
+});
+
+function animate() { requestAnimationFrame(animate); graph3d.rendercall(); }
+animate();
+```
+
+---
+
+### Recipe 5 — Highlight a node's neighbours on click
+
+```javascript
+const G = await PGL.SampleData.LoadZKCSimulated();
+const canvas = document.getElementById("displayCanvas");
+
+const graph3d = new PGL.GraphDrawer.GraphDrawer3d({ graph: G, width: 800, height: 700, canvas });
+await graph3d.init();
+
+const nodeGroup = PGL.ThreeWrapper.DrawTHREEBoxBasedVertices(G, 1, 0xffffff, 5);
+graph3d.addVisElement(nodeGroup);
+graph3d.addVisElement(PGL.ThreeWrapper.DrawTHREEGraphEdgesThick(G, 1, 0x555555, 10));
+
+const mesh = nodeGroup.children[0]; // inner instanced mesh
+
+graph3d.enableInteraction({
+  graph: G,
+  onNodeClick: (d) => {
+    PGL.ThreeWrapper.ResetVertexColors(mesh);            // clear previous highlight
+    PGL.ThreeWrapper.ChangeTheVertexColours(mesh, [d.nodeId], 0xffdd00);   // clicked node = yellow
+    PGL.ThreeWrapper.ChangeTheVertexColours(mesh, d.neighbours, 0xff4444); // neighbours = red
+  },
+});
+
+function animate() { requestAnimationFrame(animate); graph3d.rendercall(); }
+animate();
+```
+
+---
+
+### Recipe 6 — Live layout simulation (Kamada–Kawai)
+
+Use `createKamadaKawai3D` + mutable draw calls so the geometry updates each frame without recreating it.
+
+```javascript
+const G = await PGL.SampleData.LoadDwt1005();
+
+const simulation = PGL.createKamadaKawai3D(G, {
+  simulationBound: 500,
+  cohesionValue: 1,
+  repulsionValue: 1,
+  iterationsPerStep: 1,
+});
+
+// Apply initial positions so the draw calls have something to start from
+G.apply_position_map(simulation.getPositionMap());
+const lmap = PGL.Drawing.DrawEdgeLinesDivisions(G, 1);
+G.apply_edge_pos_maps(lmap);
+
+const canvas = document.getElementById("displayCanvas");
+const graph3d = new PGL.GraphDrawer.GraphDrawer3d({ graph: G, width: 800, height: 700, canvas });
+await graph3d.init();
+
+// Mutable variants return updater functions — required for animation
+const { group, updatePositions } = PGL.ThreeWrapper.DrawTHREEGraphVerticesMutable(G, 0.1, 1, 0xffffff, 1);
+const { group: edgeGroup, updateEdges } = PGL.ThreeWrapper.DrawTHREEGraphEdgesThinMutable(G, 0.1, 0xffafcc);
+graph3d.addVisElement(group);
+graph3d.addVisElement(edgeGroup);
+
+let lastTime = performance.now();
+function animate() {
+  requestAnimationFrame(animate);
+  const now = performance.now();
+  simulation.step((now - lastTime) / 1000); // advance the layout
+  lastTime = now;
+
+  G.apply_position_map(simulation.getPositionMap());
+  const lmap = PGL.Drawing.DrawEdgeLinesDivisions(G, 1);
+  G.apply_edge_pos_maps(lmap);
+  updatePositions(simulation.getPositions()); // push new positions to GPU
+  updateEdges();                               // recompute edge geometry
+  graph3d.rendercall();
+}
+animate();
+```
+
+---
+
+## Common Mistakes
+
+These are the issues that trip up most new users and AI-generated code. Check this list first when something doesn't render or a callback never fires.
+
+| Mistake | Symptom | Fix |
+|---|---|---|
+| Passing the `Group` to `ChangeTheVertexColours` | Colors don't change | Pass `nodeVisualElements.children[0]` — the function needs the inner instanced mesh, not the outer Group. Same for `ResetVertexColors`. |
+| Forgetting `await G.initialize()` after manually building a graph | BFS, Dijkstra, and layout return empty/wrong results | `GenerateErdosReyni_n_p` and manual `add_node` / `add_edge` loops do **not** auto-initialize. Always call `await G.initialize()` before running any algorithm or draw call. |
+| Calling `initialize()` without `await` | Race condition — adjacency lists are half-built | It is async. Always `await G.initialize()`. |
+| Using `DrawTHREEGraphVertices` in a bundler project (Vite, Parcel, Webpack) | Nodes invisible — texture `./Textures/Square.png` fails to load silently | Copy `Examples/Textures/` to your project's public folder, or use `DrawTHREEBoxBasedVertices` which needs no texture. |
+| Calling `enableInteraction()` before `addVisElement()` | Callbacks never fire | The interaction layer raycasts against objects already in the scene. Always add all visual elements first, then call `enableInteraction()`. |
+| Expecting `Dijkstra` to use edge weights | Shortest path looks wrong on weighted graphs | `Dijkstra` in PGL returns **hop counts** (unweighted BFS). There is no weighted shortest-path solver — use hop counts or implement your own on top of `get_adjacency()`. |
+| Using a static draw call then trying to update positions | Node positions don't move in the animation loop | Static variants (`DrawTHREEBoxBasedVertices`, `DrawTHREEGraphEdgesThick`) bake geometry at creation. For live updates use the `Mutable` variants and call `updatePositions()` / `updateEdges()` each frame. |
+
+---
 
 ## Testing
 

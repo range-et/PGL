@@ -40,19 +40,20 @@
     </div>
     <canvas id="displayCanvas" class="displayCanvas"></canvas>
   <script type="module">
-    // Rich interaction: use NodePickDetails to drive visual feedback.
-    // ChangeTheVertexColours highlights neighbour nodes by node ID.
     import * as PGL from "../Build/pgl_module.js";
 
+    // This example combines hover interaction with dynamic vertex coloring.
+    // onNodeHover fires with a NodePickDetails object when entering a node,
+    // and with null when the cursor leaves — use the null case to reset colors.
+
     const G = await PGL.SampleData.LoadZKCSimulated();
-    const width = 800;
-    const height = 700;
     const canvas = document.getElementById("displayCanvas");
     const infoText = document.getElementById("infoText");
 
-    const graph3d = new PGL.GraphDrawer.GraphDrawer3d({ graph: G, width, height, canvas });
+    const graph3d = new PGL.GraphDrawer.GraphDrawer3d({ graph: G, width: 800, height: 700, canvas });
     await graph3d.init();
 
+    // Disable camera auto-rotation so hover targets stay stable.
     graph3d.controls.autoRotate = false;
 
     const bounds = 1;
@@ -62,19 +63,27 @@
     graph3d.addVisElement(nodeVisualElements);
     graph3d.addVisElement(edgeVisualElements);
 
+    // IMPORTANT: ChangeTheVertexColours and ResetVertexColors take the inner
+    // instanced mesh, NOT the Group returned by the draw call.
+    // Always pass nodeVisualElements.children[0] — passing nodeVisualElements
+    // directly will silently do nothing.
+    const nodeMesh = nodeVisualElements.children[0];
     const HIGHLIGHT_COLOR = 0xff4444;
 
     graph3d.enableInteraction({
       graph: G,
       hoverEnabled: true,
       onNodeHover: (d) => {
-        PGL.ThreeWrapper.ResetVertexColors(nodeVisualElements.children[0]);
+        // Reset all node colors before applying a new highlight each frame.
+        PGL.ThreeWrapper.ResetVertexColors(nodeMesh);
         if (d) {
+          // d.neighbours is the array of neighbour node IDs — color them directly.
           if (d.neighbours.length > 0) {
-            PGL.ThreeWrapper.ChangeTheVertexColours(nodeVisualElements.children[0], d.neighbours, HIGHLIGHT_COLOR);
+            PGL.ThreeWrapper.ChangeTheVertexColours(nodeMesh, d.neighbours, HIGHLIGHT_COLOR);
           }
           infoText.innerHTML = `Node <b>${d.nodeId}</b><br>Degree: ${d.neighbours.length}<br>Neighbours highlighted in red`;
         } else {
+          // d is null when the pointer leaves a node — colors already reset above.
           infoText.innerHTML = "Hover a node";
         }
       },

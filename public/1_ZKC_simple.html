@@ -19,61 +19,47 @@
   <div class="canvas-wrap">
   <canvas id="displayCanvas" class="displayCanvas"></canvas>
   <script type="module">
-    // import the library
     import * as PGL from "../Build/pgl_module.js";
 
-    // construct a simple ZKC graph
-    // this graph is pre initialized (Since it is simulated in this case)
+    // STEP 1 — Load the graph.
+    // LoadZKCSimulated returns the Zachary Karate Club graph with positions already
+    // computed (Kamada-Kawai), so you can skip the layout step entirely.
+    // Use LoadZKC() instead if you want to run your own layout.
     const zkcSimulated = await PGL.SampleData.LoadZKCSimulated();
-    // console log this to see how this data is stored 
-    console.log(zkcSimulated);
-    // also as a reference just see how this data is stored 
-    zkcSimulated.printData();
+    zkcSimulated.printData(); // logs node/edge counts to console — useful for debugging
 
-    // set the width and height 
-    const width = 800;
-    const heigth = 700;
-
-    // pass in the graph and the canvas into the drawing object to draw it
-    // first get the canvas element
+    // STEP 2 — Create the renderer and attach it to the canvas element.
     const canvas = document.getElementById("displayCanvas");
-    // then create a graph drawer object
-    // to do that first make a options object
-    const graphDrawerOptions = {
+    const graph3d = new PGL.GraphDrawer.GraphDrawer3d({
       graph: zkcSimulated,
-      width: width,
-      height: heigth,
-      canvas: canvas
-    };
-    // then create the visualization window
-    // with those settings
-    const graph3d = new PGL.GraphDrawer.GraphDrawer3d(graphDrawerOptions);
-    // initialize this object before adding things to it 
+      width: 800,
+      height: 700,
+      canvas: canvas,
+    });
+
+    // STEP 3 — Initialize (async). Sets up the Three.js scene, camera, and
+    // WebGL renderer. Must complete before you add any geometry.
     await graph3d.init();
 
-    // Create the 3d elements for the graph
-    // first describe a global scaling factor
-    const bounds = 1
-    // first create all the node elements
+    // STEP 4 — Create visual geometry and add it to the scene.
+    // `bounds` is a global scale factor applied to all positions.
+    // DrawTHREEBoxBasedVertices uses box meshes (no texture file required).
+    // DrawTHREEGraphVertices uses billboard sprites but needs ./Textures/Square.png.
+    const bounds = 1;
     const nodeVisualElements = PGL.ThreeWrapper.DrawTHREEBoxBasedVertices(zkcSimulated, bounds, 0xffffff, 5);
-    // add the node elements to the scene
     graph3d.addVisElement(nodeVisualElements);
-    // then create the edge elements 
+
     const edgeVisualElements = PGL.ThreeWrapper.DrawTHREEGraphEdgesThick(zkcSimulated, bounds, 0xffafcc, 10);
     graph3d.addVisElement(edgeVisualElements);
 
-    // then there are two last steps for a 3d graph
-    // this is done so that other 3d objects can be added in later
-    // since the base library is three.js all standard three js things are possible
-    // now moving on to the two steps :
-    // make an animation function
+    // STEP 5 — Start the animation loop.
+    // graph3d.rendercall() advances OrbitControls (auto-rotate, damping) and
+    // renders the frame. You can add your own per-frame logic here too — this is
+    // a standard Three.js render loop.
     function animate() {
       requestAnimationFrame(animate);
       graph3d.rendercall();
     }
-
-    // append the graph renderer to the container
-    // and then drawing render calls
     animate();
   </script>
   </div>

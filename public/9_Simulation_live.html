@@ -21,32 +21,36 @@
     <script type="module">
       import * as PGL from "../Build/pgl_module.js";
 
-      // DWT 1005 graph from the paper (same as Example 12's 2D stress dataset)
+      // DWT-1005: a 1005-node structural engineering graph. Loaded pre-initialized.
       const G = await PGL.SampleData.LoadDwt1005();
       G.printData();
 
+      // createKamadaKawai3D returns a simulation object with step(dt) / getPositions().
+      // It does NOT run the layout immediately — positions evolve frame-by-frame in the
+      // animation loop. This lets you watch the graph "settle" in real time.
       const simulation = PGL.createKamadaKawai3D(G, {
-        simulationBound: 800,
-        cohesionValue: 1,
-        repulsionValue: 1,
-        iterationsPerStep: 1,
+        simulationBound: 800,   // world-space radius the layout tries to fit within
+        cohesionValue: 1,       // spring attraction strength
+        repulsionValue: 1,      // node repulsion strength
+        iterationsPerStep: 1,   // layout steps computed per call to step() — increase for faster convergence
       });
+
+      // Apply initial positions to the graph before drawing so the draw calls
+      // have valid geometry to start from (otherwise nodes all stack at the origin).
       G.apply_position_map(simulation.getPositionMap());
       const lmap = PGL.Drawing.DrawEdgeLinesDivisions(G, 1);
       G.apply_edge_pos_maps(lmap);
 
-      const width = 800;
-      const height = 700;
       const canvas = document.getElementById("displayCanvas");
-      const graph3d = new PGL.GraphDrawer.GraphDrawer3d({
-        graph: G,
-        width,
-        height,
-        canvas,
-      });
+      const graph3d = new PGL.GraphDrawer.GraphDrawer3d({ graph: G, width: 800, height: 700, canvas });
       await graph3d.init();
 
       const bounds = 0.1;
+
+      // KEY DECISION — use Mutable variants for any animation.
+      // Static variants (DrawTHREEBoxBasedVertices etc.) bake geometry at creation time
+      // and cannot be updated. Mutable variants return updatePositions() and updateEdges()
+      // functions that push new positions to the GPU each frame without recreating geometry.
       const { group, updatePositions } = PGL.ThreeWrapper.DrawTHREEGraphVerticesMutable(G, bounds, 1, 0xffffff, 1);
       graph3d.addVisElement(group);
       const { group: edgeGroup, updateEdges } = PGL.ThreeWrapper.DrawTHREEGraphEdgesThinMutable(G, bounds, 0xffafcc);
@@ -56,14 +60,18 @@
       function animate() {
         requestAnimationFrame(animate);
         const now = performance.now();
-        const dt = (now - lastTime) / 1000;
+        const dt = (now - lastTime) / 1000; // delta time in seconds
         lastTime = now;
+
+        // Advance the layout by one step, then write the new positions back to
+        // the graph and push them to the GPU via the mutable updater functions.
         simulation.step(dt);
         G.apply_position_map(simulation.getPositionMap());
         const lmap = PGL.Drawing.DrawEdgeLinesDivisions(G, 1);
         G.apply_edge_pos_maps(lmap);
-        updatePositions(simulation.getPositions());
-        updateEdges();
+        updatePositions(simulation.getPositions()); // Float32Array [x0,y0,z0, x1,y1,z1, ...]
+        updateEdges();                               // recomputes edge line geometry from node positions
+
         graph3d.rendercall();
       }
       animate();
