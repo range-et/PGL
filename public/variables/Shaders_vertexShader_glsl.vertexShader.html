@@ -18,7 +18,7 @@
 <h1>Variable vertexShader<code class="tsd-tag ts-flagConst">Const</code> </h1></div>
 <div class="tsd-signature"><span class="tsd-kind-variable">vertex<wbr/>Shader</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;\nattribute float size;\nattribute vec3 customColor;\n\nvarying vec3 vColor;\n\nvoid main() {\n    vColor = customColor;\n    vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );\n    gl_PointSize = size * ( 300.0 / -mvPosition.z );\n    gl_Position = projectionMatrix * mvPosition;\n}\n&quot;</span><span class="tsd-signature-symbol"> = ...</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/range-et/PGL/blob/9de326b/Src/Shaders/vertexShader.glsl.ts#L1">Shaders/vertexShader.glsl.ts:1</a></li></ul></aside></div>
+<li>Defined in <a href="https://github.com/range-et/PGL/blob/54d3a38/Src/Shaders/vertexShader.glsl.ts#L1">Shaders/vertexShader.glsl.ts:1</a></li></ul></aside></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
