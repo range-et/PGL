@@ -7,23 +7,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="MasterStyle.css">
   <title>Example 16 – Interaction (highlight neighbours)</title>
-  <style>
-    .info-panel {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-      width: 240px;
-      padding: 0.75rem;
-      background: rgba(26, 26, 26, 0.9);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      font-size: 0.85rem;
-      font-family: monospace;
-    }
-    .info-panel h3 { margin: 0 0 0.5rem; font-size: 0.9rem; color: var(--teal); }
-    .info-panel p { margin: 0.25rem 0; }
-    .canvas-wrap { position: relative; }
-  </style>
 </head>
 
 <body class="example-page">
@@ -34,11 +17,9 @@
     <a href="https://github.com/range-et/PGL/blob/main/Examples/16_Interaction_details.html" class="code-link" target="_blank" rel="noopener">View code</a>
   </header>
   <div class="canvas-wrap">
-    <div id="infoPanel" class="info-panel">
-      <h3>Hover a node</h3>
-      <p id="infoText">Its neighbours will be highlighted in red.</p>
-    </div>
     <canvas id="displayCanvas" class="displayCanvas"></canvas>
+  </div>
+  <div class="example-info" id="infoText">Hover a node — its neighbours will be highlighted in red.</div>
   <script type="module">
     import * as PGL from "../Build/pgl_module.js";
 
@@ -95,7 +76,6 @@
     }
     animate();
   </script>
-  </div>
 </body>
 
 </html>

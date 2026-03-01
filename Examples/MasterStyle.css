@@ -159,3 +159,59 @@ body {
 #toggle:hover {
   background: var(--teal);
 }
+
+/* ---- In-page controls row (above or below canvas, not floating) ---------- */
+.example-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  max-width: 820px;
+  margin: 0.4rem auto;
+  padding: 0.45rem 1rem;
+  font-size: 0.85rem;
+  font-family: monospace;
+  color: var(--grey);
+}
+
+.example-controls label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.example-controls select,
+.example-controls button {
+  background: var(--cardBg);
+  color: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.3rem 0.65rem;
+  cursor: pointer;
+  font-family: monospace;
+  font-size: 0.82rem;
+  transition: background 0.12s;
+}
+
+.example-controls button:hover { background: #3a3a3a; }
+
+.example-controls .ctrl-status {
+  color: var(--teal);
+}
+
+/* ---- In-page info/output box (below canvas, not floating) ---------------- */
+.example-info {
+  max-width: 820px;
+  margin: 0.5rem auto 0;
+  padding: 0.55rem 1rem;
+  background: var(--cardBg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-family: monospace;
+  color: var(--grey);
+  min-height: 2.4rem;
+  line-height: 1.5;
+  text-align: left;
+}

@@ -7,52 +7,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="MasterStyle.css">
   <title>Example 18 – Growing torus (live Kamada–Kawai)</title>
-  <style>
-    .controls-panel {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-      width: 200px;
-      padding: 0.75rem;
-      background: rgba(26, 26, 26, 0.92);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      font-size: 0.82rem;
-      font-family: monospace;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-    .controls-panel h3  { margin: 0 0 0.25rem; font-size: 0.9rem; color: var(--teal); }
-    .controls-panel label { display: flex; justify-content: space-between; align-items: center; }
-    .controls-panel select,
-    .controls-panel button {
-      background: #2a2a2a;
-      color: #e0e0e0;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 0.2rem 0.4rem;
-      cursor: pointer;
-      font-family: monospace;
-      font-size: 0.8rem;
-    }
-    .controls-panel button:hover { background: #3a3a3a; }
-    .status-bar {
-      position: absolute;
-      bottom: 1rem;
-      left: 50%;
-      transform: translateX(-50%);
-      padding: 0.35rem 0.9rem;
-      background: rgba(26, 26, 26, 0.88);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      font-size: 0.8rem;
-      font-family: monospace;
-      white-space: nowrap;
-      color: var(--teal);
-    }
-    .canvas-wrap { position: relative; }
-  </style>
 </head>
 
 <body class="example-page">
@@ -68,23 +22,20 @@
     <a href="https://github.com/range-et/PGL/blob/main/Examples/18_Growing_graph.html" class="code-link" target="_blank" rel="noopener">View code</a>
   </header>
 
+  <div class="example-controls">
+    <label>Speed
+      <select id="speedSelect">
+        <option value="2000">Slow (2 s)</option>
+        <option value="1000" selected>Normal (1 s)</option>
+        <option value="400">Fast (0.4 s)</option>
+        <option value="150">Very fast (0.15 s)</option>
+      </select>
+    </label>
+    <button id="pauseBtn">⏸ Pause</button>
+    <span class="ctrl-status" id="statusBar">Loading torus.obj…</span>
+  </div>
+
   <div class="canvas-wrap">
-    <div class="controls-panel">
-      <h3>Controls</h3>
-      <label>
-        Speed
-        <select id="speedSelect">
-          <option value="2000">Slow (2 s)</option>
-          <option value="1000" selected>Normal (1 s)</option>
-          <option value="400">Fast (0.4 s)</option>
-          <option value="150">Very fast (0.15 s)</option>
-        </select>
-      </label>
-      <button id="pauseBtn">⏸ Pause</button>
-    </div>
-
-    <div class="status-bar" id="statusBar">Loading torus.obj…</div>
-
     <canvas id="displayCanvas" class="displayCanvas"></canvas>
 
     <script type="module">
