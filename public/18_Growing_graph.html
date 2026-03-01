@@ -3,10 +3,10 @@
 
 <head>
   <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta http-equiv="X-Action-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="MasterStyle.css">
-  <title>Example 18 – Growing graph (live Kamada–Kawai)</title>
+  <title>Example 18 – Growing torus (live Kamada–Kawai)</title>
   <style>
     .controls-panel {
       position: absolute;
@@ -23,7 +23,7 @@
       flex-direction: column;
       gap: 0.5rem;
     }
-    .controls-panel h3 { margin: 0 0 0.25rem; font-size: 0.9rem; color: var(--teal); }
+    .controls-panel h3  { margin: 0 0 0.25rem; font-size: 0.9rem; color: var(--teal); }
     .controls-panel label { display: flex; justify-content: space-between; align-items: center; }
     .controls-panel select,
     .controls-panel button {
@@ -58,12 +58,12 @@
 <body class="example-page">
   <header class="example-header">
     <a href="examples.html" class="back-link">← All examples</a>
-    <h1>Example 18 – Growing graph (live Kamada–Kawai)</h1>
+    <h1>Example 18 – Growing torus (live Kamada–Kawai)</h1>
     <p class="example-desc">
-      Nodes are added one at a time while the Kamada–Kawai simulation runs continuously.
-      Existing node positions are preserved across each addition by seeding the new
-      simulation's internal Float32Array directly. Inspired by how sparse matrix graphs
-      (like pkustk05) are built up by successive connectivity insertions.
+      A torus mesh (144 vertices, quad faces) grows one vertex at a time while
+      Kamada–Kawai runs continuously. The torus's ring-of-rings connectivity produces
+      a distinctive cylindrical structure that emerges as nodes are added. Existing
+      node positions are preserved by seeding the new simulation's Float32Array directly.
     </p>
     <a href="https://github.com/range-et/PGL/blob/main/Examples/18_Growing_graph.html" class="code-link" target="_blank" rel="noopener">View code</a>
   </header>
@@ -74,87 +74,113 @@
       <label>
         Speed
         <select id="speedSelect">
-          <option value="3000">Slow (3 s)</option>
-          <option value="1500" selected>Normal (1.5 s)</option>
-          <option value="600">Fast (0.6 s)</option>
-          <option value="200">Very fast (0.2 s)</option>
+          <option value="2000">Slow (2 s)</option>
+          <option value="1000" selected>Normal (1 s)</option>
+          <option value="400">Fast (0.4 s)</option>
+          <option value="150">Very fast (0.15 s)</option>
         </select>
       </label>
       <button id="pauseBtn">⏸ Pause</button>
     </div>
 
-    <div class="status-bar" id="statusBar">Initialising…</div>
+    <div class="status-bar" id="statusBar">Loading torus.obj…</div>
 
     <canvas id="displayCanvas" class="displayCanvas"></canvas>
 
     <script type="module">
       import * as PGL from "../Build/pgl_module.js";
 
-      // ── Configuration ──────────────────────────────────────────────────────────
-      // Pre-generate the full target graph. We reveal its nodes one at a time so
-      // that the Kamada–Kawai layout can continuously adapt as the graph grows.
-      // This mirrors how sparse structural graphs (like pkustk05, a finite-element
-      // stiffness matrix) are built up by successive node/edge insertions.
-      const TARGET_NODES = 80;
-      const EDGE_PROBABILITY = 0.12;  // ~0.12 keeps the graph sparse but connected
-      const SEED_COUNT = 4;           // start with this many nodes before growing
-      const SIM_BOUND = 300;          // world-space radius the simulation uses internally
-      const BOUNDS = 0.4;             // scale factor applied when converting to Three.js coords
+      const statusEl = document.getElementById("statusBar");
 
-      // ── Step 1: Pre-generate the target graph ────────────────────────────────
-      // We generate the full graph now so we know which edges each node will
-      // eventually have. During growth, each added node only connects to
-      // already-active neighbours — edges to future nodes come in later.
-      const fullGraph = PGL.Models.GenerateErdosReyni_n_p(TARGET_NODES, EDGE_PROBABILITY);
-      await fullGraph.initialize(); // GenerateErdosReyni does not auto-initialize
+      // ── Configuration ────────────────────────────────────────────────────────
+      // The torus has 144 vertices arranged in a 9×16 grid (9 cross-section
+      // segments, 16 major-circle segments). Each vertex connects to ~4 neighbours,
+      // giving a sparse, highly structured connectivity. KK will gradually reveal
+      // this ring-of-rings topology as nodes are added one at a time.
+      const SEED_COUNT = 9;   // start with one full cross-section ring
+      const SIM_BOUND  = 800; // KK internal world-space radius (matches Example 9)
+      const BOUNDS     = 0.1; // Three.js scale: positions × BOUNDS → scene units
 
-      const allNodeIds = [...fullGraph.nodes.keys()].sort((a, b) => a - b);
+      // ── Step 1: Load and parse the torus OBJ ────────────────────────────────
+      // LoadGraphFromObjText: v → node (0-based id), face edges → graph edges.
+      let objText;
+      try {
+        const res = await fetch("data/torus.obj");
+        if (!res.ok) throw new Error(res.statusText);
+        objText = await res.text();
+      } catch (e) {
+        statusEl.textContent = "Could not load data/torus.obj — serve from a local HTTP server.";
+        throw e;
+      }
+
+      statusEl.textContent = "Building graph…";
+      const { graph: fullGraph } = await PGL.SampleData.LoadGraphFromObjText(objText);
+      await fullGraph.initialize();
+
+      const TARGET_NODES  = fullGraph.nodes.size;                           // 144
+      const allNodeIds    = [...fullGraph.nodes.keys()].sort((a, b) => a - b);
       const fullAdjacency = fullGraph.get_adjacency();
 
-      // ── Step 2: Build the live graph from the seed nodes ─────────────────────
+      // ── Step 2: Build the live graph from the seed nodes ────────────────────
+      // Start with one complete cross-section ring (nodes 0–8). KK will be
+      // allowed to place them freely — we do NOT seed from mesh positions.
+      // Trying to seed from mesh positions causes centerPull to collapse all
+      // co-planar seed nodes to the origin simultaneously (blob).
       const activeIds = new Set(allNodeIds.slice(0, SEED_COUNT));
       let nextIdx = SEED_COUNT;
 
-      const G = new PGL.Graph();
+      const G = new PGL.Graph(new Map(), new Map());
       for (const id of activeIds) {
-        G.add_node(id, { pos: { x: 0, y: 0, z: 0 } });
+        // Placeholder position — KK overwrites this with its own random start
+        G.add_node(id, new PGL._Node({ pos: { x: 0, y: 0, z: 0 } }));
       }
       for (const id of activeIds) {
         for (const nid of (fullAdjacency.get(id) ?? [])) {
+          // add_edge updates node.neighbours immediately — no initialize() needed
           if (nid > id && activeIds.has(nid)) G.add_edge(id, nid);
         }
       }
-      // Manual graph build requires explicit initialize() — loaders handle this automatically
-      await G.initialize();
 
-      // ── Step 3: Set up the renderer ───────────────────────────────────────────
+      // ── Step 3: Renderer ─────────────────────────────────────────────────────
       const canvas = document.getElementById("displayCanvas");
       const graph3d = new PGL.GraphDrawer.GraphDrawer3d({
         graph: G, width: 800, height: 700, canvas,
       });
       await graph3d.init();
-      graph3d.controls.autoRotate = false;
+      // Auto-rotate lets you see the 3D torus structure emerging over time
+      graph3d.controls.autoRotate = true;
+      graph3d.controls.autoRotateSpeed = 1.5;
 
-      // ── Step 4: Create the initial Kamada–Kawai simulation ────────────────────
-      // createKamadaKawai3D initialises its own internal Float32Array with random
-      // positions. We'll seed existing-node positions when the simulation is
-      // recreated after each node addition — see addNextNode() below.
-      let simulation = PGL.createKamadaKawai3D(G, {
+      // Move camera in close — the settled KK cluster with centerPull=0.1 is
+      // roughly 3 Three.js units across (SIM_BOUND × BOUNDS = 80 units potential
+      // spread, but centerPull compacts it to ~3 units at equilibrium).
+      // Default camera is at (0, 100, 100) = 141 units away — the cluster would
+      // appear as a single pixel from there. (0, 3, 3) distance ≈ 4.2 units puts
+      // the settled layout at ~70% of the viewport height.
+      graph3d.camera.position.set(0, 3, 3);
+      graph3d.controls.update();
+
+      // ── Step 4: Kamada–Kawai simulation ──────────────────────────────────────
+      const KK_OPTS = {
         simulationBound: SIM_BOUND,
-        cohesionValue: 1,
-        repulsionValue: 1,
-        centerPull: 0.05,  // gentle pull toward origin keeps the layout centred
-        iterationsPerStep: 2,
-      });
+        cohesionValue:   1,
+        repulsionValue:  2,   // strong repulsion keeps nodes spread apart
+        centerPull:      0.1, // keeps layout centred on origin for the close camera
+        iterationsPerStep: 5, // more iterations per frame → settles faster
+      };
+      let simulation = PGL.createKamadaKawai3D(G, KK_OPTS);
 
-      // ── Step 5: Draw geometry (mutable — required for per-frame updates) ──────
-      // Mutable variants return updater functions so we can push new positions to
-      // the GPU each frame without recreating geometry. We also need to recreate
-      // them each time a node is added (instanced meshes have a fixed count).
+      // Pre-settle before the first frame so the layout starts in a good state
+      // rather than flying in from the random [0, SIM_BOUND] initialisation.
+      // 300 steps × iterationsPerStep:5 = 1500 KK iterations — very fast for 9 nodes.
+      for (let s = 0; s < 300; s++) simulation.step(0.016);
+
+      // ── Step 5: Mutable geometry ─────────────────────────────────────────────
+      // box size 0.1: at the close camera distance (~4 units) a 0.1-unit box
+      // appears as ~20 px — clearly visible and matching the compact KK layout scale.
       let nodeGroup, edgeGroup, updatePositions, updateEdges;
 
       function rebuildGeometry() {
-        // Dispose and remove old geometry to avoid GPU memory leaks
         if (nodeGroup) {
           nodeGroup.traverse(o => { o.geometry?.dispose(); o.material?.dispose(); });
           graph3d.scene.remove(nodeGroup);
@@ -163,32 +189,30 @@
           edgeGroup.traverse(o => { o.geometry?.dispose(); o.material?.dispose(); });
           graph3d.scene.remove(edgeGroup);
         }
-        // DrawTHREEBoxBasedVerticesMutable: updatePositions accepts Float32Array or Map
         ({ group: nodeGroup, updatePositions } =
-          PGL.ThreeWrapper.DrawTHREEBoxBasedVerticesMutable(G, BOUNDS, 0xffffff, 5));
+          PGL.ThreeWrapper.DrawTHREEBoxBasedVerticesMutable(G, BOUNDS, 0xffffff, 0.1));
         ({ group: edgeGroup, updateEdges } =
           PGL.ThreeWrapper.DrawTHREEGraphEdgesThinMutable(G, BOUNDS, 0xffafcc));
         graph3d.addVisElement(nodeGroup);
         graph3d.addVisElement(edgeGroup);
       }
 
-      // Sync the simulation's initial random positions to the graph, then draw
       G.apply_position_map(simulation.getPositionMap());
       G.apply_edge_pos_maps(PGL.Drawing.DrawEdgeLinesDivisions(G, 1));
       rebuildGeometry();
+      updateStatus();
 
-      // ── Node-addition logic ───────────────────────────────────────────────────
-      let isAdding = false; // prevents re-entry while awaiting initialize()
+      // ── Node addition ─────────────────────────────────────────────────────────
+      let isAdding = false;
 
       async function addNextNode() {
         if (isAdding || nextIdx >= allNodeIds.length) return;
         isAdding = true;
 
-        // Save current simulation state before touching G.
-        // IMPORTANT: getPositions() returns the live internal Float32Array by reference,
-        // so we must copy it before any re-initialization overwrites it.
-        const savedPositions = Float32Array.from(simulation.getPositions()); // copy
-        const n = savedPositions.length / 3; // number of nodes currently in the simulation
+        // Copy current positions before modifying G.
+        // getPositions() returns a live reference — copy immediately.
+        const savedPositions = Float32Array.from(simulation.getPositions());
+        const n = savedPositions.length / 3;
 
         // Compute centroid of the existing layout so the new node starts nearby
         let cx = 0, cy = 0, cz = 0;
@@ -199,92 +223,76 @@
         }
         cx /= n; cy /= n; cz /= n;
 
-        // Add the new node to G near the centroid with some positional jitter
         const newId = allNodeIds[nextIdx++];
         activeIds.add(newId);
-        const jitter = SIM_BOUND * 0.2;
-        G.add_node(newId, {
+
+        // Place the new node near the existing cluster with jitter.
+        // The torus connectivity (not the mesh position) determines where KK
+        // will ultimately pull it — the ring structure emerges from the forces.
+        // Jitter ~20 sim units keeps new nodes near the existing cluster
+        // (which sits at ~5–14 sim-unit radius from origin after settling).
+        const jitter = 20;
+        G.add_node(newId, new PGL._Node({
           pos: {
             x: cx + (Math.random() - 0.5) * jitter,
             y: cy + (Math.random() - 0.5) * jitter,
             z: cz + (Math.random() - 0.5) * jitter,
           },
-        });
+        }));
 
-        // Connect the new node only to neighbours that are already active.
-        // Edges to future nodes will be added as those nodes are revealed later.
         for (const nid of (fullAdjacency.get(newId) ?? [])) {
           if (nid !== newId && activeIds.has(nid)) G.add_edge(newId, nid);
         }
 
-        // Rebuild adjacency lists — required after any add_node / add_edge call
-        await G.initialize();
+        // Recreate simulation with seeded positions so existing nodes don't jump.
+        // getPositions() on the new sim returns the live internal Float32Array —
+        // set() copies saved positions in-place, then we append the new node's position.
+        // Node ordering is stable (Map insertion order, add-only) so the first n
+        // entries always correspond 1-to-1 with the saved positions.
+        const newSim = PGL.createKamadaKawai3D(G, KK_OPTS);
 
-        // ── Recreate the simulation with position continuity ──────────────────
-        // createKamadaKawai3D always initialises with fresh random positions.
-        // We immediately overwrite the live Float32Array it returns via getPositions()
-        // to seed all existing nodes with their last known positions.
-        //
-        // This works because:
-        //   1. G.get_node_ids_order() returns nodes in Map insertion order.
-        //   2. We only ever ADD nodes — so the first n entries of the new order
-        //      are identical to the old order. The new node is always at index n.
-        //   3. getPositions() returns the internal array by reference, so writing
-        //      to it directly changes the simulation's starting state.
-        const newSim = PGL.createKamadaKawai3D(G, {
-          simulationBound: SIM_BOUND,
-          cohesionValue: 1,
-          repulsionValue: 1,
-          centerPull: 0.05,
-          iterationsPerStep: 2,
-        });
-
-        const newPositions = newSim.getPositions(); // live reference
-        // Restore all existing-node positions (they map 1-to-1 to the first n entries)
-        newPositions.set(savedPositions);
-        // Override the new node's random position with our centroid-based placement
+        const newPositions = newSim.getPositions();
+        newPositions.set(savedPositions); // restore existing nodes without jumps
+        // new node (index n) starts near centroid
         newPositions[n * 3]     = cx + (Math.random() - 0.5) * jitter;
         newPositions[n * 3 + 1] = cy + (Math.random() - 0.5) * jitter;
         newPositions[n * 3 + 2] = cz + (Math.random() - 0.5) * jitter;
 
         simulation = newSim;
 
-        // Sync positions to G.nodes (needed by DrawEdgeLinesDivisions) and rebuild GPU geometry
         G.apply_position_map(simulation.getPositionMap());
         G.apply_edge_pos_maps(PGL.Drawing.DrawEdgeLinesDivisions(G, 1));
         rebuildGeometry();
 
-        // Briefly highlight the newly added node before resetting
+        // Flash the newly added node green for 500 ms
         if (nodeGroup?.children[0]) {
           PGL.ThreeWrapper.ChangeTheVertexColours(nodeGroup.children[0], [newId], 0x44ffaa);
           setTimeout(() => {
             if (nodeGroup?.children[0]) PGL.ThreeWrapper.ResetVertexColors(nodeGroup.children[0]);
-          }, 600);
+          }, 500);
         }
 
         updateStatus();
         isAdding = false;
       }
 
-      // ── Status display ────────────────────────────────────────────────────────
-      const statusEl = document.getElementById("statusBar");
+      // ── Status ────────────────────────────────────────────────────────────────
       function updateStatus() {
         const done = nextIdx >= allNodeIds.length;
         statusEl.textContent = done
           ? `Complete — ${G.nodes.size} nodes, ${G.edges.size} edges`
           : `Nodes: ${G.nodes.size} / ${TARGET_NODES}  |  Edges: ${G.edges.size}`;
       }
-      updateStatus();
 
       // ── UI controls ───────────────────────────────────────────────────────────
-      let addIntervalMs = 1500;
+      let addIntervalMs = 1000;
       let paused = false;
+      let timeSinceLastAdd = 0;
 
-      document.getElementById("speedSelect").addEventListener("change", (e) => {
+      document.getElementById("speedSelect").addEventListener("change", e => {
         addIntervalMs = Number(e.target.value);
-        timeSinceLastAdd = 0; // reset timer so the next addition fires at the new interval
+        timeSinceLastAdd = 0;
       });
-
       const pauseBtn = document.getElementById("pauseBtn");
       pauseBtn.addEventListener("click", () => {
         paused = !paused;
@@ -293,16 +301,13 @@
 
       // ── Animation loop ────────────────────────────────────────────────────────
       let lastTime = performance.now();
-      let timeSinceLastAdd = 0;
 
       function animate() {
         requestAnimationFrame(animate);
         const now = performance.now();
-        // Cap dt to 100 ms to prevent physics explosions when the tab is hidden then focused
-        const dt = Math.min((now - lastTime) / 1000, 0.1);
+        const dt = Math.min((now - lastTime) / 1000, 0.1); // cap at 100 ms
         lastTime = now;
 
-        // Schedule node additions — fires when interval elapses and we're not mid-add
         if (!paused && !isAdding && nextIdx < allNodeIds.length) {
           timeSinceLastAdd += dt * 1000;
           if (timeSinceLastAdd >= addIntervalMs) {
@@ -311,14 +316,12 @@
           }
         }
 
-        // Advance layout and push to GPU — skip while a node addition is in flight
-        // to avoid driving stale geometry with the new simulation object
         if (!isAdding) {
           simulation.step(dt);
           G.apply_position_map(simulation.getPositionMap());
           G.apply_edge_pos_maps(PGL.Drawing.DrawEdgeLinesDivisions(G, 1));
-          updatePositions(simulation.getPositions()); // Float32Array → GPU
-          updateEdges();                               // edge line geometry → GPU
+          updatePositions(simulation.getPositions());
+          updateEdges();
         }
 
         graph3d.rendercall();
