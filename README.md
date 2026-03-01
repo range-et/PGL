@@ -260,17 +260,22 @@ G.apply_edge_pos_maps(lmap);
 ```javascript
 import * as PGL from "plebeiangraphlibrary";
 
-const G = new PGL.Graph();
+// Graph constructor requires explicit Maps — no-arg call leaves internals undefined
+const G = new PGL.Graph(new Map(), new Map());
 
-// add_node(id, { pos: PointLike, ...yourData })
-G.add_node(0, { pos: { x: 0, y: 0, z: 0 } });
-G.add_node(1, { pos: { x: 0, y: 0, z: 0 } });
-G.add_node(2, { pos: { x: 0, y: 0, z: 0 } });
+// add_node expects a _Node instance, not a plain object.
+// _Node(data) stores data under node.data — pos is read from node.data.pos.
+G.add_node(0, new PGL._Node({ pos: { x: 0, y: 0, z: 0 } }));
+G.add_node(1, new PGL._Node({ pos: { x: 0, y: 0, z: 0 } }));
+G.add_node(2, new PGL._Node({ pos: { x: 0, y: 0, z: 0 } }));
+
+// add_edge updates node.neighbours on both ends immediately — adjacency is live.
 G.add_edge(0, 1);
 G.add_edge(1, 2);
 G.add_edge(2, 0);
 
-// Manual builds require an explicit initialize() call — loaders handle this automatically
+// initialize() rebuilds adjacency from scratch (with deduplication).
+// Call it if you need a guaranteed-clean adjacency list — it is async.
 await G.initialize();
 
 // Now run a layout to compute real positions
@@ -442,6 +447,9 @@ These are the issues that trip up most new users and AI-generated code. Check th
 | Passing the `Group` to `ChangeTheVertexColours` | Colors don't change | Pass `nodeVisualElements.children[0]` — the function needs the inner instanced mesh, not the outer Group. Same for `ResetVertexColors`. |
 | Forgetting `await G.initialize()` after manually building a graph | BFS, Dijkstra, and layout return empty/wrong results | `GenerateErdosReyni_n_p` and manual `add_node` / `add_edge` loops do **not** auto-initialize. Always call `await G.initialize()` before running any algorithm or draw call. |
 | Calling `initialize()` without `await` | Race condition — adjacency lists are half-built | It is async. Always `await G.initialize()`. |
+| `await PGL.Models.GenerateErdosReyni_n_p(n, p)` missing | Returns a Promise — calling `.initialize()` on a Promise throws "is not a function" | Always `await` the call: `const G = await PGL.Models.GenerateErdosReyni_n_p(n, p)` |
+| `new PGL.Graph()` with no arguments | `this.nodes` and `this.edges` are `undefined` — any access throws immediately | Use `new PGL.Graph(new Map(), new Map())` for an empty graph |
+| `G.add_node(id, { pos: ... })` plain object | Node has no `.neighbours` array — `add_edge` throws on first use | Pass a `_Node` instance: `G.add_node(id, new PGL._Node({ pos: ... }))` |
 | Using `DrawTHREEGraphVertices` in a bundler project (Vite, Parcel, Webpack) | Nodes invisible — texture `./Textures/Square.png` fails to load silently | Copy `Examples/Textures/` to your project's public folder, or use `DrawTHREEBoxBasedVertices` which needs no texture. |
 | Calling `enableInteraction()` before `addVisElement()` | Callbacks never fire | The interaction layer raycasts against objects already in the scene. Always add all visual elements first, then call `enableInteraction()`. |
 | Expecting `Dijkstra` to use edge weights | Shortest path looks wrong on weighted graphs | `Dijkstra` in PGL returns **hop counts** (unweighted BFS). There is no weighted shortest-path solver — use hop counts or implement your own on top of `get_adjacency()`. |
@@ -467,7 +475,7 @@ Or head over to the GitHub, download the pgl_module.js [Builds](https://github.c
 
 ## More examples
 
-More examples are available at [Examples](https://www.plebeiangraphlibrary.com/examples.html). They cover layout (Kamada–Kawai, Stress SGD), edge bundling, flow maps, and **interaction** (Examples 14–17: click, hover, neighbour highlight, drag-to-reposition).
+More examples are available at [Examples](https://www.plebeiangraphlibrary.com/examples.html). They cover layout (Kamada–Kawai, Stress SGD), edge bundling, flow maps, **interaction** (Examples 14–17: click, hover, neighbour highlight, drag-to-reposition), and **dynamic graph growth** (Example 18: add nodes iteratively while the live simulation adapts).
 
 ## Integrations
 

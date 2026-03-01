@@ -59,10 +59,10 @@ import * as PGL from "plebeiangraphlibrary";
 ## Graph (class)
 
 ```javascript
-const G = new PGL.Graph();           // empty graph
+const G = new PGL.Graph(new Map(), new Map());   // empty graph (Maps required — no-arg call breaks)
 const G = await PGL.Graph.create(nodes, edges);  // from arrays, auto-initialized
 
-G.add_node(id, { pos: { x, y, z }, ...yourData })
+G.add_node(id, new PGL._Node({ pos: { x, y, z }, ...yourData }))  // _Node instance required
 G.add_edge(startId, endId, data?)
 G.remove_node(id)
 G.remove_edge(id)
@@ -212,6 +212,18 @@ sim.getPositions()       // Float32Array [x0,y0,z0, x1,y1,z1, ...]
 sim.getPositionMap()     // Map<nodeId, PointLike>
 ```
 
+**Camera scale warning:** `centerPull` acts as gravity toward the origin. With `centerPull: 0.1` and, say, 144 nodes the settled cluster radius is only ~14 simulation units. At `BOUNDS: 0.1` that is ~1.4 Three.js units. The default camera sits at `(0, 100, 100)` — 141 units away — so the entire graph appears as a single pixel. Move the camera in after `init()` and pre-settle before the first frame:
+
+```javascript
+await graph3d.init();
+graph3d.camera.position.set(0, 3, 3); // tune to match your BOUNDS
+graph3d.controls.update();
+
+const sim = PGL.createKamadaKawai3D(G, { ..., iterationsPerStep: 5 });
+// burn-in: 300 steps before drawing so layout is already stable on frame 1
+for (let s = 0; s < 300; s++) sim.step(0.016);
+```
+
 ### Stress SGD
 
 ```javascript
@@ -294,13 +306,45 @@ StressSGD3DOptions   // options for createStressSGD3D()
 
 ---
 
+## Growing a Graph While the Simulation Runs (Example 18)
+
+When you add a node to a live simulation you must recreate the simulation (it pre-computes the distance matrix at creation). To preserve existing node positions, directly overwrite the new simulation's internal `Float32Array` — `getPositions()` returns the live reference, not a copy.
+
+```javascript
+const savedPositions = Float32Array.from(simulation.getPositions()); // copy before changes
+const n = savedPositions.length / 3;
+
+G.add_node(newId, new PGL._Node({ pos: { x: cx, y: cy, z: cz } }));
+G.add_edge(newId, existingNeighbourId);
+// add_edge keeps node.neighbours live — no initialize() needed unless you want deduplication
+
+const newSim = PGL.createKamadaKawai3D(G, { simulationBound: 300, ... });
+const newPositions = newSim.getPositions(); // live reference to internal array
+newPositions.set(savedPositions);           // restore existing-node positions (they map 1-to-1)
+// New node (at index n) keeps its starting position from the simulation init
+
+simulation = newSim;
+G.apply_position_map(simulation.getPositionMap());
+G.apply_edge_pos_maps(PGL.Drawing.DrawEdgeLinesDivisions(G, 1));
+rebuildGeometry(); // InstancedMesh count changed — must recreate GPU geometry
+```
+
+**Why `newPositions.set(savedPositions)` works:** `G.get_node_ids_order()` returns nodes in Map insertion order. Since you only ever ADD nodes, the first `n` entries of the new order are identical to the old order — the new node is always appended at index `n`.
+
+---
+
 ## Common Footguns at a Glance
 
 | ⚠️ | Fix |
 |---|---|
 | `ChangeTheVertexColours(group, ...)` — colors don't change | Use `group.children[0]` (inner instanced mesh) |
 | `GenerateErdosReyni_n_p(n, p)` then BFS returns wrong results | Add `await G.initialize()` before any algorithm or draw |
+| `PGL.Models.GenerateErdosReyni_n_p(n, p)` without `await` — `.initialize is not a function` | It's async — `const G = await PGL.Models.GenerateErdosReyni_n_p(n, p)` |
+| `new PGL.Graph()` with no args — crashes on first access | Use `new PGL.Graph(new Map(), new Map())` |
+| `G.add_node(id, { pos: ... })` plain object — `add_edge` throws on neighbours | Pass `new PGL._Node({ pos: ... })` |
 | `DrawTHREEGraphVertices` invisible in bundler projects | Texture `./Textures/Square.png` needs to be in public folder; or use `DrawTHREEBoxBasedVertices` |
 | `enableInteraction()` callbacks never fire | Call it **after** all `addVisElement()` calls |
 | `Dijkstra` gives wrong results for weighted graphs | It returns hop counts (BFS), not weighted distances |
 | Static draw call positions don't update | Use `Mutable` variants + call `updatePositions()` / `updateEdges()` each frame |
+| Live KK simulation looks like one pixel / blob | `centerPull` compacts the layout; default camera at `(0,100,100)` is too far — set `graph3d.camera.position.set(0, 3, 3); graph3d.controls.update()` after `init()` |
+| Live KK simulation starts as chaotic scatter | KK randomises in `[0, simulationBound]`; burn in first: `for (let s = 0; s < 300; s++) sim.step(0.016)` before first draw |
