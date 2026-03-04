@@ -2,6 +2,8 @@
 
 The Plebeian Graph Library (PGL) is a library designed to facilitate the visualization of large-scale network data (NetworkX-style graph plotting in JavaScript/TypeScript). Leveraging the power of WebGL, PGL offers an efficient and interactive solution for visualizing network data in web browsers (Tested on Firefox, Edge and Chrome). Whether dealing with local datasets or data retrieved from APIs, PGL provides a versatile platform for conducting extensive network simulations, physical modeling, and immersive visualizations. With a rich set of features including graph condensation based on selected criteria, randomized edge pruning in highly connected graphs, and support for diverse visualization techniques like network diffusions and Kamada Kawai layouts, and edge bundling, PGL empowers users to gain valuable insights from complex network structures.
 
+![PGL graph animation](graph_animation.gif)
+
 ## Notes on terminology
 
 It can be a bit confusing especially when working with Nodes/Edges/Vertices/Lines in this library (Also in general in working with graphs). Hence the terminology that I've followed here is as follows:

@@ -19,7 +19,7 @@
     "test": "node ./test/test_1.js",
     "test:unit": "vitest run",
     "test:unit:watch": "vitest",
-    "document": "rm -rf docs && npx typedoc --options typedoc.json",
+    "document": "rm -rf docs && npx typedoc --options typedoc.json && cp graph_animation.gif docs/",
     "document:public": "npm run document && rm -rf public && mkdir -p public && cp -R docs/. public/",
     "examples:public": "rm -rf public && mkdir -p public && cp -R Examples/. public/",
     "deploy:public": "npm run build && npm run document && rm -rf public && mkdir -p public && mkdir -p public/Build && cp -R Build/. public/Build/ && cp -R Examples/. public/ && cp -R docs/. public/",
