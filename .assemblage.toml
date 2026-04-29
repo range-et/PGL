@@ -1,0 +1,15 @@
+# Mirrored into Assemblage/_Projects/PGL/
+# Includes the JOSS paper (paper.md + paper.pdf) for cross-linking.
+include = [
+    "README.md",
+    "CHANGELOG.md",
+    "CHEATSHEET.md",
+    "paper.md",
+    "paper.pdf",
+]
+exclude = [
+    "CLAUDE.md",
+    "node_modules/**",
+    "Build/**",
+    "benchmark/**",
+]
