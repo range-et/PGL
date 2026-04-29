@@ -1,5 +1,8 @@
 ---
 tags: [project, pgl, readme, visualization, node-graph]
+status: shipped
+domain: code-tools
+repo: https://github.com/range-et/PGL
 ---
 
 ## Introduction
