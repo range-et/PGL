@@ -531,3 +531,7 @@ BibTeX entry is available in `paper.bib` as `Haldar2024`.
 **Stress-based layout (createStressSGD3D):** The stress-minimization-by-SGD algorithm and schedule used in PGL are taken from the **(sgd)²** reference implementation ([jxz12/s_gd2](https://github.com/jxz12/s_gd2)) from Imperial College London. The underlying method is from the paper: J. X. Zheng, S. Pawar, D. F. M. Goodman, *Graph Drawing by Stochastic Gradient Descent*, IEEE Transactions on Visualization and Computer Graphics, [arXiv:1710.04626](https://arxiv.org/abs/1710.04626). Example graph data (e.g. football.txt) in the Stress SGD demo are from the same s_gd2 repository.
 
 **PGL:** This library was sponsored by the Geometry Lab under the Laboratory for Design Technologies at the Graduate School of Design, Harvard University. Many thanks to Andrew Witt for guiding this project. This project was developed by [Indrajeet Haldar](https://www.indrajeethaldar.com/).
+
+---
+
+*Related project docs: [CHEATSHEET](CHEATSHEET.md) · [CHANGELOG](CHANGELOG.md) · [paper](paper.md) (JOSS publication source)*
