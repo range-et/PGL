@@ -1,6 +1,6 @@
 {
   "name": "plebeiangraphlibrary",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "A NetworkX like package for graphs in javascript",
   "source": "./Src/index.ts",
   "main": "./Build/pgl.js",
