@@ -37,20 +37,21 @@ class GraphDrawer3d {
    * camera -  A perspective camera from the threeJS library 
    * scene - The three JS scene that gets define automatically
    * 
-   * @param GraphDrawerOptions3d - These options are constructed into a single object and passed in
+   * @param GraphDrawerOptions3d - `{ canvas, width, height }` plus an optional `graph`. The other
+   *   fields are created by the drawer; they are accepted only for backwards compatibility and ignored.
    */
   constructor(GraphDrawerOptions3d: {
     canvas: HTMLCanvasElement;
     width: number;
     height: number;
-    geometryMap: Map<any, any>;
-    materialMap: Map<any, any>;
-    meshMap: Map<any, any>;
-    controls: OrbitControls;
-    renderer: THREE.WebGLRenderer;
-    camera: THREE.PerspectiveCamera;
-    scene: THREE.Scene;
-  }) {
+    /** The graph being drawn; stored in `graphs` */
+    graph?: Graph;
+  } & Partial<
+    Pick<
+      GraphDrawer3d,
+      "geometryMap" | "materialMap" | "meshMap" | "controls" | "renderer" | "camera" | "scene"
+    >
+  >) {
     this.canvas = GraphDrawerOptions3d.canvas;
     this.width = GraphDrawerOptions3d.width;
     this.height = GraphDrawerOptions3d.height;
@@ -67,6 +68,7 @@ class GraphDrawer3d {
     // graph map is the hash map that holds all the
     // graphs that we are working with together
     this.graphs = new Map();
+    if (GraphDrawerOptions3d.graph) this.graphs.set(0, GraphDrawerOptions3d.graph);
   }
 
   /**

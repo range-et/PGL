@@ -173,3 +173,13 @@ describe("GraphMethods.SelectSubgraph", () => {
     expect(await GraphMethods.BFSSearch(sub, 0)).toEqual(new Map([[0, -1], [1, 0]]));
   });
 });
+
+describe("GraphMethods.BFSSearch", () => {
+  it("ignores edges to IDs that are not nodes", async () => {
+    const graph = new Graph(new Map([[0, new _Node({})], [1, new _Node({})]]), new Map());
+    await graph.initialize();
+    graph.add_edge(0, 99);
+    graph.add_edge(0, 1);
+    expect(await GraphMethods.BFSSearch(graph, 0)).toEqual(new Map([[0, -1], [1, 0]]));
+  });
+});

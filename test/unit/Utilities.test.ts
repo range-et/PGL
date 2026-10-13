@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import Utilities from "../../Src/HelperClasses/Utilities";
 import Point from "../../Src/HelperClasses/Point";
+import { rgbToHex } from "../../Src/HelperClasses/ColorHelper";
 
 describe("Utilities", () => {
   describe("calculateAverage", () => {
@@ -37,6 +38,13 @@ describe("Utilities", () => {
     it("returns 0 for same point", () => {
       const a = new Point(1, 1, 1);
       expect(Utilities.calculateSquaredDistance(a, a)).toBe(0);
+    });
+  });
+
+  describe("rgbToHex", () => {
+    it("rounds and clamps components to valid hex bytes", () => {
+      expect(rgbToHex(255, 0, 16)).toBe("#ff0010");
+      expect(rgbToHex(127.6, -5, 300)).toBe("#8000ff");
     });
   });
 });

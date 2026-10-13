@@ -271,7 +271,7 @@ async function DrawEdgeBundling(
   // first create a deep copy of the map
   const returnArray = new Map<number, Line>();
   for (let key of LineMap.keys()) {
-    returnArray.set(key, structuredClone(LineMap.get(key)!));
+    returnArray.set(key, new Line(LineMap.get(key)!.points)); // deep copy that keeps Point methods
   }
   // variables that are getting reused
   let line: Line;
@@ -345,7 +345,7 @@ async function DrawEdgeBundling(
 function DisplaceEdgeInY(LineMap: Map<number, Line>, displacement: number) {
   const returnArray = new Map<number, Line>();
   for (let key of LineMap.keys()) {
-    returnArray.set(key, structuredClone(LineMap.get(key)!));
+    returnArray.set(key, new Line(LineMap.get(key)!.points)); // deep copy that keeps Point methods
   }
   for (const key of returnArray.keys()) {
     const line = returnArray.get(key)!;
@@ -417,7 +417,14 @@ async function HivePlot(
   const adj = Graph.get_adjacency();
   const DijkstraDepth = await GraphMethods.Dijkstra(Graph, selectedNode);
   // calculate the number of steps that I am searching through
-  const steps = Math.max(...[...DijkstraDepth.values()]);
+  let steps = 0;
+  for (const d of DijkstraDepth.values()) if (d > steps) steps = d;
+  // nodes unreachable from selectedNode go on one extra outer tier
+  const hasUnreachable = [...adj.keys()].some((n) => !DijkstraDepth.has(n));
+  if (hasUnreachable) {
+    steps += 1;
+    for (const n of adj.keys()) if (!DijkstraDepth.has(n)) DijkstraDepth.set(n, steps);
+  }
   // step map
   const stepMap = new Map();
   // now create a stepped ring of stuff

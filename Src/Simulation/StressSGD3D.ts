@@ -63,12 +63,17 @@ function fisherYatesShuffle<T>(arr: T[], rng: () => number): void {
   }
 }
 
-/** Simple LCG for reproducible random (matches reference rk_interval). */
-function createRng(seed: number): () => number {
-  let s = seed;
+/**
+ * Simple LCG (mod 2^31) for reproducible random numbers in [0, 1).
+ * Math.imul keeps the multiply exact; a plain `*` loses low bits above 2^53 and the
+ * sequence then repeats after ~10k values.
+ * @internal exported for tests
+ */
+export function createRng(seed: number): () => number {
+  let s = seed & 0x7fffffff;
   return () => {
-    s = (s * 1103515245 + 12345) & 0x7fffffff;
-    return s / 0x7fffffff;
+    s = (Math.imul(s, 1103515245) + 12345) & 0x7fffffff;
+    return s / 0x80000000;
   };
 }
 

@@ -9,7 +9,7 @@
  * @returns returns an object with r g b component values
  */
 function componentToHex(c: number) {
-  var hex = c.toString(16);
+  var hex = Math.min(255, Math.max(0, Math.round(c))).toString(16);
   return hex.length == 1 ? "0" + hex : hex;
 }
 

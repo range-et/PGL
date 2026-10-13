@@ -13,19 +13,33 @@ import { pointsWithinRadius } from "./KDTree";
 
 class UnionFind {
   private parent: Map<number, number> = new Map();
+  private size: Map<number, number> = new Map();
 
+  // Iterative with path compression: recursion overflowed the stack on long chains.
   find(x: number): number {
-    if (!this.parent.has(x)) this.parent.set(x, x);
-    if (this.parent.get(x) !== x) {
-      this.parent.set(x, this.find(this.parent.get(x)!));
+    if (!this.parent.has(x)) {
+      this.parent.set(x, x);
+      this.size.set(x, 1);
+      return x;
     }
-    return this.parent.get(x)!;
+    let root = x;
+    while (this.parent.get(root) !== root) root = this.parent.get(root)!;
+    while (x !== root) {
+      const next = this.parent.get(x)!;
+      this.parent.set(x, root);
+      x = next;
+    }
+    return root;
   }
 
+  // Union by size keeps trees shallow.
   union(x: number, y: number): void {
-    const px = this.find(x);
-    const py = this.find(y);
-    if (px !== py) this.parent.set(px, py);
+    let px = this.find(x);
+    let py = this.find(y);
+    if (px === py) return;
+    if (this.size.get(px)! > this.size.get(py)!) [px, py] = [py, px];
+    this.parent.set(px, py);
+    this.size.set(py, this.size.get(px)! + this.size.get(py)!);
   }
 }
 

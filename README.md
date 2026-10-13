@@ -35,7 +35,8 @@ Every PGL visualization follows the same five steps **in this order**. Getting t
 Step 1 — Load or build a Graph
          PGL.SampleData.LoadZKCSimulated()   ← positions already baked in (fastest start)
          PGL.SampleData.LoadZKC()            ← raw graph, you must run a layout first
-         GenerateErdosReyni_n_p(n, p) + await G.initialize()  ← manual build
+         await GenerateErdosReyni_n_p(n, p)  ← random graph (auto-initialized)
+         new Graph(...) + add_node/add_edge + await G.initialize()  ← manual build
 
 Step 2 — Create the renderer
          new PGL.GraphDrawer.GraphDrawer3d({ graph, canvas, width, height })
@@ -67,8 +68,8 @@ Mutable variants return an `updatePositions(posArray)` and `updateEdges()` funct
 
 **When do I need to call `await G.initialize()`?**
 
-- `LoadZKCSimulated()`, `LoadZKC()`, `LoadDwt1005()`, `Graph.create()` → **auto-initialized, skip this step**
-- `GenerateErdosReyni_n_p()` or building a graph manually with `add_node` / `add_edge` → **you must call `await G.initialize()` yourself** before drawing or running algorithms
+- `LoadZKCSimulated()`, `LoadZKC()`, `LoadDwt1005()`, `GenerateErdosReyni_n_p()`, `Graph.create()` → **auto-initialized, skip this step**
+- Building a graph manually with `add_node` / `add_edge` → **you must call `await G.initialize()` yourself** before drawing or running algorithms
 
 ---
 
@@ -458,9 +459,9 @@ These are the issues that trip up most new users and AI-generated code. Check th
 | Mistake | Symptom | Fix |
 |---|---|---|
 | Passing the `Group` to `ChangeTheVertexColours` | Colors don't change | Pass `nodeVisualElements.children[0]` — the function needs the inner instanced mesh, not the outer Group. Same for `ResetVertexColors`. |
-| Forgetting `await G.initialize()` after manually building a graph | BFS, Dijkstra, and layout return empty/wrong results | `GenerateErdosReyni_n_p` and manual `add_node` / `add_edge` loops do **not** auto-initialize. Always call `await G.initialize()` before running any algorithm or draw call. |
+| Forgetting `await G.initialize()` after manually building a graph | BFS, Dijkstra, and layout return empty/wrong results | Manual `add_node` / `add_edge` loops do **not** auto-initialize. Always call `await G.initialize()` before running any algorithm or draw call. |
 | Calling `initialize()` without `await` | Race condition — adjacency lists are half-built | It is async. Always `await G.initialize()`. |
-| `await PGL.Models.GenerateErdosReyni_n_p(n, p)` missing | Returns a Promise — calling `.initialize()` on a Promise throws "is not a function" | Always `await` the call: `const G = await PGL.Models.GenerateErdosReyni_n_p(n, p)` |
+| `await PGL.Models.GenerateErdosReyni_n_p(n, p)` missing | Returns a Promise — using it without `await` gives a Promise, not a Graph | Always `await` the call: `const G = await PGL.Models.GenerateErdosReyni_n_p(n, p)` |
 | `new PGL.Graph()` with no arguments | `this.nodes` and `this.edges` are `undefined` — any access throws immediately | Use `new PGL.Graph(new Map(), new Map())` for an empty graph |
 | `G.add_node(id, { pos: ... })` plain object | Node has no `.neighbours` array — `add_edge` throws on first use | Pass a `_Node` instance: `G.add_node(id, new PGL._Node({ pos: ... }))` |
 | Using `DrawTHREEGraphVertices` in a bundler project (Vite, Parcel, Webpack) | Nodes invisible — texture `./Textures/Square.png` fails to load silently | Copy `Examples/Textures/` to your project's public folder, or use `DrawTHREEBoxBasedVertices` which needs no texture. |

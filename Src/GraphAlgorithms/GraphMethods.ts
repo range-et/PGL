@@ -30,12 +30,14 @@ async function BFSSearch(Graph:Graph, node:number) {
   const queue: number[] = [node];
   exploredFromMap.set(node, -1);
 
-  while (queue.length > 0) {
-    const currentNode = queue.shift()!;
-    const neighbours = adj.get(currentNode);
-    for (let i = 0; i < neighbours!.length; i++) {
-      const neighbour = neighbours![i];
-      if (!explored.has(neighbour)) {
+  // head index instead of queue.shift(), which is O(n) per call
+  for (let head = 0; head < queue.length; head++) {
+    const currentNode = queue[head];
+    const neighbours = adj.get(currentNode) ?? [];
+    for (let i = 0; i < neighbours.length; i++) {
+      const neighbour = neighbours[i];
+      // edges may reference IDs that are not nodes in the graph; skip those
+      if (!explored.has(neighbour) && adj.has(neighbour)) {
         explored.add(neighbour);
         queue.push(neighbour);
         exploredFromMap.set(neighbour, currentNode);

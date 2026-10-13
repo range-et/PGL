@@ -29,25 +29,20 @@ async function GenerateErdosReyni_n_p(n: number, p: number) {
   let interimP;
   let edge;
   let index = 0;
+  // each unordered pair once (ii > i), so edges are undirected, unique and self-loop free
   for (let i = 0; i < n; i++) {
-    for (let ii = 0; ii < n; ii++) {
-      // im skipping self loops so just make sure there is
-      // an if statement for the settings
-      if (i != ii) {
-        interimP = Math.random();
-        if (p > interimP) {
-          // then create and edge and add that edge to the list of edges
-          edge = new Edge(i, ii, {});
-          edges.set(index, edge);
-          index += 1;
-        }
+    for (let ii = i + 1; ii < n; ii++) {
+      interimP = Math.random();
+      if (p > interimP) {
+        // then create and edge and add that edge to the list of edges
+        edge = new Edge(i, ii, {});
+        edges.set(index, edge);
+        index += 1;
       }
     }
   }
-  // now create the actual graph
-  const G = new Graph(nodes, edges);
-  // lastly return the graph
-  return G;
+  // create the graph with its adjacency lists built
+  return Graph.create(nodes, edges);
 }
 
 export default { GenerateErdosReyni_n_p };

@@ -14,7 +14,7 @@ import * as PGL from "plebeiangraphlibrary";
 1. Get a Graph           LoadZKCSimulated() / LoadZKC() / LoadDwt1005()
                          LoadGraphFromEdgeListText(text)
                          new Graph() + add_node/add_edge + await G.initialize()
-                         GenerateErdosReyni_n_p(n, p) + await G.initialize()
+                         await GenerateErdosReyni_n_p(n, p)  (auto-initialized)
 
 2. Create renderer       new PGL.GraphDrawer.GraphDrawer3d({ graph, canvas, width, height })
 
@@ -264,7 +264,7 @@ PGL.Hierarchy.clusterByStrategy(G, strategy)                    → Graph
 ## Models (graph generators)
 
 ```javascript
-const G = PGL.Models.GenerateErdosReyni_n_p(n, p)  // random graph
+const G = await PGL.Models.GenerateErdosReyni_n_p(n, p)  // random graph
 await G.initialize()                                 // ⚠️ required — generator does not auto-initialize
 ```
 
@@ -338,8 +338,7 @@ rebuildGeometry(); // InstancedMesh count changed — must recreate GPU geometry
 | ⚠️ | Fix |
 |---|---|
 | `ChangeTheVertexColours(group, ...)` — colors don't change | Use `group.children[0]` (inner instanced mesh) |
-| `GenerateErdosReyni_n_p(n, p)` then BFS returns wrong results | Add `await G.initialize()` before any algorithm or draw |
-| `PGL.Models.GenerateErdosReyni_n_p(n, p)` without `await` — `.initialize is not a function` | It's async — `const G = await PGL.Models.GenerateErdosReyni_n_p(n, p)` |
+| `PGL.Models.GenerateErdosReyni_n_p(n, p)` without `await` — you get a Promise, not a Graph | It's async — `const G = await PGL.Models.GenerateErdosReyni_n_p(n, p)` |
 | `new PGL.Graph()` with no args — crashes on first access | Use `new PGL.Graph(new Map(), new Map())` |
 | `G.add_node(id, { pos: ... })` plain object — `add_edge` throws on neighbours | Pass `new PGL._Node({ pos: ... })` |
 | `DrawTHREEGraphVertices` invisible in bundler projects | Texture `./Textures/Square.png` needs to be in public folder; or use `DrawTHREEBoxBasedVertices` |
