@@ -57,7 +57,7 @@ declare function DrawThickEdgesFromEdgeMap(EdgeMap: Map<number, Line>, bounds: n
  * @param Graph - The graph that has to be drawn
  * @param bounds - The global scale factor for the edges - defaults to 1
  * @param color - color of the lines - defaults to white
- * @returns a THREE.Group of lines
+ * @returns a THREE.Group containing one THREE.LineSegments for all edges
  */
 declare function DrawTHREEGraphEdgesThin(Graph: Graph, bounds?: number, color?: number): THREE.Group<THREE.Object3DEventMap>;
 /**
@@ -91,8 +91,8 @@ declare function DrawThickPathFromNodeIds(Graph: Graph, bounds: number, pathNode
  *
  * @param LineMap - The edge map that has to be drawn out
  * @param bounds - Global scale for the edges to be drawn defaults to 1
- * @param color - Color of the edges defaults to 1
- * @returns
+ * @param color - Color of the edges defaults to white
+ * @returns a THREE.Group containing one THREE.LineSegments for all edges
  */
 declare function DrawThinEdgesFromEdgeMap(LineMap: Map<number, Line>, bounds?: number, color?: number): THREE.Group<THREE.Object3DEventMap>;
 /**

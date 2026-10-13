@@ -5,7 +5,9 @@
  */
 import * as THREE from "three";
 /**
- * Build a BufferGeometry for one polyline as a ribbon (strip of quads).
+ * Build one BufferGeometry holding a ribbon (strip of quads) for every polyline,
+ * so any number of lines can be drawn with a single draw call.
  * Attributes: position, positionPrev, positionNext, side.
+ * Polylines with fewer than 2 points are skipped.
  */
-export declare function buildMeshLineGeometry(positions: THREE.Vector3[]): THREE.BufferGeometry;
+export declare function buildMeshLineGeometry(polylines: THREE.Vector3[][]): THREE.BufferGeometry;

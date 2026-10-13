@@ -1,0 +1,275 @@
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>CHEATSHEET | Plebeian Graph Library - v3.0.0</title><link rel="icon" href="../assets/favicon.ico"/><meta name="description" content="Documentation for Plebeian Graph Library"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><link rel="stylesheet" href="../assets/custom.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar">
+<div class="tsd-toolbar-contents container"><a href="../index.html" class="title">Plebeian Graph Library - v3.0.0</a>
+<div id="tsd-toolbar-links"><a href="/examples.html">Examples</a><a href="https://github.com/range-et/PGL">GitHub</a><a href="https://www.npmjs.com/package/plebeiangraphlibrary">npm</a></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/>
+<ul role="listbox" id="tsd-search-results"></ul>
+<div id="tsd-search-status" aria-live="polite" aria-atomic="true">
+<div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-menu"></use></svg></a></div></header>
+<div class="container container-main">
+<div class="col-content">
+<div class="tsd-page-title">
+<ul class="tsd-breadcrumb" aria-label="Breadcrumb">
+<li><a href="" aria-current="page">CHEATSHEET</a></li></ul></div>
+<div class="tsd-panel tsd-typography"><h1 id="pgl-cheat-sheet" class="tsd-anchor-link">PGL Cheat Sheet<a href="#pgl-cheat-sheet" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h1>
+<p>Quick reference for <a href="https://www.plebeiangraphlibrary.com/">plebeiangraphlibrary</a>. Everything on one page, optimized for copy-paste and LLM context.</p>
+<pre><code class="javascript"><span class="hl-3">import</span><span class="hl-0"> </span><span class="hl-1">*</span><span class="hl-0"> </span><span class="hl-3">as</span><span class="hl-0"> PGL </span><span class="hl-3">from</span><span class="hl-0"> </span><span class="hl-6">&quot;plebeiangraphlibrary&quot;</span><span class="hl-0">;</span>
+</code><button type="button">Copy</button></pre>
+
+<hr>
+<h2 id="the-5-step-pipeline-always-in-this-order" class="tsd-anchor-link">The 5-Step Pipeline (always in this order)<a href="#the-5-step-pipeline-always-in-this-order" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<pre><code><span class="hl-1">1.</span><span class="hl-0"> Get a Graph           </span><span class="hl-2">LoadZKCSimulated</span><span class="hl-0">() </span><span class="hl-3">/</span><span class="hl-0"> </span><span class="hl-2">LoadZKC</span><span class="hl-0">() </span><span class="hl-3">/</span><span class="hl-0"> </span><span class="hl-2">LoadDwt1005</span><span class="hl-0">()</span><br/><span class="hl-0">                         </span><span class="hl-2">LoadGraphFromEdgeListText</span><span class="hl-0">(text)</span><br/><span class="hl-0">                         </span><span class="hl-3">new</span><span class="hl-0"> </span><span class="hl-2">Graph</span><span class="hl-0">() </span><span class="hl-3">+</span><span class="hl-0"> add_node</span><span class="hl-3">/</span><span class="hl-0">add_edge </span><span class="hl-3">+</span><span class="hl-0"> </span><span class="hl-3">await</span><span class="hl-0"> </span><span class="hl-1">G</span><span class="hl-0">.</span><span class="hl-2">initialize</span><span class="hl-0">()</span><br/><span class="hl-0">                         </span><span class="hl-3">await</span><span class="hl-0"> </span><span class="hl-2">GenerateErdosReyni_n_p</span><span class="hl-0">(n, p)  (auto</span><span class="hl-3">-</span><span class="hl-0">initialized)</span><br/><br/><span class="hl-1">2.</span><span class="hl-0"> Create renderer       </span><span class="hl-3">new</span><span class="hl-0"> </span><span class="hl-1">PGL</span><span class="hl-0">.GraphDrawer.</span><span class="hl-2">GraphDrawer3d</span><span class="hl-0">({ graph, canvas, width, height })</span><br/><br/><span class="hl-1">3.</span><span class="hl-0"> </span><span class="hl-2">Init</span><span class="hl-0"> (async)          </span><span class="hl-3">await</span><span class="hl-0"> graph3d.</span><span class="hl-2">init</span><span class="hl-0">()</span><br/><br/><span class="hl-1">4.</span><span class="hl-0"> Draw </span><span class="hl-3">+</span><span class="hl-0"> add to scene   </span><span class="hl-3">const</span><span class="hl-0"> </span><span class="hl-1">nodes</span><span class="hl-0"> </span><span class="hl-3">=</span><span class="hl-0"> </span><span class="hl-1">PGL</span><span class="hl-0">.ThreeWrapper.Draw</span><span class="hl-3">...</span><span class="hl-0">(</span><span class="hl-1">G</span><span class="hl-0">, </span><span class="hl-3">...</span><span class="hl-0">)</span><br/><span class="hl-0">                         graph3d.</span><span class="hl-2">addVisElement</span><span class="hl-0">(nodes)</span><br/><span class="hl-0">                         </span><span class="hl-4">// interaction goes here, after addVisElement:</span><br/><span class="hl-0">                         graph3d.</span><span class="hl-2">enableInteraction</span><span class="hl-0">({ graph: </span><span class="hl-1">G</span><span class="hl-0">, </span><span class="hl-2">onNodeClick</span><span class="hl-0">: (</span><span class="hl-5">d</span><span class="hl-0">) </span><span class="hl-3">=&gt;</span><span class="hl-0"> </span><span class="hl-3">...</span><span class="hl-0"> })</span><br/><br/><span class="hl-1">5.</span><span class="hl-0"> Animate               </span><span class="hl-3">function</span><span class="hl-0"> </span><span class="hl-2">animate</span><span class="hl-0">() { </span><span class="hl-2">requestAnimationFrame</span><span class="hl-0">(animate); graph3d.</span><span class="hl-2">rendercall</span><span class="hl-0">(); }</span><br/><span class="hl-0">                         </span><span class="hl-2">animate</span><span class="hl-0">()</span>
+</code><button>Copy</button></pre>
+
+<hr>
+<h2 id="static-vs-mutable-draw-calls" class="tsd-anchor-link">Static vs. Mutable Draw Calls<a href="#static-vs-mutable-draw-calls" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Static (one-shot)</th>
+<th>Mutable (live animation)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Nodes (billboard)</td>
+<td><code>DrawTHREEGraphVertices(G, bounds, size, color, opacity)</code> → <code>Group</code></td>
+<td><code>DrawTHREEGraphVerticesMutable(G, bounds, size, color, opacity)</code> → <code>{ group, updatePositions(Float32Array) }</code></td>
+</tr>
+<tr>
+<td>Nodes (box)</td>
+<td><code>DrawTHREEBoxBasedVertices(G, bounds, color, size)</code> → <code>Group</code></td>
+<td><code>DrawTHREEBoxBasedVerticesMutable(G, bounds, color, size)</code> → <code>{ group, updatePositions(Float32Array) }</code></td>
+</tr>
+<tr>
+<td>Edges (thick)</td>
+<td><code>DrawTHREEGraphEdgesThick(G, bounds, color, width)</code> → <code>Group</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td>Edges (thin)</td>
+<td><code>DrawTHREEGraphEdgesThin(G, bounds, color)</code> → <code>Group</code></td>
+<td><code>DrawTHREEGraphEdgesThinMutable(G, bounds, color)</code> → <code>{ group, updateEdges() }</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Rule:</strong> If positions change after draw time, use the <code>Mutable</code> variant.</p>
+<hr>
+<h2 id="sampledata" class="tsd-anchor-link">SampleData<a href="#sampledata" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<table>
+<thead>
+<tr>
+<th>Function</th>
+<th>Returns</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>LoadZKCSimulated()</code></td>
+<td><code>Graph</code> (initialized, positions baked)</td>
+<td>Best for quick demos — no layout step needed</td>
+</tr>
+<tr>
+<td><code>LoadZKC()</code></td>
+<td><code>Graph</code> (initialized, no positions)</td>
+<td>Run <code>await SimulateKamadaKawai(...)</code> before drawing</td>
+</tr>
+<tr>
+<td><code>LoadDwt1005()</code></td>
+<td><code>Graph</code> (initialized)</td>
+<td>1005-node structural graph, lazy-loaded</td>
+</tr>
+<tr>
+<td><code>LoadGraphFromEdgeListText(text)</code></td>
+<td><code>Graph</code> (initialized)</td>
+<td>Space-separated <code>nodeA nodeB</code> per line</td>
+</tr>
+<tr>
+<td><code>LoadGraphFromObjText(objText)</code></td>
+<td><code>{ graph, positions: Float32Array }</code></td>
+<td>OBJ mesh → graph. Use positions as <code>initialPositions</code> for StressSGD</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="graph-class" class="tsd-anchor-link">Graph (class)<a href="#graph-class" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<pre><code class="javascript"><span class="hl-3">const</span><span class="hl-0"> </span><span class="hl-1">G</span><span class="hl-0"> </span><span class="hl-3">=</span><span class="hl-0"> </span><span class="hl-3">new</span><span class="hl-0"> </span><span class="hl-1">PGL</span><span class="hl-0">.</span><span class="hl-2">Graph</span><span class="hl-0">(</span><span class="hl-3">new</span><span class="hl-0"> </span><span class="hl-2">Map</span><span class="hl-0">(), </span><span class="hl-3">new</span><span class="hl-0"> </span><span class="hl-2">Map</span><span class="hl-0">());   </span><span class="hl-4">// empty graph (Maps required — no-arg call breaks)</span><br/><span class="hl-3">const</span><span class="hl-0"> </span><span class="hl-1">G</span><span class="hl-0"> </span><span class="hl-3">=</span><span class="hl-0"> </span><span class="hl-3">await</span><span class="hl-0"> </span><span class="hl-1">PGL</span><span class="hl-0">.Graph.</span><span class="hl-2">create</span><span class="hl-0">(nodes, edges);  </span><span class="hl-4">// from arrays, auto-initialized</span><br/><br/><span class="hl-1">G</span><span class="hl-0">.</span><span class="hl-2">add_node</span><span class="hl-0">(id, </span><span class="hl-3">new</span><span class="hl-0"> </span><span class="hl-1">PGL</span><span class="hl-0">.</span><span class="hl-2">_Node</span><span class="hl-0">({ pos: { x, y, z }, </span><span class="hl-3">...</span><span class="hl-0">yourData }))  </span><span class="hl-4">// _Node instance required</span><br/><span class="hl-1">G</span><span class="hl-0">.</span><span class="hl-2">add_edge</span><span class="hl-0">(startId, endId, data</span><span class="hl-3">?</span><span class="hl-0">)</span><br/><span class="hl-1">G</span><span class="hl-0">.</span><span class="hl-2">remove_node</span><span class="hl-0">(id)</span><br/><span class="hl-1">G</span><span class="hl-0">.</span><span class="hl-2">remove_edge</span><span class="hl-0">(id)</span><br/><br/><span class="hl-3">await</span><span class="hl-0"> </span><span class="hl-1">G</span><span class="hl-0">.</span><span class="hl-2">initialize</span><span class="hl-0">()                 </span><span class="hl-4">// REQUIRED after manual builds — loaders do this for you</span><br/><br/><span class="hl-1">G</span><span class="hl-0">.</span><span class="hl-2">get_position_map</span><span class="hl-0">()                 </span><span class="hl-4">// Map&lt;nodeId, PointLike&gt; — current node positions</span><br/><span class="hl-1">G</span><span class="hl-0">.</span><span class="hl-2">apply_position_map</span><span class="hl-0">(map)            </span><span class="hl-4">// write positions back to nodes</span><br/><span class="hl-1">G</span><span class="hl-0">.</span><span class="hl-2">get_edge_map</span><span class="hl-0">()                     </span><span class="hl-4">// Map&lt;edgeId, { ldata: Point[] }&gt; — edge geometry</span><br/><span class="hl-1">G</span><span class="hl-0">.</span><span class="hl-2">apply_edge_pos_maps</span><span class="hl-0">(map)           </span><span class="hl-4">// write edge geometry back</span><br/><span class="hl-1">G</span><span class="hl-0">.</span><span class="hl-2">apply_drawing_maps</span><span class="hl-0">({ pmap, emap }) </span><span class="hl-4">// shorthand for both apply calls</span><br/><span class="hl-1">G</span><span class="hl-0">.</span><span class="hl-2">get_map</span><span class="hl-0">()                          </span><span class="hl-4">// { pmap, emap } shorthand</span><br/><br/><span class="hl-1">G</span><span class="hl-0">.</span><span class="hl-2">get_adjacency</span><span class="hl-0">()                    </span><span class="hl-4">// Map&lt;nodeId, nodeId[]&gt; — sparse adjacency</span><br/><span class="hl-1">G</span><span class="hl-0">.</span><span class="hl-2">get_adjacency_matrix</span><span class="hl-0">()             </span><span class="hl-4">// { matrix: Float32Array (row-major n×n), nodeIds: number[] }</span><br/><span class="hl-1">G</span><span class="hl-0">.</span><span class="hl-2">get_node_ids_order</span><span class="hl-0">()               </span><span class="hl-4">// number[] — stable node ID ordering</span><br/><br/><span class="hl-1">G</span><span class="hl-0">.nodes                              </span><span class="hl-4">// Map&lt;nodeId, _Node&gt;</span><br/><span class="hl-1">G</span><span class="hl-0">.edges                              </span><span class="hl-4">// Map&lt;edgeId, Edge&gt;</span><br/><span class="hl-1">G</span><span class="hl-0">.</span><span class="hl-2">printData</span><span class="hl-0">()                        </span><span class="hl-4">// console-log summary</span>
+</code><button type="button">Copy</button></pre>
+
+<hr>
+<h2 id="graphdrawer3d-renderer" class="tsd-anchor-link">GraphDrawer3d (renderer)<a href="#graphdrawer3d-renderer" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<pre><code class="javascript"><span class="hl-3">const</span><span class="hl-0"> </span><span class="hl-1">graph3d</span><span class="hl-0"> </span><span class="hl-3">=</span><span class="hl-0"> </span><span class="hl-3">new</span><span class="hl-0"> </span><span class="hl-1">PGL</span><span class="hl-0">.GraphDrawer.</span><span class="hl-2">GraphDrawer3d</span><span class="hl-0">({ graph, canvas, width, height });</span><br/><span class="hl-3">await</span><span class="hl-0"> graph3d.</span><span class="hl-2">init</span><span class="hl-0">();</span><br/><br/><span class="hl-0">graph3d.</span><span class="hl-2">addVisElement</span><span class="hl-0">(group)         </span><span class="hl-4">// add a THREE.Group to the scene</span><br/><span class="hl-0">graph3d.</span><span class="hl-2">rendercall</span><span class="hl-0">()                 </span><span class="hl-4">// call every frame inside requestAnimationFrame</span><br/><br/><span class="hl-0">graph3d.</span><span class="hl-2">enableInteraction</span><span class="hl-0">(options)   </span><span class="hl-4">// see Interaction section below</span><br/><span class="hl-0">graph3d.</span><span class="hl-2">disableInteraction</span><span class="hl-0">()</span><br/><br/><span class="hl-4">// Direct Three.js access:</span><br/><span class="hl-0">graph3d.scene        </span><span class="hl-4">// THREE.Scene</span><br/><span class="hl-0">graph3d.camera       </span><span class="hl-4">// THREE.PerspectiveCamera</span><br/><span class="hl-0">graph3d.controls     </span><span class="hl-4">// OrbitControls  (controls.autoRotate = false to disable spin)</span>
+</code><button type="button">Copy</button></pre>
+
+<hr>
+<h2 id="drawing-layout-edge-geometry" class="tsd-anchor-link">Drawing (layout &amp; edge geometry)<a href="#drawing-layout-edge-geometry" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<pre><code class="javascript"><span class="hl-4">// Static layout — returns a position map, then you apply it</span><br/><span class="hl-3">const</span><span class="hl-0"> </span><span class="hl-1">posMap</span><span class="hl-0"> </span><span class="hl-3">=</span><span class="hl-0"> </span><span class="hl-3">await</span><span class="hl-0"> </span><span class="hl-1">PGL</span><span class="hl-0">.Drawing.</span><span class="hl-2">SimulateKamadaKawai</span><span class="hl-0">(</span><span class="hl-1">G</span><span class="hl-0">, iterations, bound</span><span class="hl-3">?</span><span class="hl-0">, cohesion</span><span class="hl-3">?</span><span class="hl-0">, repulsion</span><span class="hl-3">?</span><span class="hl-0">)</span><br/><span class="hl-1">G</span><span class="hl-0">.</span><span class="hl-2">apply_position_map</span><span class="hl-0">(posMap)</span><br/><br/><span class="hl-4">// Edge geometry — always run after setting positions</span><br/><span class="hl-0">const lmap </span><span class="hl-3">=</span><span class="hl-0"> </span><span class="hl-1">PGL</span><span class="hl-0">.Drawing.</span><span class="hl-2">DrawEdgeLinesDivisions</span><span class="hl-0">(</span><span class="hl-1">G</span><span class="hl-0">, numDivisions)  </span><span class="hl-4">// recommended</span><br/><span class="hl-0">const lmap </span><span class="hl-3">=</span><span class="hl-0"> </span><span class="hl-1">PGL</span><span class="hl-0">.Drawing.</span><span class="hl-2">DrawEdgeLines</span><span class="hl-0">(</span><span class="hl-1">G</span><span class="hl-0">, divDistance)</span><br/><span class="hl-1">G</span><span class="hl-0">.</span><span class="hl-2">apply_edge_pos_maps</span><span class="hl-0">(lmap)</span><br/><br/><span class="hl-4">// Edge bundling (async)</span><br/><span class="hl-0">const bundled </span><span class="hl-3">=</span><span class="hl-0"> </span><span class="hl-3">await</span><span class="hl-0"> </span><span class="hl-1">PGL</span><span class="hl-0">.Drawing.</span><span class="hl-2">DrawEdgeBundling</span><span class="hl-0">(lmap, iterations, distance)</span><br/><span class="hl-1">G</span><span class="hl-0">.</span><span class="hl-2">apply_edge_pos_maps</span><span class="hl-0">(bundled)</span><br/><br/><span class="hl-1">PGL</span><span class="hl-0">.Drawing.</span><span class="hl-2">DisplaceEdgeInY</span><span class="hl-0">(lmap, displacement)   </span><span class="hl-4">// arc-lift edges</span><br/><span class="hl-1">PGL</span><span class="hl-0">.Drawing.</span><span class="hl-2">DisplaceVertices</span><span class="hl-0">(</span><span class="hl-1">G</span><span class="hl-0">, parameterKey, maxDisplacement)</span><br/><span class="hl-1">PGL</span><span class="hl-0">.Drawing.</span><span class="hl-2">MoveGraph</span><span class="hl-0">(</span><span class="hl-1">G</span><span class="hl-0">, displacement)            </span><span class="hl-4">// translate all nodes</span><br/><span class="hl-1">PGL</span><span class="hl-0">.Drawing.</span><span class="hl-2">InstanciateRandomPositions</span><span class="hl-0">(</span><span class="hl-1">G</span><span class="hl-0">)         </span><span class="hl-4">// randomize node positions</span><br/><span class="hl-1">PGL</span><span class="hl-0">.Drawing.</span><span class="hl-2">HivePlot</span><span class="hl-0">(</span><span class="hl-1">G</span><span class="hl-0">, selectedNode, step, startPosition)</span>
+</code><button type="button">Copy</button></pre>
+
+<hr>
+<h2 id="threewrapper-geometry-factories" class="tsd-anchor-link">ThreeWrapper (geometry factories)<a href="#threewrapper-geometry-factories" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<pre><code class="javascript"><span class="hl-4">// Nodes</span><br/><span class="hl-1">PGL</span><span class="hl-0">.ThreeWrapper.</span><span class="hl-2">DrawTHREEGraphVertices</span><span class="hl-0">(</span><span class="hl-1">G</span><span class="hl-0">, bounds, size, color, opacity)          → Group  ⚠️ needs .</span><span class="hl-3">/</span><span class="hl-0">Textures</span><span class="hl-3">/</span><span class="hl-0">Square.png</span><br/><span class="hl-1">PGL</span><span class="hl-0">.ThreeWrapper.</span><span class="hl-2">DrawTHREEBoxBasedVertices</span><span class="hl-0">(</span><span class="hl-1">G</span><span class="hl-0">, bounds, color, size)                → Group</span><br/><span class="hl-1">PGL</span><span class="hl-0">.ThreeWrapper.</span><span class="hl-2">DrawTHREEGraphVerticesMutable</span><span class="hl-0">(</span><span class="hl-1">G</span><span class="hl-0">, bounds, size, color, opacity)   → { group, </span><span class="hl-2">updatePositions</span><span class="hl-0">(Float32Array) }</span><br/><span class="hl-1">PGL</span><span class="hl-0">.ThreeWrapper.</span><span class="hl-2">DrawTHREEBoxBasedVerticesMutable</span><span class="hl-0">(</span><span class="hl-1">G</span><span class="hl-0">, bounds, color, size)         → { group, </span><span class="hl-2">updatePositions</span><span class="hl-0">(Float32Array) }</span><br/><span class="hl-1">PGL</span><span class="hl-0">.ThreeWrapper.</span><span class="hl-2">AddBoxBasedImaging</span><span class="hl-0">(</span><span class="hl-1">G</span><span class="hl-0">, bounds, imageUrl, size)                    → </span><span class="hl-2">Group</span><span class="hl-0">  (image</span><span class="hl-3">-</span><span class="hl-0">textured nodes)</span><br/><br/><span class="hl-4">// Edges</span><br/><span class="hl-1">PGL</span><span class="hl-0">.ThreeWrapper.</span><span class="hl-2">DrawTHREEGraphEdgesThick</span><span class="hl-0">(</span><span class="hl-1">G</span><span class="hl-0">, bounds, color, width)                → Group</span><br/><span class="hl-1">PGL</span><span class="hl-0">.ThreeWrapper.</span><span class="hl-2">DrawTHREEGraphEdgesThin</span><span class="hl-0">(</span><span class="hl-1">G</span><span class="hl-0">, bounds, color)                        → Group</span><br/><span class="hl-1">PGL</span><span class="hl-0">.ThreeWrapper.</span><span class="hl-2">DrawTHREEGraphEdgesThinMutable</span><span class="hl-0">(</span><span class="hl-1">G</span><span class="hl-0">, bounds, color)                 → { group, </span><span class="hl-2">updateEdges</span><span class="hl-0">() }</span><br/><span class="hl-1">PGL</span><span class="hl-0">.ThreeWrapper.</span><span class="hl-2">DrawThickEdgesFromEdgeMap</span><span class="hl-0">(edgeMap, bounds, color, width)         → Group</span><br/><span class="hl-1">PGL</span><span class="hl-0">.ThreeWrapper.</span><span class="hl-2">DrawThinEdgesFromEdgeMap</span><span class="hl-0">(edgeMap, bounds, color)                 → Group</span><br/><span class="hl-1">PGL</span><span class="hl-0">.ThreeWrapper.</span><span class="hl-2">DrawSimplifiedEdges</span><span class="hl-0">(</span><span class="hl-1">G</span><span class="hl-0">, bounds, color)                            → Group</span><br/><br/><span class="hl-4">// Color</span><br/><span class="hl-1">PGL</span><span class="hl-0">.ThreeWrapper.</span><span class="hl-2">ChangeTheVertexColours</span><span class="hl-0">(points, nodeIds[], color)  </span><span class="hl-4">// ⚠️ point-cloud vertices only (Group or .children[0])</span><br/><span class="hl-1">PGL</span><span class="hl-0">.ThreeWrapper.</span><span class="hl-2">ResetVertexColors</span><span class="hl-0">(points)                         </span><span class="hl-4">// ⚠️ same</span><br/><br/><span class="hl-4">// Paths &amp; groups</span><br/><span class="hl-1">PGL</span><span class="hl-0">.ThreeWrapper.</span><span class="hl-2">DrawThickPathFromNodeIds</span><span class="hl-0">(</span><span class="hl-1">G</span><span class="hl-0">, bounds, nodeIds[], color, width)     → Group</span><br/><span class="hl-1">PGL</span><span class="hl-0">.ThreeWrapper.</span><span class="hl-2">AddInModularityBasedPointGroups</span><span class="hl-0">(</span><span class="hl-1">G</span><span class="hl-0">, </span><span class="hl-6">&quot;modularity&quot;</span><span class="hl-0">)                 → Group</span>
+</code><button type="button">Copy</button></pre>
+
+<hr>
+<h2 id="interaction-opt-in" class="tsd-anchor-link">Interaction (opt-in)<a href="#interaction-opt-in" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>Call <strong>after</strong> all <code>addVisElement()</code> calls.</p>
+<pre><code class="javascript"><span class="hl-0">graph3d.</span><span class="hl-2">enableInteraction</span><span class="hl-0">({</span><br/><span class="hl-0">  graph: </span><span class="hl-1">G</span><span class="hl-0">,                                         </span><span class="hl-4">// required</span><br/><br/><span class="hl-0">  </span><span class="hl-2">onNodeClick</span><span class="hl-0">:  (</span><span class="hl-5">d</span><span class="hl-3">:</span><span class="hl-0"> </span><span class="hl-2">NodePickDetails</span><span class="hl-0">) </span><span class="hl-3">=&gt;</span><span class="hl-0"> </span><span class="hl-3">void</span><span class="hl-0">,       </span><span class="hl-4">// optional</span><br/><span class="hl-0">  </span><span class="hl-2">onEdgeClick</span><span class="hl-0">:  (</span><span class="hl-5">d</span><span class="hl-3">:</span><span class="hl-0"> </span><span class="hl-2">EdgePickDetails</span><span class="hl-0">) </span><span class="hl-3">=&gt;</span><span class="hl-0"> </span><span class="hl-3">void</span><span class="hl-0">,       </span><span class="hl-4">// optional</span><br/><span class="hl-0">  </span><span class="hl-2">onNodeHover</span><span class="hl-0">:  (</span><span class="hl-5">d</span><span class="hl-3">:</span><span class="hl-0"> </span><span class="hl-2">NodePickDetails</span><span class="hl-0"> </span><span class="hl-3">|</span><span class="hl-0"> </span><span class="hl-1">null</span><span class="hl-0">) </span><span class="hl-3">=&gt;</span><span class="hl-0"> </span><span class="hl-3">void</span><span class="hl-0">, </span><span class="hl-4">// null when cursor leaves</span><br/><span class="hl-0">  </span><span class="hl-2">onEdgeHover</span><span class="hl-0">:  (</span><span class="hl-5">d</span><span class="hl-3">:</span><span class="hl-0"> </span><span class="hl-2">EdgePickDetails</span><span class="hl-0"> </span><span class="hl-3">|</span><span class="hl-0"> </span><span class="hl-1">null</span><span class="hl-0">) </span><span class="hl-3">=&gt;</span><span class="hl-0"> </span><span class="hl-3">void</span><span class="hl-0">,</span><br/><br/><span class="hl-0">  hoverEnabled: </span><span class="hl-1">true</span><span class="hl-0">,                               </span><span class="hl-4">// default true; set false to skip hover raycasting</span><br/><span class="hl-0">  enableNodeDrag: </span><span class="hl-1">false</span><span class="hl-0">,                            </span><span class="hl-4">// enable drag-to-reposition</span><br/><span class="hl-0">  </span><span class="hl-2">onNodeDrag</span><span class="hl-0">: (</span><span class="hl-5">nodeId</span><span class="hl-3">:</span><span class="hl-0"> </span><span class="hl-1">number</span><span class="hl-0">, </span><span class="hl-5">newPos</span><span class="hl-3">:</span><span class="hl-0"> </span><span class="hl-2">PointLike</span><span class="hl-0">) </span><span class="hl-3">=&gt;</span><span class="hl-0"> </span><span class="hl-3">void</span><span class="hl-0">,  </span><span class="hl-4">// update node + call updatePositions/updateEdges</span><br/><span class="hl-0">  controls: graph3d.controls,                       </span><span class="hl-4">// auto-passed; pauses orbit during drag</span><br/><span class="hl-0">})</span>
+</code><button type="button">Copy</button></pre>
+
+<p><strong>NodePickDetails:</strong> <code>{ nodeId, data, neighbours: number[], position: PointLike }</code>
+<strong>EdgePickDetails:</strong> <code>{ edgeId, start, end, data }</code></p>
+<p><strong>Tips:</strong></p>
+<ul>
+<li>Thin and thick edges are both pickable (edge IDs via <code>userData.segmentEdgeIds</code>)</li>
+<li>Set <code>graph3d.controls.autoRotate = false</code> for interactive demos</li>
+<li><code>onNodeHover</code> fires with <code>null</code> when the pointer leaves a node — use this to hide tooltips</li>
+</ul>
+<hr>
+<h2 id="simulation-live-layout" class="tsd-anchor-link">Simulation (live layout)<a href="#simulation-live-layout" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="kamadakawai" class="tsd-anchor-link">Kamada–Kawai<a href="#kamadakawai" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="javascript"><span class="hl-3">const</span><span class="hl-0"> </span><span class="hl-1">sim</span><span class="hl-0"> </span><span class="hl-3">=</span><span class="hl-0"> </span><span class="hl-1">PGL</span><span class="hl-0">.</span><span class="hl-2">createKamadaKawai3D</span><span class="hl-0">(</span><span class="hl-1">G</span><span class="hl-0">, {</span><br/><span class="hl-0">  simulationBound: </span><span class="hl-1">500</span><span class="hl-0">,    </span><span class="hl-4">// world-space radius</span><br/><span class="hl-0">  cohesionValue: </span><span class="hl-1">1</span><span class="hl-0">,        </span><span class="hl-4">// spring attraction</span><br/><span class="hl-0">  repulsionValue: </span><span class="hl-1">1</span><span class="hl-0">,       </span><span class="hl-4">// node repulsion</span><br/><span class="hl-0">  centerPull: </span><span class="hl-1">0.1</span><span class="hl-0">,         </span><span class="hl-4">// pull toward origin</span><br/><span class="hl-0">  iterationsPerStep: </span><span class="hl-1">1</span><span class="hl-0">,    </span><span class="hl-4">// layout steps per call to step()</span><br/><span class="hl-0">  useOctree: </span><span class="hl-1">true</span><span class="hl-0">,         </span><span class="hl-4">// Barnes-Hut approximation (faster for large graphs)</span><br/><span class="hl-0">  octreeTheta: </span><span class="hl-1">0.5</span><span class="hl-0">,</span><br/><span class="hl-0">})</span><br/><br/><span class="hl-4">// In the animation loop:</span><br/><span class="hl-0">sim.</span><span class="hl-2">step</span><span class="hl-0">(deltaTimeSeconds)</span><br/><span class="hl-0">sim.</span><span class="hl-2">getPositions</span><span class="hl-0">()       </span><span class="hl-4">// Float32Array [x0,y0,z0, x1,y1,z1, ...]</span><br/><span class="hl-0">sim.</span><span class="hl-2">getPositionMap</span><span class="hl-0">()     </span><span class="hl-4">// Map&lt;nodeId, PointLike&gt;</span>
+</code><button type="button">Copy</button></pre>
+
+<p><strong>Camera scale warning:</strong> <code>centerPull</code> acts as gravity toward the origin. With <code>centerPull: 0.1</code> and, say, 144 nodes the settled cluster radius is only ~14 simulation units. At <code>BOUNDS: 0.1</code> that is ~1.4 Three.js units. The default camera sits at <code>(0, 100, 100)</code> — 141 units away — so the entire graph appears as a single pixel. Move the camera in after <code>init()</code> and pre-settle before the first frame:</p>
+<pre><code class="javascript"><span class="hl-3">await</span><span class="hl-0"> graph3d.</span><span class="hl-2">init</span><span class="hl-0">();</span><br/><span class="hl-0">graph3d.camera.position.</span><span class="hl-2">set</span><span class="hl-0">(</span><span class="hl-1">0</span><span class="hl-0">, </span><span class="hl-1">3</span><span class="hl-0">, </span><span class="hl-1">3</span><span class="hl-0">); </span><span class="hl-4">// tune to match your BOUNDS</span><br/><span class="hl-0">graph3d.controls.</span><span class="hl-2">update</span><span class="hl-0">();</span><br/><br/><span class="hl-3">const</span><span class="hl-0"> </span><span class="hl-1">sim</span><span class="hl-0"> </span><span class="hl-3">=</span><span class="hl-0"> </span><span class="hl-1">PGL</span><span class="hl-0">.</span><span class="hl-2">createKamadaKawai3D</span><span class="hl-0">(</span><span class="hl-1">G</span><span class="hl-0">, { </span><span class="hl-3">...</span><span class="hl-0">, iterationsPerStep: </span><span class="hl-1">5</span><span class="hl-0"> });</span><br/><span class="hl-4">// burn-in: 300 steps before drawing so layout is already stable on frame 1</span><br/><span class="hl-3">for</span><span class="hl-0"> (</span><span class="hl-3">let</span><span class="hl-0"> s </span><span class="hl-3">=</span><span class="hl-0"> </span><span class="hl-1">0</span><span class="hl-0">; s </span><span class="hl-3">&lt;</span><span class="hl-0"> </span><span class="hl-1">300</span><span class="hl-0">; s</span><span class="hl-3">++</span><span class="hl-0">) sim.</span><span class="hl-2">step</span><span class="hl-0">(</span><span class="hl-1">0.016</span><span class="hl-0">);</span>
+</code><button type="button">Copy</button></pre>
+
+<h3 id="stress-sgd" class="tsd-anchor-link">Stress SGD<a href="#stress-sgd" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="javascript"><span class="hl-3">const</span><span class="hl-0"> </span><span class="hl-1">sim</span><span class="hl-0"> </span><span class="hl-3">=</span><span class="hl-0"> </span><span class="hl-3">await</span><span class="hl-0"> </span><span class="hl-1">PGL</span><span class="hl-0">.</span><span class="hl-2">createStressSGD3D</span><span class="hl-0">(</span><span class="hl-1">G</span><span class="hl-0">, {</span><br/><span class="hl-0">  dimensions: </span><span class="hl-1">2</span><span class="hl-0">,                    </span><span class="hl-4">// 2 or 3</span><br/><span class="hl-0">  initialPositions: Float32Array</span><span class="hl-3">?</span><span class="hl-0">,  </span><span class="hl-4">// seed positions (e.g. from LoadGraphFromObjText)</span><br/><span class="hl-0">  epochsPerStep</span><span class="hl-3">:</span><span class="hl-0"> </span><span class="hl-1">1</span><span class="hl-0">,</span><br/><span class="hl-0">  tMax: </span><span class="hl-1">30</span><span class="hl-0">,</span><br/><span class="hl-0">  eps: </span><span class="hl-1">0.1</span><span class="hl-0">,</span><br/><span class="hl-0">  scaleBound: </span><span class="hl-1">500</span><span class="hl-0">,</span><br/><span class="hl-0">  initialPreservation: </span><span class="hl-1">false</span><span class="hl-0">,</span><br/><span class="hl-0">})</span><br/><span class="hl-4">// Same step / getPositions / getPositionMap API as Kamada–Kawai</span>
+</code><button type="button">Copy</button></pre>
+
+<hr>
+<h2 id="graphmethods-algorithms" class="tsd-anchor-link">GraphMethods (algorithms)<a href="#graphmethods-algorithms" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<pre><code class="javascript"><span class="hl-1">PGL</span><span class="hl-0">.GraphMethods.</span><span class="hl-2">BFSSearch</span><span class="hl-0">(</span><span class="hl-1">G</span><span class="hl-0">, startNodeId)      → Map</span><span class="hl-3">&lt;</span><span class="hl-0">nodeId, exploredFromId</span><span class="hl-3">&gt;</span><br/><span class="hl-1">PGL</span><span class="hl-0">.GraphMethods.</span><span class="hl-2">Dijkstra</span><span class="hl-0">(</span><span class="hl-1">G</span><span class="hl-0">, startNodeId)        → Map</span><span class="hl-3">&lt;</span><span class="hl-0">nodeId, hopCount</span><span class="hl-3">&gt;</span><span class="hl-0">  ⚠️ hop</span><span class="hl-3">-</span><span class="hl-0">count only, not weighted</span><br/><span class="hl-1">PGL</span><span class="hl-0">.GraphMethods.</span><span class="hl-2">GraphDiameter</span><span class="hl-0">(</span><span class="hl-1">G</span><span class="hl-0">)                → { start, end, distance }  (double</span><span class="hl-3">-</span><span class="hl-0">sweep estimate; lower bound)</span><br/><span class="hl-1">PGL</span><span class="hl-0">.GraphMethods.</span><span class="hl-2">SelectSubgraph</span><span class="hl-0">(</span><span class="hl-1">G</span><span class="hl-0">, nodeIds[])    → Graph</span>
+</code><button type="button">Copy</button></pre>
+
+<hr>
+<h2 id="hierarchy-lod-clustering" class="tsd-anchor-link">Hierarchy (LOD / clustering)<a href="#hierarchy-lod-clustering" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<pre><code class="javascript"><span class="hl-1">PGL</span><span class="hl-0">.Hierarchy.</span><span class="hl-2">clusterByDistance</span><span class="hl-0">(</span><span class="hl-1">G</span><span class="hl-0">, { distanceThreshold: </span><span class="hl-1">25</span><span class="hl-0"> })  → </span><span class="hl-2">Graph</span><span class="hl-0"> (</span><span class="hl-1">super</span><span class="hl-3">-</span><span class="hl-0">nodes)</span><br/><span class="hl-1">PGL</span><span class="hl-0">.Hierarchy.</span><span class="hl-2">clusterByStrategy</span><span class="hl-0">(</span><span class="hl-1">G</span><span class="hl-0">, strategy)                    → Graph</span>
+</code><button type="button">Copy</button></pre>
+
+<hr>
+<h2 id="models-graph-generators" class="tsd-anchor-link">Models (graph generators)<a href="#models-graph-generators" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<pre><code class="javascript"><span class="hl-3">const</span><span class="hl-0"> </span><span class="hl-1">G</span><span class="hl-0"> </span><span class="hl-3">=</span><span class="hl-0"> </span><span class="hl-3">await</span><span class="hl-0"> </span><span class="hl-1">PGL</span><span class="hl-0">.Models.</span><span class="hl-2">GenerateErdosReyni_n_p</span><span class="hl-0">(n, p)  </span><span class="hl-4">// random graph</span><br/><span class="hl-3">await</span><span class="hl-0"> </span><span class="hl-1">G</span><span class="hl-0">.</span><span class="hl-2">initialize</span><span class="hl-0">()                                 </span><span class="hl-4">// ⚠️ required — generator does not auto-initialize</span>
+</code><button type="button">Copy</button></pre>
+
+<hr>
+<h2 id="constructors" class="tsd-anchor-link">Constructors<a href="#constructors" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<pre><code class="javascript"><span class="hl-1">PGL</span><span class="hl-0">.Constructors.</span><span class="hl-2">ConstructGraphNodeEdgesList</span><span class="hl-0">(nodes, edges)  → Graph</span>
+</code><button type="button">Copy</button></pre>
+
+<hr>
+<h2 id="matrix-helpers" class="tsd-anchor-link">Matrix helpers<a href="#matrix-helpers" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<pre><code class="javascript"><span class="hl-1">PGL</span><span class="hl-0">.MatrixHelpers.</span><span class="hl-2">matrixVectorMultiply</span><span class="hl-0">(</span><span class="hl-1">A</span><span class="hl-0">, n, x, out)  </span><span class="hl-4">// dense n×n Float32Array matrix × vector</span><br/><span class="hl-1">PGL</span><span class="hl-0">.MatrixHelpers.</span><span class="hl-2">normalizeVector</span><span class="hl-0">(x)                  </span><span class="hl-4">// normalize Float32Array in place</span>
+</code><button type="button">Copy</button></pre>
+
+<hr>
+<h2 id="key-types" class="tsd-anchor-link">Key Types<a href="#key-types" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<pre><code class="typescript"><span class="hl-0">PointLike     </span><span class="hl-3">=</span><span class="hl-0"> { x: number; y: number; z: number }</span><br/><span class="hl-0">Point         </span><span class="hl-4">// class with x, y, z and translate()</span><br/><br/><span class="hl-0">NodeData      </span><span class="hl-3">=</span><span class="hl-0"> { pos?: PointLike; [key: string]: any }</span><br/><span class="hl-0">EdgeData      </span><span class="hl-3">=</span><span class="hl-0"> { ldata?: Point[]; [key: string]: any }</span><br/><br/><span class="hl-0">NodePickDetails </span><span class="hl-3">=</span><span class="hl-0"> { nodeId: number; data: NodeData; neighbours: number[]; position: PointLike }</span><br/><span class="hl-0">EdgePickDetails </span><span class="hl-3">=</span><span class="hl-0"> { edgeId: number; start: number; end: number; data: EdgeData }</span><br/><br/><span class="hl-0">InteractionOptions   </span><span class="hl-4">// full options object for enableInteraction()</span><br/><span class="hl-0">KamadaKawai3DOptions </span><span class="hl-4">// options for createKamadaKawai3D()</span><br/><span class="hl-0">StressSGD3DOptions   </span><span class="hl-4">// options for createStressSGD3D()</span>
+</code><button type="button">Copy</button></pre>
+
+<hr>
+<h2 id="growing-a-graph-while-the-simulation-runs-example-18" class="tsd-anchor-link">Growing a Graph While the Simulation Runs (Example 18)<a href="#growing-a-graph-while-the-simulation-runs-example-18" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>When you add a node to a live simulation you must recreate the simulation (it pre-computes the distance matrix at creation). To preserve existing node positions, directly overwrite the new simulation's internal <code>Float32Array</code> — <code>getPositions()</code> returns the live reference, not a copy.</p>
+<pre><code class="javascript"><span class="hl-3">const</span><span class="hl-0"> </span><span class="hl-1">savedPositions</span><span class="hl-0"> </span><span class="hl-3">=</span><span class="hl-0"> Float32Array.</span><span class="hl-2">from</span><span class="hl-0">(simulation.</span><span class="hl-2">getPositions</span><span class="hl-0">()); </span><span class="hl-4">// copy before changes</span><br/><span class="hl-3">const</span><span class="hl-0"> </span><span class="hl-1">n</span><span class="hl-0"> </span><span class="hl-3">=</span><span class="hl-0"> savedPositions.</span><span class="hl-1">length</span><span class="hl-0"> </span><span class="hl-3">/</span><span class="hl-0"> </span><span class="hl-1">3</span><span class="hl-0">;</span><br/><br/><span class="hl-1">G</span><span class="hl-0">.</span><span class="hl-2">add_node</span><span class="hl-0">(newId, </span><span class="hl-3">new</span><span class="hl-0"> </span><span class="hl-1">PGL</span><span class="hl-0">.</span><span class="hl-2">_Node</span><span class="hl-0">({ pos: { x: cx, y: cy, z: cz } }));</span><br/><span class="hl-1">G</span><span class="hl-0">.</span><span class="hl-2">add_edge</span><span class="hl-0">(newId, existingNeighbourId);</span><br/><span class="hl-4">// add_edge keeps node.neighbours live — no initialize() needed unless you want deduplication</span><br/><br/><span class="hl-3">const</span><span class="hl-0"> </span><span class="hl-1">newSim</span><span class="hl-0"> </span><span class="hl-3">=</span><span class="hl-0"> </span><span class="hl-1">PGL</span><span class="hl-0">.</span><span class="hl-2">createKamadaKawai3D</span><span class="hl-0">(</span><span class="hl-1">G</span><span class="hl-0">, { simulationBound: </span><span class="hl-1">300</span><span class="hl-0">, </span><span class="hl-3">...</span><span class="hl-0"> });</span><br/><span class="hl-3">const</span><span class="hl-0"> </span><span class="hl-1">newPositions</span><span class="hl-0"> </span><span class="hl-3">=</span><span class="hl-0"> newSim.</span><span class="hl-2">getPositions</span><span class="hl-0">(); </span><span class="hl-4">// live reference to internal array</span><br/><span class="hl-0">newPositions.</span><span class="hl-2">set</span><span class="hl-0">(savedPositions);           </span><span class="hl-4">// restore existing-node positions (they map 1-to-1)</span><br/><span class="hl-4">// New node (at index n) keeps its starting position from the simulation init</span><br/><br/><span class="hl-0">simulation </span><span class="hl-3">=</span><span class="hl-0"> newSim;</span><br/><span class="hl-1">G</span><span class="hl-0">.</span><span class="hl-2">apply_position_map</span><span class="hl-0">(simulation.</span><span class="hl-2">getPositionMap</span><span class="hl-0">());</span><br/><span class="hl-1">G</span><span class="hl-0">.</span><span class="hl-2">apply_edge_pos_maps</span><span class="hl-0">(</span><span class="hl-1">PGL</span><span class="hl-0">.Drawing.</span><span class="hl-2">DrawEdgeLinesDivisions</span><span class="hl-0">(</span><span class="hl-1">G</span><span class="hl-0">, </span><span class="hl-1">1</span><span class="hl-0">));</span><br/><span class="hl-2">rebuildGeometry</span><span class="hl-0">(); </span><span class="hl-4">// InstancedMesh count changed — must recreate GPU geometry</span>
+</code><button type="button">Copy</button></pre>
+
+<p><strong>Why <code>newPositions.set(savedPositions)</code> works:</strong> <code>G.get_node_ids_order()</code> returns nodes in Map insertion order. Since you only ever ADD nodes, the first <code>n</code> entries of the new order are identical to the old order — the new node is always appended at index <code>n</code>.</p>
+<hr>
+<h2 id="common-footguns-at-a-glance" class="tsd-anchor-link">Common Footguns at a Glance<a href="#common-footguns-at-a-glance" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<table>
+<thead>
+<tr>
+<th>⚠️</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ChangeTheVertexColours(...)</code> on box vertices — colors don't change</td>
+<td>Use point-cloud vertices (<code>DrawTHREEGraphVertices</code>) for per-node colours</td>
+</tr>
+<tr>
+<td><code>PGL.Models.GenerateErdosReyni_n_p(n, p)</code> without <code>await</code> — you get a Promise, not a Graph</td>
+<td>It's async — <code>const G = await PGL.Models.GenerateErdosReyni_n_p(n, p)</code></td>
+</tr>
+<tr>
+<td><code>new PGL.Graph()</code> with no args — crashes on first access</td>
+<td>Use <code>new PGL.Graph(new Map(), new Map())</code></td>
+</tr>
+<tr>
+<td><code>G.add_node(id, { pos: ... })</code> plain object — <code>add_edge</code> throws on neighbours</td>
+<td>Pass <code>new PGL._Node({ pos: ... })</code></td>
+</tr>
+<tr>
+<td><code>DrawTHREEGraphVertices</code> invisible in bundler projects</td>
+<td>Texture <code>./Textures/Square.png</code> needs to be in public folder; or use <code>DrawTHREEBoxBasedVertices</code></td>
+</tr>
+<tr>
+<td><code>enableInteraction()</code> callbacks never fire</td>
+<td>Call it <strong>after</strong> all <code>addVisElement()</code> calls</td>
+</tr>
+<tr>
+<td><code>Dijkstra</code> gives wrong results for weighted graphs</td>
+<td>It returns hop counts (BFS), not weighted distances</td>
+</tr>
+<tr>
+<td>Static draw call positions don't update</td>
+<td>Use <code>Mutable</code> variants + call <code>updatePositions()</code> / <code>updateEdges()</code> each frame</td>
+</tr>
+<tr>
+<td>Live KK simulation looks like one pixel / blob</td>
+<td><code>centerPull</code> compacts the layout; default camera at <code>(0,100,100)</code> is too far — set <code>graph3d.camera.position.set(0, 3, 3); graph3d.controls.update()</code> after <code>init()</code></td>
+</tr>
+<tr>
+<td>Live KK simulation starts as chaotic scatter</td>
+<td>KK randomises in <code>[0, simulationBound]</code>; burn in first: <code>for (let s = 0; s &lt; 300; s++) sim.step(0.016)</code> before first draw</td>
+</tr>
+</tbody>
+</table>
+</div></div>
+<div class="col-sidebar">
+<div class="page-menu">
+<div class="tsd-navigation settings">
+<details class="tsd-accordion"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h3>Settings</h3></summary>
+<div class="tsd-accordion-details">
+<div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span>
+<ul id="tsd-filter-options">
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li></ul></div>
+<div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div>
+<details open class="tsd-accordion tsd-page-navigation"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h3>On This Page</h3></summary>
+<div class="tsd-accordion-details"><a href="#pgl-cheat-sheet"><span>PGL <wbr/>Cheat <wbr/>Sheet</span></a>
+<ul>
+<li><a href="#the-5-step-pipeline-always-in-this-order"><span>The 5-<wbr/>Step <wbr/>Pipeline (always in this order)</span></a></li>
+<li><a href="#static-vs-mutable-draw-calls"><span>Static vs. <wbr/>Mutable <wbr/>Draw <wbr/>Calls</span></a></li>
+<li><a href="#sampledata"><span>Sample<wbr/>Data</span></a></li>
+<li><a href="#graph-class"><span>Graph (class)</span></a></li>
+<li><a href="#graphdrawer3d-renderer"><span>Graph<wbr/>Drawer3d (renderer)</span></a></li>
+<li><a href="#drawing-layout-edge-geometry"><span>Drawing (layout &amp; edge geometry)</span></a></li>
+<li><a href="#threewrapper-geometry-factories"><span>Three<wbr/>Wrapper (geometry factories)</span></a></li>
+<li><a href="#interaction-opt-in"><span>Interaction (opt-<wbr/>in)</span></a></li>
+<li><a href="#simulation-live-layout"><span>Simulation (live layout)</span></a></li>
+<li>
+<ul>
+<li><a href="#kamadakawai"><span>Kamada–<wbr/>Kawai</span></a></li>
+<li><a href="#stress-sgd"><span>Stress <wbr/>SGD</span></a></li></ul></li>
+<li><a href="#graphmethods-algorithms"><span>Graph<wbr/>Methods (algorithms)</span></a></li>
+<li><a href="#hierarchy-lod-clustering"><span>Hierarchy (<wbr/>LOD / clustering)</span></a></li>
+<li><a href="#models-graph-generators"><span>Models (graph generators)</span></a></li>
+<li><a href="#constructors"><span>Constructors</span></a></li>
+<li><a href="#matrix-helpers"><span>Matrix helpers</span></a></li>
+<li><a href="#key-types"><span>Key <wbr/>Types</span></a></li>
+<li><a href="#growing-a-graph-while-the-simulation-runs-example-18"><span>Growing a <wbr/>Graph <wbr/>While the <wbr/>Simulation <wbr/>Runs (<wbr/>Example 18)</span></a></li>
+<li><a href="#common-footguns-at-a-glance"><span>Common <wbr/>Footguns at a <wbr/>Glance</span></a></li></ul></div></details></div>
+<div class="site-menu">
+<nav id="tsd-sidebar-links" class="tsd-navigation"><a href="/examples.html" class="tsd-nav-link">Examples</a><a href="https://github.com/range-et/PGL" class="tsd-nav-link">GitHub</a><a href="https://www.npmjs.com/package/plebeiangraphlibrary" class="tsd-nav-link">npm</a></nav>
+<nav class="tsd-navigation"><a href="../modules.html">Plebeian Graph Library - v3.0.0</a>
+<ul class="tsd-small-nested-navigation" id="tsd-nav-container">
+<li>Loading...</li></ul></nav></div></div></div><footer>
+<p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+<p>Theme: <a href="https://github.com/range-et/monad_system">Monad System</a></p></footer>
+<div class="overlay"></div></body></html>

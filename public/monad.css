@@ -1,0 +1,1030 @@
+/* Vendored from https://github.com/range-et/monad_system (build/monad.css @ 358d055).
+ * MIT License, Copyright (c) 2025 Indrajeet Haldar. Do not edit; re-copy to update. */
+/*
+ * Monad System
+ * Generated from colors.json — do not edit directly.
+ *
+ * Tiers:
+ *   Strata  — CSS custom properties (--strata-*)       connective state
+ *   Monad   — Structural layout (.monad-*)              root containers
+ *   Atomos  — Primitive components (.atomos-*)          indivisible units
+ *   Threshold — Navigation & transitions (.threshold-*) state crossings
+ */
+
+/* =========================================================================
+   FONTS — Helvetica (system, per the NASA standards manual) · Inter fallback
+           · JetBrains Mono (data) · Lora  (Google Fonts)
+   ========================================================================= */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap');
+
+/* =========================================================================
+   AKASHA — DARK (DEFAULT)
+   The connective state layer. All components read from these.
+   ========================================================================= */
+:root {
+  /* Ground */
+  --strata-bg:             #0F1113;
+  --strata-layer-01:       #171A1E;
+  --strata-layer-02:       #1F242B;
+  --strata-layer-03:       #2A313A;
+
+  /* Type */
+  --strata-text-primary:   #EEF2F6;
+  --strata-text-secondary: #B6BFCC;
+  --strata-text-disabled:  #7D8794;
+
+  /* Structure */
+  --strata-border:         #3A434F;
+  --strata-border-subtle:  #2B323A;
+  --strata-overlay:        rgba(0,0,0,0.65);
+
+  /* Signal */
+  --strata-interactive:        #1E88C8;
+  --strata-interactive-hover:  #1973AA;
+  --strata-interactive-active: #166696;
+  --strata-on-interactive:     #0F1113;
+
+  /* Status */
+  --strata-info:     #2B9ED1;
+  --strata-success:  #6EAD45;
+  --strata-warning:  #D7A12A;
+  --strata-error:    #E4002B;
+  --strata-on-info:    #0F1113;
+  --strata-on-success: #0F1113;
+  --strata-on-warning: #0F1113;
+  /* --strata-on-error is near-white (not near-black) — NASA-discipline:
+     the warning IS the red field, and white-on-red is the high-impact
+     pair the 1976 NASA Graphics Standards Manual reserves for stop-now
+     signaling. Other on-* tokens stay near-black because their bases
+     (info/success/warning) have luminance that pairs better with dark
+     foregrounds. */
+  --strata-on-error:   #F2F4F7;
+  --strata-info-bg:    #2B9ED11a;
+  --strata-success-bg: #6EAD451a;
+  --strata-warning-bg: #D7A12A1a;
+  --strata-error-bg:   #E4002B1a;
+
+  /* Domain */
+  --strata-move-start:  #4CAF50;
+  --strata-move-hand:   #03A9F4;
+  --strata-move-foot:   #FFEB3B;
+  --strata-move-finish: #9C27B0;
+
+  /* Misc */
+  --strata-highlight:  #FFEB3B;
+  --strata-disabled:   #757575;
+  --opacity-low:       0.2;
+  --opacity-high:      0.8;
+
+  /* Type system */
+  --font-sans:   'Helvetica Neue', Helvetica, 'Inter', Arial, sans-serif;
+  --font-mono:   'JetBrains Mono', 'Menlo', 'Courier New', monospace;
+  --font-serif:  'Lora', 'Georgia', Times, serif;
+
+  /* Scale */
+  --type-xs:   0.75rem;
+  --type-sm:   0.875rem;
+  --type-base: 1rem;
+  --type-md:   1.125rem;
+  --type-lg:   1.25rem;
+  --type-xl:   1.5rem;
+  --type-2xl:  1.75rem;
+  --type-3xl:  2rem;
+  --type-4xl:  2.625rem;
+  --type-5xl:  3.375rem;
+
+  /* Grid (8px base unit) */
+  --space-1:  8px;
+  --space-2:  16px;
+  --space-3:  24px;
+  --space-4:  32px;
+  --space-6:  48px;
+  --space-8:  64px;
+  --space-10: 80px;
+
+
+  /* Threshold — durations */
+  --threshold-duration-fast:      80ms;
+  --threshold-duration-base:      160ms;
+  --threshold-duration-slow:      280ms;
+  --threshold-duration-slower:    440ms;
+
+  /* Threshold — easing */
+  --threshold-ease-linear: linear;
+  --threshold-ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+  --threshold-ease-in:     cubic-bezier(0.7, 0, 0.84, 0);
+  --threshold-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* Threshold — composed shorthands (backward compat) */
+  --threshold-fast:      var(--threshold-duration-fast)  var(--threshold-ease-linear);
+  --threshold-base:      var(--threshold-duration-base)  var(--threshold-ease-linear);
+  --threshold-slow:      var(--threshold-duration-slow)  var(--threshold-ease-linear);
+}
+
+/* =========================================================================
+   AKASHA — LIGHT
+   ========================================================================= */
+[data-strata="light"] {
+  --strata-bg:             #F2F4F7;
+  --strata-layer-01:       #ffffff;
+  --strata-layer-02:       #EDF1F5;
+  --strata-layer-03:       #E3E8EE;
+  --strata-text-primary:   #141A22;
+  --strata-text-secondary: #4F5A69;
+  --strata-text-disabled:  #7E8998;
+  --strata-border:         #BCC6D2;
+  --strata-border-subtle:  #D8DFE7;
+  --strata-overlay:        rgba(10,14,20,0.24);
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-strata="dark"]) {
+    --strata-bg:             #F2F4F7;
+    --strata-layer-01:       #ffffff;
+    --strata-layer-02:       #EDF1F5;
+    --strata-layer-03:       #E3E8EE;
+    --strata-text-primary:   #141A22;
+    --strata-text-secondary: #4F5A69;
+    --strata-text-disabled:  #7E8998;
+    --strata-border:         #BCC6D2;
+    --strata-border-subtle:  #D8DFE7;
+    --strata-overlay:        rgba(10,14,20,0.24);
+  }
+}
+
+/* =========================================================================
+   BASE RESET
+   ========================================================================= */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  font-size: var(--type-base);
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--strata-text-primary);
+  background-color: var(--strata-bg);
+  -webkit-font-smoothing: antialiased;
+  transition: background-color var(--threshold-base), color var(--threshold-base);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--strata-text-primary);
+  letter-spacing: normal;
+}
+h1 { font-size: clamp(1.75rem,  4vw + 0.5rem,  var(--type-4xl)); }
+h2 { font-size: clamp(1.5rem,   3vw + 0.5rem,  var(--type-3xl)); }
+h3 { font-size: clamp(1.25rem,  2.5vw + 0.25rem, var(--type-2xl)); }
+h4 { font-size: clamp(1.125rem, 2vw + 0.125rem, var(--type-xl)); }
+h5 { font-size: clamp(1rem,     1.5vw,          var(--type-lg)); }
+h6 { font-size: var(--type-base); }
+
+p { color: var(--strata-text-secondary); line-height: 1.65; }
+
+a {
+  color: var(--strata-interactive);
+  text-decoration: none;
+  transition: color var(--threshold-fast);
+}
+a:hover { color: var(--strata-interactive-hover); text-decoration: underline; }
+
+code, pre {
+  font-family: var(--font-mono);
+  font-size: var(--type-sm);
+  background: var(--strata-layer-02);
+  border: 1px solid var(--strata-border-subtle);
+}
+code { padding: 1px 5px; }
+pre  { padding: var(--space-2); overflow-x: auto; border-left: 2px solid var(--strata-interactive); }
+
+::selection {
+  background: #1E88C8;
+  color: #0F1113;
+}
+
+:focus-visible {
+  outline: 2px solid var(--strata-interactive);
+  outline-offset: 1px;
+}
+
+/* Scrollbar — Webkit (Chrome, Safari, Edge) */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--strata-bg); }
+::-webkit-scrollbar-thumb {
+  background: var(--strata-border);
+  border: 2px solid var(--strata-bg);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--strata-interactive); }
+
+/* Scrollbar — Firefox */
+* { scrollbar-width: thin; scrollbar-color: var(--strata-border) var(--strata-bg); }
+
+/* =========================================================================
+   MONAD — GRID  (8px base unit, 16 columns)
+   ========================================================================= */
+.monad-grid {
+  display: grid;
+  grid-template-columns: repeat(16, 1fr);
+  gap: var(--space-2);
+  width: 100%;
+  max-width: 1584px;
+  margin-inline: auto;
+  padding-inline: var(--space-2);
+}
+.monad-row {
+  display: grid;
+  grid-template-columns: repeat(16, 1fr);
+  gap: var(--space-2);
+}
+
+@media (max-width: 1056px) {
+  .monad-grid { grid-template-columns: repeat(8, 1fr); }
+  .monad-row  { grid-template-columns: repeat(8, 1fr); }
+  .monad-col-md-full { grid-column: 1 / -1 !important; }
+  .monad-col-md-half { grid-column: span 4 !important; }
+}
+@media (max-width: 672px) {
+  .monad-grid { grid-template-columns: repeat(4, 1fr); padding-inline: 0; }
+  .monad-row  { grid-template-columns: repeat(4, 1fr); }
+  [class*="monad-col-"]:not([class*="monad-col-sm-"]) { grid-column: span 4; }
+  .monad-col-sm-full { grid-column: 1 / -1 !important; }
+  .monad-col-sm-half { grid-column: span 2 !important; }
+}
+
+.monad-col-1  { grid-column: span 1; }
+.monad-col-2  { grid-column: span 2; }
+.monad-col-3  { grid-column: span 3; }
+.monad-col-4  { grid-column: span 4; }
+.monad-col-5  { grid-column: span 5; }
+.monad-col-6  { grid-column: span 6; }
+.monad-col-7  { grid-column: span 7; }
+.monad-col-8  { grid-column: span 8; }
+.monad-col-9  { grid-column: span 9; }
+.monad-col-10 { grid-column: span 10; }
+.monad-col-11 { grid-column: span 11; }
+.monad-col-12 { grid-column: span 12; }
+.monad-col-13 { grid-column: span 13; }
+.monad-col-14 { grid-column: span 14; }
+.monad-col-15 { grid-column: span 15; }
+.monad-col-16 { grid-column: span 16; }
+
+/* =========================================================================
+   MONAD — SHELL  (structural layout)
+   ========================================================================= */
+.monad-layout {
+  display: flex;
+  min-height: calc(100vh - 48px);
+}
+
+.monad-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 48px;
+  padding-inline: var(--space-2);
+  background: var(--strata-layer-01);
+  border-bottom: 1px solid var(--strata-border);
+}
+.monad-header__name {
+  font-size: var(--type-base);
+  font-weight: 700;
+  color: var(--strata-text-primary);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+.monad-header__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-left: auto;
+}
+
+.monad-rail {
+  width: 240px;
+  min-height: 100vh;
+  padding: var(--space-2) 0;
+  background: var(--strata-layer-01);
+  border-right: 1px solid var(--strata-border);
+  flex-shrink: 0;
+}
+.monad-rail__section {
+  padding: var(--space-2) var(--space-2) var(--space-1);
+  font-size: var(--type-sm);
+  font-weight: 500;
+  color: var(--strata-text-secondary);
+}
+.monad-rail__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 9px var(--space-2);
+  font-size: var(--type-sm);
+  color: var(--strata-text-secondary);
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+  text-decoration: none;
+  transition: background var(--threshold-fast), color var(--threshold-fast);
+}
+.monad-rail__item:hover {
+  background: var(--strata-layer-02);
+  color: var(--strata-text-primary);
+}
+.monad-rail__item.active {
+  background: var(--strata-layer-02);
+  color: var(--strata-interactive);
+  border-left: 2px solid var(--strata-interactive);
+  padding-left: calc(var(--space-2) - 2px);
+}
+
+.monad-content {
+  flex: 1;
+  padding: var(--space-4);
+  min-width: 0;
+}
+
+/* =========================================================================
+   THRESHOLD — NAVIGATION  (traversal elements)
+   ========================================================================= */
+.threshold-nav {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex: 1;
+}
+.threshold-nav a, .threshold-link {
+  display: inline-block;
+  padding: 6px var(--space-2);
+  font-size: var(--type-sm);
+  font-weight: 400;
+  color: var(--strata-text-secondary);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  transition: color var(--threshold-fast), border-color var(--threshold-fast);
+}
+.threshold-nav a:hover, .threshold-link:hover {
+  color: var(--strata-text-primary);
+  text-decoration: none;
+}
+.threshold-nav a.active, .threshold-link.active {
+  color: var(--strata-interactive);
+  border-bottom-color: var(--strata-interactive);
+}
+
+/* Hamburger toggle */
+.threshold-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid var(--strata-border);
+  cursor: pointer;
+  color: var(--strata-text-secondary);
+  transition: background var(--threshold-fast), color var(--threshold-fast);
+  flex-shrink: 0;
+}
+.threshold-toggle:hover { background: var(--strata-layer-02); color: var(--strata-text-primary); }
+.threshold-toggle__bar {
+  display: block;
+  width: 16px;
+  height: 2px;
+  background: currentColor;
+  transition: transform var(--threshold-fast), opacity var(--threshold-fast);
+}
+.threshold-toggle[aria-expanded="true"] .threshold-toggle__bar:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.threshold-toggle[aria-expanded="true"] .threshold-toggle__bar:nth-child(2) { opacity: 0; }
+.threshold-toggle[aria-expanded="true"] .threshold-toggle__bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* Overlay backdrop */
+.threshold-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: var(--strata-overlay);
+  z-index: 199;
+}
+.threshold-overlay.is-visible { display: block; }
+
+@media (max-width: 1056px) {
+  .threshold-toggle { display: flex; }
+  .threshold-nav {
+    display: none;
+    position: fixed;
+    top: 48px;
+    left: 0;
+    right: 0;
+    background: var(--strata-layer-01);
+    border-bottom: 2px solid var(--strata-border);
+    padding: var(--space-2);
+    z-index: 98;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .threshold-nav.is-open { display: flex; }
+  .threshold-nav a {
+    padding: var(--space-1) var(--space-2);
+    width: 100%;
+    border-bottom: none;
+  }
+  .monad-rail {
+    position: fixed;
+    top: 48px;
+    left: 0;
+    bottom: 0;
+    z-index: 200;
+    transform: translateX(-100%);
+    transition: transform var(--threshold-base);
+    min-height: unset;
+    overflow-y: auto;
+  }
+  .monad-rail.is-open { transform: translateX(0); }
+  .monad-content { padding: var(--space-3); }
+}
+@media (max-width: 672px) {
+  .monad-content { padding: var(--space-2); }
+}
+
+/* =========================================================================
+   AKASHA TOGGLE  (theme switcher)
+   ========================================================================= */
+.strata-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid var(--strata-border);
+  color: var(--strata-text-secondary);
+  cursor: pointer;
+  font-size: var(--type-sm);
+  font-family: var(--font-mono);
+  transition: background var(--threshold-fast), color var(--threshold-fast), border-color var(--threshold-fast);
+}
+.strata-toggle:hover {
+  background: var(--strata-interactive);
+  color: var(--strata-on-interactive);
+  border-color: var(--strata-interactive);
+}
+
+/* =========================================================================
+   ATOMOS — BUTTONS  (indivisible action units)
+   ========================================================================= */
+.atomos-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  padding: 10px var(--space-2);
+  font-family: var(--font-sans);
+  font-size: var(--type-sm);
+  font-weight: 500;
+  line-height: 1;
+  border: 1px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  text-decoration: none;
+  transition:
+    background var(--threshold-fast),
+    border-color var(--threshold-fast),
+    color var(--threshold-fast);
+}
+.atomos-btn:disabled { opacity: 0.35; cursor: not-allowed; pointer-events: none; }
+.atomos-btn--sm { padding: 6px var(--space-2); font-size: var(--type-xs); }
+.atomos-btn--lg { padding: 14px var(--space-3); font-size: var(--type-base); }
+
+.atomos-btn--primary {
+  background: var(--strata-interactive);
+  color: var(--strata-on-interactive);
+  border-color: var(--strata-interactive);
+}
+.atomos-btn--primary:hover  { background: var(--strata-interactive-hover);  border-color: var(--strata-interactive-hover); }
+.atomos-btn--primary:active { background: var(--strata-interactive-active); border-color: var(--strata-interactive-active); }
+
+.atomos-btn--secondary {
+  background: transparent;
+  color: var(--strata-interactive);
+  border-color: var(--strata-interactive);
+}
+.atomos-btn--secondary:hover  { background: var(--strata-interactive); color: var(--strata-on-interactive); }
+.atomos-btn--secondary:active { background: var(--strata-interactive-active); color: var(--strata-on-interactive); border-color: var(--strata-interactive-active); }
+
+.atomos-btn--danger {
+  background: var(--strata-error);
+  color: var(--strata-on-error);
+  border-color: var(--strata-error);
+}
+.atomos-btn--danger:hover  { background: color-mix(in srgb, var(--strata-error) 85%, black); border-color: color-mix(in srgb, var(--strata-error) 85%, black); }
+.atomos-btn--danger:active { background: color-mix(in srgb, var(--strata-error) 75%, black); border-color: color-mix(in srgb, var(--strata-error) 75%, black); }
+
+.atomos-btn--ghost {
+  background: transparent;
+  color: var(--strata-text-secondary);
+  border-color: transparent;
+}
+.atomos-btn--ghost:hover {
+  background: var(--strata-layer-02);
+  color: var(--strata-text-primary);
+  border-color: var(--strata-border);
+}
+
+/* =========================================================================
+   ATOMOS — CARDS  (contained surface units)
+   ========================================================================= */
+.atomos-card {
+  background: var(--strata-layer-01);
+  border: 1px solid var(--strata-border);
+  padding: var(--space-3);
+}
+.atomos-card--interactive { cursor: pointer; }
+.atomos-card--interactive:hover { border-color: var(--strata-interactive); }
+.atomos-card--flat { border-color: var(--strata-border-subtle); }
+
+.atomos-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--strata-border-subtle);
+}
+.atomos-card__title { font-size: var(--type-base); font-weight: 500; color: var(--strata-text-primary); }
+.atomos-card__body  { color: var(--strata-text-secondary); font-size: var(--type-sm); }
+
+.atomos-tile {
+  background: var(--strata-layer-01);
+  border: 1px solid var(--strata-border);
+  padding: var(--space-3);
+  cursor: pointer;
+  transition: background var(--threshold-fast), border-color var(--threshold-fast);
+}
+.atomos-tile:hover  { background: var(--strata-layer-02); border-color: var(--strata-interactive); }
+.atomos-tile.active {
+  background: var(--strata-layer-02);
+  border-left: 2px solid var(--strata-interactive);
+  padding-left: calc(var(--space-3) - 2px);
+}
+
+/* Stat variant */
+.atomos-stat {
+  background: var(--strata-layer-01);
+  border: 1px solid var(--strata-border);
+  border-top: 2px solid var(--strata-border);
+  padding: var(--space-3);
+}
+.atomos-stat--signal   { border-top-color: var(--strata-interactive); }
+.atomos-stat--success  { border-top-color: var(--strata-success); }
+.atomos-stat--warning  { border-top-color: var(--strata-warning); }
+.atomos-stat--error    { border-top-color: var(--strata-error); }
+
+.atomos-stat__eyebrow {
+  font-size: var(--type-sm);
+  font-weight: 500;
+  color: var(--strata-text-secondary);
+  margin-bottom: var(--space-1);
+}
+.atomos-stat__value {
+  font-size: var(--type-3xl);
+  font-weight: 300;
+  color: var(--strata-text-primary);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.atomos-stat__label { font-size: var(--type-sm); color: var(--strata-text-secondary); margin-top: 4px; }
+.atomos-stat__delta { font-size: var(--type-xs); margin-top: 6px; font-family: var(--font-mono); }
+.atomos-stat__delta--up   { color: var(--strata-success); }
+.atomos-stat__delta--down { color: var(--strata-error); }
+
+@media (max-width: 672px) {
+  .atomos-card, .atomos-tile, .atomos-stat { padding: var(--space-2); }
+}
+
+/* =========================================================================
+   ATOMOS — TAGS & BADGES
+   ========================================================================= */
+.atomos-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 7px;
+  font-size: var(--type-xs);
+  font-weight: 600;
+  font-family: var(--font-mono);
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+.atomos-tag--info    { background: var(--strata-info-bg);    color: var(--strata-info);    border-color: var(--strata-info); }
+.atomos-tag--success { background: var(--strata-success-bg); color: var(--strata-success); border-color: var(--strata-success); }
+.atomos-tag--warning { background: var(--strata-warning-bg); color: var(--strata-warning); border-color: var(--strata-warning); }
+.atomos-tag--error   { background: var(--strata-error-bg);   color: var(--strata-error);   border-color: var(--strata-error); }
+.atomos-tag--neutral { background: var(--strata-layer-02); color: var(--strata-text-secondary); border-color: var(--strata-border); }
+
+.atomos-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  font-size: 10px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  background: var(--strata-interactive);
+  color: var(--strata-on-interactive);
+}
+.atomos-badge--error { background: var(--strata-error); color: var(--strata-on-error); }
+
+/* =========================================================================
+   ATOMOS — NOTICES  (status communication)
+   ========================================================================= */
+.atomos-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-left: 3px solid transparent;
+  font-size: var(--type-sm);
+}
+.atomos-notice__icon  { flex-shrink: 0; margin-top: 1px; font-family: var(--font-mono); }
+.atomos-notice__body  { flex: 1; }
+.atomos-notice__title { font-weight: 500; color: var(--strata-text-primary); margin-bottom: 2px; }
+.atomos-notice__msg   { color: var(--strata-text-secondary); }
+.atomos-notice__close {
+  background: transparent; border: none; cursor: pointer; padding: 0;
+  color: var(--strata-text-disabled); font-size: var(--type-base); flex-shrink: 0;
+  transition: color var(--threshold-fast);
+}
+.atomos-notice__close:hover { color: var(--strata-text-primary); }
+
+.atomos-notice--info    { background: var(--strata-info-bg);    border-color: var(--strata-info); }
+.atomos-notice--success { background: var(--strata-success-bg); border-color: var(--strata-success); }
+.atomos-notice--warning { background: var(--strata-warning-bg); border-color: var(--strata-warning); }
+.atomos-notice--error   { background: var(--strata-error-bg);   border-color: var(--strata-error); }
+
+/* =========================================================================
+   ATOMOS — CALLOUTS  (high-priority state, NASA-discipline "fill not frame")
+   =========================================================================
+   Notices are *informational* — outlined, tinted bg, peripheral. Callouts
+   are *attention-claiming* — the state IS the field. Use callouts when the
+   user must look at this element first; use notices for ambient status.
+
+   Discipline: solid status field, on-* text token, flush-left, NO decorative
+   icon (the colour and the type are the signal). Type is Helvetica. The
+   headline is bold. The head and the action use medium weight. All text is
+   sentence case without added letter spacing.
+   Benchmark: the warning callout averages 86.2% UMSI++ mass-on-target in the
+   perception benchmark (benchmark/report.md, run of 13 October 2026). */
+.atomos-callout {
+  padding: 0;
+  text-align: left;
+  border: 0;
+}
+.atomos-callout *, .atomos-callout *::before, .atomos-callout *::after {
+  /* The callout's tonal field IS the readability contract. Reset any
+     ambient text-color rules (e.g. global p tag color) so descendants
+     inherit the on-* token via currentColor. */
+  color: inherit;
+}
+.atomos-callout__head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  font-family: var(--font-sans);
+  font-size: var(--type-sm);
+  font-weight: 500;
+  border-bottom: 1px solid currentColor;
+}
+.atomos-callout__body {
+  padding: var(--space-3);
+}
+.atomos-callout__headline {
+  font-family: var(--font-sans);
+  font-size: var(--type-4xl);
+  font-weight: 700; line-height: 1.0;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  margin: 0;
+}
+.atomos-callout__sub {
+  margin-top: var(--space-2);
+  margin-bottom: 0;
+  font-family: var(--font-sans);
+  font-size: var(--type-base);
+  line-height: 1.45;
+}
+.atomos-callout__action {
+  display: inline-block;
+  margin-top: var(--space-3);
+  padding: var(--space-1) var(--space-3);
+  font-family: var(--font-sans);
+  font-size: var(--type-sm);
+  font-weight: 500;
+  /* Inverted from the callout: text-color becomes bg, bg becomes text */
+  background: currentColor;
+}
+.atomos-callout__action > * { color: var(--callout-bg, var(--strata-bg)); }
+
+.atomos-callout--error {
+  background: var(--strata-error);
+  color: var(--strata-on-error);
+  --callout-bg: var(--strata-error);
+}
+.atomos-callout--warning {
+  background: var(--strata-warning);
+  color: var(--strata-on-warning);
+  --callout-bg: var(--strata-warning);
+}
+.atomos-callout--info {
+  background: var(--strata-info);
+  color: var(--strata-on-info);
+  --callout-bg: var(--strata-info);
+}
+.atomos-callout--success {
+  background: var(--strata-success);
+  color: var(--strata-on-success);
+  --callout-bg: var(--strata-success);
+}
+
+/* =========================================================================
+   ATOMOS — FORMS
+   ========================================================================= */
+.atomos-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: var(--space-3);
+}
+.atomos-label {
+  font-size: var(--type-sm);
+  font-weight: 500;
+  color: var(--strata-text-primary);
+}
+
+.atomos-input, .atomos-select, .atomos-textarea {
+  width: 100%;
+  font-family: var(--font-sans);
+  font-size: var(--type-sm);
+  color: var(--strata-text-primary);
+  background: var(--strata-layer-01);
+  border: 1px solid var(--strata-border);
+  outline: none;
+  -webkit-appearance: none;
+  transition: border-color var(--threshold-fast);
+}
+.atomos-input    { padding: 10px var(--space-2); }
+.atomos-select   { padding: 10px var(--space-2); cursor: pointer; }
+.atomos-textarea { padding: var(--space-2); resize: vertical; min-height: 96px; }
+
+.atomos-input::placeholder { color: var(--strata-text-disabled); }
+.atomos-input:focus, .atomos-select:focus, .atomos-textarea:focus {
+  border-color: var(--strata-interactive);
+  box-shadow: inset 2px 0 0 var(--strata-interactive);
+}
+.atomos-input:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  background: var(--strata-layer-02);
+}
+.atomos-input--error { border-color: var(--strata-error); }
+.atomos-input--error:focus { box-shadow: inset 2px 0 0 var(--strata-error); }
+
+.atomos-helper { font-size: var(--type-xs); color: var(--strata-text-disabled); font-family: var(--font-mono); }
+.atomos-helper--error { color: var(--strata-error); }
+
+/* Toggle switch */
+.atomos-switch {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  cursor: pointer;
+}
+.atomos-switch__track {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  background: var(--strata-layer-03);
+  border: 1px solid var(--strata-border);
+  transition: background var(--threshold-fast), border-color var(--threshold-fast);
+  flex-shrink: 0;
+}
+.atomos-switch__track::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  background: var(--strata-text-disabled);
+  transition: transform var(--threshold-fast), background var(--threshold-fast);
+}
+.atomos-switch input:checked + .atomos-switch__track { background: var(--strata-interactive); border-color: var(--strata-interactive); }
+.atomos-switch input:checked + .atomos-switch__track::after { transform: translateX(16px); background: var(--strata-on-interactive); }
+.atomos-switch input { position: absolute; opacity: 0; width: 0; height: 0; }
+.atomos-switch input:focus-visible + .atomos-switch__track {
+  outline: 2px solid var(--strata-interactive);
+  outline-offset: 2px;
+}
+.atomos-switch__label { font-size: var(--type-sm); color: var(--strata-text-secondary); }
+
+/* =========================================================================
+   ATOMOS — TABLE
+   ========================================================================= */
+.atomos-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid var(--strata-border);
+}
+.atomos-table-wrap > .atomos-table { border: none; min-width: 480px; }
+
+.atomos-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--type-sm);
+}
+.atomos-table th {
+  padding: var(--space-1) var(--space-2);
+  text-align: left;
+  font-size: var(--type-sm);
+  font-weight: 500;
+  color: var(--strata-text-secondary);
+  border-bottom: 1px solid var(--strata-text-primary);
+  background: var(--strata-layer-01);
+}
+.atomos-table td {
+  padding: var(--space-1) var(--space-2);
+  color: var(--strata-text-primary);
+  border-bottom: 1px solid var(--strata-border-subtle);
+  vertical-align: middle;
+}
+.atomos-table tbody tr { transition: background var(--threshold-fast); }
+.atomos-table tbody tr:hover { background: var(--strata-layer-02); }
+.atomos-table--zebra tbody tr:nth-child(even) { background: var(--strata-layer-01); }
+.atomos-table--zebra tbody tr:nth-child(odd)  { background: var(--strata-bg); }
+.atomos-table--zebra tbody tr:hover { background: var(--strata-layer-02); }
+
+@media (max-width: 672px) {
+  .atomos-table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+}
+
+/* =========================================================================
+   ATOMOS — PROGRESS
+   ========================================================================= */
+.atomos-progress {
+  height: 4px;
+  background: var(--strata-layer-03);
+  overflow: hidden;
+}
+.atomos-progress__fill {
+  height: 100%;
+  width: var(--progress, 0%);
+  background: var(--strata-interactive);
+  transition: width var(--threshold-slow);
+}
+.atomos-progress__fill--success { background: var(--strata-success); }
+.atomos-progress__fill--warning { background: var(--strata-warning); }
+.atomos-progress__fill--error   { background: var(--strata-error); }
+
+/* =========================================================================
+   ATOMOS — DOMAIN HOLDS  (movement-specific, never reuse for status)
+   ========================================================================= */
+.atomos-hold {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  font-size: var(--type-xs);
+  font-weight: 600;
+  font-family: var(--font-mono);
+  border: 1px solid transparent;
+}
+.atomos-hold::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: currentColor;
+}
+
+.atomos-hold--start  { color: var(--strata-move-start);  background: #4CAF5018;  border-color: var(--strata-move-start); }
+.atomos-hold--hand   { color: var(--strata-move-hand);   background: #03A9F418;   border-color: var(--strata-move-hand); }
+.atomos-hold--foot   { color: var(--strata-move-foot);   background: #FFEB3B18;   border-color: var(--strata-move-foot); }
+.atomos-hold--finish { color: var(--strata-move-finish); background: #9C27B018; border-color: var(--strata-move-finish); }
+
+/* =========================================================================
+   UTILITIES
+   ========================================================================= */
+.mn-divider {
+  border: none;
+  border-top: 1px solid var(--strata-border-subtle);
+  margin: var(--space-3) 0;
+}
+.mn-spacer { flex: 1; }
+
+.mn-text-primary   { color: var(--strata-text-primary); }
+.mn-text-secondary { color: var(--strata-text-secondary); }
+.mn-text-disabled  { color: var(--strata-text-disabled); }
+.mn-text-info      { color: var(--strata-info); }
+.mn-text-success   { color: var(--strata-success); }
+.mn-text-warning   { color: var(--strata-warning); }
+.mn-text-error     { color: var(--strata-error); }
+.mn-text-mono      { font-family: var(--font-mono); }
+.mn-truncate       { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mn-sr-only        { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border-width: 0; }
+
+/* Responsive show/hide */
+.mn-hide-sm { }
+.mn-hide-md { }
+.mn-show-sm { display: none; }
+.mn-show-md { display: none; }
+@media (max-width: 672px) {
+  .mn-hide-sm { display: none !important; }
+  .mn-show-sm { display: revert !important; }
+}
+@media (max-width: 1056px) {
+  .mn-hide-md { display: none !important; }
+  .mn-show-md { display: revert !important; }
+}
+
+
+/* =========================================================================
+   STRATA — TEXTURE TOKENS
+   ========================================================================= */
+:root {
+  --strata-texture-dot: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12'><circle cx='6.0' cy='6.0' r='1.5' fill='black' fill-opacity='0.6'/></svg>");
+  --strata-texture-mask-dot: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12'><circle cx='6.0' cy='6.0' r='1.5' fill='black' fill-opacity='0.6'/></svg>");
+  --strata-texture-hatch-v: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='8'><line x1='4.0' y1='0' x2='4.0' y2='8' stroke='black' stroke-width='1' stroke-opacity='0.6'/></svg>");
+  --strata-texture-mask-hatch-v: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='8'><line x1='4.0' y1='0' x2='4.0' y2='8' stroke='black' stroke-width='1' stroke-opacity='0.6'/></svg>");
+  --strata-texture-hatch-h: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='8'><line x1='0' y1='4.0' x2='8' y2='4.0' stroke='black' stroke-width='1' stroke-opacity='0.6'/></svg>");
+  --strata-texture-mask-hatch-h: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='8'><line x1='0' y1='4.0' x2='8' y2='4.0' stroke='black' stroke-width='1' stroke-opacity='0.6'/></svg>");
+  --strata-texture-hatch-x: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='8'><line x1='4.0' y1='0' x2='4.0' y2='8' stroke='black' stroke-width='1' stroke-opacity='0.6'/><line x1='0' y1='4.0' x2='8' y2='4.0' stroke='black' stroke-width='1' stroke-opacity='0.6'/></svg>");
+  --strata-texture-mask-hatch-x: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='8'><line x1='4.0' y1='0' x2='4.0' y2='8' stroke='black' stroke-width='1' stroke-opacity='0.6'/><line x1='0' y1='4.0' x2='8' y2='4.0' stroke='black' stroke-width='1' stroke-opacity='0.6'/></svg>");
+  --strata-texture-hatch-fwd: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10'><line x1='0' y1='10' x2='10' y2='0' stroke='black' stroke-width='1' stroke-opacity='0.6'/><line x1='-10' y1='10' x2='10' y2='-10' stroke='black' stroke-width='1' stroke-opacity='0.6'/><line x1='0' y1='20' x2='20' y2='0' stroke='black' stroke-width='1' stroke-opacity='0.6'/></svg>");
+  --strata-texture-mask-hatch-fwd: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10'><line x1='0' y1='10' x2='10' y2='0' stroke='black' stroke-width='1' stroke-opacity='0.6'/><line x1='-10' y1='10' x2='10' y2='-10' stroke='black' stroke-width='1' stroke-opacity='0.6'/><line x1='0' y1='20' x2='20' y2='0' stroke='black' stroke-width='1' stroke-opacity='0.6'/></svg>");
+  --strata-texture-hatch-bwd: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10'><line x1='0' y1='0' x2='10' y2='10' stroke='black' stroke-width='1' stroke-opacity='0.6'/><line x1='-10' y1='0' x2='10' y2='20' stroke='black' stroke-width='1' stroke-opacity='0.6'/><line x1='0' y1='-10' x2='20' y2='10' stroke='black' stroke-width='1' stroke-opacity='0.6'/></svg>");
+  --strata-texture-mask-hatch-bwd: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10'><line x1='0' y1='0' x2='10' y2='10' stroke='black' stroke-width='1' stroke-opacity='0.6'/><line x1='-10' y1='0' x2='10' y2='20' stroke='black' stroke-width='1' stroke-opacity='0.6'/><line x1='0' y1='-10' x2='20' y2='10' stroke='black' stroke-width='1' stroke-opacity='0.6'/></svg>");
+}
+
+/* =========================================================================
+   ATOMOS — TEXTURE UTILITIES
+   -------------------------------------------------------------------------
+   Patterns render via ``mask-image`` so the visible color comes from the
+   current theme token (``--strata-text-secondary`` by default). Override
+   on a per-element basis with ``background-color`` or by setting
+   ``--strata-texture-color``. Works on dark and light surfaces.
+   ========================================================================= */
+.atomos-texture {
+  background-color: var(--strata-texture-color, var(--strata-text-secondary));
+  -webkit-mask-repeat: repeat;
+          mask-repeat: repeat;
+  -webkit-mask-size: auto;
+          mask-size: auto;
+}
+.atomos-texture--dot {
+  -webkit-mask-image: var(--strata-texture-mask-dot);
+          mask-image: var(--strata-texture-mask-dot);
+}
+.atomos-texture--hatch-v {
+  -webkit-mask-image: var(--strata-texture-mask-hatch-v);
+          mask-image: var(--strata-texture-mask-hatch-v);
+}
+.atomos-texture--hatch-h {
+  -webkit-mask-image: var(--strata-texture-mask-hatch-h);
+          mask-image: var(--strata-texture-mask-hatch-h);
+}
+.atomos-texture--hatch-x {
+  -webkit-mask-image: var(--strata-texture-mask-hatch-x);
+          mask-image: var(--strata-texture-mask-hatch-x);
+}
+.atomos-texture--hatch-fwd {
+  -webkit-mask-image: var(--strata-texture-mask-hatch-fwd);
+          mask-image: var(--strata-texture-mask-hatch-fwd);
+}
+.atomos-texture--hatch-bwd {
+  -webkit-mask-image: var(--strata-texture-mask-hatch-bwd);
+          mask-image: var(--strata-texture-mask-hatch-bwd);
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  :root, [data-strata="light"] {
+    --threshold-duration-fast:   0.01ms;
+    --threshold-duration-base:   0.01ms;
+    --threshold-duration-slow:   0.01ms;
+    --threshold-duration-slower: 0.01ms;
+  }
+}

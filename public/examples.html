@@ -5,106 +5,211 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="MasterStyle.css" />
+  <script src="monad.js"></script>
   <title>PGL Examples</title>
 </head>
 
-<body class="index-page">
-  <main>
-    <h1>Plebeian Graph Library</h1>
-    <p class="subtitle">3D graph visualization with Three.js — examples</p>
+<body>
+  <header class="monad-header">
+    <a class="monad-header__name" href="index.html">PGL</a>
+    <nav class="threshold-nav pgl-nav">
+      <a href="index.html">Docs</a>
+      <a href="examples.html" class="active">Examples</a>
+      <a href="documents/CHANGELOG.html">Changelog</a>
+      <a href="https://github.com/range-et/PGL" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://www.npmjs.com/package/plebeiangraphlibrary" target="_blank" rel="noopener">npm</a>
+    </nav>
+    <div class="monad-header__actions">
+      <button class="strata-toggle" data-mn-theme-toggle aria-label="Toggle theme">◑</button>
+    </div>
+  </header>
 
-    <section class="example-list">
-      <a href="1_ZKC_simple.html" class="example-card">
-        <div class="num">Example 1</div>
-        <div class="title">Simple ZKC</div>
-        <p class="desc">Basic 3D graph: ZKC dataset with box nodes and thick edges. Good starting point for loading data and drawing a graph.</p>
-      </a>
-      <a href="2_ZKC_edge_bundling.html" class="example-card">
-        <div class="num">Example 2</div>
-        <div class="title">Edge bundling</div>
-        <p class="desc">ZKC with curved, bundled edges and vertical displacement for an arc-style flow look. Combines DrawEdgeBundling and DisplaceEdgeInY.</p>
-      </a>
-      <a href="3_LargePointCloud.html" class="example-card">
-        <div class="num">Example 3</div>
-        <div class="title">Large point cloud</div>
-        <p class="desc">Erdős–Rényi random graph (5000 nodes), Kamada–Kawai layout, and point-cloud + thin edges. Scales to larger graphs.</p>
-      </a>
-      <a href="4_ToggleActivation.html" class="example-card">
-        <div class="num">Example 4</div>
-        <div class="title">Toggle activation</div>
-        <p class="desc">Interactive node highlighting: click to toggle a subset "active" and recolor nodes. Useful for diffusion or selection demos.</p>
-      </a>
-      <a href="5_Hierarchy_simple.html" class="example-card">
-        <div class="num">Example 5</div>
-        <div class="title">Hierarchy (simplify by merging nearby nodes)</div>
-        <p class="desc">Merge nodes within a distance in 3D into super-nodes at cluster centers; edges between clusters are combined. Fewer nodes, same overall structure — good for LOD or flow-map style views.</p>
-      </a>
-      <a href="6_Flowmap_style.html" class="example-card">
-        <div class="num">Example 6</div>
-        <div class="title">Flow map</div>
-        <p class="desc">FlowmapBlue-style: zoom in/out to change clustering. Zoom out = fewer merged nodes and flows; zoom in = more detail. 3D KD-tree by camera distance.</p>
-      </a>
-      <a href="7_Graph_algorithms.html" class="example-card">
-        <div class="num">Example 7</div>
-        <div class="title">Graph algorithms: diameter path</div>
-        <p class="desc">GraphDiameter (Dijkstra) finds the longest shortest path; BFS reconstructs the path. Nodes colored green (start), blue (end), red (path); thick 5px line along the path.</p>
-      </a>
-      <a href="8_ThreeWrapper_variants.html" class="example-card">
-        <div class="num">Example 8</div>
-        <div class="title">ThreeWrapper variants</div>
-        <p class="desc">Different draw styles: box nodes, simplified (cylinder-style) edges, and modularity-based node/edge groups by a node property.</p>
-      </a>
-      <a href="9_Simulation_live.html" class="example-card">
-        <div class="num">Example 9</div>
-        <div class="title">Live 3D simulation</div>
-        <p class="desc">Time-based 3D Kamada–Kawai: layout evolves in real time. Uses createKamadaKawai3D, step(dt), and mutable vertices.</p>
-      </a>
-      <a href="10_Adjacency_matrix.html" class="example-card">
-        <div class="num">Example 10</div>
-        <div class="title">Adjacency matrix + power iteration</div>
-        <p class="desc">get_adjacency_matrix() and matrix math in the browser. Power iteration for leading eigenvector; node size reflects value.</p>
-      </a>
-      <a href="11_Custom_layout.html" class="example-card">
-        <div class="num">Example 11</div>
-        <div class="title">Custom layout from matrix math</div>
-        <p class="desc">Adjacency → power iteration for two coordinates → apply_position_map. Full pipeline: matrix math to 3D layout.</p>
-      </a>
-      <a href="12_StressSGD_simulation_live.html" class="example-card">
-        <div class="num">Example 12</div>
-        <div class="title">Stress SGD live simulation</div>
-        <p class="desc">Stress layout by s_gd2: epoch-based, Fisher-Yates shuffle. createStressSGD3D, step(dt).</p>
-      </a>
-      <a href="13_StressSGD_bunny_3d.html" class="example-card">
-        <div class="num">Example 13</div>
-        <div class="title">Stress SGD 3D (Stanford Bunny mesh)</div>
-        <p class="desc">3D stress layout from a mesh: OBJ → graph (vertices + edges), initial positions = mesh. Layout refines in 3D so the shape stays bunny-like.</p>
-      </a>
-      <a href="14_Interaction_click.html" class="example-card">
-        <div class="num">Example 14</div>
-        <div class="title">Interaction (click)</div>
-        <p class="desc">Opt-in interaction: click nodes or edges to see graph details. Uses enableInteraction() with onNodeClick and onEdgeClick callbacks.</p>
-      </a>
-      <a href="15_Interaction_hover.html" class="example-card">
-        <div class="num">Example 15</div>
-        <div class="title">Interaction (hover)</div>
-        <p class="desc">Hover over nodes or edges to see details in a tooltip. Demonstrates onNodeHover and onEdgeHover.</p>
-      </a>
-      <a href="16_Interaction_details.html" class="example-card">
-        <div class="num">Example 16</div>
-        <div class="title">Interaction (highlight neighbours)</div>
-        <p class="desc">Click a node to highlight its neighbours. Combines enableInteraction with ChangeTheVertexColours.</p>
-      </a>
-      <a href="17_Interaction_drag.html" class="example-card">
-        <div class="num">Example 17</div>
-        <div class="title">Interaction (drag nodes)</div>
-        <p class="desc">Drag cubes to reposition nodes. Uses enableNodeDrag and onNodeDrag with mutable vertices and edges.</p>
-      </a>
-      <a href="18_Growing_graph.html" class="example-card">
-        <div class="num">Example 18</div>
-        <div class="title">Growing torus (live Kamada–Kawai)</div>
-        <p class="desc">A torus mesh (OBJ) grows one vertex at a time while Kamada–Kawai runs continuously. Each new node appears at its true mesh position before being pulled into the force-directed layout. Existing positions are preserved by seeding the new simulation's Float32Array directly — no position jumps.</p>
-      </a>
+  <main class="land">
+    <section class="cover">
+      <div class="cover__meta">
+        <span>Plebeian Graph Library</span>
+        <span>Examples</span>
+      </div>
+      <h1 class="cover__title">Examples</h1>
+      <p class="cover__sub">Large graphs in 3D, in the browser, on WebGL.</p>
+      <div class="cover__foot">
+        <p class="cover__lead">Each page is a single HTML file that imports <code>Build/pgl_standalone.js</code> (three.js included). Open one, then use <em>View code</em> to read the source. In your own project, install <code>plebeiangraphlibrary</code> and <code>three</code> from npm.</p>
+        <div class="cover__actions">
+          <a class="atomos-btn atomos-btn--primary atomos-btn--lg" href="1_ZKC_simple.html">Start with example 1</a>
+          <a class="atomos-btn atomos-btn--secondary atomos-btn--lg" href="index.html">API docs</a>
+        </div>
+      </div>
+
+      <div class="atomos-notice atomos-notice--info whatsnew">
+        <div class="atomos-notice__body">
+          <div class="atomos-notice__title">Updated for 3.0.0</div>
+          <div class="atomos-notice__msg">Edges draw as one object (one draw call), thick and thin edges are both clickable, vertex colours and opacity work, Erdős–Rényi graphs have the correct density, and Stress SGD sets up much faster. See the <a href="documents/CHANGELOG.html">changelog</a>.</div>
+        </div>
+      </div>
     </section>
+
+    <section class="sec">
+      <div>
+        <span class="sec__num">1</span>
+        <h2 class="sec__title">Basics</h2>
+        <p class="sec__intro">Load a graph, draw nodes and edges, and change how they look.</p>
+      </div>
+      <div class="example-list">
+        <a href="1_ZKC_simple.html" class="example-row">
+          <span class="example-row__num">01</span>
+          <span><span class="example-row__title">Simple ZKC</span>
+            <span class="example-row__desc">Zachary's karate club with precomputed positions, box nodes and thick edges. The smallest complete pipeline.</span></span>
+          <span class="example-row__tags"><span class="atomos-tag atomos-tag--neutral">Thick edges</span></span>
+        </a>
+        <a href="2_ZKC_edge_bundling.html" class="example-row">
+          <span class="example-row__num">02</span>
+          <span><span class="example-row__title">Edge bundling</span>
+            <span class="example-row__desc">Bundled, curved edges with vertical displacement for an arc-style flow look. DrawEdgeBundling and DisplaceEdgeInY.</span></span>
+          <span class="example-row__tags"><span class="atomos-tag atomos-tag--neutral">Bundling</span></span>
+        </a>
+        <a href="3_LargePointCloud.html" class="example-row">
+          <span class="example-row__num">03</span>
+          <span><span class="example-row__title">Large point cloud</span>
+            <span class="example-row__desc">5,000-node Erdős–Rényi graph as a point cloud. All thin edges render as one LineSegments object.</span></span>
+          <span class="example-row__tags"><span class="atomos-tag atomos-tag--neutral">Scale</span></span>
+        </a>
+        <a href="4_ToggleActivation.html" class="example-row">
+          <span class="example-row__num">04</span>
+          <span><span class="example-row__title">Toggle activation</span>
+            <span class="example-row__desc">Recolour a random subset of point-cloud vertices with ChangeTheVertexColours and ResetVertexColors.</span></span>
+          <span class="example-row__tags"><span class="atomos-tag atomos-tag--neutral">Colour</span></span>
+        </a>
+        <a href="8_ThreeWrapper_variants.html" class="example-row">
+          <span class="example-row__num">08</span>
+          <span><span class="example-row__title">ThreeWrapper variants</span>
+            <span class="example-row__desc">Box nodes, simplified edges, and node/edge groups split by a node property.</span></span>
+          <span class="example-row__tags"><span class="atomos-tag atomos-tag--neutral">Styles</span></span>
+        </a>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div>
+        <span class="sec__num">2</span>
+        <h2 class="sec__title">Layout and simulation</h2>
+        <p class="sec__intro">Live layouts that update the drawing every frame with the mutable draw calls.</p>
+      </div>
+      <div class="example-list">
+        <a href="9_Simulation_live.html" class="example-row">
+          <span class="example-row__num">09</span>
+          <span><span class="example-row__title">Live 3D Kamada–Kawai</span>
+            <span class="example-row__desc">1,005-node engineering graph laid out in real time with createKamadaKawai3D (Barnes–Hut octree) and step(dt).</span></span>
+          <span class="example-row__tags"><span class="atomos-tag atomos-tag--neutral">Kamada–Kawai</span></span>
+        </a>
+        <a href="12_StressSGD_simulation_live.html" class="example-row">
+          <span class="example-row__num">12</span>
+          <span><span class="example-row__title">Stress SGD live simulation</span>
+            <span class="example-row__desc">Stress layout by stochastic gradient descent (s_gd2). createStressSGD3D sets up from typed arrays and stops moving once its schedule finishes.</span></span>
+          <span class="example-row__tags"><span class="atomos-tag atomos-tag--neutral">Stress SGD</span></span>
+        </a>
+        <a href="13_StressSGD_bunny_3d.html" class="example-row">
+          <span class="example-row__num">13</span>
+          <span><span class="example-row__title">Stress SGD 3D: Stanford bunny</span>
+            <span class="example-row__desc">OBJ mesh to graph, mesh positions as the starting layout, refined in 3D so the shape stays recognisable.</span></span>
+          <span class="example-row__tags"><span class="atomos-tag atomos-tag--neutral">Stress SGD</span><span class="atomos-tag atomos-tag--neutral">OBJ</span></span>
+        </a>
+        <a href="18_Growing_graph.html" class="example-row">
+          <span class="example-row__num">18</span>
+          <span><span class="example-row__title">Growing torus</span>
+            <span class="example-row__desc">A torus mesh grows one vertex at a time while Kamada–Kawai keeps running; existing positions carry over without jumps.</span></span>
+          <span class="example-row__tags"><span class="atomos-tag atomos-tag--neutral">Dynamic graph</span></span>
+        </a>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div>
+        <span class="sec__num">3</span>
+        <h2 class="sec__title">Algorithms and matrix math</h2>
+        <p class="sec__intro">Graph searches and linear algebra in the browser.</p>
+      </div>
+      <div class="example-list">
+        <a href="7_Graph_algorithms.html" class="example-row">
+          <span class="example-row__num">07</span>
+          <span><span class="example-row__title">Diameter path</span>
+            <span class="example-row__desc">Double BFS sweep from a random node finds a long shortest path; DrawThickPathFromNodeIds draws it.</span></span>
+          <span class="example-row__tags"><span class="atomos-tag atomos-tag--neutral">BFS</span></span>
+        </a>
+        <a href="10_Adjacency_matrix.html" class="example-row">
+          <span class="example-row__num">10</span>
+          <span><span class="example-row__title">Adjacency matrix and power iteration</span>
+            <span class="example-row__desc">get_adjacency_matrix() and matrixVectorMultiply; node size shows the leading eigenvector.</span></span>
+          <span class="example-row__tags"><span class="atomos-tag atomos-tag--neutral">Matrix</span></span>
+        </a>
+        <a href="11_Custom_layout.html" class="example-row">
+          <span class="example-row__num">11</span>
+          <span><span class="example-row__title">Custom layout from matrix math</span>
+            <span class="example-row__desc">Two power-iteration vectors become X and Z coordinates through apply_position_map.</span></span>
+          <span class="example-row__tags"><span class="atomos-tag atomos-tag--neutral">Matrix</span><span class="atomos-tag atomos-tag--neutral">Layout</span></span>
+        </a>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div>
+        <span class="sec__num">4</span>
+        <h2 class="sec__title">Level of detail</h2>
+        <p class="sec__intro">Merge nearby nodes into super-nodes for simpler, flow-map style views.</p>
+      </div>
+      <div class="example-list">
+        <a href="5_Hierarchy_simple.html" class="example-row">
+          <span class="example-row__num">05</span>
+          <span><span class="example-row__title">Hierarchy</span>
+            <span class="example-row__desc">Nodes within a distance merge into one node at their centroid; edges between groups are combined.</span></span>
+          <span class="example-row__tags"><span class="atomos-tag atomos-tag--neutral">Clustering</span></span>
+        </a>
+        <a href="6_Flowmap_style.html" class="example-row">
+          <span class="example-row__num">06</span>
+          <span><span class="example-row__title">Flow map</span>
+            <span class="example-row__desc">Zoom to change the clustering: fewer merged flows when zoomed out, more detail when zoomed in.</span></span>
+          <span class="example-row__tags"><span class="atomos-tag atomos-tag--neutral">Clustering</span><span class="atomos-tag atomos-tag--neutral">Zoom</span></span>
+        </a>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div>
+        <span class="sec__num">5</span>
+        <h2 class="sec__title">Interaction</h2>
+        <p class="sec__intro">Opt-in picking with enableInteraction(). Node and edge details arrive in callbacks.</p>
+      </div>
+      <div class="example-list">
+        <a href="14_Interaction_click.html" class="example-row">
+          <span class="example-row__num">14</span>
+          <span><span class="example-row__title">Click</span>
+            <span class="example-row__desc">Click nodes or thick edges to show their details. onNodeClick and onEdgeClick.</span></span>
+          <span class="example-row__tags"><span class="atomos-tag atomos-tag--neutral">Picking</span></span>
+        </a>
+        <a href="15_Interaction_hover.html" class="example-row">
+          <span class="example-row__num">15</span>
+          <span><span class="example-row__title">Hover</span>
+            <span class="example-row__desc">Hover nodes or edges to show their details. onNodeHover and onEdgeHover.</span></span>
+          <span class="example-row__tags"><span class="atomos-tag atomos-tag--neutral">Picking</span></span>
+        </a>
+        <a href="16_Interaction_details.html" class="example-row">
+          <span class="example-row__num">16</span>
+          <span><span class="example-row__title">Highlight neighbours</span>
+            <span class="example-row__desc">Hover a node to colour it and its neighbours with ChangeTheVertexColours.</span></span>
+          <span class="example-row__tags"><span class="atomos-tag atomos-tag--neutral">Picking</span><span class="atomos-tag atomos-tag--neutral">Colour</span></span>
+        </a>
+        <a href="17_Interaction_drag.html" class="example-row">
+          <span class="example-row__num">17</span>
+          <span><span class="example-row__title">Drag nodes</span>
+            <span class="example-row__desc">Drag cubes to move nodes; mutable vertices and edges follow. Works with hover turned off.</span></span>
+          <span class="example-row__tags"><span class="atomos-tag atomos-tag--neutral">Drag</span></span>
+        </a>
+      </div>
+    </section>
+
+    <footer class="colophon">
+      <span>Plebeian Graph Library · MIT</span>
+      <span>Theme: <a href="https://github.com/range-et/monad_system" target="_blank" rel="noopener">Monad System</a></span>
+    </footer>
   </main>
 </body>
 
