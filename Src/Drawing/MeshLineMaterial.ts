@@ -19,18 +19,18 @@ void main() {
   vec4 clipPrev = projectionMatrix * modelViewMatrix * vec4(positionPrev, 1.0);
   vec4 clipNext = projectionMatrix * modelViewMatrix * vec4(positionNext, 1.0);
 
-  vec2 ndcCurr = clipPos.xy / clipPos.w;
-  vec2 ndcPrev = clipPrev.xy / clipPrev.w;
-  vec2 ndcNext = clipNext.xy / clipNext.w;
+  // Work in screen pixels so the width is the same along x and y on non-square canvases
+  vec2 halfRes = resolution * 0.5;
+  vec2 screenPrev = clipPrev.xy / clipPrev.w * halfRes;
+  vec2 screenNext = clipNext.xy / clipNext.w * halfRes;
 
-  vec2 dir = normalize(ndcNext - ndcPrev);
+  vec2 dir = screenNext - screenPrev;
+  float len = length(dir);
+  dir = len > 0.0 ? dir / len : vec2(1.0, 0.0);
   vec2 perp = vec2(-dir.y, dir.x);
 
-  float w = clipPos.w;
-  float pixelScale = min(resolution.x, resolution.y);
-  float ndcPerPixel = 2.0 / pixelScale;
-  vec2 offsetNdc = perp * side * (lineWidth * 0.5 * ndcPerPixel);
-  clipPos.xy += offsetNdc * w;
+  vec2 offsetNdc = perp * side * (lineWidth * 0.5) / halfRes;
+  clipPos.xy += offsetNdc * clipPos.w;
 
   gl_Position = clipPos;
 }
@@ -52,7 +52,7 @@ export interface MeshLineMaterialOptions {
 
 /**
  * Material for billboarded thick lines. Width is in pixels (screen space).
- * Requires resolution uniform (canvas size) for correct scaling.
+ * The resolution uniform must hold the canvas size in CSS pixels (createThickEdgesGroup updates it before each render).
  */
 export function createMeshLineMaterial(options: MeshLineMaterialOptions = {}): THREE.ShaderMaterial {
   const color = options.color ?? 0xffffff;

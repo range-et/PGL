@@ -183,3 +183,18 @@ describe("GraphMethods.BFSSearch", () => {
     expect(await GraphMethods.BFSSearch(graph, 0)).toEqual(new Map([[0, -1], [1, 0]]));
   });
 });
+
+describe("GraphMethods.Dijkstra", () => {
+  it("returns hop distances on a long path in linear time, leaving out unreachable nodes", async () => {
+    const n = 30_000;
+    const { graph } = makeGraph(n, Array.from({ length: n - 2 }, (_, i) => [i, i + 1] as [number, number]));
+    await graph.initialize();
+    const t0 = performance.now();
+    const d = await GraphMethods.Dijkstra(graph, 0);
+    // linear BFS takes a few ms here; walking parent chains per node (O(n²)) takes seconds
+    expect(performance.now() - t0).toBeLessThan(1000);
+    expect(d.get(n - 2)).toBe(n - 2);
+    expect(d.has(n - 1)).toBe(false); // last node has no edges
+    expect(d.size).toBe(n - 1);
+  });
+});

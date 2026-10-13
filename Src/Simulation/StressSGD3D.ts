@@ -1,6 +1,5 @@
 import Graph from "../Core/Graph";
 import Point from "../HelperClasses/Point";
-import GraphMethods from "../GraphAlgorithms/GraphMethods";
 
 export interface StressSGD3DOptions {
   /** Layout in 2D (x,y only; z=0) or 3D. Default 2. Matches s_gd2 reference. */
@@ -48,18 +47,22 @@ export interface StressSGD3DSimulation {
   getPositionMap(): Map<number, Point>;
 }
 
-interface StressPair {
-  i: number;
-  j: number;
-  d: number;
-  w: number;
+/** Stress terms in typed arrays (12 bytes per pair instead of an object per pair). */
+interface StressPairs {
+  i: Uint32Array;
+  j: Uint32Array;
+  /** hop distance between i and j */
+  d: Float32Array;
 }
 
-/** Fisher-Yates shuffle (matches reference fisheryates_shuffle). */
-function fisherYatesShuffle<T>(arr: T[], rng: () => number): void {
-  for (let i = arr.length - 1; i >= 1; i--) {
-    const j = Math.floor(rng() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
+/** Fisher-Yates shuffle of the pair arrays (matches reference fisheryates_shuffle). */
+function fisherYatesShuffle(pairs: StressPairs, rng: () => number): void {
+  const { i: I, j: J, d: D } = pairs;
+  for (let a = D.length - 1; a >= 1; a--) {
+    const b = Math.floor(rng() * (a + 1));
+    let t = I[a]; I[a] = I[b]; I[b] = t;
+    t = J[a]; J[a] = J[b]; J[b] = t;
+    const td = D[a]; D[a] = D[b]; D[b] = td;
   }
 }
 
@@ -77,29 +80,74 @@ export function createRng(seed: number): () => number {
   };
 }
 
-/** Compute all-pairs shortest path (hop count) and build stress pair list. Matches reference bfs(). */
-async function computeStressPairs(
+/**
+ * All-pairs hop distances by one BFS per node over an index-based adjacency list,
+ * kept as (i, j, d) terms for each connected pair i < j. Matches reference bfs().
+ */
+function computeStressPairs(
   graph: Graph,
   nodeIds: number[],
   idToIndex: Map<number, number>
-): Promise<StressPair[]> {
+): StressPairs {
   const n = nodeIds.length;
-  const distFromSource: Map<number, Map<number, number>> = new Map();
-  for (let si = 0; si < n; si++) {
-    const srcId = nodeIds[si];
-    const dmap = await GraphMethods.Dijkstra(graph, srcId);
-    distFromSource.set(srcId, dmap);
+  const adjMap = graph.get_adjacency();
+  const neighbours: Uint32Array[] = nodeIds.map((id) => {
+    const out: number[] = [];
+    for (const nb of adjMap.get(id) ?? []) {
+      const j = idToIndex.get(nb);
+      if (j !== undefined) out.push(j);
+    }
+    return Uint32Array.from(out);
+  });
+
+  const dist = new Int32Array(n);
+  const queue = new Uint32Array(n);
+  const bfs = (source: number): void => {
+    dist.fill(-1);
+    dist[source] = 0;
+    queue[0] = source;
+    for (let head = 0, tail = 1; head < tail; head++) {
+      const u = queue[head];
+      for (const v of neighbours[u]) {
+        if (dist[v] === -1) {
+          dist[v] = dist[u] + 1;
+          queue[tail++] = v;
+        }
+      }
+    }
+  };
+
+  // Connected pairs = sum of c(c-1)/2 over component sizes c; lets the arrays be allocated once.
+  const component = new Int32Array(n).fill(-1);
+  let pairCount = 0;
+  for (let s = 0; s < n; s++) {
+    if (component[s] !== -1) continue;
+    bfs(s);
+    let size = 0;
+    for (let t = 0; t < n; t++) {
+      if (dist[t] >= 0) {
+        component[t] = s;
+        size++;
+      }
+    }
+    pairCount += (size * (size - 1)) / 2;
   }
 
-  const pairs: StressPair[] = [];
-  for (let i = 0; i < n; i++) {
-    for (let j = i + 1; j < n; j++) {
-      const dmap = distFromSource.get(nodeIds[i]);
-      if (!dmap) continue;
-      const d = dmap.get(nodeIds[j]);
-      if (d === undefined || d <= 0) continue;
-      const w = 1 / (d * d);
-      pairs.push({ i, j, d, w });
+  const pairs: StressPairs = {
+    i: new Uint32Array(pairCount),
+    j: new Uint32Array(pairCount),
+    d: new Float32Array(pairCount),
+  };
+  let k = 0;
+  for (let s = 0; s < n; s++) {
+    bfs(s);
+    for (let t = s + 1; t < n; t++) {
+      if (dist[t] > 0) {
+        pairs.i[k] = s;
+        pairs.j[k] = t;
+        pairs.d[k] = dist[t];
+        k++;
+      }
     }
   }
   return pairs;
@@ -130,17 +178,17 @@ export async function createStressSGD3D(
   const idToIndex = new Map<number, number>();
   nodeIds.forEach((id, i) => idToIndex.set(id, i));
 
-  const pairs = await computeStressPairs(graph, nodeIds, idToIndex);
-  if (pairs.length === 0) {
-    // Fallback: no pairs
-  }
+  const pairs = computeStressPairs(graph, nodeIds, idToIndex);
+  const pairCount = pairs.d.length;
 
   // Reference schedule: eta_max = 1/w_min, eta_min = eps/w_max, eta(t) = eta_max * exp(-lambda*t)
+  // with w = 1/d^2
   let wMin = Infinity;
   let wMax = -Infinity;
-  for (const p of pairs) {
-    if (p.w < wMin) wMin = p.w;
-    if (p.w > wMax) wMax = p.w;
+  for (let k = 0; k < pairCount; k++) {
+    const w = 1 / (pairs.d[k] * pairs.d[k]);
+    if (w < wMin) wMin = w;
+    if (w > wMax) wMax = w;
   }
   if (wMin <= 0 || wMax <= 0) wMin = 1;
   if (wMax <= 0) wMax = 1;
@@ -188,9 +236,11 @@ export async function createStressSGD3D(
       fisherYatesShuffle(pairs, rng);
 
       // Process all pairs in shuffled order (reference: for each term)
-      for (const t of pairs) {
-        const { i, j, d, w } = t;
-        let mu = eta * w;
+      for (let k = 0; k < pairCount; k++) {
+        const i = pairs.i[k];
+        const j = pairs.j[k];
+        const d = pairs.d[k];
+        let mu = eta / (d * d);
         if (mu > 1) mu = 1;
 
         // diff = X_i - X_j (reference: dx = X[i*2]-X[j*2], ...)

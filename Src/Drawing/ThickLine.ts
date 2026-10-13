@@ -11,56 +11,7 @@ import { createMeshLineMaterial } from "./MeshLineMaterial";
 
 /** Default line width in pixels (screen space) */
 const DEFAULT_LINE_WIDTH_PX = 2;
-/** Default resolution for material (canvas size); can be updated on resize */
-const DEFAULT_RESOLUTION = new THREE.Vector2(800, 700);
 
-/**
- * Create a single thick line mesh from a Line (array of points).
- * Uses a ribbon geometry + shader material so the line is billboarded
- * and has consistent pixel width on screen.
- *
- * @param line - Line with .points (Point[])
- * @param bounds - Scale factor applied to point coordinates (same as thin lines)
- * @param color - Hex color
- * @param lineWidthPx - Line width in pixels (screen space)
- * @param resolution - Canvas size for correct scaling (optional)
- * @returns A Three.js Mesh that can be added to the scene
- */
-export function createThickLineMesh(
-  line: Line,
-  bounds: number,
-  color: number,
-  lineWidthPx: number = DEFAULT_LINE_WIDTH_PX,
-  resolution?: THREE.Vector2
-): THREE.Mesh {
-  if (line.points.length < 2) {
-    const geo = new THREE.BufferGeometry();
-    return new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color }));
-  }
-
-  const positions = line.points.map(
-    (p) => new THREE.Vector3(p.x * bounds, p.y * bounds, p.z * bounds)
-  );
-  const geometry = buildMeshLineGeometry(positions);
-  const material = createMeshLineMaterial({
-    color,
-    lineWidth: lineWidthPx,
-    resolution: resolution ?? DEFAULT_RESOLUTION,
-  });
-  return new THREE.Mesh(geometry, material);
-}
-
-/**
- * Create a group of thick line meshes from an edge map.
- * Lines are billboarded and drawn with the given pixel width.
- *
- * @param edgeMap - Map of edge id to Line
- * @param bounds - Scale factor for coordinates
- * @param color - Hex color for all lines
- * @param lineWidthPx - Line width in pixels (screen space); default 2
- * @param resolution - Canvas size (optional, for correct pixel scaling)
- * @returns THREE.Group containing one mesh per edge
- */
 /**
  * Convert legacy thickness (world-unit style 0.02, 0.03) to pixel width for screen-space lines.
  */
@@ -69,20 +20,68 @@ function toPixelWidth(thickness: number): number {
   return Math.max(1, Math.round(thickness * 100));
 }
 
+/**
+ * Create thick lines for every edge in an edge map as one mesh (one draw call).
+ * Lines are billboarded and drawn with the given pixel width; the width follows the
+ * renderer's canvas size.
+ *
+ * The mesh is pickable: raycasts hit the edge centre lines (using the Raycaster's Line
+ * threshold) and report `index` = 2 × segment; `userData.segmentEdgeIds[segment]` is the edge ID.
+ *
+ * @param edgeMap - Map of edge id to Line
+ * @param bounds - Scale factor for coordinates
+ * @param color - Hex color for all lines
+ * @param thickness - Line width in pixels (values below 1 are treated as legacy units × 100)
+ * @returns THREE.Group containing a single mesh (empty if no edge has 2+ points)
+ */
 export function createThickEdgesGroup(
   edgeMap: Map<number, Line>,
   bounds: number,
   color: number,
-  thickness: number = DEFAULT_LINE_WIDTH_PX,
-  resolution?: THREE.Vector2
+  thickness: number = DEFAULT_LINE_WIDTH_PX
 ): THREE.Group {
-  const lineWidthPx = toPixelWidth(thickness);
-  const group = new THREE.Group();
+  const polylines: THREE.Vector3[][] = [];
+  const segmentPositions: number[] = [];
+  const segmentEdgeIds: number[] = [];
   for (const [edgeId, line] of edgeMap.entries()) {
     if (!line?.points || line.points.length < 2) continue;
-    const mesh = createThickLineMesh(line, bounds, color, lineWidthPx, resolution);
-    mesh.userData = { edgeId };
-    group.add(mesh);
+    const pts = line.points.map((p) => new THREE.Vector3(p.x * bounds, p.y * bounds, p.z * bounds));
+    polylines.push(pts);
+    for (let i = 0; i < pts.length - 1; i++) {
+      const a = pts[i];
+      const b = pts[i + 1];
+      segmentPositions.push(a.x, a.y, a.z, b.x, b.y, b.z);
+      segmentEdgeIds.push(edgeId);
+    }
   }
+
+  const group = new THREE.Group();
+  if (polylines.length === 0) return group;
+
+  const material = createMeshLineMaterial({ color, lineWidth: toPixelWidth(thickness) });
+  const mesh = new THREE.Mesh(buildMeshLineGeometry(polylines), material);
+  mesh.userData = { segmentEdgeIds };
+
+  // The ribbon gets its width in the vertex shader, so its triangles have zero area on the CPU
+  // and can never be hit. Raycast against the centre lines instead.
+  const pickLines = new THREE.LineSegments(
+    new THREE.BufferGeometry().setAttribute(
+      "position",
+      new THREE.Float32BufferAttribute(segmentPositions, 3)
+    )
+  );
+  mesh.raycast = (raycaster, intersects) => {
+    pickLines.matrixWorld.copy(mesh.matrixWorld);
+    const hits: THREE.Intersection[] = [];
+    pickLines.raycast(raycaster, hits);
+    for (const hit of hits) intersects.push({ ...hit, object: mesh });
+  };
+
+  // Keep the pixel width correct for the actual canvas size.
+  mesh.onBeforeRender = (renderer) => {
+    renderer.getSize(material.uniforms.resolution.value);
+  };
+
+  group.add(mesh);
   return group;
 }

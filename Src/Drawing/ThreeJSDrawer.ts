@@ -233,7 +233,7 @@ function DrawThickEdgesFromEdgeMap(
  * @param Graph - The graph that has to be drawn
  * @param bounds - The global scale factor for the edges - defaults to 1
  * @param color - color of the lines - defaults to white
- * @returns a THREE.Group of lines
+ * @returns a THREE.Group containing one THREE.LineSegments for all edges
  */
 function DrawTHREEGraphEdgesThin(
   Graph: Graph,
@@ -264,34 +264,28 @@ function DrawTHREEGraphEdgesThinMutable(
   bounds: number = 1,
   color: number = 0xffffff
 ): MutableEdgesResult {
-  const material = new THREE.LineBasicMaterial({ color });
+  const lines = new THREE.LineSegments(
+    new THREE.BufferGeometry(),
+    new THREE.LineBasicMaterial({ color })
+  );
   const group = new THREE.Group();
+  group.add(lines);
 
   function updateEdges(): void {
-    while (group.children.length > 0) {
-      const child = group.children[0];
-      group.remove(child);
-      if (child instanceof THREE.Line && child.geometry) {
-        child.geometry.dispose();
-      }
+    const { positions, segmentEdgeIds } = buildEdgeSegments(Graph.get_edge_map(), bounds);
+    const attr = lines.geometry.getAttribute("position") as THREE.BufferAttribute | undefined;
+    if (attr && attr.array.length === positions.length) {
+      // same edge layout: overwrite the existing buffer in place
+      (attr.array as Float32Array).set(positions);
+      attr.needsUpdate = true;
+      lines.geometry.boundingSphere = null; // recomputed lazily for culling and picking
+    } else {
+      // edges added or removed: GPU buffers must be reallocated, so swap in a new geometry
+      lines.geometry.dispose();
+      lines.geometry = new THREE.BufferGeometry();
+      lines.geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
     }
-    const emap = Graph.get_edge_map();
-    for (const [edgeId, edge] of emap.entries()) {
-      const points: THREE.Vector3[] = [];
-      edge.points.forEach((element) => {
-        points.push(
-          new THREE.Vector3(
-            element.x * bounds,
-            element.y * bounds,
-            element.z * bounds
-          )
-        );
-      });
-      const geometry = new THREE.BufferGeometry().setFromPoints(points);
-      const line = new THREE.Line(geometry, material);
-      line.userData = { edgeId };
-      group.add(line);
-    }
+    lines.userData = { segmentEdgeIds };
   }
 
   updateEdges();
@@ -329,39 +323,53 @@ function DrawThickPathFromNodeIds(
  *
  * @param LineMap - The edge map that has to be drawn out
  * @param bounds - Global scale for the edges to be drawn defaults to 1
- * @param color - Color of the edges defaults to 1
- * @returns
+ * @param color - Color of the edges defaults to white
+ * @returns a THREE.Group containing one THREE.LineSegments for all edges
  */
 function DrawThinEdgesFromEdgeMap(
   LineMap: Map<number, Line>,
   bounds: number = 1,
   color: number = 0xffffff
 ) {
-  const material = new THREE.LineBasicMaterial({
-    color: color,
-  });
-  const lines = new THREE.Group();
-  let points: THREE.Vector3[];
-  for (const [edgeId, edge] of LineMap.entries()) {
-    points = [];
-    // get the edge data
-    const ldata = edge.points;
-    ldata.forEach((element) => {
-      points.push(
-        new THREE.Vector3(
-          element.x * bounds,
-          element.y * bounds,
-          element.z * bounds
-        )
-      );
-    });
-    // then make the line thing
-    const geometry = new THREE.BufferGeometry().setFromPoints(points);
-    const line = new THREE.Line(geometry, material);
-    line.userData = { edgeId };
-    lines.add(line);
+  const { positions, segmentEdgeIds } = buildEdgeSegments(LineMap, bounds);
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+  const lines = new THREE.LineSegments(
+    geometry,
+    new THREE.LineBasicMaterial({ color: color })
+  );
+  lines.userData = { segmentEdgeIds };
+  const group = new THREE.Group();
+  group.add(lines);
+  return group;
+}
+
+/**
+ * Flatten every polyline in an edge map into line-segment vertex pairs (scaled by bounds),
+ * so all edges render as one THREE.LineSegments (one draw call).
+ * segmentEdgeIds[k] is the edge ID of segment k (vertices 2k and 2k + 1).
+ */
+function buildEdgeSegments(LineMap: Map<number, Line>, bounds: number) {
+  let segmentCount = 0;
+  for (const line of LineMap.values()) segmentCount += Math.max(0, line.points.length - 1);
+  const positions = new Float32Array(segmentCount * 6);
+  const segmentEdgeIds: number[] = [];
+  let o = 0;
+  for (const [edgeId, line] of LineMap.entries()) {
+    const pts = line.points;
+    for (let i = 0; i < pts.length - 1; i++) {
+      const a = pts[i];
+      const b = pts[i + 1];
+      positions[o++] = a.x * bounds;
+      positions[o++] = a.y * bounds;
+      positions[o++] = a.z * bounds;
+      positions[o++] = b.x * bounds;
+      positions[o++] = b.y * bounds;
+      positions[o++] = b.z * bounds;
+      segmentEdgeIds.push(edgeId);
+    }
   }
-  return lines;
+  return { positions, segmentEdgeIds };
 }
 
 // draw the cube box graph here (single InstancedMesh for all boxes)

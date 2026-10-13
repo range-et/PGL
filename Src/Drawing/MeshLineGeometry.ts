@@ -7,51 +7,60 @@
 import * as THREE from "three";
 
 /**
- * Build a BufferGeometry for one polyline as a ribbon (strip of quads).
+ * Build one BufferGeometry holding a ribbon (strip of quads) for every polyline,
+ * so any number of lines can be drawn with a single draw call.
  * Attributes: position, positionPrev, positionNext, side.
+ * Polylines with fewer than 2 points are skipped.
  */
-export function buildMeshLineGeometry(positions: THREE.Vector3[]): THREE.BufferGeometry {
-  const n = positions.length;
-  if (n < 2) {
-    return new THREE.BufferGeometry();
+export function buildMeshLineGeometry(polylines: THREE.Vector3[][]): THREE.BufferGeometry {
+  let vertexCount = 0;
+  let indexCount = 0;
+  for (const line of polylines) {
+    if (line.length < 2) continue;
+    vertexCount += line.length * 2;
+    indexCount += (line.length - 1) * 6;
   }
 
-  const posArr: number[] = [];
-  const prevArr: number[] = [];
-  const nextArr: number[] = [];
-  const sideArr: number[] = [];
+  const posArr = new Float32Array(vertexCount * 3);
+  const prevArr = new Float32Array(vertexCount * 3);
+  const nextArr = new Float32Array(vertexCount * 3);
+  const sideArr = new Float32Array(vertexCount);
+  const indices = vertexCount > 65535 ? new Uint32Array(indexCount) : new Uint16Array(indexCount);
 
-  for (let i = 0; i < n; i++) {
-    const p = positions[i];
-    const pPrev = i > 0 ? positions[i - 1] : p;
-    const pNext = i < n - 1 ? positions[i + 1] : p;
-
-    // Left edge vertex
-    posArr.push(p.x, p.y, p.z);
-    prevArr.push(pPrev.x, pPrev.y, pPrev.z);
-    nextArr.push(pNext.x, pNext.y, pNext.z);
-    sideArr.push(-1);
-
-    // Right edge vertex
-    posArr.push(p.x, p.y, p.z);
-    prevArr.push(pPrev.x, pPrev.y, pPrev.z);
-    nextArr.push(pNext.x, pNext.y, pNext.z);
-    sideArr.push(1);
+  let v = 0; // vertex cursor
+  let k = 0; // index cursor
+  for (const line of polylines) {
+    const n = line.length;
+    if (n < 2) continue;
+    const first = v;
+    for (let i = 0; i < n; i++) {
+      const p = line[i];
+      // prev/next stay within this polyline so separate lines are never joined
+      const pPrev = i > 0 ? line[i - 1] : p;
+      const pNext = i < n - 1 ? line[i + 1] : p;
+      for (let side = -1; side <= 1; side += 2) {
+        const o = v * 3;
+        posArr[o] = p.x; posArr[o + 1] = p.y; posArr[o + 2] = p.z;
+        prevArr[o] = pPrev.x; prevArr[o + 1] = pPrev.y; prevArr[o + 2] = pPrev.z;
+        nextArr[o] = pNext.x; nextArr[o + 1] = pNext.y; nextArr[o + 2] = pNext.z;
+        sideArr[v] = side;
+        v++;
+      }
+    }
+    // each segment is a quad: triangles (a, a+1, a+2) and (a+2, a+1, a+3)
+    for (let i = 0; i < n - 1; i++) {
+      const a = first + i * 2;
+      indices[k++] = a; indices[k++] = a + 1; indices[k++] = a + 2;
+      indices[k++] = a + 2; indices[k++] = a + 1; indices[k++] = a + 3;
+    }
   }
 
   const geometry = new THREE.BufferGeometry();
-  geometry.setAttribute("position", new THREE.Float32BufferAttribute(posArr, 3));
-  geometry.setAttribute("positionPrev", new THREE.Float32BufferAttribute(prevArr, 3));
-  geometry.setAttribute("positionNext", new THREE.Float32BufferAttribute(nextArr, 3));
-  geometry.setAttribute("side", new THREE.Float32BufferAttribute(sideArr, 1));
-
-  // Triangle list: each quad (segment) = two triangles (0,1,2) and (2,1,3)
-  const indices: number[] = [];
-  for (let i = 0; i < n - 1; i++) {
-    const a = i * 2;
-    indices.push(a, a + 1, a + 2, a + 2, a + 1, a + 3);
-  }
-  geometry.setIndex(indices);
+  geometry.setAttribute("position", new THREE.BufferAttribute(posArr, 3));
+  geometry.setAttribute("positionPrev", new THREE.BufferAttribute(prevArr, 3));
+  geometry.setAttribute("positionNext", new THREE.BufferAttribute(nextArr, 3));
+  geometry.setAttribute("side", new THREE.BufferAttribute(sideArr, 1));
+  geometry.setIndex(new THREE.BufferAttribute(indices, 1));
   geometry.computeBoundingSphere();
 
   return geometry;

@@ -58,18 +58,17 @@ async function BFSSearch(Graph:Graph, node:number) {
  * @returns - Map from which each one of the nodes was searched from
  */
 async function Dijkstra(Graph:Graph, Node:number) {
-  const adj = Graph.get_adjacency();
-  const Dmap:Map<number, number> = new Map();
   const exploredFromMap = await BFSSearch(Graph, Node);
-  for (const n of adj.keys()) {
-    if (!exploredFromMap.has(n)) continue; // unreachable (disconnected)
-    let i = 0;
-    let exploredFrom: number | undefined = exploredFromMap.get(n);
-    while (exploredFrom !== undefined && exploredFrom !== -1) {
-      exploredFrom = exploredFromMap.get(exploredFrom);
-      i += 1;
-    }
-    Dmap.set(n, i);
+  // The map is in BFS order, so each node's parent already has its distance.
+  const depth = new Map<number, number>();
+  for (const [n, parent] of exploredFromMap) {
+    depth.set(n, parent === -1 ? 0 : depth.get(parent)! + 1);
+  }
+  // Return in node order; unreachable (disconnected) nodes are left out.
+  const Dmap:Map<number, number> = new Map();
+  for (const n of Graph.nodes.keys()) {
+    const d = depth.get(n);
+    if (d !== undefined) Dmap.set(n, d);
   }
   return Dmap;
 }

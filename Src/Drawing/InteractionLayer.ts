@@ -78,19 +78,24 @@ function resolveNodeId(intersection: THREE.Intersection): number | null {
 }
 
 function resolveEdgeId(intersection: THREE.Intersection): number | null {
-  const obj = intersection.object;
-  const edgeId = (obj.userData as { edgeId?: number }).edgeId;
+  const { edgeId, segmentEdgeIds } = intersection.object.userData as {
+    edgeId?: number;
+    segmentEdgeIds?: number[];
+  };
+  // Merged edge geometry (thin LineSegments / thick ribbons): index is the segment's first vertex
+  if (segmentEdgeIds && intersection.index != null) {
+    return segmentEdgeIds[Math.floor(intersection.index / 2)] ?? null;
+  }
   return edgeId != null ? edgeId : null;
 }
 
 function buildNodePickDetails(graph: Graph, nodeId: number): NodePickDetails {
   const node = graph.nodes.get(nodeId);
-  const pmap = graph.get_position_map();
   return {
     nodeId,
     data: node?.data ?? {},
     neighbours: node?.neighbours?.slice() ?? [],
-    position: pmap.get(nodeId),
+    position: node?.data?.pos ?? undefined,
   };
 }
 
@@ -266,7 +271,7 @@ export class InteractionLayer {
 
   private getDragPosition(): { x: number; y: number; z: number } | null {
     if (this.dragNodeId == null) return null;
-    const pos = this.graph.get_position_map().get(this.dragNodeId);
+    const pos = this.graph.nodes.get(this.dragNodeId)?.data?.pos;
     if (!pos) return null;
     _planeNormal.set(0, 0, -1).applyQuaternion(this.camera.quaternion);
     _plane.setFromNormalAndCoplanarPoint(_planeNormal, new THREE.Vector3(pos.x, pos.y, pos.z));

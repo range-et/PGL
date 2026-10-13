@@ -124,3 +124,18 @@ describe("createStressSGD3D after the schedule ends", () => {
     expect(Array.from(sim.getPositions())).toEqual(settled);
   });
 });
+
+describe("createStressSGD3D layout quality", () => {
+  it("lays out each component so distances match hop counts", async () => {
+    // path 0-1-2-3 plus a separate edge 4-5
+    const graph = makeGraph(6, [[0, 1], [1, 2], [2, 3], [4, 5]]);
+    await graph.initialize();
+    const sim = await createStressSGD3D(graph, { seed: 11, epochsPerStep: 80 });
+    sim.step(0);
+    const p = sim.getPositions();
+    const dist = (a: number, b: number) => Math.hypot(p[a * 3] - p[b * 3], p[a * 3 + 1] - p[b * 3 + 1]);
+    expect(Math.abs(dist(0, 3) - 3)).toBeLessThan(0.1);
+    expect(Math.abs(dist(0, 2) - 2)).toBeLessThan(0.1);
+    expect(Math.abs(dist(4, 5) - 1)).toBeLessThan(0.1);
+  });
+});
