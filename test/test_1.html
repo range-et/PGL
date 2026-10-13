@@ -135,6 +135,7 @@
     function animate() {
       requestAnimationFrame(animate);
       graph3d.rendercall();
+      window.__rendered = true; // signals test_1.js that a frame has been drawn
     }
 
     // append the graph renderer to the container

@@ -246,7 +246,7 @@ const sim = await PGL.createStressSGD3D(G, {
 ```javascript
 PGL.GraphMethods.BFSSearch(G, startNodeId)      → Map<nodeId, exploredFromId>
 PGL.GraphMethods.Dijkstra(G, startNodeId)        → Map<nodeId, hopCount>  ⚠️ hop-count only, not weighted
-PGL.GraphMethods.GraphDiameter(G)                → { start, end, distance }
+PGL.GraphMethods.GraphDiameter(G)                → { start, end, distance }  (double-sweep estimate; lower bound)
 PGL.GraphMethods.SelectSubgraph(G, nodeIds[])    → Graph
 ```
 

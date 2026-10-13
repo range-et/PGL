@@ -11,6 +11,6 @@ export interface MeshLineMaterialOptions {
 }
 /**
  * Material for billboarded thick lines. Width is in pixels (screen space).
- * Requires resolution uniform (canvas size) for correct scaling.
+ * The resolution uniform must hold the canvas size in CSS pixels (createThickEdgesGroup updates it before each render).
  */
 export declare function createMeshLineMaterial(options?: MeshLineMaterialOptions): THREE.ShaderMaterial;

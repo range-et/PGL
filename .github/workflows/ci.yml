@@ -13,9 +13,18 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
           cache: "npm"
       - run: npm ci
       - run: npx tsc --noEmit
       - run: npm run build
       - run: npm run test:unit
+      - name: Visual regression test
+        run: npm test
+      - name: Upload visual diff
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-diff
+          path: test/diff_image.png
+          if-no-files-found: ignore

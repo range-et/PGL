@@ -5,6 +5,32 @@ All notable changes to the Plebeian Graph Library (PGL) will be documented in th
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- **npm build no longer bundles three.js or gl-matrix** — `pgl_module.js` / `pgl.js` import them (757 KB → ~90 KB), so apps share one three.js instance. The new **`Build/pgl_standalone.js`** bundles three.js for use without a bundler; the Examples use it.
+- **GenerateErdosReyni_n_p** — Samples each unordered pair once (it produced about twice the expected edges, with duplicates) and returns an initialized graph.
+- **DrawTHREEGraphVertices / DrawTHREEGraphVerticesMutable** — The `color` argument is applied (vertices were always white) and `alpha` is opacity.
+- **Edge drawing** — Thin and thick edges render as a single object each (one draw call). Each group now holds one `LineSegments` / `Mesh` instead of one object per edge; the edge ID for a hit is in `userData.segmentEdgeIds`. Thick-line width follows the canvas size.
+- **createStressSGD3D** — Much faster, lower-memory setup. The random generator was fixed, so layouts for a given `seed` differ from earlier versions. Positions no longer change once the schedule has finished.
+- **GraphDrawer3d** — Constructor accepts the documented `{ graph, canvas, width, height }` in TypeScript.
+
+### Fixed
+
+- `new Graph()` with more than ~100k edges threw `RangeError`.
+- `SelectSubgraph` modified the parent graph's neighbour lists and leaked outside neighbours into the subgraph.
+- Edge-list, OBJ and DWT loaders gave every node the same position object.
+- Kamada–Kawai (octree) overflowed the stack when two nodes shared a position.
+- `MoveGraph` threw after `DrawEdgeBundling` / `DisplaceEdgeInY`.
+- `HivePlot` threw on disconnected graphs.
+- Distance clustering overflowed the stack on large clusters.
+- Edge lines were interpolated end → start.
+- `rgbToHex` produced invalid output for non-integer components.
+- `BFSSearch` threw on edges to missing nodes; `BFSSearch` / `Dijkstra` were quadratic on long paths.
+- Node dragging did nothing with `hoverEnabled: false`.
+- Thick edges could not be picked by clicks or hover.
+
 ## [2.2.2] - 2025-02-28
 
 ### Added

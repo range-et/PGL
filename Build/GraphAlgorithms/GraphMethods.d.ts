@@ -19,10 +19,12 @@ declare function BFSSearch(Graph: Graph, node: number): Promise<Map<number, numb
 declare function Dijkstra(Graph: Graph, Node: number): Promise<Map<number, number>>;
 /**
  *
- * Finds the diameter of the graph
+ * Estimates the diameter of the graph with a double BFS sweep (BFS from a random node, then
+ * BFS from the farthest node found). The result is exact for trees and a lower bound in
+ * general; on disconnected graphs it only covers the component of the random start node.
  *
  * @param Graph
- * @returns returns an object with a start, end - the two points of a graph and the diameter of the graph
+ * @returns an object with start, end - the two endpoints found - and distance, their hop distance
  */
 declare function GraphDiameter(Graph: Graph): Promise<{
     start: number;

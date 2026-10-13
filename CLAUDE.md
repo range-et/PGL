@@ -9,11 +9,12 @@ Plebeian Graph Library (PGL) — a TypeScript/WebGL network visualization librar
 ## Build & Development Commands
 
 ```bash
-npm run build          # Build library → Build/pgl.js (CJS) + Build/pgl_module.js (ESM)
+npm run build          # Build library → Build/pgl.js (CJS) + Build/pgl_module.js (ESM), three/gl-matrix external;
+                       #   Build/pgl_standalone.js (ESM, three bundled) for Examples / no-bundler use
 npm run watch          # Watch mode for development
 npm run test:unit      # Run Vitest unit tests
 npm run test:unit:watch # Watch mode for unit tests
-npm run test           # Visual regression tests (Puppeteer + pixelmatch)
+npm run test           # Visual regression test (Puppeteer + pixelmatch); UPDATE_REFERENCE=1 to re-baseline
 npm run document       # Generate TypeDoc API docs to docs/
 npm run build:all      # Build + generate docs
 npm run serve          # Python HTTP server on port 3000 (for examples)
@@ -21,7 +22,7 @@ npm run serve          # Python HTTP server on port 3000 (for examples)
 
 ## Architecture
 
-**Core data model** (`Src/Core/`): `Graph` holds `Map<string, _Node>` and `Map<string, Edge>`. The `_Node` class is underscore-prefixed to avoid Node.js naming collision. Graphs require `await G.initialize()` after construction or mutation.
+**Core data model** (`Src/Core/`): `Graph` holds `Map<number, _Node>` and `Map<number, Edge>` (numeric IDs). The `_Node` class is underscore-prefixed to avoid Node.js naming collision. Graphs require `await G.initialize()` after construction or mutation.
 
 **Rendering pipeline** (`Src/Drawing/`):
 - `GraphDrawer3d` — main renderer wrapping Three.js scene, camera, controls
@@ -31,7 +32,7 @@ npm run serve          # Python HTTP server on port 3000 (for examples)
 
 **Layout algorithms** (`Src/Simulation/`): Kamada-Kawai 3D and Stress SGD 3D, both supporting live simulation via `step(deltaTime)`.
 
-**Graph algorithms** (`Src/GraphAlgorithms/`): BFS, Dijkstra (hop-count only, not weighted), subgraph selection, diameter.
+**Graph algorithms** (`Src/GraphAlgorithms/`): BFS, Dijkstra (hop-count only, not weighted), subgraph selection, diameter (double-sweep estimate: exact for trees, lower bound otherwise).
 
 **Hierarchy** (`Src/Hierarchy/`): Distance-based clustering for LOD.
 
@@ -54,7 +55,7 @@ Every PGL visualization follows this order — getting it wrong is the most comm
 
 - Unit tests: `test/unit/*.test.ts` (Vitest) — cover Graph, Simulation, MatrixHelpers, Utilities
 - Visual regression: `test/test_1.js` (Puppeteer screenshots compared with pixelmatch)
-- CI runs on GitHub Actions (Ubuntu, Node 20): build → test:unit
+- CI runs on GitHub Actions (Ubuntu, Node 22): tsc → build → test:unit → visual test
 
 ## Dependencies
 

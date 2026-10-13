@@ -6,16 +6,17 @@ import { default as Line } from '../HelperClasses/Line';
  */
 import * as THREE from "three";
 /**
- * Create a single thick line mesh from a Line (array of points).
- * Uses a ribbon geometry + shader material so the line is billboarded
- * and has consistent pixel width on screen.
+ * Create thick lines for every edge in an edge map as one mesh (one draw call).
+ * Lines are billboarded and drawn with the given pixel width; the width follows the
+ * renderer's canvas size.
  *
- * @param line - Line with .points (Point[])
- * @param bounds - Scale factor applied to point coordinates (same as thin lines)
- * @param color - Hex color
- * @param lineWidthPx - Line width in pixels (screen space)
- * @param resolution - Canvas size for correct scaling (optional)
- * @returns A Three.js Mesh that can be added to the scene
+ * The mesh is pickable: raycasts hit the edge centre lines (using the Raycaster's Line
+ * threshold) and report `index` = 2 × segment; `userData.segmentEdgeIds[segment]` is the edge ID.
+ *
+ * @param edgeMap - Map of edge id to Line
+ * @param bounds - Scale factor for coordinates
+ * @param color - Hex color for all lines
+ * @param thickness - Line width in pixels (values below 1 are treated as legacy units × 100)
+ * @returns THREE.Group containing a single mesh (empty if no edge has 2+ points)
  */
-export declare function createThickLineMesh(line: Line, bounds: number, color: number, lineWidthPx?: number, resolution?: THREE.Vector2): THREE.Mesh;
-export declare function createThickEdgesGroup(edgeMap: Map<number, Line>, bounds: number, color: number, thickness?: number, resolution?: THREE.Vector2): THREE.Group;
+export declare function createThickEdgesGroup(edgeMap: Map<number, Line>, bounds: number, color: number, thickness?: number): THREE.Group;

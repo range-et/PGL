@@ -78,11 +78,13 @@ async function Dijkstra(Graph:Graph, Node:number) {
 // this only returns one of the diameters that is the longest 
 // not all of them
 /**
- * 
- * Finds the diameter of the graph
- * 
- * @param Graph 
- * @returns returns an object with a start, end - the two points of a graph and the diameter of the graph
+ *
+ * Estimates the diameter of the graph with a double BFS sweep (BFS from a random node, then
+ * BFS from the farthest node found). The result is exact for trees and a lower bound in
+ * general; on disconnected graphs it only covers the component of the random start node.
+ *
+ * @param Graph
+ * @returns an object with start, end - the two endpoints found - and distance, their hop distance
  */
 async function GraphDiameter(Graph:Graph) {
   const nodeIds = [...Graph.nodes.keys()];

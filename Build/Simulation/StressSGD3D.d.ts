@@ -32,6 +32,13 @@ export interface StressSGD3DSimulation {
     getPositionMap(): Map<number, Point>;
 }
 /**
+ * Simple LCG (mod 2^31) for reproducible random numbers in [0, 1).
+ * Math.imul keeps the multiply exact; a plain `*` loses low bits above 2^53 and the
+ * sequence then repeats after ~10k values.
+ * @internal exported for tests
+ */
+export declare function createRng(seed: number): () => number;
+/**
  * Creates a stress-minimization simulation via stochastic gradient descent.
  * Faithful port of s_gd2 reference (https://github.com/jxz12/s_gd2):
  * - Epoch-based: each step does full epoch(s) with Fisher-Yates shuffle
