@@ -1,0 +1,174 @@
+/* PGL API docs — Monad System theme for TypeDoc's default theme.
+   Tokens from https://github.com/range-et/monad_system (MIT, Copyright (c) 2025 Indrajeet Haldar).
+   Rules: Helvetica sentence case, mono only for code, square corners, 1px rules,
+   blue for links and active state only, no shadows or gradients. */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600;700&display=swap");
+
+:root {
+  --font-sans: "Helvetica Neue", Helvetica, "Inter", Arial, sans-serif;
+  --font-mono: "JetBrains Mono", "Menlo", "Courier New", monospace;
+  --mn-interactive: #1E88C8;
+  --mn-interactive-hover: #1973AA;
+  --mn-info: #2B9ED1;
+  --mn-success: #6EAD45;
+  --mn-warning: #D7A12A;
+  --mn-error: #E4002B;
+
+  /* Light (Strata light) */
+  --light-color-background: #F2F4F7;
+  --light-color-background-secondary: #FFFFFF;
+  --light-color-background-active: #E3E8EE;
+  --light-color-background-warning: #D7A12A1a;
+  --light-color-warning-text: #141A22;
+  --light-color-accent: #BCC6D2;
+  --light-color-active-menu-item: #EDF1F5;
+  --light-color-text: #141A22;
+  --light-color-contrast-text: #141A22;
+  --light-color-text-aside: #4F5A69;
+  --light-color-icon-background: #FFFFFF;
+  --light-color-icon-text: #141A22;
+  --light-color-comment-tag-text: #141A22;
+  --light-color-comment-tag: #EDF1F5;
+  --light-color-link: var(--mn-interactive);
+  --light-color-focus-outline: var(--mn-interactive);
+  --light-color-document: #141A22;
+
+  /* Dark (Strata default) */
+  --dark-color-background: #0F1113;
+  --dark-color-background-secondary: #171A1E;
+  --dark-color-background-active: #2A313A;
+  --dark-color-background-warning: #D7A12A1a;
+  --dark-color-warning-text: #EEF2F6;
+  --dark-color-accent: #3A434F;
+  --dark-color-active-menu-item: #1F242B;
+  --dark-color-text: #EEF2F6;
+  --dark-color-contrast-text: #EEF2F6;
+  --dark-color-text-aside: #B6BFCC;
+  --dark-color-icon-background: #171A1E;
+  --dark-color-icon-text: #EEF2F6;
+  --dark-color-comment-tag-text: #EEF2F6;
+  --dark-color-comment-tag: #1F242B;
+  --dark-color-link: var(--mn-interactive);
+  --dark-color-focus-outline: var(--mn-interactive);
+  --dark-color-document: #EEF2F6;
+}
+
+/* Symbol kinds use the Strata signal colours, the same in both themes */
+:root {
+  --light-color-ts-keyword: var(--mn-interactive);   --dark-color-ts-keyword: var(--mn-interactive);
+  --light-color-ts-project: var(--mn-interactive);   --dark-color-ts-project: var(--mn-interactive);
+  --light-color-ts-module: var(--mn-interactive);    --dark-color-ts-module: var(--mn-interactive);
+  --light-color-ts-namespace: var(--mn-interactive); --dark-color-ts-namespace: var(--mn-interactive);
+  --light-color-ts-class: var(--mn-interactive);     --dark-color-ts-class: var(--mn-interactive);
+  --light-color-ts-function: var(--mn-info);         --dark-color-ts-function: var(--mn-info);
+  --light-color-ts-method: var(--mn-info);           --dark-color-ts-method: var(--mn-info);
+  --light-color-ts-interface: var(--mn-success);     --dark-color-ts-interface: var(--mn-success);
+  --light-color-ts-property: var(--mn-warning);      --dark-color-ts-property: var(--mn-warning);
+  --light-color-ts-variable: #7D8794;                --dark-color-ts-variable: #B6BFCC;
+  --light-color-ts-type-alias: var(--mn-success);    --dark-color-ts-type-alias: var(--mn-success);
+  --light-color-ts-type-parameter: var(--mn-warning); --dark-color-ts-type-parameter: var(--mn-warning);
+  --light-color-ts-enum: var(--mn-warning);          --dark-color-ts-enum: var(--mn-warning);
+  --light-color-ts-accessor: var(--mn-warning);      --dark-color-ts-accessor: var(--mn-warning);
+  --light-color-ts-reference: var(--mn-info);        --dark-color-ts-reference: var(--mn-info);
+  --light-color-alert-note: var(--mn-info);          --dark-color-alert-note: var(--mn-info);
+  --light-color-alert-tip: var(--mn-success);        --dark-color-alert-tip: var(--mn-success);
+  --light-color-alert-important: var(--mn-interactive); --dark-color-alert-important: var(--mn-interactive);
+  --light-color-alert-warning: var(--mn-warning);    --dark-color-alert-warning: var(--mn-warning);
+  --light-color-alert-caution: var(--mn-error);      --dark-color-alert-caution: var(--mn-error);
+}
+
+/* ---------- Base ---------- */
+* { border-radius: 0 !important; box-shadow: none !important; }
+
+body {
+  font-family: var(--font-sans);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, h4, h5, h6 { font-weight: 500; letter-spacing: normal; }
+.tsd-page-title h1 { font-size: 2.625rem; font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; }
+.tsd-typography p, .tsd-typography li { line-height: 1.65; }
+.tsd-typography h2 {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 3px solid var(--color-text);
+}
+.tsd-typography h3 { margin-top: 2rem; }
+
+a { transition: color 80ms linear; }
+a:hover { color: var(--mn-interactive-hover); }
+
+code, pre, .tsd-signature, .tsd-signature-type, .tsd-signature-symbol, .tsd-kind-parameter {
+  font-family: var(--font-mono);
+}
+code { font-size: 0.875em; }
+.tsd-typography code, .tsd-comment code {
+  padding: 1px 5px;
+  background: var(--color-background-active);
+  border: 1px solid var(--color-accent);
+}
+pre {
+  border: 1px solid var(--color-accent);
+  border-left: 2px solid var(--mn-interactive);
+  background: var(--color-background-secondary);
+}
+pre code { padding: 0; background: none; border: 0; }
+
+blockquote {
+  margin-left: 0;
+  padding: 0.5rem 1rem;
+  border-left: 3px solid var(--mn-info);
+  background: var(--color-background-secondary);
+}
+
+/* Tables (README cookbook, options) */
+.tsd-typography table { border-collapse: collapse; font-size: 0.875rem; }
+.tsd-typography th {
+  text-align: left;
+  font-weight: 500;
+  color: var(--color-text-aside);
+  border: 0;
+  border-bottom: 1px solid var(--color-text);
+  background: var(--color-background-secondary);
+}
+.tsd-typography td { border: 0; border-bottom: 1px solid var(--color-accent); }
+.tsd-typography table tr:nth-child(2n) { background: transparent; }
+
+/* ---------- Header ---------- */
+.tsd-page-toolbar {
+  background: var(--color-background-secondary);
+  border-bottom: 1px solid var(--color-accent);
+}
+.tsd-page-toolbar .title { font-weight: 700; font-size: 1rem; }
+#tsd-toolbar-links a { font-size: 0.875rem; color: var(--color-text-aside); }
+#tsd-toolbar-links a:hover { color: var(--color-text); text-decoration: none; }
+
+/* ---------- Sidebar ---------- */
+.site-menu, .page-menu { font-size: 0.875rem; }
+.tsd-navigation a, .tsd-page-navigation a { border-left: 2px solid transparent; }
+.tsd-navigation a.current, .tsd-page-navigation a.current {
+  background: var(--color-active-menu-item);
+  border-left-color: var(--mn-interactive);
+}
+.tsd-accordion-summary > h3, .tsd-accordion-summary h5 { font-weight: 500; }
+
+/* ---------- Content panels ---------- */
+.tsd-panel.tsd-member, .tsd-signature {
+  border: 1px solid var(--color-accent);
+}
+.tsd-signature { background: var(--color-background-secondary); border-left: 2px solid var(--mn-interactive); }
+.tsd-panel-group > h2, .tsd-member-group > h2 { font-weight: 500; }
+.tsd-index-panel, .tsd-panel.tsd-index-panel { border: 1px solid var(--color-accent); }
+
+.tsd-tag, .tsd-anchor-icon svg { font-family: var(--font-mono); }
+.tsd-tag {
+  border: 1px solid var(--color-accent);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* Search box */
+#tsd-search, #tsd-search-input { font-family: var(--font-sans); }
+#tsd-search { border: 1px solid var(--color-accent); }
+
+footer { border-top: 1px solid var(--color-accent); font-size: 0.875rem; }

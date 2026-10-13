@@ -11,9 +11,19 @@ The Plebeian Graph Library (PGL) is a library designed to facilitate the visuali
 
 > **Used in production by:**
 > - **[Narode](https://github.com/range-et/Narode)** — Reddit information-spread visualizer; PGL's first applied case. Renders forum cascades as graphs so the structure of how ideas propagate is legible at a glance.
-> - **[jeftwork](https://github.com/range-et/jeftwork)** — people-document graph mapper for the Epstein DOJ dumps. Thousands of co-occurrence edges in 3D with category colors and a year timeline. Leveraging the power of WebGL, PGL offers an efficient and interactive solution for visualizing network data in web browsers (Tested on Firefox, Edge and Chrome). Whether dealing with local datasets or data retrieved from APIs, PGL provides a versatile platform for conducting extensive network simulations, physical modeling, and immersive visualizations. With a rich set of features including graph condensation based on selected criteria, randomized edge pruning in highly connected graphs, and support for diverse visualization techniques like network diffusions and Kamada Kawai layouts, and edge bundling, PGL empowers users to gain valuable insights from complex network structures.
+> - **[jeftwork](https://github.com/range-et/jeftwork)** — people-document graph mapper for the Epstein DOJ dumps. Thousands of co-occurrence edges in 3D with category colors and a year timeline.
+
+Leveraging the power of WebGL, PGL offers an efficient and interactive solution for visualizing network data in web browsers (Tested on Firefox, Edge and Chrome). Whether dealing with local datasets or data retrieved from APIs, PGL provides a versatile platform for conducting extensive network simulations, physical modeling, and immersive visualizations. With a rich set of features including graph condensation based on selected criteria, randomized edge pruning in highly connected graphs, and support for diverse visualization techniques like network diffusions and Kamada Kawai layouts, and edge bundling, PGL empowers users to gain valuable insights from complex network structures.
 
 ![PGL graph animation](graph_animation.gif)
+
+## What's new in 3.0
+
+- **three.js is a peer dependency.** Install it next to PGL (`npm i plebeiangraphlibrary three`); the npm build no longer bundles it, so your app and PGL share one instance. `Build/pgl_standalone.js` still bundles three.js for use without a bundler.
+- **One draw call per edge set.** Thin and thick edges each render as a single object, and both can be clicked or hovered.
+- **Vertex `color` and `alpha` work** in `DrawTHREEGraphVertices` / `DrawTHREEGraphVerticesMutable`.
+- **Faster Stress SGD setup** (about 10× on 2,000 nodes, with far less memory). `GenerateErdosReyni_n_p` now produces the requested density and returns an initialized graph.
+- Many crash fixes for large graphs. See the [changelog](CHANGELOG.md) for the full list and upgrade notes.
 
 ## Notes on terminology
 
@@ -95,6 +105,8 @@ The library exports **Point** (class with `x`, `y`, `z` and `translate()`), **Po
 
 - **Static** (one-shot layout): `DrawTHREEGraphVertices`, `DrawTHREEGraphEdgesThin` — create geometry once from the graph.
 - **Mutable** (animation loops): `DrawTHREEGraphVerticesMutable` (and `updatePositions()`), `DrawTHREEGraphEdgesThinMutable` (and `updateEdges()`) — update geometry each frame for time-based simulation.
+- **Edges are one object per call.** `DrawTHREEGraphEdgesThin`, `DrawThinEdgesFromEdgeMap` and `DrawTHREEGraphEdgesThinMutable` return a Group holding a single `THREE.LineSegments`; `DrawTHREEGraphEdgesThick` and `DrawThickEdgesFromEdgeMap` return a Group holding a single mesh whose line width (in pixels) follows the canvas size. For a raycast hit on either, the edge ID is `hit.object.userData.segmentEdgeIds[Math.floor(hit.index / 2)]`; `enableInteraction()` does this for you.
+- **Vertex colours:** `DrawTHREEGraphVertices(G, bounds, size, color, alpha)` applies `color` to every vertex and treats `alpha` as opacity (1 = opaque). `ChangeTheVertexColours` / `ResetVertexColors` recolour these point-cloud vertices; box vertices (`DrawTHREEBoxBasedVertices`) use one colour for all boxes.
 
 ### Interaction (opt-in)
 
@@ -155,7 +167,7 @@ graph3d.enableInteraction({
 });
 ```
 
-**Tips:** Thick edges are easier to pick than thin lines. Use `bounds: 1` or `5` for better picking. Set `graph3d.controls.autoRotate = false` for interactive demos. See Examples 14 (click), 15 (hover), 16 (highlight neighbours), 17 (drag).
+**Tips:** Thin and thick edges are both pickable; the pick distance is 5 world units for edges and 10 for point-cloud vertices, so scale your graph (`bounds`) accordingly. Set `graph3d.controls.autoRotate = false` for interactive demos. See Examples 14 (click), 15 (hover), 16 (highlight neighbours), 17 (drag).
 
 ### LOD and flow-map style
 
@@ -259,9 +271,9 @@ const edgeListText = `
 `.trim();
 
 const G = await PGL.SampleData.LoadGraphFromEdgeListText(edgeListText);
-// G is already initialized and has random starting positions.
-// Run a layout before drawing (positions are random without it):
-const posMap = PGL.Drawing.SimulateKamadaKawai(G, 50, 200);
+// G is already initialized; every node starts at the origin.
+// Run a layout before drawing (SimulateKamadaKawai is async):
+const posMap = await PGL.Drawing.SimulateKamadaKawai(G, 50, 200);
 G.apply_position_map(posMap);
 const lmap = PGL.Drawing.DrawEdgeLinesDivisions(G, 1);
 G.apply_edge_pos_maps(lmap);
@@ -293,7 +305,7 @@ G.add_edge(2, 0);
 await G.initialize();
 
 // Now run a layout to compute real positions
-const posMap = PGL.Drawing.SimulateKamadaKawai(G, 100, 200);
+const posMap = await PGL.Drawing.SimulateKamadaKawai(G, 100, 200);
 G.apply_position_map(posMap);
 const lmap = PGL.Drawing.DrawEdgeLinesDivisions(G, 1);
 G.apply_edge_pos_maps(lmap);
@@ -305,16 +317,16 @@ G.apply_edge_pos_maps(lmap);
 
 ### Recipe 3 — Color nodes by a data property
 
-Nodes are drawn as an instanced mesh. `ChangeTheVertexColours` takes the **inner mesh** (`.children[0]`), not the Group.
+Per-node colours need point-cloud vertices (`DrawTHREEGraphVertices` or its Mutable variant). `ChangeTheVertexColours` accepts the returned Group or its `.children[0]`. Box vertices share one colour.
 
 ```javascript
 const G = await PGL.SampleData.LoadZKCSimulated();
 // ... (pipeline steps 2–4) ...
 
-const nodeGroup = PGL.ThreeWrapper.DrawTHREEBoxBasedVertices(G, 1, 0xffffff, 5);
+const nodeGroup = PGL.ThreeWrapper.DrawTHREEGraphVertices(G, 1, 8, 0xffffff, 1);
 graph3d.addVisElement(nodeGroup);
 
-// Color specific nodes red — pass the inner mesh, not the Group
+// Color specific nodes red
 const mesh = nodeGroup.children[0];
 const redNodeIds = [0, 3, 7, 12];
 PGL.ThreeWrapper.ChangeTheVertexColours(mesh, redNodeIds, 0xff4444);
@@ -383,11 +395,11 @@ const canvas = document.getElementById("displayCanvas");
 const graph3d = new PGL.GraphDrawer.GraphDrawer3d({ graph: G, width: 800, height: 700, canvas });
 await graph3d.init();
 
-const nodeGroup = PGL.ThreeWrapper.DrawTHREEBoxBasedVertices(G, 1, 0xffffff, 5);
+const nodeGroup = PGL.ThreeWrapper.DrawTHREEGraphVertices(G, 1, 8, 0xffffff, 1);
 graph3d.addVisElement(nodeGroup);
 graph3d.addVisElement(PGL.ThreeWrapper.DrawTHREEGraphEdgesThick(G, 1, 0x555555, 10));
 
-const mesh = nodeGroup.children[0]; // inner instanced mesh
+const mesh = nodeGroup.children[0]; // point cloud with per-vertex colours
 
 graph3d.enableInteraction({
   graph: G,
@@ -458,7 +470,8 @@ These are the issues that trip up most new users and AI-generated code. Check th
 
 | Mistake | Symptom | Fix |
 |---|---|---|
-| Passing the `Group` to `ChangeTheVertexColours` | Colors don't change | Pass `nodeVisualElements.children[0]` — the function needs the inner instanced mesh, not the outer Group. Same for `ResetVertexColors`. |
+| Using `ChangeTheVertexColours` on box vertices | Colors don't change | Only point-cloud vertices (`DrawTHREEGraphVertices` / `DrawTHREEGraphVerticesMutable`) have per-vertex colours. Pass the returned Group or its `.children[0]`. Same for `ResetVertexColors`. |
+| Iterating an edge Group's children to find edges | Only one child | Edges render as one object; use `userData.segmentEdgeIds` (see *Drawing API*) or `enableInteraction()` callbacks. |
 | Forgetting `await G.initialize()` after manually building a graph | BFS, Dijkstra, and layout return empty/wrong results | Manual `add_node` / `add_edge` loops do **not** auto-initialize. Always call `await G.initialize()` before running any algorithm or draw call. |
 | Calling `initialize()` without `await` | Race condition — adjacency lists are half-built | It is async. Always `await G.initialize()`. |
 | `await PGL.Models.GenerateErdosReyni_n_p(n, p)` missing | Returns a Promise — using it without `await` gives a Promise, not a Graph | Always `await` the call: `const G = await PGL.Models.GenerateErdosReyni_n_p(n, p)` |
@@ -473,19 +486,21 @@ These are the issues that trip up most new users and AI-generated code. Check th
 
 ## Testing
 
-- **Unit tests:** `npm run test:unit` (Vitest; tests Utilities, Graph, Simulation, matrix helpers).
-- **Visual regression:** `npm test` (Puppeteer + pixelmatch against a baseline screenshot).
+- **Unit tests:** `npm run test:unit` (Vitest): graph model and algorithms, simulations, drawing and picking, loaders, hierarchy, and the build output (three.js stays external in the npm build).
+- **Type check:** `npx tsc --noEmit`.
+- **Visual regression:** `npm run build && npm test` renders `test/test_1.html` and compares the canvas with `test/test_1.png` (fails if more than 200 pixels differ). `UPDATE_REFERENCE=1 npm test` re-baselines. Set `PUPPETEER_EXECUTABLE_PATH` to use an installed Chrome.
+- CI (GitHub Actions, Node 22) runs all of the above.
 
 ## Usage / Installation
 
 Install it from the npm repository. Note that this method needs a npm folder to be set up with a build tool like parcel to package the visualizations
 
 ```
-npm i plebeiangraphlibrary
+npm i plebeiangraphlibrary three
 ```
 There is a boiler plate example of this in [repository](https://github.com/range-et/pgl_example)
 
-The npm build imports `three` and `gl-matrix` from your project instead of bundling them, so your app and PGL share one copy of three.js.
+`three` (>= 0.170) is a peer dependency: the npm build imports it from your project instead of bundling it, so your app and PGL share one copy of three.js.
 
 Or head over to the GitHub, download the pgl_standalone.js [Builds](https://github.com/range-et/PGL/tree/main/Build) file (three.js included) and then start using it as a standalone module without a bundler.
 

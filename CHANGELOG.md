@@ -5,10 +5,11 @@ All notable changes to the Plebeian Graph Library (PGL) will be documented in th
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [3.0.0] - 2026-10-13
 
 ### Changed
 
+- **three.js is now a peer dependency (`>=0.170.0`).** Install it alongside PGL: `npm i plebeiangraphlibrary three`.
 - **npm build no longer bundles three.js or gl-matrix** — `pgl_module.js` / `pgl.js` import them (757 KB → ~90 KB), so apps share one three.js instance. The new **`Build/pgl_standalone.js`** bundles three.js for use without a bundler; the Examples use it.
 - **GenerateErdosReyni_n_p** — Samples each unordered pair once (it produced about twice the expected edges, with duplicates) and returns an initialized graph.
 - **DrawTHREEGraphVertices / DrawTHREEGraphVerticesMutable** — The `color` argument is applied (vertices were always white) and `alpha` is opacity.

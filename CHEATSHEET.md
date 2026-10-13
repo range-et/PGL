@@ -49,7 +49,7 @@ import * as PGL from "plebeiangraphlibrary";
 | Function | Returns | Notes |
 |---|---|---|
 | `LoadZKCSimulated()` | `Graph` (initialized, positions baked) | Best for quick demos — no layout step needed |
-| `LoadZKC()` | `Graph` (initialized, random positions) | Run `SimulateKamadaKawai` before drawing |
+| `LoadZKC()` | `Graph` (initialized, no positions) | Run `await SimulateKamadaKawai(...)` before drawing |
 | `LoadDwt1005()` | `Graph` (initialized) | 1005-node structural graph, lazy-loaded |
 | `LoadGraphFromEdgeListText(text)` | `Graph` (initialized) | Space-separated `nodeA nodeB` per line |
 | `LoadGraphFromObjText(objText)` | `{ graph, positions: Float32Array }` | OBJ mesh → graph. Use positions as `initialPositions` for StressSGD |
@@ -111,7 +111,7 @@ graph3d.controls     // OrbitControls  (controls.autoRotate = false to disable s
 
 ```javascript
 // Static layout — returns a position map, then you apply it
-const posMap = PGL.Drawing.SimulateKamadaKawai(G, iterations, bound?, cohesion?, repulsion?)
+const posMap = await PGL.Drawing.SimulateKamadaKawai(G, iterations, bound?, cohesion?, repulsion?)
 G.apply_position_map(posMap)
 
 // Edge geometry — always run after setting positions
@@ -151,8 +151,8 @@ PGL.ThreeWrapper.DrawThinEdgesFromEdgeMap(edgeMap, bounds, color)               
 PGL.ThreeWrapper.DrawSimplifiedEdges(G, bounds, color)                            → Group
 
 // Color
-PGL.ThreeWrapper.ChangeTheVertexColours(mesh, nodeIds[], color)  // ⚠️ pass .children[0], not the Group
-PGL.ThreeWrapper.ResetVertexColors(mesh)                         // ⚠️ same — pass .children[0]
+PGL.ThreeWrapper.ChangeTheVertexColours(points, nodeIds[], color)  // ⚠️ point-cloud vertices only (Group or .children[0])
+PGL.ThreeWrapper.ResetVertexColors(points)                         // ⚠️ same
 
 // Paths & groups
 PGL.ThreeWrapper.DrawThickPathFromNodeIds(G, bounds, nodeIds[], color, width)     → Group
@@ -185,7 +185,7 @@ graph3d.enableInteraction({
 **EdgePickDetails:** `{ edgeId, start, end, data }`
 
 **Tips:**
-- Thick edges are easier to pick than thin lines
+- Thin and thick edges are both pickable (edge IDs via `userData.segmentEdgeIds`)
 - Set `graph3d.controls.autoRotate = false` for interactive demos
 - `onNodeHover` fires with `null` when the pointer leaves a node — use this to hide tooltips
 
@@ -337,7 +337,7 @@ rebuildGeometry(); // InstancedMesh count changed — must recreate GPU geometry
 
 | ⚠️ | Fix |
 |---|---|
-| `ChangeTheVertexColours(group, ...)` — colors don't change | Use `group.children[0]` (inner instanced mesh) |
+| `ChangeTheVertexColours(...)` on box vertices — colors don't change | Use point-cloud vertices (`DrawTHREEGraphVertices`) for per-node colours |
 | `PGL.Models.GenerateErdosReyni_n_p(n, p)` without `await` — you get a Promise, not a Graph | It's async — `const G = await PGL.Models.GenerateErdosReyni_n_p(n, p)` |
 | `new PGL.Graph()` with no args — crashes on first access | Use `new PGL.Graph(new Map(), new Map())` |
 | `G.add_node(id, { pos: ... })` plain object — `add_edge` throws on neighbours | Pass `new PGL._Node({ pos: ... })` |

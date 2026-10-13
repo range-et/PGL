@@ -1,11 +1,31 @@
 {
   "$schema": "https://typedoc.org/schema.json",
-  "entryPoints": ["Src"],
+  "name": "Plebeian Graph Library",
+  "entryPoints": [
+    "Src"
+  ],
   "entryPointStrategy": "expand",
   "out": "docs",
   "readme": "README.md",
+  "projectDocuments": [
+    "CHANGELOG.md",
+    "CHEATSHEET.md"
+  ],
   "excludeExternals": true,
   "excludePrivate": true,
-  "exclude": ["**/*.test.ts", "**/node_modules/**"],
-  "includeVersion": true
+  "exclude": [
+    "**/*.test.ts",
+    "**/node_modules/**"
+  ],
+  "includeVersion": true,
+  "favicon": "favicon.ico",
+  "customCss": "docs-theme/typedoc-monad.css",
+  "lightHighlightTheme": "github-light",
+  "darkHighlightTheme": "github-dark",
+  "navigationLinks": {
+    "Examples": "/examples.html",
+    "GitHub": "https://github.com/range-et/PGL",
+    "npm": "https://www.npmjs.com/package/plebeiangraphlibrary"
+  },
+  "customFooterHtml": "Theme: <a href=\"https://github.com/range-et/monad_system\">Monad System</a>"
 }

@@ -10,7 +10,7 @@ const buildOutDir = resolve(__dirname, "Build");
  * one copy of three.js. Only exact package ids: the OrbitControls addon (ESM-only) is bundled,
  * and its own `import "three"` stays external.
  */
-export const npmExternals = ["three", "gl-matrix"];
+const npmExternals = ["three", "gl-matrix"];
 
 // Vitest options are merged at runtime; cast so TypeDoc/tsc don't require vitest types
 const config = ({ mode }: { mode: string }) => {
