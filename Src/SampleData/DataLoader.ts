@@ -39,9 +39,8 @@ async function LoadGraphFromEdgeListText(edgeListText: string): Promise<Graph> {
     nodeIdsSet.add(j);
   }
   const nodes = new Map<number, _Node>();
-  const origin = new Point(0, 0, 0);
   for (const id of nodeIdsSet) {
-    nodes.set(id, new _Node({ pos: origin }));
+    nodes.set(id, new _Node({ pos: new Point(0, 0, 0) }));
   }
   const edges = new Map<number, Edge>();
   edgePairs.forEach(([start, end], idx) => {
@@ -148,9 +147,8 @@ async function LoadGraphFromObjText(objText: string): Promise<LoadGraphFromObjRe
   }
   const n = vertices.length / 3;
   const nodes = new Map<number, _Node>();
-  const origin = new Point(0, 0, 0);
   for (let id = 0; id < n; id++) {
-    nodes.set(id, new _Node({ pos: origin }));
+    nodes.set(id, new _Node({ pos: new Point(0, 0, 0) }));
   }
   const edges = new Map<number, Edge>();
   let idx = 0;
@@ -189,11 +187,10 @@ async function LoadDwt1005(): Promise<Graph> {
     }
   }
   const nodes = new Map<number, _Node>();
-  const origin = new Point(0, 0, 0);
   // Deterministic order 1..N so simulation and drawer node order match
   const sortedIds = [...nodeIdsSet].sort((a, b) => a - b);
   for (const id of sortedIds) {
-    nodes.set(id, new _Node({ pos: origin }));
+    nodes.set(id, new _Node({ pos: new Point(0, 0, 0) }));
   }
   const edges = new Map<number, Edge>();
   let idx = 0;

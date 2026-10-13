@@ -21,15 +21,23 @@ export interface OctreeCell {
 }
 
 /**
- * Build an octree from points. Each leaf holds at most one point;
- * internal nodes store center of mass and count for Barnes-Hut.
+ * Subdivision depth after which remaining points are kept together in one leaf.
+ * Halving 64 times is far below float precision, so only coincident (or NaN) points get here.
+ */
+const MAX_DEPTH = 64;
+
+/**
+ * Build an octree from points. Each leaf holds one point, except leaves at
+ * MAX_DEPTH, which hold all points that could not be separated (point is null).
+ * Internal nodes store center of mass and count for Barnes-Hut.
  */
 export function buildOctree(
   points: OctreePoint[],
   minX: number,
   minY: number,
   minZ: number,
-  size: number
+  size: number,
+  depth: number = 0
 ): OctreeCell | null {
   if (points.length === 0) return null;
   if (points.length === 1) {
@@ -43,6 +51,16 @@ export function buildOctree(
       children: null,
       point: p,
     };
+  }
+  if (depth >= MAX_DEPTH) {
+    let sx = 0, sy = 0, sz = 0;
+    for (const p of points) {
+      sx += p.x;
+      sy += p.y;
+      sz += p.z;
+    }
+    const k = points.length;
+    return { cx: sx / k, cy: sy / k, cz: sz / k, count: k, size, children: null, point: null };
   }
 
   const midX = minX + size;
@@ -75,7 +93,7 @@ export function buildOctree(
     const cminX = minX + ox * size;
     const cminY = minY + oy * size;
     const cminZ = minZ + oz * size;
-    const child = buildOctree(pts, cminX, cminY, cminZ, half);
+    const child = buildOctree(pts, cminX, cminY, cminZ, half, depth + 1);
     if (child) {
       children.push(child);
       cx += child.cx * child.count;
@@ -133,9 +151,9 @@ export function computeRepulsionForce(
     return;
   }
 
-  // Barnes-Hut: if cell is far enough, approximate as single point
+  // Barnes-Hut: if cell is far enough (or is a leaf of coincident points), approximate as single point
   const ratio = cell.size / len;
-  if (ratio < theta && cell.count > 0) {
+  if ((ratio < theta || cell.children === null) && cell.count > 0) {
     const f = (repulsionValue * cell.count) / lenSq;
     out.fx -= dx * f;
     out.fy -= dy * f;

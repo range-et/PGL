@@ -4,6 +4,7 @@ import _Node from "../../Src/Core/_Node";
 import Edge from "../../Src/Core/Edge";
 import Point from "../../Src/HelperClasses/Point";
 import { createKamadaKawai3D, createStressSGD3D } from "../../Src/Simulation";
+import { buildOctree, computeRepulsionForce } from "../../Src/Simulation/Octree";
 
 function makeGraph(
   numNodes: number,
@@ -58,5 +59,31 @@ describe("createStressSGD3D", () => {
     sim.step(0.1);
     const pmap = sim.getPositionMap();
     expect(pmap.size).toBe(3);
+  });
+});
+
+describe("Octree", () => {
+  it("builds with coincident points and counts both in the repulsion", () => {
+    const tree = buildOctree(
+      [
+        { x: 1, y: 1, z: 1, index: 0 },
+        { x: 1, y: 1, z: 1, index: 1 },
+        { x: -3, y: 0, z: 0, index: 2 },
+      ],
+      -4, -4, -4, 4
+    );
+    const out = { fx: 0, fy: 0, fz: 0 };
+    // Query at (3,3,3) with point 2 excluded; theta=0 forces descent to the leaves.
+    computeRepulsionForce(tree, 3, 3, 3, 2, 1, 0, out);
+    // Each point at (1,1,1) pushes by -diff/|diff|^2 = 2/12 per axis.
+    expect(out.fx).toBeCloseTo(2 * (2 / 12));
+    expect(out.fz).toBeCloseTo(2 * (2 / 12));
+  });
+
+  it("Kamada-Kawai with the octree survives nodes stacked on one position", async () => {
+    const graph = makeGraph(100, []);
+    await graph.initialize();
+    const sim = createKamadaKawai3D(graph, { simulationBound: 0, centerPull: 0 });
+    expect(() => sim.step(0)).not.toThrow();
   });
 });

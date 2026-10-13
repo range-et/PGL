@@ -22,8 +22,10 @@ class Graph {
   constructor(nodes: Map<number, _Node>, edges: Map<number, Edge>) {
     this.nodes = nodes;
     this.edges = edges;
-    this._nextEdgeId =
-      edges.size > 0 ? Math.max(...edges.keys()) + 1 : 0;
+    // Loop rather than Math.max(...keys): spreading 100k+ arguments overflows the call stack.
+    let maxEdgeId = -1;
+    for (const id of edges.keys()) if (id > maxEdgeId) maxEdgeId = id;
+    this._nextEdgeId = maxEdgeId + 1;
   }
 
   // test function

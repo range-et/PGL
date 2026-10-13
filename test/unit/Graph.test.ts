@@ -3,6 +3,7 @@ import Graph from "../../Src/Core/Graph";
 import _Node from "../../Src/Core/_Node";
 import Edge from "../../Src/Core/Edge";
 import Point from "../../Src/HelperClasses/Point";
+import GraphMethods from "../../Src/GraphAlgorithms/GraphMethods";
 
 function makeGraph(
   numNodes: number,
@@ -145,5 +146,30 @@ describe("Graph", () => {
       expect(pmap.get(2)?.z).toBe(9);
       expect(pmap.has(1)).toBe(false);
     });
+  });
+
+  describe("constructor", () => {
+    it("handles 200k edges and continues edge IDs after the largest key", () => {
+      const nodes = new Map<number, _Node>([[0, new _Node({})], [1, new _Node({})]]);
+      const edges = new Map<number, Edge>();
+      for (let i = 0; i < 200_000; i++) edges.set(i * 2, new Edge(0, 1, {}));
+      const graph = new Graph(nodes, edges);
+      graph.add_edge(0, 1, {});
+      expect(graph.edges.has(399_999)).toBe(true);
+      expect(graph.edges.size).toBe(200_001);
+    });
+  });
+});
+
+describe("GraphMethods.SelectSubgraph", () => {
+  it("keeps only internal neighbours and leaves the parent graph untouched", async () => {
+    const { graph } = makeGraph(4, [[0, 1], [1, 2], [2, 3]]);
+    await graph.initialize();
+    const sub = await GraphMethods.SelectSubgraph(graph, [0, 1, 99]);
+    expect([...sub.nodes.keys()]).toEqual([0, 1]);
+    expect(sub.edges.size).toBe(1);
+    expect(sub.nodes.get(1)!.neighbours).toEqual([0]);
+    expect(graph.nodes.get(1)!.neighbours).toEqual([0, 2]);
+    expect(await GraphMethods.BFSSearch(sub, 0)).toEqual(new Map([[0, -1], [1, 0]]));
   });
 });

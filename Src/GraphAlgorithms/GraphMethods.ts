@@ -128,20 +128,16 @@ async function GraphDiameter(Graph:Graph) {
 async function SelectSubgraph(graph:Graph, nodeList:number[]) {
   const prunedNodes:Map<number,_Node> = new Map();
   const prunedEdges:Map<number, Edge> = new Map();
-  // set the prunded vertices list
-  nodeList.forEach((element) => {
-    // get the element from the graph and set that
-    // data element in the  prunded vertices map
-    const ndata = graph.nodes.get(element)!;
-    prunedNodes.set(element, ndata);
-  });
+  // New node/edge objects so building the subgraph's adjacency never touches the parent graph
+  for (const id of nodeList) {
+    const node = graph.nodes.get(id);
+    if (node) prunedNodes.set(id, new _Node(node.data));
+  }
 
-  // set the pruned edges list
   let i = 0;
-  for (const edge of graph.edges.keys()) {
-    const edgeData = graph.edges.get(edge)!;
-    if (nodeList.includes(edgeData.start) && nodeList.includes(edgeData.end)) {
-      prunedEdges.set(i, edgeData);
+  for (const edge of graph.edges.values()) {
+    if (prunedNodes.has(edge.start) && prunedNodes.has(edge.end)) {
+      prunedEdges.set(i, new Edge(edge.start, edge.end, edge.data));
       i += 1;
     }
   }
