@@ -11,7 +11,7 @@ The Plebeian Graph Library (PGL) is a library designed to facilitate the visuali
 
 > **Used in production by:**
 > - **[Narode](https://github.com/range-et/Narode)** — Reddit information-spread visualizer; PGL's first applied case. Renders forum cascades as graphs so the structure of how ideas propagate is legible at a glance.
-> - **[jeftwork](https://github.com/range-et/jeftwork)** — people-document graph mapper for the Epstein DOJ dumps. Thousands of co-occurrence edges in 3D with category colors and a year timeline.
+> - **N-D-3** — a general-purpose graph toolkit: an outer-loop search over environment configurations driving inner-loop stochastic graph simulation, with the goal as a first-class part of the spec.
 
 Leveraging the power of WebGL, PGL offers an efficient and interactive solution for visualizing network data in web browsers (Tested on Firefox, Edge and Chrome). Whether dealing with local datasets or data retrieved from APIs, PGL provides a versatile platform for conducting extensive network simulations, physical modeling, and immersive visualizations. With a rich set of features including graph condensation based on selected criteria, randomized edge pruning in highly connected graphs, and support for diverse visualization techniques like network diffusions and Kamada Kawai layouts, and edge bundling, PGL empowers users to gain valuable insights from complex network structures.
 
