@@ -9,6 +9,23 @@ import GraphMethods from "../GraphAlgorithms/GraphMethods";
 import Graph from "../Core/Graph";
 import _Node from "../Core/_Node";
 
+/** Shared point-cloud material; `alpha` is the opacity (1 = opaque). */
+function createPointMaterial(alpha: number) {
+  return new THREE.ShaderMaterial({
+    uniforms: {
+      color: { value: new THREE.Color(0xffffff) }, // base color multiplied with per-vertex customColor
+      pointTexture: {
+        value: new THREE.TextureLoader().load("./Textures/Square.png"),
+      },
+      alpha: { value: alpha },
+    },
+    vertexShader: vertexShader,
+    fragmentShader: fragmentShader,
+    transparent: alpha < 1,
+    depthWrite: alpha >= 1,
+  });
+}
+
 // Draw the graph out as a bunch of vertices
 // As like tiny squares
 /**
@@ -34,16 +51,14 @@ function DrawTHREEGraphVertices(
   const pmap = Graph.get_position_map();
   // declare the sizes and colors
   let sizes: number[];
-  let colors: number[];
+  const colors: number[] = [];
   if (typeof size == "number") {
     sizes = Array(Graph.nodes.size).fill(size);
   } else {
     sizes = size;
   }
-  colors = Array(Graph.nodes.size).fill(color);
   const labels = [];
-  const colorVal = new THREE.Color();
-  colorVal.setRGB(255, 255, 255); // white as the default
+  const colorVal = new THREE.Color(color);
   // process the data set
   let i = 0;
   let nodeData: Point;
@@ -78,17 +93,7 @@ function DrawTHREEGraphVertices(
   geometry.name = "nodes";
 
   // example material
-  const PointMaterial = new THREE.ShaderMaterial({
-    uniforms: {
-      color: { value: new THREE.Color(0xffffff) }, // this is a base color dont mess with this
-      pointTexture: {
-        value: new THREE.TextureLoader().load("./Textures/Square.png"),
-      },
-      alphaTest: { value: alpha },
-    },
-    vertexShader: vertexShader,
-    fragmentShader: fragmentShader,
-  });
+  const PointMaterial = createPointMaterial(alpha);
 
   const vertices = new THREE.Group();
   vertices.add(new THREE.Points(geometry, PointMaterial));
@@ -122,10 +127,9 @@ function DrawTHREEGraphVerticesMutable(
   const pmap = Graph.get_position_map();
   const positionAttribute: number[] = [];
   let sizes: number[];
-  const colors = Array(n).fill(color);
+  const colors: number[] = [];
   const labels = nodeIds.slice();
-  const colorVal = new THREE.Color();
-  colorVal.setRGB(255, 255, 255);
+  const colorVal = new THREE.Color(color);
   for (let i = 0; i < n; i++) {
     const nodeData = pmap.get(nodeIds[i])!;
     positionAttribute.push(
@@ -154,17 +158,7 @@ function DrawTHREEGraphVerticesMutable(
   geometry.setAttribute("label", new THREE.Int32BufferAttribute(labels, 1));
   geometry.name = "nodes";
 
-  const PointMaterial = new THREE.ShaderMaterial({
-    uniforms: {
-      color: { value: new THREE.Color(0xffffff) },
-      pointTexture: {
-        value: new THREE.TextureLoader().load("./Textures/Square.png"),
-      },
-      alphaTest: { value: alpha },
-    },
-    vertexShader: vertexShader,
-    fragmentShader: fragmentShader,
-  });
+  const PointMaterial = createPointMaterial(alpha);
 
   const group = new THREE.Group();
   group.add(new THREE.Points(geometry, PointMaterial));

@@ -1,14 +1,13 @@
 const fragmentShader = `
 uniform vec3 color;
 uniform sampler2D pointTexture;
-uniform float alphaTest;
+uniform float alpha;
 
 varying vec3 vColor;
 
 void main() {
-    gl_FragColor = vec4( color * vColor, 1.0 );
+    gl_FragColor = vec4( color * vColor, alpha );
     gl_FragColor = gl_FragColor * texture2D( pointTexture, gl_PointCoord );
-    if ( gl_FragColor.a < alphaTest ) discard;
 }
 `;
 

@@ -103,3 +103,24 @@ describe("StressSGD3D random generator", () => {
     expect(seen.size).toBe(200_000);
   });
 });
+
+describe("createStressSGD3D after the schedule ends", () => {
+  it("leaves positions unchanged even with centerPull and initialPreservation", async () => {
+    const graph = makeGraph(4, [[0, 1], [1, 2], [2, 3]]);
+    await graph.initialize();
+    const initialPositions = new Float32Array([0, 0, 0, 5, 0, 0, 5, 5, 0, 0, 5, 0]);
+    const sim = await createStressSGD3D(graph, {
+      seed: 3,
+      tMax: 5,
+      epochsPerStep: 5,
+      centerPull: 0.1,
+      initialPositions,
+      initialPreservation: 0.2,
+    });
+    sim.step(0);
+    const settled = Array.from(sim.getPositions());
+    sim.step(0);
+    sim.step(0);
+    expect(Array.from(sim.getPositions())).toEqual(settled);
+  });
+});

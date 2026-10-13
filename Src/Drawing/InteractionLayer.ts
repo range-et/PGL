@@ -161,11 +161,13 @@ export class InteractionLayer {
     this.boundOnPointerDown = this.onPointerDown.bind(this);
     this.boundOnPointerUp = this.onPointerUp.bind(this);
 
+    const dragEnabled = !!(options.enableNodeDrag && options.onNodeDrag);
     domElement.addEventListener("click", this.boundOnClick);
-    if (this.hoverEnabled) {
+    // pointermove drives both hover and dragging
+    if (this.hoverEnabled || dragEnabled) {
       domElement.addEventListener("pointermove", this.boundOnPointerMove);
     }
-    if (options.enableNodeDrag && options.onNodeDrag) {
+    if (dragEnabled) {
       domElement.addEventListener("pointerdown", this.boundOnPointerDown);
       domElement.addEventListener("pointerup", this.boundOnPointerUp);
       domElement.addEventListener("pointerleave", this.boundOnPointerUp);
@@ -284,6 +286,7 @@ export class InteractionLayer {
       return;
     }
 
+    if (!this.hoverEnabled) return;
     const { nodeId, edgeId } = this.pick();
     this.fireHoverCallbacks(nodeId, edgeId);
   }

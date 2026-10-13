@@ -179,6 +179,7 @@ export async function createStressSGD3D(
 
   function step(_deltaTime: number): void {
     const epochs = Math.max(1, opts.epochsPerStep);
+    const epochsBefore = epochIndex;
     for (let ep = 0; ep < epochs && epochIndex < opts.tMax; ep++) {
       const eta = opts.useSchedule ? getEta(epochIndex) : opts.learningRate;
       epochIndex++;
@@ -209,6 +210,9 @@ export async function createStressSGD3D(
         if (dims === 3) positions[j * 3 + 2] += r * dz;
       }
     }
+    // Schedule finished: the layout is final. Without this, centerPull and initialPreservation
+    // kept moving positions on every later step (collapsing to the origin / reverting to the input).
+    if (epochIndex === epochsBefore) return;
 
     // Blend toward initial positions (preserves 3D mesh shape when using initialPositions)
     if (opts.initialPreservation > 0 && initialPositionsBackup) {
