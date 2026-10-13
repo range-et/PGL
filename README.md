@@ -1,10 +1,3 @@
----
-tags: [project, pgl, readme, visualization, node-graph]
-status: shipped
-domain: code-tools
-repo: https://github.com/range-et/PGL
----
-
 ## Introduction
 
 The Plebeian Graph Library (PGL) is a library designed to facilitate the visualization of large-scale network data (NetworkX-style graph plotting in JavaScript/TypeScript).
