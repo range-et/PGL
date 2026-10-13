@@ -14,7 +14,7 @@
   },
   "scripts": {
     "watch": "vite build --watch",
-    "build": "rm -rf Build && vite build",
+    "build": "rm -rf Build && vite build && vite build --mode standalone",
     "build:all": "npm run build && npm run document",
     "test": "node ./test/test_1.js",
     "test:unit": "vitest run",

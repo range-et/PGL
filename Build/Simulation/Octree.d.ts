@@ -18,10 +18,11 @@ export interface OctreeCell {
     point: OctreePoint | null;
 }
 /**
- * Build an octree from points. Each leaf holds at most one point;
- * internal nodes store center of mass and count for Barnes-Hut.
+ * Build an octree from points. Each leaf holds one point, except leaves at
+ * MAX_DEPTH, which hold all points that could not be separated (point is null).
+ * Internal nodes store center of mass and count for Barnes-Hut.
  */
-export declare function buildOctree(points: OctreePoint[], minX: number, minY: number, minZ: number, size: number): OctreeCell | null;
+export declare function buildOctree(points: OctreePoint[], minX: number, minY: number, minZ: number, size: number, depth?: number): OctreeCell | null;
 /**
  * Compute repulsion force on point at (px, py, pz) with index excludeIndex,
  * using Barnes-Hut approximation. theta controls accuracy: smaller = more accurate, larger = faster.

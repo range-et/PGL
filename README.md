@@ -484,7 +484,9 @@ npm i plebeiangraphlibrary
 ```
 There is a boiler plate example of this in [repository](https://github.com/range-et/pgl_example)
 
-Or head over to the GitHub, download the pgl_module.js [Builds](https://github.com/range-et/PGL/tree/main/Build) file and then start using it as a standalone module.
+The npm build imports `three` and `gl-matrix` from your project instead of bundling them, so your app and PGL share one copy of three.js.
+
+Or head over to the GitHub, download the pgl_standalone.js [Builds](https://github.com/range-et/PGL/tree/main/Build) file (three.js included) and then start using it as a standalone module without a bundler.
 
 ## More examples
 
