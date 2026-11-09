@@ -95,8 +95,8 @@ declare class Graph {
      * @param layout - Applies an object of maps associated with a graph: {pmap:(the position map), emap:(the edge map)}
      */
     apply_drawing_maps(layout: {
-        pmap: Map<number, Point>;
-        emap: Map<number, Line>;
+        pmap?: Map<number, Point>;
+        emap?: Map<number, Line>;
     }): void;
     /**
      * Gets the position map and the edge map respectively

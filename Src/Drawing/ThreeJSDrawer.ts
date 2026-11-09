@@ -557,7 +557,7 @@ function AddCylinderBasedImaging(
   size: number | number[] = 10
 ) {
   // precompute all the sizes
-  let sizes: number | number[];
+  let sizes: number[];
   if (typeof size == "number") {
     sizes = Array(nodeMap.size).fill(size) as number[];
   } else {
@@ -568,7 +568,7 @@ function AddCylinderBasedImaging(
   const material = new THREE.MeshBasicMaterial({ color: color });
   let i = 0;
   for (const [id, nodeData] of nodeMap) {
-    const radius = typeof sizes === "number" ? sizes : sizes[i];
+    const radius = sizes[i];
     const circumfurence = 2 * radius * Math.PI;
     const segments = Math.ceil(circumfurence / divisonLength);
     const geometry = new THREE.CylinderGeometry(radius, radius, 10, segments);
@@ -718,7 +718,7 @@ function ChangeTheVertexColours(
         }
       });
     }
-    if (customColor) customColor.needsUpdate = true;
+    customColor!.needsUpdate = true;
   } catch {
     // Points object or customColor may be missing; skip coloring
   }
@@ -734,14 +734,14 @@ function ResetVertexColors(vertices: THREE.Points | THREE.Group) {
     const customColor = points?.geometry?.attributes?.customColor as THREE.BufferAttribute | undefined;
     const arr = customColor?.array;
     if (!arr || arr.length === 0) return;
-    const count = customColor?.count ?? Math.floor(arr.length / 3);
+    const count = customColor!.count;
     for (let i = 0; i < count; i++) {
       const k = i * 3;
       arr[k] = 1;
       arr[k + 1] = 1;
       arr[k + 2] = 1;
     }
-    if (customColor) customColor.needsUpdate = true;
+    customColor!.needsUpdate = true;
   } catch {
     // skip if wrong object or missing attribute
   }

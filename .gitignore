@@ -143,3 +143,7 @@ dist
 
 # Nobody needs the the .DS_store file 
 .DS_store
+# Verification reports
+.stryker-tmp/
+reports/mutation/
+reports/examples/

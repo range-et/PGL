@@ -108,6 +108,7 @@
       // Default camera is at (0, 100, 100) = 141 units away — the cluster would
       // appear as a single pixel from there. (0, 3, 3) distance ≈ 4.2 units puts
       // the settled layout at ~70% of the viewport height.
+      graph3d.controls.minDistance = 0.5; // permit the close camera distance
       graph3d.camera.position.set(0, 3, 3);
       graph3d.controls.update();
 
@@ -215,13 +216,15 @@
         G.apply_edge_pos_maps(PGL.Drawing.DrawEdgeLinesDivisions(G, 1));
         rebuildGeometry();
 
-        // Flash the newly added node green for 500 ms
-        if (nodeGroup?.children[0]) {
-          PGL.ThreeWrapper.ChangeTheVertexColours(nodeGroup.children[0], [newId], 0x44ffaa);
-          setTimeout(() => {
-            if (nodeGroup?.children[0]) PGL.ThreeWrapper.ResetVertexColors(nodeGroup.children[0]);
-          }, 500);
-        }
+        // Instanced boxes use instance colors, not point-cloud customColor attributes.
+        const mesh = nodeGroup.children[0];
+        const instance = [...G.nodes.keys()].indexOf(newId);
+        mesh.setColorAt(instance, mesh.material.color.clone().set(0x44ffaa));
+        mesh.instanceColor.needsUpdate = true;
+        setTimeout(() => {
+          mesh.setColorAt(instance, mesh.material.color.clone());
+          mesh.instanceColor.needsUpdate = true;
+        }, 500);
 
         updateStatus();
         isAdding = false;
@@ -250,6 +253,26 @@
         pauseBtn.textContent = paused ? "▶ Resume" : "⏸ Pause";
       });
 
+      // Expand the view as the graph grows; keep the close initial view without
+      // allowing later nodes to be clipped. Preserve the current orbit direction.
+      function keepGraphInView() {
+        const positions = simulation.getPositions();
+        const target = graph3d.controls.target;
+        let radius = 0;
+        for (let i = 0; i < positions.length; i += 3) {
+          radius = Math.max(radius, Math.hypot(
+            positions[i] * BOUNDS - target.x,
+            positions[i + 1] * BOUNDS - target.y,
+            positions[i + 2] * BOUNDS - target.z,
+          ));
+        }
+        const requiredDistance = (radius + 0.1) / Math.sin(graph3d.camera.fov * Math.PI / 360) * 1.15;
+        const offset = graph3d.camera.position.clone().sub(target);
+        if (offset.length() < requiredDistance) {
+          graph3d.camera.position.copy(target).add(offset.setLength(requiredDistance));
+        }
+      }
+
       // ── Animation loop ────────────────────────────────────────────────────────
       let lastTime = performance.now();
 
@@ -275,6 +298,7 @@
           updateEdges();
         }
 
+        keepGraphInView();
         graph3d.rendercall();
       }
 

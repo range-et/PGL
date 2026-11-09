@@ -5,6 +5,44 @@ All notable changes to the Plebeian Graph Library (PGL) will be documented in th
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Automated browser walkthrough of all 18 demos and the index, including real mouse
+  interactions, live simulations, complete graph growth and screenshot artifacts.
+- Per-file 100% statement, branch, function and line coverage gates for executable
+  library source, reproducible property tests, numerical/graph snapshots and a
+  whole-library mutation audit. Performance and browser regressions remain in CI.
+- Numeric input validation at graph-generation, spatial-query, geometry,
+  matrix/vector and simulation boundaries. Invalid ranges, non-finite values,
+  non-integer work counts and malformed initial-position buffers now throw
+  `RangeError` instead of silently corrupting output or performing unbounded work.
+
+### Fixed
+
+- Example hover details no longer disappear when switching from an edge to a node.
+- The custom matrix layout uses independent coordinate directions at visible scale.
+- The growing-graph example permits its intended close camera and uses instance
+  colors so newly added boxes actually flash green, then expands the view to fit
+  the completed graph.
+- Graph adjacency now remains unique and self-loop-free after edge additions;
+  deleting one parallel edge preserves connectivity, and rebuilds clear stale links.
+- Shortest-hop distances now support node ID `-1` without confusing it with a root marker.
+- Graph movement accepts structural `{ x, y, z }` coordinates; singleton line
+  displacement no longer produces `NaN`.
+- Edge-list parsing no longer truncates malformed IDs. OBJ parsing accepts tabs,
+  rejects non-finite Float32 coordinates and invalid faces, and preserves source
+  vertex numbering when malformed vertices are skipped.
+- Octree queries at an internal cell's center of mass descend into children instead
+  of incorrectly discarding their forces.
+
+### Changed
+
+- `apply_drawing_maps` types now allow either map to be omitted, matching runtime behavior.
+- Mutation audits reject apparent survivors that ran zero tests, and do not use
+  Vitest's related-file filter. Timing tests run without instrumentation.
+
 ## [3.0.2] - 2026-10-13
 
 ### Changed

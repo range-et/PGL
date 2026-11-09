@@ -479,10 +479,23 @@ These are the issues that trip up most new users and AI-generated code. Check th
 
 ## Testing
 
-- **Unit tests:** `npm run test:unit` (Vitest): graph model and algorithms, simulations, drawing and picking, loaders, hierarchy, and the build output (three.js stays external in the npm build).
-- **Type check:** `npx tsc --noEmit`.
-- **Visual regression:** `npm run build && npm test` renders `test/test_1.html` and compares the canvas with `test/test_1.png` (fails if more than 200 pixels differ). `UPDATE_REFERENCE=1 npm test` re-baselines. Set `PUPPETEER_EXECUTABLE_PATH` to use an installed Chrome.
-- CI (GitHub Actions, Node 22) runs all of the above.
+Use current Node 22 LTS (22.18+) or Node 24.11+ for development, then `npm ci`.
+
+- **Full verification:** `npm run verify` runs type checks, coverage, performance regressions, builds, the browser image comparison and all examples.
+- **Coverage:** `npm run test:coverage` enforces **100% statements, branches, functions and lines per executable source file**, including new files. Shader text and static datasets are excluded from JavaScript coverage.
+- **Mutation audit:** `npm run test:mutation` mutates the whole library and fails below 80%. It also rejects apparent survivors that ran no tests.
+- **Property tests:** `npm run test:property`; use `FC_SEED=42 FC_NUM_RUNS=1000` to explore additional reproducible inputs.
+- **Examples:** `npm run test:examples` checks every demo in Chrome, including rendering, input callbacks, live simulation and graph growth. Screenshots and results are saved to `reports/examples/`.
+- **Visual regression:** `npm run build && npm run test:visual` compares the rendered canvas with `test/test_1.png`. Baseline updates require explicit `UPDATE_REFERENCE=1` and visual review.
+
+CI runs these checks and uploads coverage/mutation reports. See [CONTRIBUTING.md](CONTRIBUTING.md#automated-verification) for replay commands, baseline policy and scope. Coverage is an execution measure, not proof that every possible input is correct.
+
+Graph-generation parameters, spatial radii, vector normalization and simulation
+options now validate their numeric contracts and report invalid values with `RangeError`.
+Subdivision counts and simulation work counts must be positive integers; graph sizes
+must be nonnegative integers; initial simulation positions must contain exactly
+`3 * nodeCount` finite coordinates. Malformed edge-list/OBJ records are skipped rather
+than converted into truncated IDs or dangling mesh edges.
 
 ## Usage / Installation
 

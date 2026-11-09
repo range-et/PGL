@@ -31,9 +31,10 @@ async function LoadGraphFromEdgeListText(edgeListText: string): Promise<Graph> {
     if (!trimmed || trimmed.startsWith("#")) continue;
     const parts = trimmed.split(/\s+/);
     if (parts.length < 2) continue;
-    const i = parseInt(parts[0], 10);
-    const j = parseInt(parts[1], 10);
-    if (Number.isNaN(i) || Number.isNaN(j)) continue;
+    if (!/^[+-]?\d+$/.test(parts[0]) || !/^[+-]?\d+$/.test(parts[1])) continue;
+    const i = Number(parts[0]);
+    const j = Number(parts[1]);
+    if (!Number.isSafeInteger(i) || !Number.isSafeInteger(j)) continue;
     edgePairs.push([i, j]);
     nodeIdsSet.add(i);
     nodeIdsSet.add(j);
@@ -114,35 +115,35 @@ async function LoadGraphFromObjText(objText: string): Promise<LoadGraphFromObjRe
   const lines = objText.split(/\r?\n/);
   const vertices: number[] = [];
   const edgeSet = new Set<string>();
+  const vertexIds: Array<number | undefined> = [];
+  const faces: number[][] = [];
   for (const line of lines) {
     const trimmed = line.trim();
     if (!trimmed || trimmed.startsWith("#")) continue;
-    if (trimmed.startsWith("v ")) {
-      const parts = trimmed.slice(2).trim().split(/\s+/);
-      if (parts.length >= 3) {
-        const x = parseFloat(parts[0]);
-        const y = parseFloat(parts[1]);
-        const z = parseFloat(parts[2]);
-        if (!Number.isNaN(x) && !Number.isNaN(y) && !Number.isNaN(z)) {
-          vertices.push(x, y, z);
-        }
+    const parts = trimmed.split(/\s+/);
+    if (parts[0] === "v") {
+      const coords = parts.slice(1, 4).map(Number);
+      // Keep source vertex numbering even when a malformed vertex is skipped.
+      if (coords.length === 3 && coords.every(v => Number.isFinite(Math.fround(v)))) {
+        vertexIds.push(vertices.length / 3);
+        vertices.push(...coords);
+      } else {
+        vertexIds.push(undefined);
       }
-      continue;
+    } else if (parts[0] === "f") {
+      const tokens = parts.slice(1).map(p => p.split("/")[0]);
+      if (tokens.length < 3 || tokens.some(p => !/^\d+$/.test(p))) continue;
+      const indices = tokens.map(Number);
+      if (indices.every(i => Number.isSafeInteger(i) && i >= 1)) faces.push(indices);
     }
-    if (trimmed.startsWith("f ")) {
-      const parts = trimmed.slice(2).trim().split(/\s+/);
-      const indices: number[] = [];
-      for (const p of parts) {
-        const num = parseInt(p.split("/")[0], 10);
-        if (!Number.isNaN(num) && num >= 1) indices.push(num - 1);
-      }
-      for (let a = 0; a < indices.length; a++) {
-        const i = indices[a];
-        const j = indices[(a + 1) % indices.length];
-        if (i === j) continue;
-        const key = i < j ? `${i},${j}` : `${j},${i}`;
-        edgeSet.add(key);
-      }
+  }
+  for (const face of faces) {
+    const indices = face.map(i => vertexIds[i - 1]);
+    if (indices.some(i => i === undefined)) continue;
+    for (let a = 0; a < indices.length; a++) {
+      const i = indices[a]!;
+      const j = indices[(a + 1) % indices.length]!;
+      if (i !== j) edgeSet.add(i < j ? `${i},${j}` : `${j},${i}`);
     }
   }
   const n = vertices.length / 3;
@@ -173,13 +174,12 @@ async function LoadDwt1005(): Promise<Graph> {
   const nodeIdsSet = new Set<number>();
   for (const key of Object.keys(adj)) {
     const id = parseInt(key, 10);
-    if (!Number.isNaN(id)) nodeIdsSet.add(id);
+    nodeIdsSet.add(id);
     for (const nb of adj[key]) nodeIdsSet.add(nb);
   }
   const edgeSet = new Set<string>();
   for (const key of Object.keys(adj)) {
     const id = parseInt(key, 10);
-    if (Number.isNaN(id)) continue;
     for (const nb of adj[key]) {
       const a = Math.min(id, nb);
       const b = Math.max(id, nb);

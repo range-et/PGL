@@ -29,20 +29,27 @@
       const n = nodeIds.length;
       const out = new Float32Array(n);
 
-      function powerIteration(seed) {
+      function powerIteration(seed, orthogonalTo) {
         const x = new Float32Array(n);
         for (let i = 0; i < n; i++) x[i] = seed(i);
         PGL.normalizeVector(x);
         for (let iter = 0; iter < 15; iter++) {
           PGL.matrixVectorMultiply(matrix, n, x, out);
           x.set(out);
+          // Deflate the first direction so the second does not converge to the
+          // same eigenvector and collapse the drawing onto a diagonal line.
+          if (orthogonalTo) {
+            let dot = 0;
+            for (let i = 0; i < n; i++) dot += x[i] * orthogonalTo[i];
+            for (let i = 0; i < n; i++) x[i] -= dot * orthogonalTo[i];
+          }
           PGL.normalizeVector(x);
         }
         return x;
       }
 
       const xCoord = powerIteration(() => Math.random());
-      const zCoord = powerIteration((i) => (i % 2 === 0 ? 1 : -1));
+      const zCoord = powerIteration((i) => (i % 2 === 0 ? 1 : -1), xCoord);
 
       let minX = Infinity, maxX = -Infinity, minZ = Infinity, maxZ = -Infinity;
       for (let i = 0; i < n; i++) {
@@ -57,9 +64,9 @@
       const posMap = new Map();
       nodeIds.forEach((id, i) => {
         posMap.set(id, {
-          x: scale * (xCoord[i] - minX) / rx,
+          x: scale * ((xCoord[i] - minX) / rx - 0.5),
           y: 0,
-          z: scale * (zCoord[i] - minZ) / rz,
+          z: scale * ((zCoord[i] - minZ) / rz - 0.5),
         });
       });
       G.apply_position_map(posMap);
@@ -73,7 +80,7 @@
       const graph3d = new PGL.GraphDrawer.GraphDrawer3d({ graph: G, width, height, canvas });
       await graph3d.init();
 
-      const bounds = 0.1;
+      const bounds = 1;
       graph3d.addVisElement(PGL.ThreeWrapper.DrawTHREEGraphVertices(G, bounds, 1, 0xffffff, 1));
       graph3d.addVisElement(PGL.ThreeWrapper.DrawTHREEGraphEdgesThin(G, bounds, 0xffafcc));
 

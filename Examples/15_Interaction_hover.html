@@ -43,23 +43,26 @@
     graph3d.addVisElement(nodeVisualElements);
     graph3d.addVisElement(edgeVisualElements);
 
+    // Both callbacks can fire during one pointer move. Retain both states so
+    // clearing an old edge cannot overwrite the newly hovered node's details.
+    let hoveredNode = null;
+    let hoveredEdge = null;
+    function updateInfo() {
+      if (hoveredNode) {
+        const d = hoveredNode;
+        infoText.innerHTML = `Node <b>${d.nodeId}</b><br>Neighbours: ${d.neighbours.length}<br>Position: (${d.position?.x?.toFixed(2) ?? "?"}, ${d.position?.y?.toFixed(2) ?? "?"}, ${d.position?.z?.toFixed(2) ?? "?"})`;
+      } else if (hoveredEdge) {
+        const d = hoveredEdge;
+        infoText.innerHTML = `Edge <b>${d.edgeId}</b><br>Connects: ${d.start} → ${d.end}`;
+      } else {
+        infoText.textContent = "Hover a node or edge";
+      }
+    }
     graph3d.enableInteraction({
       graph: G,
       hoverEnabled: true,
-      onNodeHover: (d) => {
-        if (d) {
-          infoText.innerHTML = `Node <b>${d.nodeId}</b><br>Neighbours: ${d.neighbours.length}<br>Position: (${d.position?.x?.toFixed(2) ?? "?"}, ${d.position?.y?.toFixed(2) ?? "?"}, ${d.position?.z?.toFixed(2) ?? "?"})`;
-        } else {
-          infoText.innerHTML = "Hover a node or edge";
-        }
-      },
-      onEdgeHover: (d) => {
-        if (d) {
-          infoText.innerHTML = `Edge <b>${d.edgeId}</b><br>Connects: ${d.start} → ${d.end}`;
-        } else {
-          infoText.innerHTML = "Hover a node or edge";
-        }
-      },
+      onNodeHover: (d) => { hoveredNode = d; updateInfo(); },
+      onEdgeHover: (d) => { hoveredEdge = d; updateInfo(); },
     });
 
     function animate() {

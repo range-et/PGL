@@ -269,9 +269,8 @@ export class InteractionLayer {
     }
   }
 
-  private getDragPosition(): { x: number; y: number; z: number } | null {
-    if (this.dragNodeId == null) return null;
-    const pos = this.graph.nodes.get(this.dragNodeId)?.data?.pos;
+  private getDragPosition(nodeId: number): { x: number; y: number; z: number } | null {
+    const pos = this.graph.nodes.get(nodeId)?.data?.pos;
     if (!pos) return null;
     _planeNormal.set(0, 0, -1).applyQuaternion(this.camera.quaternion);
     _plane.setFromNormalAndCoplanarPoint(_planeNormal, new THREE.Vector3(pos.x, pos.y, pos.z));
@@ -286,7 +285,7 @@ export class InteractionLayer {
     this.getMouseNDC(event);
 
     if (this.dragNodeId != null && this.options.onNodeDrag) {
-      const newPos = this.getDragPosition();
+      const newPos = this.getDragPosition(this.dragNodeId);
       if (newPos) this.options.onNodeDrag(this.dragNodeId, newPos);
       return;
     }

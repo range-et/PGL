@@ -349,6 +349,7 @@ function DisplaceEdgeInY(LineMap: Map<number, Line>, displacement: number) {
   }
   for (const key of returnArray.keys()) {
     const line = returnArray.get(key)!;
+    if (line.points.length < 2) continue;
     // now for all the points in this
     let pnt, ydisval;
     for (let i = 0; i < line.points.length; i++) {
@@ -488,8 +489,7 @@ function MovePmap(NodeMap: Map<number, Point>, displacement: Point) {
   const newPmap: Map<number, Point> = new Map();
   for (let node of NodeMap.keys()) {
     const p = NodeMap.get(node)!;
-    p.translate(displacement);
-    newPmap.set(node, p);
+    newPmap.set(node, new Point(p.x + displacement.x, p.y + displacement.y, p.z + displacement.z));
   }
   return newPmap;
 }
@@ -515,9 +515,7 @@ function MoveEmap(LineMap: Map<number, Line>, dispacement: Point) {
     interimLine = LineMap.get(lineNumber)!;
     // move all the points
     for (let pnt of interimLine.points) {
-      pnt.translate(dispacement);
-      // add this to the new stack of lines
-      interimPoints.push(pnt);
+      interimPoints.push(new Point(pnt.x + dispacement.x, pnt.y + dispacement.y, pnt.z + dispacement.z));
     }
     // create a new line
     newLine = new Line(interimPoints);

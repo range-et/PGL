@@ -1,3 +1,4 @@
+import { finiteNumber, integer } from "../HelperClasses/Validation";
 import Graph from "../Core/Graph";
 import Point from "../HelperClasses/Point";
 import * as glMatrix from "gl-matrix";
@@ -54,6 +55,13 @@ export function createKamadaKawai3D(
   options: KamadaKawai3DOptions = {}
 ): KamadaKawai3DSimulation {
   const opts = { ...DEFAULT_OPTIONS, ...options };
+  finiteNumber(opts.simulationBound, "simulationBound", 0);
+  finiteNumber(opts.cohesionValue, "cohesionValue");
+  finiteNumber(opts.repulsionValue, "repulsionValue");
+  finiteNumber(opts.centerPull, "centerPull");
+  finiteNumber(opts.octreeTheta, "octreeTheta", 0);
+  integer(opts.iterationsPerStep, "iterationsPerStep", 1);
+  integer(opts.octreeThreshold, "octreeThreshold", 1);
   const nodeIds = graph.get_node_ids_order();
   const n = nodeIds.length;
   const adj = graph.get_adjacency();
@@ -130,7 +138,7 @@ export function createKamadaKawai3D(
         );
         vec3.set(scratch.force, 0, 0, 0);
 
-        const neighbours = adj.get(nodeIds[i]) ?? [];
+        const neighbours = adj.get(nodeIds[i])!;
         if (neighbours.length > 0) {
           scratch.neighborAvg[0] = 0;
           scratch.neighborAvg[1] = 0;

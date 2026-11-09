@@ -1,3 +1,4 @@
+import { finiteNumber, integer } from "../HelperClasses/Validation";
 import Graph from "../Core/Graph";
 import Point from "../HelperClasses/Point";
 
@@ -93,7 +94,7 @@ function computeStressPairs(
   const adjMap = graph.get_adjacency();
   const neighbours: Uint32Array[] = nodeIds.map((id) => {
     const out: number[] = [];
-    for (const nb of adjMap.get(id) ?? []) {
+    for (const nb of adjMap.get(id)!) {
       const j = idToIndex.get(nb);
       if (j !== undefined) out.push(j);
     }
@@ -173,8 +174,22 @@ export async function createStressSGD3D(
     ...options,
     seed: options.seed ?? Math.floor(Math.random() * 0x7fffffff),
   };
+  if (opts.dimensions !== 2 && opts.dimensions !== 3) throw new RangeError("dimensions must be 2 or 3");
+  integer(opts.epochsPerStep, "epochsPerStep", 1);
+  integer(opts.tMax, "tMax", 1);
+  integer(opts.seed, "seed", -Number.MAX_SAFE_INTEGER);
+  finiteNumber(opts.simulationBound, "simulationBound", 0);
+  finiteNumber(opts.centerPull, "centerPull");
+  finiteNumber(opts.scaleBound, "scaleBound", 0);
+  finiteNumber(opts.learningRate, "learningRate", 0);
+  finiteNumber(opts.eps, "eps", Number.MIN_VALUE, 1);
+  finiteNumber(opts.initialPreservation, "initialPreservation", 0, 1);
   const nodeIds = graph.get_node_ids_order();
   const n = nodeIds.length;
+  if (opts.initialPositions) {
+    if (opts.initialPositions.length !== n * 3) throw new RangeError("initialPositions must contain n * 3 coordinates");
+    for (const value of opts.initialPositions) finiteNumber(value, "initialPositions coordinate");
+  }
   const idToIndex = new Map<number, number>();
   nodeIds.forEach((id, i) => idToIndex.set(id, i));
 
@@ -196,8 +211,8 @@ export async function createStressSGD3D(
   const etaMin = opts.eps / wMax;
   const lambda =
     opts.tMax > 1 ? Math.log(etaMax / etaMin) / (opts.tMax - 1) : 0;
-  const getEta = (t: number): number =>
-    t >= opts.tMax ? etaMin : etaMax * Math.exp(-lambda * t);
+  // step stops at tMax, so the schedule is evaluated only inside its domain.
+  const getEta = (t: number): number => etaMax * Math.exp(-lambda * t);
 
   const dims = opts.dimensions;
   const rng = createRng(opts.seed);

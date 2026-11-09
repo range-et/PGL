@@ -12,7 +12,6 @@ const buildOutDir = resolve(__dirname, "Build");
  */
 const npmExternals = ["three", "gl-matrix"];
 
-// Vitest options are merged at runtime; cast so TypeDoc/tsc don't require vitest types
 const config = ({ mode }: { mode: string }) => {
   // `vite build --mode standalone` emits Build/pgl_standalone.js with three.js bundled,
   // for <script type="module"> use without a bundler (used by the Examples).
@@ -50,11 +49,6 @@ const config = ({ mode }: { mode: string }) => {
           },
         },
       },
-    },
-    test: {
-      globals: true,
-      environment: "node",
-      include: ["test/unit/**/*.test.ts", "Src/**/*.test.ts"],
     },
     resolve: {
       alias: {

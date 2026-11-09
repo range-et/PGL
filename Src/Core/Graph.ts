@@ -72,6 +72,8 @@ class Graph {
    * Async to allow yielding on large graphs and avoid hanging the browser.
    */
   async constructAdjacencyList(): Promise<void> {
+    // Rebuild from the authoritative edge map, including after direct map edits.
+    for (const node of this.nodes.values()) node.neighbours = [];
     // First pass: build neighbours from edges
     this.edges.forEach((edge) => {
       const start = edge.start;
@@ -117,8 +119,10 @@ class Graph {
     // keep adjacency consistent for undirected graph (both directions)
     const startNode = this.nodes.get(start);
     const endNode = this.nodes.get(end);
-    if (startNode) startNode.neighbours.push(end);
-    if (endNode) endNode.neighbours.push(start);
+    if (start !== end) {
+      if (startNode && !startNode.neighbours.includes(end)) startNode.neighbours.push(end);
+      if (endNode && !endNode.neighbours.includes(start)) endNode.neighbours.push(start);
+    }
   }
 
   /**
@@ -132,17 +136,18 @@ class Graph {
     const edge = this.edges.get(edgeId);
     if (!edge) return false;
     const { start, end } = edge;
-    const startNode = this.nodes.get(start);
-    const endNode = this.nodes.get(end);
-    if (startNode) {
-      const idx = startNode.neighbours.indexOf(end);
-      if (idx > -1) startNode.neighbours.splice(idx, 1);
-    }
-    if (endNode) {
-      const idx = endNode.neighbours.indexOf(start);
-      if (idx > -1) endNode.neighbours.splice(idx, 1);
-    }
     this.edges.delete(edgeId);
+    // Adjacency represents connectivity, not edge multiplicity.
+    const stillConnected = [...this.edges.values()].some(other =>
+      (other.start === start && other.end === end) ||
+      (other.start === end && other.end === start)
+    );
+    if (!stillConnected) {
+      const startNode = this.nodes.get(start);
+      const endNode = this.nodes.get(end);
+      if (startNode) startNode.neighbours = startNode.neighbours.filter(id => id !== end);
+      if (endNode) endNode.neighbours = endNode.neighbours.filter(id => id !== start);
+    }
     return true;
   }
 
@@ -155,18 +160,13 @@ class Graph {
    */
   remove_node(nodeId: number): boolean {
     if (!this.nodes.has(nodeId)) return false;
-    // Collect edge IDs to remove (can't delete while iterating)
-    const edgeIdsToRemove: number[] = [];
-    for (const [edgeId, edge] of this.edges.entries()) {
-      if (edge.start === nodeId || edge.end === nodeId) {
-        edgeIdsToRemove.push(edgeId);
-      }
-    }
-    // Remove each incident edge (updates adjacency)
-    for (const edgeId of edgeIdsToRemove) {
-      this.remove_edge(edgeId);
+    for (const [edgeId, edge] of this.edges) {
+      if (edge.start === nodeId || edge.end === nodeId) this.edges.delete(edgeId);
     }
     this.nodes.delete(nodeId);
+    for (const node of this.nodes.values()) {
+      node.neighbours = node.neighbours.filter(id => id !== nodeId);
+    }
     return true;
   }
 
@@ -237,8 +237,8 @@ class Graph {
    * @param layout - Applies an object of maps associated with a graph: {pmap:(the position map), emap:(the edge map)}
    */
   apply_drawing_maps(layout: {
-    pmap: Map<number, Point>;
-    emap: Map<number, Line>;
+    pmap?: Map<number, Point>;
+    emap?: Map<number, Line>;
   }) {
     if (layout.pmap) {
       this.apply_position_map(layout.pmap);
@@ -300,7 +300,7 @@ class Graph {
     nodeIds.forEach((id, i) => idToIndex.set(id, i));
     for (let i = 0; i < n; i++) {
       const nodeId = nodeIds[i];
-      const neighbours = adj.get(nodeId) ?? [];
+      const neighbours = adj.get(nodeId)!;
       for (const nbId of neighbours) {
         const j = idToIndex.get(nbId);
         if (j !== undefined) matrix[i * n + j] = 1;

@@ -9,6 +9,7 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -16,15 +17,52 @@ jobs:
           node-version: "22"
           cache: "npm"
       - run: npm ci
-      - run: npx tsc --noEmit
+      - run: npm run typecheck
       - run: npm run build
-      - run: npm run test:unit
+      - run: npm run test:coverage
+      - run: npm run test:performance
       - name: Visual regression test
-        run: npm test
+        run: npm run test:visual
+      - name: Example browser walkthrough
+        run: npm run test:examples
+      - name: Upload example screenshots and results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: example-results
+          path: reports/examples/
+          if-no-files-found: ignore
       - name: Upload visual diff
         if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: visual-diff
           path: test/diff_image.png
+          if-no-files-found: ignore
+
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage/
+          if-no-files-found: ignore
+
+  mutation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+      - run: npm ci
+      - run: npm run test:mutation
+      - name: Upload mutation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mutation-report
+          path: reports/mutation/
           if-no-files-found: ignore

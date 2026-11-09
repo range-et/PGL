@@ -1,3 +1,4 @@
+import { finiteNumber, integer } from "./Validation";
 import Point from "./Point";
 import Line from "./Line";
 import Utilities from "./Utilities";
@@ -15,6 +16,7 @@ function line_from_start_end_divisions(
   end: Point,
   divisions: number
 ) {
+  integer(divisions, "divisions", 1);
   // create a start and end time
   const Start = new Point(start.x, start.y, start.z);
   const End = new Point(end.x, end.y, end.z);
@@ -46,6 +48,7 @@ function line_from_start_end_distance(
   end: Point,
   distance: number
 ) {
+  finiteNumber(distance, "distance", Number.MIN_VALUE);
   const dist = Utilities.calculateDistance(start, end);
   const divs = Math.round(dist / distance) + 2;
   const subdivline = line_from_start_end_divisions(start, end, divs);
@@ -58,6 +61,7 @@ function line_from_start_end_distance(
  * @returns the central point of the array of points
  */
 function centroid(points: Point[]) {
+  if (points.length === 0) throw new RangeError("centroid requires at least one point");
   let rx = 0;
   let ry = 0;
   let rz = 0;

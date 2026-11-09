@@ -44,10 +44,8 @@
     graph3d.addVisElement(nodeVisualElements);
     graph3d.addVisElement(edgeVisualElements);
 
-    // IMPORTANT: ChangeTheVertexColours and ResetVertexColors take the inner
-    // instanced mesh, NOT the Group returned by the draw call.
-    // Always pass nodeVisualElements.children[0] — passing nodeVisualElements
-    // directly will silently do nothing.
+    // Color helpers accept this point cloud or its containing Group.
+    // Instanced boxes instead use InstancedMesh.setColorAt().
     const nodeMesh = nodeVisualElements.children[0];
     const HIGHLIGHT_COLOR = 0xff4444;
 

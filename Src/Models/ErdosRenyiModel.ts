@@ -1,3 +1,4 @@
+import { finiteNumber, integer } from "../HelperClasses/Validation";
 // This essentially generates a erdos reyni graph
 // Super useful for juszt getting a random graph and studying
 // graph structure. Read more https://en.wikipedia.org/wiki/Erd%C5%91s%E2%80%93R%C3%A9nyi_model
@@ -14,6 +15,8 @@ import _Node from "../Core/_Node";
  * @returns A Erdos Reyni graph
  */
 async function GenerateErdosReyni_n_p(n: number, p: number) {
+  integer(n, "n");
+  finiteNumber(p, "p", 0, 1);
   // first create a list of nodes
   const nodes = new Map();
   const edges = new Map();

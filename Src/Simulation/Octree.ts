@@ -93,8 +93,8 @@ export function buildOctree(
     const cminX = minX + ox * size;
     const cminY = minY + oy * size;
     const cminZ = minZ + oz * size;
-    const child = buildOctree(pts, cminX, cminY, cminZ, half, depth + 1);
-    if (child) {
+    const child = buildOctree(pts, cminX, cminY, cminZ, half, depth + 1)!;
+    {
       children.push(child);
       cx += child.cx * child.count;
       cy += child.cy * child.count;
@@ -103,7 +103,6 @@ export function buildOctree(
     }
   }
 
-  if (count === 0) return null;
   return {
     cx: cx / count,
     cy: cy / count,
@@ -137,7 +136,15 @@ export function computeRepulsionForce(
   const dz = cell.cz - pz;
   const lenSq = dx * dx + dy * dy + dz * dz;
 
-  if (lenSq < 1e-20) return;
+  if (lenSq < 1e-20) {
+    // A cell's center can coincide with the query even when its children exert force.
+    if (cell.children) {
+      for (const child of cell.children) {
+        computeRepulsionForce(child, px, py, pz, excludeIndex, repulsionValue, theta, out);
+      }
+    }
+    return;
+  }
 
   const len = Math.sqrt(lenSq);
 
@@ -153,7 +160,7 @@ export function computeRepulsionForce(
 
   // Barnes-Hut: if cell is far enough (or is a leaf of coincident points), approximate as single point
   const ratio = cell.size / len;
-  if ((ratio < theta || cell.children === null) && cell.count > 0) {
+  if (ratio < theta || cell.children === null) {
     const f = (repulsionValue * cell.count) / lenSq;
     out.fx -= dx * f;
     out.fy -= dy * f;
@@ -162,9 +169,7 @@ export function computeRepulsionForce(
   }
 
   // Recurse into children
-  if (cell.children) {
-    for (const child of cell.children) {
-      computeRepulsionForce(child, px, py, pz, excludeIndex, repulsionValue, theta, out);
-    }
+  for (const child of cell.children) {
+    computeRepulsionForce(child, px, py, pz, excludeIndex, repulsionValue, theta, out);
   }
 }

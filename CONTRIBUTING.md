@@ -50,3 +50,97 @@ Please follow Code of Conduct in all your interactions with the project.
 1. Increase the version numbers in any examples files and the README.md to the new version that this Pull Request would represent. The versioning scheme used is SemVer.
 1. The Pull Request will be merged once it is approved and passes CI checks. 
 
+
+## Automated verification
+
+Use current Node 22 LTS (22.18 or newer, as in CI) or Node 24.11+ and
+`npm ci`. The mutation toolchain requires these versions; `.nvmrc` selects Node 22. Before submitting a change, run:
+
+```sh
+npm run verify
+npm run test:mutation
+```
+
+`verify` runs strict TypeScript checks, unit/property/snapshot tests, coverage,
+performance regressions, both library builds, the browser image comparison and
+a browser walkthrough of every numbered example plus the index.
+CI runs these checks plus the full-library mutation audit. `npm test` retains its
+existing visual-test behavior and requires a build first.
+
+### Coverage policy
+
+Every executable TypeScript source file must have **100% statements, branches,
+functions and lines**, enforced per file by `vitest.config.ts`. Newly added source
+files are included automatically. Only shader text and static sample datasets are
+excluded; barrel modules and type-only files contain no executable statements.
+The WebGL image test separately checks rendering integration. It is not a claim
+of exhaustive GPU/shader branch coverage.
+
+Do not add ignore pragmas, remove meaningful behavior or lower thresholds to make
+coverage green. Test real boundary cases and invalid inputs; simplify branches
+only when invariants make them unreachable. Browser-facing tests use real Three.js
+geometry and raycasting where possible, with renderer mocks for lifecycle tests.
+The existing browser check exercises a real software WebGL renderer.
+
+### Mutation and property tests
+
+Stryker mutates the entire library, with the same shader/data exclusions. The
+mutation score must be at least **80%**. Coverage and mutation scores measure
+different things: running a line does not prove its result was asserted. Inspect
+survivors; some mutations preserve behavior and others expose missing assertions.
+A separate report-integrity check rejects surviving mutants that ran zero tests.
+Stryker 10.1.1 supports Vitest 5's nested test-name separator; the older runner
+silently skipped nested tests during mutation runs. `vitest.related` is disabled
+to avoid a second file filter; Stryker selects tests using per-test coverage.
+
+Property tests run 150 generated cases each with a fixed seed, including in
+mutation workers. Oracles include Floyd–Warshall shortest paths, exhaustive
+Euclidean radius searches, direct octree force summation, transitive clustering,
+edge-count conservation and graph-edit state transitions. To explore more inputs:
+
+```sh
+FC_SEED=42 FC_NUM_RUNS=1000 npm run test:property
+```
+
+fast-check prints the seed, shrinking path and minimal counterexample on failure.
+Replay only that test using the reported values:
+
+```sh
+FC_SEED=42 FC_PATH='0:1' npm run test:property -- -t 'failing test name'
+```
+
+Replace the example seed/path with the failure output. Preserve useful
+counterexamples as regression tests. Invalid seed/run-count settings fail early.
+
+Performance tests run separately via `npm run test:performance`. Coverage and
+mutation instrumentation changes execution speed, so the timing and large-scale
+regressions are excluded from instrumented runs, but still run in CI and `verify`.
+
+### Reports and baselines
+
+Coverage reports are in `coverage/`; mutation reports are in `reports/mutation/`.
+CI uploads both. For an intentional output change, use
+`npm run test:unit -- test/regression --update` and review every snapshot diff.
+For an intentional rendering change, rebuild, run
+`UPDATE_REFERENCE=1 npm run test:visual`, and inspect the reference image.
+CI never requests baseline updates.
+
+Passing these gates provides evidence for the tested contracts, not a proof that
+all inputs are correct. Review behavioral changes and baseline updates.
+
+### Example browser walkthrough
+
+`npm run test:examples` starts an isolated local server and opens every numbered
+HTML demo in headless Chrome using software WebGL. Build first. The suite discovers
+new numbered examples automatically and checks index links, runtime/resource/shader
+errors, draw calls, finite geometry and nonblank canvas screenshots. It exercises
+activation, node/edge clicks and hover transitions, neighbour highlights, dragging,
+pause/resume/speed controls, live simulations and growth through all 144 torus nodes.
+It also checks that the custom layout retains two independent axes.
+
+The test server injects renderer/callback observation into the served pages; source
+examples and the built library still provide all behavior. A seeded `Math.random`
+makes the generated demos reproducible (`EXAMPLES_SEED=42` by default). To explore a
+different graph sample, use `EXAMPLES_SEED=123 npm run test:examples`. Screenshots
+and per-page results are saved to `reports/examples/` and uploaded by CI. These
+screenshots are review artifacts; only `test:visual` uses a pixel-diff baseline.

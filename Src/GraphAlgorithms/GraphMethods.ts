@@ -62,7 +62,7 @@ async function Dijkstra(Graph:Graph, Node:number) {
   // The map is in BFS order, so each node's parent already has its distance.
   const depth = new Map<number, number>();
   for (const [n, parent] of exploredFromMap) {
-    depth.set(n, parent === -1 ? 0 : depth.get(parent)! + 1);
+    depth.set(n, n === Node ? 0 : depth.get(parent)! + 1);
   }
   // Return in node order; unreachable (disconnected) nodes are left out.
   const Dmap:Map<number, number> = new Map();
@@ -92,7 +92,7 @@ async function GraphDiameter(Graph:Graph) {
   if (nodeIds.length === 1) return { start: nodeIds[0], end: nodeIds[0], distance: 0 };
 
   const adj = Graph.get_adjacency();
-  const withNeighbors = nodeIds.filter((id) => (adj.get(id)?.length ?? 0) > 0);
+  const withNeighbors = nodeIds.filter((id) => adj.get(id)!.length > 0);
   const pickFrom = withNeighbors.length > 0 ? withNeighbors : nodeIds;
   let seed = pickFrom[Math.floor(Math.random() * pickFrom.length)];
 

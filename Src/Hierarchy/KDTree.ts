@@ -1,3 +1,4 @@
+import { finiteNumber } from "../HelperClasses/Validation";
 /**
  * Minimal 3D KD-tree for range queries (points within distance).
  * Used by the distance-based cluster strategy.
@@ -38,11 +39,12 @@ function buildKDT(
   const mid = Math.floor(sorted.length / 2);
   const median = sorted[mid];
 
-  const left = mid > 0 ? buildKDT(sorted.slice(0, mid), depth + 1) : null;
+  // For a non-leaf node mid is at least one, so the left subtree exists.
+  const left = buildKDT(sorted.slice(0, mid), depth + 1)!;
   const right =
     mid + 1 < sorted.length ? buildKDT(sorted.slice(mid + 1), depth + 1) : null;
 
-  return { left: left ?? undefined, right: right ?? undefined, item: median };
+  return { left, right: right ?? undefined, item: median };
 }
 
 /**
@@ -50,13 +52,12 @@ function buildKDT(
  * Returns array of node IDs.
  */
 function rangeQuery(
-  node: ReturnType<typeof buildKDT>,
+  node: NonNullable<ReturnType<typeof buildKDT>>,
   center: Point,
   dSq: number,
   depth: number,
   out: number[]
 ): void {
-  if (node === null) return;
 
   const axis = selectAxis(depth);
   const dist = sqDist(center, node.item.point);
@@ -82,13 +83,19 @@ export function pointsWithinRadius(
   items: PointWithId[],
   radius: number
 ): Map<number, number[]> {
+  finiteNumber(radius, "radius", 0);
+  for (const { point } of items) {
+    finiteNumber(point.x, "point.x");
+    finiteNumber(point.y, "point.y");
+    finiteNumber(point.z, "point.z");
+  }
   const tree = buildKDT(items, 0);
   const radiusSq = radius * radius;
   const result = new Map<number, number[]>();
 
   for (const { point, nodeId } of items) {
     const out: number[] = [];
-    if (tree) rangeQuery(tree, point, radiusSq, 0, out);
+    rangeQuery(tree!, point, radiusSq, 0, out);
     result.set(nodeId, out);
   }
 
