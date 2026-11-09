@@ -17,6 +17,12 @@ If you find a bug or have a suggestion for a new feature or enhancement, I would
 
 ### Submitting Changes
 
+Use GitHub issues as the backlog: triage the relevant issue, establish its scope
+and acceptance criteria, then complete and verify the work. Once finished, record
+the delivered behavior and verification results in [features.md](features.md),
+with a link to the issue and any compatibility notes. Keep unfinished work in
+GitHub issues rather than the completed-work log.
+
 Changes are accepted via Pull Requests (PRs) on GitHub. Here’s how you make a PR:
 
 1. Fork the PGL repository.
