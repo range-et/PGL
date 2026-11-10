@@ -1,0 +1,38 @@
+# Puts new issues and pull requests on the Dev Dashboard project:
+# https://github.com/users/range-et/projects/6
+# Issues start in Backlog, pull requests start in Testing.
+name: Add to Dev Dashboard
+
+on:
+  issues:
+    types: [opened]
+  pull_request_target:
+    types: [opened]
+
+jobs:
+  add:
+    runs-on: ubuntu-latest
+    steps:
+      - id: add
+        uses: actions/add-to-project@f2c1f1fa649a891be84948ea89b5dfba1526ef05 # v2.0.1
+        with:
+          project-url: https://github.com/users/range-et/projects/6
+          github-token: ${{ secrets.DEV_DASHBOARD_TOKEN }}
+
+      - name: Set status
+        if: steps.add.outputs.itemId != ''
+        env:
+          GH_TOKEN: ${{ secrets.DEV_DASHBOARD_TOKEN }}
+          ITEM_ID: ${{ steps.add.outputs.itemId }}
+          # Status options: Backlog = a61791a8, Testing = dc9bc769
+          OPTION_ID: ${{ github.event_name == 'issues' && 'a61791a8' || 'dc9bc769' }}
+        run: |
+          gh api graphql -f query='
+            mutation($item: ID!, $option: String!) {
+              updateProjectV2ItemFieldValue(input: {
+                projectId: "PVT_kwHOA9fpnc4Bq84g"
+                itemId: $item
+                fieldId: "PVTSSF_lAHOA9fpnc4Bq84gzhpRssc"
+                value: { singleSelectOptionId: $option }
+              }) { projectV2Item { id } }
+            }' -f item="$ITEM_ID" -f option="$OPTION_ID"
